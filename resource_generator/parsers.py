@@ -13,28 +13,47 @@ class Parser(object):
     def parse():
         pass
 
-class EntrezGeneParser(Parser):
+class EntrezGeneInfoParser(Parser):
     resourceLocation = "http://resource.belframework.org/belframework/1.0/namespace/entrez-gene-ids-hmr.belns"
 
     def __init__(self, file_to_url):
-        super(EntrezGeneParser, self).__init__(file_to_url)
-        self.encoding = {"protein-coding" : "GRP", "miscRNA" : "GR", "ncRNA" : "GR", "snoRNA" : "GR",
-                        "snRNA" : "GR", "tRNA" : "GR", "scRNA" : "GR", "other" : "G", "pseudo" : "GR",
-                        "unknown" : "G", "rRNA" : "GR"}
+        super(EntrezGeneInfoParser, self).__init__(file_to_url)
         file_keys = iter(file_to_url.keys())
-        self.gene_history = next(file_keys)
-        self.gene_info = next(file_keys)
-
+        self.entrez_gene_info = next(file_keys)
+   
     def parse(self):
-        # parse gene_info to represent the current valid entrez gene ids
-        eg_dict = dict([((EntrezGeneParser.resourceLocation, rec[1]), (self.encoding[rec[9]], uuid.uuid4())) \
-                        for rec in csv.reader(gzip_to_text(self.gene_info), delimiter="\t", quotechar="\"") if rec[0] in ("9606", "10090", "10116")])
 
-        # parse gene_history to know which gene ids were discontinued
-        history_dict = dict([(rec[2], rec[1])
-                        for rec in csv.reader(gzip_to_text(self.gene_history), delimiter="\t", quotechar="\"") if rec[0] in ("9606", "10090", "10116")])
-        history_dict = {k : self.__walk__(history_dict, k) for k in history_dict}
-        return (eg_dict, history_dict)
+        # define a csv reader object
+        info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info), delimiter="\t", quotechar="\"")
+        self.columns_for_gene_info = ["tax_id", "GeneID", "Symbol", "LocusTag", "Synonyms", "dbXrefs", \
+                                      "chromosome", "map_location", "description", "type_of_gene", \
+                                      "Symbol_from_nomenclature_authority", \
+                                      "Full_name_from_nomenclature_authority", "Nomenclature_status", \
+                                      "Other_designations", "Modification_date"]
+
+         # Dictionary for base gene info
+        info_dict = {}
+        
+        for row in info_csvreader:
+            if row[0] in ("9606", "10090", "10116"):
+                for index, item in enumerate(self.columns_for_gene_info):
+                #    print("Index = ", index)
+                #    print("Item = ", item)
+                    try:
+                        row[index]
+                    except IndexError:
+                        print("Line number: ", info_csvreader.line_num)
+                        print("Row: ", row)
+                    info_dict[item] = row[index]
+                    yield info_dict
+
+   #     with open('entrez_info.csv', 'w', newline='') as f:
+   #         writer = csv.DictWriter(f, info_dict.keys())
+   #         writer.writeheader()
+   #         writer.writerow(info_dict)
+
+   #     yield info_dict
+    
 
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -42,150 +61,168 @@ class EntrezGeneParser(Parser):
         return None if val == '-' else val
 
     def __str__(self):
-        return "EntrezGene Parser for dataset: %s" %(self.file_to_url)
+        return "EntrezGeneInfo Parser for dataset: %s" %(self.file_to_url)
 
-class HGNCParser(Parser):
-    resourceLocation = "http://resource.belframework.org/belframework/1.0/namespace/hgnc-approved-symbols.belns"
+class EntrezGeneHistoryParser(Parser):
+    resourceLocation = """"http://resource.belframework.org/belframework/1.0/namespace/
+                           entrez-gene-ids-hmr.belns"""
 
-    def __init__(self, gene_dict, history_dict, file_to_url):
-        super(HGNCParser, self).__init__(file_to_url)
-        self.gene_dict = gene_dict
-        self.history_dict = history_dict
-        self.hgnc_file = next(iter(file_to_url.keys()))
-        self.encoding = {"gene with protein product" : "GRP", "RNA, cluster" : "GR", "RNA, long non-coding" : "GR", "RNA, micro" : "GRM", \
-                          "RNA, ribosomal" : "GR", "RNA, small cytoplasmic" : "GR", "RNA, small misc" : "GR", "RNA, small nuclear" : "GR", \
-                          "RNA, small nucleolar" : "GR", "RNA, transfer" : "GR", "phenotype only" : "G", "RNA, pseudogene" : "GR", \
-                          "T cell receptor pseudogene" : "GR", "immunoglobulin pseudogene" : "GR", "pseudogene" : "GR", "T cell receptor gene" : "GRP", \
-                          "complex locus constituent" : "GRP", "endogenous retrovirus" : "G", "fragile site" : "G", "immunoglobulin gene" : "G", \
-                          "protocadherin" : "G", "readthrough" : "GR", "region" : "G", "transposable element" : "G", "unknown" : "G", \
-                          "virus integration site" : "G"}
+    def __init__(self, file_to_url):
+        super(EntrezGeneHistoryParser, self).__init__(file_to_url)
+        file_keys = iter(file_to_url.keys())
+        self.entrez_gene_history = next(file_keys)
 
     def parse(self):
-        with open(self.hgnc_file, "r") as hgncf:
+
+        # define a csv reader object
+        history_csvreader =  csv.reader(gzip_to_text(self.entrez_gene_history), delimiter="\t", 
+                                        quotechar="\"")
+
+        self.columns_for_gene_history = ["tax_id", "GeneID", "Discontinued_GeneID", "Discontinued_Symbol", \
+                                              "Discontinued_Date"]
+
+         # Dictionary for base gene info
+        history_dict = {}
+        
+        for row in history_csvreader:
+            if row[0] in ("9606", "10090", "10116"):
+                for index, item in enumerate(self.columns_for_gene_history):
+                    history_dict[item] = row[index]
+                    yield history_dict
+            
+       #  print("# of key-value pairs in history_dict: ", len(history_dict))
+       # with open('entrez_history.csv', 'w', newline='') as f:
+       #     writer = csv.DictWriter(f, history_dict.keys())
+       #     writer.writeheader()
+       #     writer.writerow(history_dict)
+
+       # yield history_dict
+    
+
+    def __walk__(self, history_dict, val):
+        while val in history_dict:
+            val = history_dict[val]
+        return None if val == '-' else val
+
+    def __str__(self):
+        return "EntrezGeneHistory Parser for dataset: %s" %(self.file_to_url)
+
+class HGNCParser(Parser):
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
+                          hgnc-approved-symbols.belns"""
+
+    def __init__(self, file_to_url):
+        super(HGNCParser, self).__init__(file_to_url)
+        self.hgnc_file = next(iter(file_to_url.keys()))
+
+    def parse(self):
+        # use iso-8859-1 as default encoding.
+        with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
             # open csv file
-            csvr = csv.reader(hgncf, delimiter="\t", quotechar="\"")
+            hgnc_csvr = csv.reader(hgncf, delimiter="\t", quotechar="\"")
 
-            # parse remainder into HGNC dict, skip header row 0
-            hgnc_dict = dict([self.__build_entry__(rec) for rec in csvr if csvr.line_num > 1])
-        return hgnc_dict
+            # columns from the HGNC dataset
+            self.hgnc_column_headers = ["HGNC ID", "Approved Symbol", "Approved Name", "Status", \
+                               "Locus Type", "Locus Group", "Previous Symbols", "Previous Names", \
+                               "Synonyms", "Name Synonyms", "Chromosome", "Date Approved", \
+                               "Date Modified", "Date Symbol Changed", "Date Name Changed", \
+                               "Accession Numbers", "Enzyme IDs", "Entrez0 Gene ID", "Ensembl Gene ID", \
+                               "Mouse Genome Database ID", "Specialist Database Links", \
+                               "Specialist Database IDs", "Pubmed IDs", "RefSeq IDs", "Gene Family Tag", \
+                               "Gene family description", "Record Type", "Primary IDs", "Secondary IDs", \
+                               "CCDS IDs", "VEGA IDs", "Locus Specific Databases", "Entrez1 gene ID", \
+                               "OMIM ID", "RefSeq", "UniProtID", "Ensembl ID", "UCSC ID", \
+                               "Mouse Genome Database ID", "Rat Genome Database ID"]
 
-    def __build_entry__(self, record):
-        # build key
-        k = (HGNCParser.resourceLocation, record[0])
+            temp_dict = dict()
+            for row in hgnc_csvr:
+                for index, item in enumerate(self.hgnc_column_headers):
+                    temp_dict[item] = row[index]
 
-        # lookup entrez gene uuid if specified, otherwise create new uuid
-        if len(record) == 3 and record[2]:
-            gene_id = record[2]
-
-            # is it discontinued, if so find replacement
-            if gene_id in self.history_dict:
-                replacement = self.history_dict[gene_id]
-                print("(HGNC) Entrez gene id of %s is discontinued, replacing with %s" %(gene_id, replacement))
-                gene_id = replacement
-
-            gene_entry = self.gene_dict[(EntrezGeneParser.resourceLocation, gene_id)]
-            v = (self.encoding[record[1]], gene_entry[1])
-        else:
-            v = (self.encoding[record[1]], uuid.uuid4())
-        return (k, v)
+            with open('hgnc.csv', 'w', newline='') as f:
+                writer = csv.DictWriter(f, temp_dict.keys())
+                writer.writeheader()
+                writer.writerow(temp_dict)
+         
+        return (temp_dict)
 
     def __str__(self):
         return "HGNC Parser for dataset: %s" %(self.file_to_url)
 
 class MGIParser(Parser):
-    resourceLocation = "http://resource.belframework.org/belframework/1.0/namespace/mgi-approved-symbols.belns"
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
+                          mgi-approved-symbols.belns"""
 
-    def __init__(self, gene_dict, history_dict, file_to_url):
+    def __init__(self, file_to_url):
         super(MGIParser, self).__init__(file_to_url)
-        self.gene_dict = gene_dict
-        self.history_dict = history_dict
-        file_keys = iter(file_to_url.keys())
-        self.mgi_gtpgup = next(file_keys)
-        self.mgi_coordinate = next(file_keys)
-        self.encoding = {"gene" : "G", "protein coding gene" : "GRP", "non-coding RNA gene" : "GR", "rRNA gene" : "GR", "tRNA gene" : "GR", \
-                         "snRNA gene" : "GR", "snoRNA gene" : "GR", "miRNA gene" : "GRM", "scRNA gene" : "GR", "lincRNA gene" : "GR", \
-                         "RNase P RNA gene" : "GR", "RNase MRP RNA gene" : "GR", "telomerase RNA gene" : "GR", "unclassified non-coding RNA gene" : "GR", \
-                         "heritable phenotypic marker" : "G", "gene segment" : "G", "unclassified gene" : "GR", "other feature types" : "G", \
-                         "pseudogene" : "GR", "QTL" : "G", "transgene" : "G", "complex/cluster/region" : None, "cytogenetic marker" : None, \
-                         "BAC/YAC end" : None, "other genome feature" : "G"}
+        self.mgi_file = next(iter(file_to_url.keys()))
 
     def parse(self):
-        with open(self.mgi_coordinate, "r") as mgicf:
-            # open mgi coordinate file to find entrez gene equivalence, skip header row 0
-            csvr = csv.reader(mgicf, delimiter="\t", quotechar="\"")
-            mgi_eg_eq = dict([(rec[2].strip(), self.gene_dict[rec[10]]) for rec in csvr if csvr.line_num > 1 and len(rec) >= 11])
+        with open(self.mgi_file, "r") as mgif:
+            # open csv file
+            mgi_csvr = csv.reader(mgif, delimiter="\t", quotechar="\"")
 
-            for symbol, gene_id in mgi_eg_eq.items():
-                if gene_id in history_dict:
-                    replacement = history_dict[gene_id]
-                    print("(MGI) Entrez gene id of %s is discontinued, replacing with %s" %(gene_id, replacement))
-                    mgi_eg_eq.update((symbol, replacement))
+           # columns from the MGI dataset
+            mgi_column_headers = ["MGI Marker Accession ID", "Chromosome", "cM Position", \
+                                       "Genome Coordinate Start", "Genome Coordinate End", \
+                                       "Genome Strand", "Marker Symbol", "Status", "Marker Name", \
+                                       "Marker Type", "Feature types (|-delimited)", \
+                                       "Marker Synonyms (|-delimited)"]
 
-        with open(self.mgi_gtpgup, "r") as mgigf:
-            # parse remainder into HGNC dict, when a symbol exists, and skip header row 0
-            mgi_dict = dict([self.__build_entry__(rec) for rec in csv.reader(mgigf, delimiter="\t", quotechar="\"") if rec[8].find(";Name=") != -1])
-        return mgi_dict
+            temp_dict = dict()
+            for row in mgi_csvr:
+                for index, item in enumerate(mgi_column_headers):
+                    temp_dict[item] = row[index]
 
-    def __build_entry__(self, record):
-        # pull out dictionary of key/values by tokenizing on ; then =
-        # format example: ID=MGI:2448514;Name=R3hdm1;Note=protein coding gene
-        entry_data = dict(map(lambda val: val.split("="), record[8].split(";")))
-
-        if "Name" in entry_data:
-            symbol = entry_data["Name"]
-            if "Note" in data:
-                note = entry_data["Note"]
-                if note not in self.encoding:
-                    ex = KeyError("Gene type ('Note') is not recognized as an encoding.")
-                    raise(ex)
-                enc = self.encoding[note]
-            else:
-                ex = ValueError("Symbol specified without an encoding")
-                raise(ex)
-        k = (MGIParser.resourceLocation, symbol)
-        v = (enc, self.gene_dict[(EntrezGeneParser.resourceLocation, mgi_eg_eq[symbol])])
-        return (k, v)
+            with open('mgi.csv', 'w', newline='') as f:
+                writer = csv.DictWriter(f, temp_dict.keys())
+                writer.writeheader()
+                writer.writerow(temp_dict)
+    
+        return (temp_dict)
 
     def __str__(self):
         return "MGI Parser for dataset: %s" %(self.file_to_url)
 
 class RGDParser(Parser):
-    resourceLocation = "http://resource.belframework.org/belframework/1.0/namespace/rgd-approved-symbols.belns" 
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
+                          rgd-approved-symbols.belns""" 
 
-    def __init__(self, gene_dict, history_dict, file_to_url):
+    def __init__(self, file_to_url):
         super(RGDParser, self).__init__(file_to_url)
-        self.gene_dict = gene_dict
-        self.history_dict = history_dict
-        self.genes_rat_file = next(iter(file_to_url.keys()))
-        self.encoding = {"gene" : "G", "miscrna" : "GR", "predicted-high" : "GRP", "predicted-low" : "GRP", "predicted-moderate" : "GRP",
-                         "protein-coding" : "GRP", "pseudo" : "GR", "snrna" : "GR", "trna" : "GR", "rrna" : "GR"}
+        self.rgd_file = next(iter(file_to_url.keys()))
 
     def parse(self):
-        with open(self.genes_rat_file, "r") as ratf:
-            csvr = csv.reader(ratf, delimiter="\t", quotechar="\"")
-            rgd_dict = dict([self.__build_entry__(rec) for rec in csvr if csvr.line_num > 60])
-        return rgd_dict
+        with open(self.rgd_file, "r") as rgdf:
+            # open csv file
+            rgd_csvr = csv.reader(rgdf, delimiter="\t", quotechar="\"")
 
-    def __build_entry__(self, record):
-        k = (RGDParser.resourceLocation, record[1])
+           # columns from the RGD dataset
+            rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME", "GENE_DESC", "CHROMOSOME_CELERA", \
+                                  "CHROMOSOME_3.1", "CHROMOSOME_3.4", "FISH_BAND", "START_POS_CELERA", \
+                                  "STOP_POS_CELERA", "STRAND_CELERA", "START_POS_3.1", "STOP_POS_3.1", \
+                                  "STRAND_3.1", "START_POS_3.4", "STOP_POS_3.4", "STRAND_3.4", \
+                                  "CURATED_REF_RGD_ID", "CURATED_REF_PUBMED_ID", "UNCURATED_PUBMED_ID", \
+                                  "ENTREZ_GENE", "UNIPROT_ID", "UNUSED", "GENBANK_NUCLEOTIDE", \
+                                  "TIGR_ID", "GENBANK_PROTEIN", "UNIGENE_ID", "SSLP_RGD_ID", \
+                                  "SSLP_SYMBOL", "OLD_SYMBOL", "OLD_NAME", "QTL_RGD_ID", "QTL_SYMBOL", \
+                                  "NOMENCLATURE_STATUS", "SPLICE_RGD_ID", "SPLICE_SYMBOL", "GENE_TYPE", \
+                                  "ENSEMBL_ID", "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
 
-        gene_id = record[20]
-        if not gene_id:
-            gene_id = None
-        else:
-            if gene_id in self.history_dict:
-                replacement = self.history_dict[gene_id]
-                gene_id = replacement
+            temp_dict = dict()
+            # RGD file contains ~40-50 lines of comments that begin with '#', so skip all of these.
+            for row in rgd_csvr:
+                if row[0] != '#' and str(row[0]).isdigit():
+                    for index, item in enumerate(rgd_column_headers):
+                        temp_dict[item] = row[index]
 
-        enc = self.encoding[record[36]]
-        if gene_id is None:
-            v = (enc, uuid.uuid4())
-        else:
-            gene_entry = self.gene_dict[(EntrezGeneParser.resourceLocation, gene_id)]
-            v = (self.encoding[record[36]], gene_entry[1])
-
-        return (k, v)
-
+            with open('hgnc.csv', 'w', newline='') as f:
+                writer = csv.DictWriter(f, temp_dict.keys())
+                writer.writeheader()
+                writer.writerow(temp_dict)
+    
+        return (temp_dict)
+    
     def __str__(self):
         return "RGD Parser for dataset: %s" %(self.file_to_url)
 

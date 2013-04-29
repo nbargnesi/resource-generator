@@ -9,9 +9,8 @@
 
 from common import download
 from configparser import ConfigParser
-from configuration import path_constants, gp_reference, gp_datasets
+from configuration import path_constants, gp_reference_info, gp_reference_history, gp_datasets
 import argparse
-import bz2
 import errno
 import os
 import pdb
@@ -19,7 +18,8 @@ import pickle
 import re
 import sys
 import tarfile
-import bz2
+import parsers
+import json
 
 parser = argparse.ArgumentParser(description="Generate namespace and equivalence files for gene/protein datasets.")
 parser.add_argument("-o", required=False, nargs=1, metavar="EQUIVALENCE FILE", help="The old namespace equivalence dictionary file.")
@@ -47,21 +47,40 @@ if not os.path.exists(path_constants.dataset_dir):
 # create empty dictionary to hold all ns values and equivalence
 gp_dict = {}
 
-# parse reference dataset (entrez gene)
-for path, url in gp_reference.file_to_url.items():
+# parse reference dataset INFO (entrez gene)
+
+for path, url in gp_reference_info.file_to_url.items():
     download(url, path)
-parser = gp_reference.parser_class(gp_reference.file_to_url)
+parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
 print("Running " + str(parser))
-(gene_dict, history_dict) = parser.parse()
-gp_dict.update(gene_dict)
+
+#gene_info_dict = parser.parse()
+with open('test.txt', 'w') as f:
+    for x in parser.parse():
+        json.dump(x, f)
+
+# parse reference dataset HISTORY (entrez gene)
+for path, url in gp_reference_history.file_to_url.items():
+    download(url, path)
+parser = gp_reference_history.parser_class(gp_reference_history.file_to_url)
+print("Running " + str(parser))
+
+gene_history_dict = parser.parse()
+with open('test2.txt', 'w') as f:
+    for x in gene_history_dict:
+        json.dump(x, f)
 
 # parse dependent datasets
 for d in gp_datasets:
+    print("dataset is: ", str(d))
     for path, url in d.file_to_url.items():
         download(url, path)
-    parser = d.parser_class(gene_dict, history_dict, d.file_to_url)
-    print("Running " + str(parser))
-    gp_dict.update(parser.parse())
+        parser = d.parser_class(d.file_to_url)
+        print("Running " + str(parser))
+        tmp_dict = parser.parse()
+        with open('tmp.txt', 'w') as f:
+            for x in tmp_dict:
+                json.dump(x, f)
 
 print("Completed gene protein resource generation.")
 print("Number of namespace entries: %d" %(len(gp_dict)))
@@ -72,5 +91,3 @@ with open("equivalence.dict", "wb") as df:
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):
         datasets.add(fname)
-
-#bz2.compress(datasets)

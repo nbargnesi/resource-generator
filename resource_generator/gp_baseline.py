@@ -9,7 +9,7 @@
 
 from common import download
 from configparser import ConfigParser
-from configuration import path_constants, gp_reference_info, gp_reference_history, gp_datasets
+from configuration import path_constants, gp_datasets #, gp_reference_info, gp_reference_history
 import argparse
 import errno
 import os
@@ -49,38 +49,38 @@ gp_dict = {}
 
 # parse reference dataset INFO (entrez gene)
 
-for path, url in gp_reference_info.file_to_url.items():
-    download(url, path)
-parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
-print("Running " + str(parser))
+#for path, url in gp_reference_info.file_to_url.items():
+#    download(url, path)
+#parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
+#print("Running " + str(parser))
 
 #gene_info_dict = parser.parse()
-with open('test.txt', 'w') as f:
-    for x in parser.parse():
-        json.dump(x, f)
+#with open('entrez_info.txt', 'w') as f:
+#    for x in gene_info_dict:
+#        json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse reference dataset HISTORY (entrez gene)
-for path, url in gp_reference_history.file_to_url.items():
-    download(url, path)
-parser = gp_reference_history.parser_class(gp_reference_history.file_to_url)
-print("Running " + str(parser))
+#for path, url in gp_reference_history.file_to_url.items():
+#    download(url, path)
+#parser = gp_reference_history.parser_class(gp_reference_history.file_to_url)
+#print("Running " + str(parser))
 
-gene_history_dict = parser.parse()
-with open('test2.txt', 'w') as f:
-    for x in gene_history_dict:
-        json.dump(x, f)
+#gene_history_dict = parser.parse()
+#with open('entrez_history.txt', 'w') as f:
+#    for x in gene_history_dict:
+#        json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse dependent datasets
+print ("before datasets")
 for d in gp_datasets:
-    print("dataset is: ", str(d))
     for path, url in d.file_to_url.items():
         download(url, path)
+        #print ("in dataset for: " +str(d))
         parser = d.parser_class(d.file_to_url)
-        print("Running " + str(parser))
-        tmp_dict = parser.parse()
-        with open('tmp.txt', 'w') as f:
-            for x in tmp_dict:
-                json.dump(x, f)
+        print ("Running " + str(parser))
+        with open(str(parser) +'.txt', 'w') as f:
+            for x in parser.parse():
+                json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 print("Completed gene protein resource generation.")
 print("Number of namespace entries: %d" %(len(gp_dict)))

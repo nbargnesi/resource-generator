@@ -37,23 +37,8 @@ class EntrezGeneInfoParser(Parser):
         for row in info_csvreader:
             if row[0] in ("9606", "10090", "10116"):
                 for index, item in enumerate(self.columns_for_gene_info):
-                #    print("Index = ", index)
-                #    print("Item = ", item)
-                    try:
-                        row[index]
-                    except IndexError:
-                        print("Line number: ", info_csvreader.line_num)
-                        print("Row: ", row)
                     info_dict[item] = row[index]
                     yield info_dict
-
-   #     with open('entrez_info.csv', 'w', newline='') as f:
-   #         writer = csv.DictWriter(f, info_dict.keys())
-   #         writer.writeheader()
-   #         writer.writerow(info_dict)
-
-   #     yield info_dict
-    
 
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -61,7 +46,7 @@ class EntrezGeneInfoParser(Parser):
         return None if val == '-' else val
 
     def __str__(self):
-        return "EntrezGeneInfo Parser for dataset: %s" %(self.file_to_url)
+        return "EntrezGeneInfo_Parser"
 
 class EntrezGeneHistoryParser(Parser):
     resourceLocation = """"http://resource.belframework.org/belframework/1.0/namespace/
@@ -89,23 +74,14 @@ class EntrezGeneHistoryParser(Parser):
                 for index, item in enumerate(self.columns_for_gene_history):
                     history_dict[item] = row[index]
                     yield history_dict
-            
-       #  print("# of key-value pairs in history_dict: ", len(history_dict))
-       # with open('entrez_history.csv', 'w', newline='') as f:
-       #     writer = csv.DictWriter(f, history_dict.keys())
-       #     writer.writeheader()
-       #     writer.writerow(history_dict)
-
-       # yield history_dict
-    
-
+ 
     def __walk__(self, history_dict, val):
         while val in history_dict:
             val = history_dict[val]
         return None if val == '-' else val
 
     def __str__(self):
-        return "EntrezGeneHistory Parser for dataset: %s" %(self.file_to_url)
+        return "EntrezGeneHistory_Parser"
 
 class HGNCParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
@@ -138,16 +114,10 @@ class HGNCParser(Parser):
             for row in hgnc_csvr:
                 for index, item in enumerate(self.hgnc_column_headers):
                     temp_dict[item] = row[index]
-
-            with open('hgnc.csv', 'w', newline='') as f:
-                writer = csv.DictWriter(f, temp_dict.keys())
-                writer.writeheader()
-                writer.writerow(temp_dict)
-         
-        return (temp_dict)
+                    yield temp_dict
 
     def __str__(self):
-        return "HGNC Parser for dataset: %s" %(self.file_to_url)
+        return "HGNC_Parser"
 
 class MGIParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
@@ -163,26 +133,20 @@ class MGIParser(Parser):
             mgi_csvr = csv.reader(mgif, delimiter="\t", quotechar="\"")
 
            # columns from the MGI dataset
-            mgi_column_headers = ["MGI Marker Accession ID", "Chromosome", "cM Position", \
-                                       "Genome Coordinate Start", "Genome Coordinate End", \
-                                       "Genome Strand", "Marker Symbol", "Status", "Marker Name", \
-                                       "Marker Type", "Feature types (|-delimited)", \
-                                       "Marker Synonyms (|-delimited)"]
+            mgi_column_headers = ["MGI Marker Accession ID", "Chr", "cM Position", \
+                                       "genome coordinate start", "genome coordinate end", \
+                                       "strand", "Marker Symbol", "Status", "Marker Name", \
+                                       "Marker Type", "Feature Type", \
+                                       "Marker Synonyms (pipe-separated)"]
 
             temp_dict = dict()
             for row in mgi_csvr:
                 for index, item in enumerate(mgi_column_headers):
                     temp_dict[item] = row[index]
-
-            with open('mgi.csv', 'w', newline='') as f:
-                writer = csv.DictWriter(f, temp_dict.keys())
-                writer.writeheader()
-                writer.writerow(temp_dict)
-    
-        return (temp_dict)
+                    yield temp_dict
 
     def __str__(self):
-        return "MGI Parser for dataset: %s" %(self.file_to_url)
+        return "MGI_Parser"
 
 class RGDParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
@@ -215,25 +179,17 @@ class RGDParser(Parser):
                 if row[0] != '#' and str(row[0]).isdigit():
                     for index, item in enumerate(rgd_column_headers):
                         temp_dict[item] = row[index]
-
-            with open('hgnc.csv', 'w', newline='') as f:
-                writer = csv.DictWriter(f, temp_dict.keys())
-                writer.writeheader()
-                writer.writerow(temp_dict)
-    
-        return (temp_dict)
+                        yield temp_dict
     
     def __str__(self):
-        return "RGD Parser for dataset: %s" %(self.file_to_url)
+        return "RGD_Parser"
 
 class SwissProtParser(Parser):
     resourceLocation_accession_numbers = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-accession-numbers.belns"
     resourceLocation_entry_names = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-entry-names.belns"
 
-    def __init__(self, gene_dict, history_dict, file_to_url):
+    def __init__(self, file_to_url):
         super(SwissProtParser, self).__init__(file_to_url)
-        self.gene_dict = gene_dict
-        self.history_dict = history_dict
         self.sprot_file = next(iter(file_to_url.keys()))
         self.encoding = "GRP"
         self.entries = {}
@@ -245,98 +201,85 @@ class SwissProtParser(Parser):
         sprot_dict = {}
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
-            self.__fast_iter__(ctx, self.__eval_entry__)
-
-            for entry_name in sorted(self.entry_names):
-                val = self.entries[entry_name]
-                entry_accessions = val[0]
-                entry_gene_ids = val[1]
-
-                # one protein to many genes, so we cannot equivalence
-                if len(entry_gene_ids) > 1:
-                    entry_uuid = uuid.uuid4()
-                elif len(entry_gene_ids) == 0:
-                    #print("No GeneId for entry name: %s" %(entry_name))
-                    entry_uuid = uuid.uuid4()
-                else:
-                    # one gene exists so find entrez gene uuid
-                    gene_id = entry_gene_ids[0]
-                    if gene_id in self.history_dict:
-                        gene_id = self.history_dict[gene_id]
-                    entry_uuid = self.gene_dict[(EntrezGeneParser.resourceLocation, gene_id)]
-
-                # add entry name namespace / equivalence entry
-                sprot_dict.update({(SwissProtParser.resourceLocation_entry_names, entry_name) : (self.encoding, entry_uuid)})
-
-                # add entry accession numbers where each one represents only one swiss prot entry
-                for entry_accession in entry_accessions:
-                    state = self.accession_numbers[entry_accession]
-                    if state is None:
-                        # accession number is one to many, create separate uuid
-                        # not equivalenced with either entry name or entrez gene id
-                        sprot_dict.update({(SwissProtParser.resourceLocation_accession_numbers, entry_accession) : (self.encoding, uuid.uuid4())})
+ 
+            temp_dict = dict()
+            for ev, e in ctx:
+                # stop evaluating if this entry is not in the Swiss-Prot dataset
+                if e.get("dataset") != "Swiss-Prot":
+                    return
+                #print ("got here")
+                # stop evaluating if this entry is not for human, mouse, or rat
+                org = e.find("{http://uniprot.org/uniprot}organism")
+                if org is not None:
+                    # restrict by NCBI Taxonomy reference
+                    dbr = org.find("{http://uniprot.org/uniprot}dbReference")
+                   # print("----------------------DEBUG------------------------")
+                   # print("----------- NCBI Tax ID :" +dbr.get("id") + " -----")
+                   # print("----------------------DEBUG------------------------")
+                    if dbr.get("id") not in ("9606", "10090", "10116"):
+                        yield temp_dict
                     else:
-                        # accession number is unique to this protein entry, so equivalence
-                        # to entry name and entrez gene id
-                        sprot_dict.update({(SwissProtParser.resourceLocation_accession_numbers, entry_accession) : (self.encoding, entry_uuid)})
-            return sprot_dict 
+                        # add NCBI Taxonomy and the id for the entry to the dict
+                        temp_dict[dbr.get("type")] = dbr.get("id")
+                        
+                # get entry name, add it to the dict
+                entry_name = e.find("{http://uniprot.org/uniprot}name").text
+                temp_dict["name"] = entry_name
+                
+                # get protein data
+                prot = e.find("{http://uniprot.org/uniprot}protein")
+                rec_name = prot.find("recommendedName")
+                rec_full_name = rec_name.find("fullName").text
+                # add recommended name to dict
+                temp_dict["recommendedName"] = rec_full_name
+                alt_names = []
+                # add each alternate name to the list, then put in the dict
+                for alternate_name in prot.findall("alternateName"):
+                    for full_name in alternate_name:
+                        alt_names.append(full_name.text)
+                temp_dict["alternateNames"] = alt_names
 
-            #print("swiss prot saved items: %d" %(len(self.entries)))
-            #print("Number of unique accession numbers: " + str(sum(val == 1 for acc, val in self.accession_numbers.items())))
-            #print("Number of duplicate accession numbers: " + str(sum(val == None for acc, val in self.accession_numbers.items())))
-            #print("Number of unique gene ids: " + str(sum(val == 1 for gene_id, val in self.gene_ids.items())))
-            #print("Number of duplicate gene ids: " + str(sum(val == None for gene_id, val in self.gene_ids.items())))
+                # get gene data
+                names = []
+                gene = e.find("{http://uniprot.org/uniprot}gene")
+                for name in gene.find("name"):
+                    if name.get("type") == "primary":
+                        temp_dict["primary"] = name.text
+                    if name.get("type") == "synonym":
+                        names.apped(name.text)
+                # add gene data to the dict
+                temp_dict["synonyms"] = names
 
-            #for k, v in self.gene_dict.items():
-            #    print("sprot ns/eq: (%s) : (%s)" %(k, v))
+                # get all accessions
+                entry_accessions = []
+                for entry_accession in e.findall("{http://uniprot.org/uniprot}accession"):
+                    acc = entry_accession.text
+                    entry_accessions.append(acc)
+                    if acc in self.accession_numbers:
+                        self.accession_numbers[acc] = None
+                    else:
+                        self.accession_numbers[acc] = 1
 
-    def __eval_entry__(self, e):
-        # stop evaluating if this entry is not in the Swiss-Prot dataset
-        if e.get("dataset") != "Swiss-Prot":
-            return
-
-        # stop evaluating if this entry is not for human, mouse, or rat
-        org = e.find("{http://uniprot.org/uniprot}organism")
-        if org is not None:
-            # restrict by NCBI Taxonomy reference
-            dbr = org.find("{http://uniprot.org/uniprot}dbReference")
-            if dbr.get("id") not in ("9606", "10090", "10116"):
-                return
-
-        # get entry name
-        entry_name = e.find("{http://uniprot.org/uniprot}name").text
-        self.entry_names.add(entry_name)
-
-        # get all accessions
-        entry_accessions = []
-        for entry_accession in e.findall("{http://uniprot.org/uniprot}accession"):
-            acc = entry_accession.text
-            entry_accessions.append(acc)
-            if acc in self.accession_numbers:
-                self.accession_numbers[acc] = None
-            else:
-                self.accession_numbers[acc] = 1
-
-        entry_gene_ids = []
-        for dbr in e.findall("{http://uniprot.org/uniprot}dbReference"):
-            if dbr.get("type") == "GeneId":
-                gene_id = dbr.get("id")
-                entry_gene_ids.append(gene_id)
-                if gene_id in self.gene_ids:
-                    self.gene_ids[gene_id] = None
-                else:
-                    self.gene_ids[gene_id] = 1
-
-        self.entries.update({entry_name : (entry_accessions, entry_gene_ids)})
-
-    def __fast_iter__(self, ctx, fun):
-        for ev, e in ctx:
-            fun(e)
-            e.clear()
-            while e.getprevious() is not None:
-                del e.getparent()[0]
-        del ctx
+                # add the array of accessions to the dict
+                temp_dict["accessions"] = entry_accessions
+                    
+                type_set = ["GeneId", "MGI", "HGNC", "RGD"]
+                entry_gene_ids = []
+                for dbr in e.findall("{http://uniprot.org/uniprot}dbReference"):
+                    if dbr.get("type") in type_set:
+                        gene_id = dbr.get("id")
+                        entry_gene_ids.append(gene_id)
+                        if gene_id in self.gene_ids:
+                            self.gene_ids[gene_id] = None
+                        else:
+                            self.gene_ids[gene_id] = 1
+                            # add dbReference type and gene ids to the dict
+                            temp_dict["dbReference"] = {dbr.get("type") : entry_gene_ids}
+                e.clear()
+                while e.getprevious() is not None:
+                    del e.getparent()[0]
+                yield temp_dict
 
     def __str__(self):
-        return "SwissProt Parser for dataset: %s" %(self.file_to_url)
+        return "SwissProt_Parser"
 

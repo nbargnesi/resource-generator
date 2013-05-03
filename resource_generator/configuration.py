@@ -59,11 +59,12 @@ path_constants = paths("build", "dataset_config.ini", "datasets", "build/equival
                        "build_info", "namespaces")
 
 #gp_reference_info = dataset({os.path.join(path_constants.dataset_dir, "eg-gene_info.gz") : 
- #                            "ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/All_Mammalia.gene_info.gz"}                              , parsers.EntrezGeneInfoParser)
+#                             "ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/All_Mammalia.gene_info.gz"}, 
+#                            parsers.EntrezGeneInfoParser)
 
 #gp_reference_history = dataset({os.path.join(path_constants.dataset_dir, "eg-gene_history.gz") :
 #                                    "ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz"},
-#                                     parsers.EntrezGeneHistoryParser)
+#                               parsers.EntrezGeneHistoryParser)
 
 gp_datasets = []
 

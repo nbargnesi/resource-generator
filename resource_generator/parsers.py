@@ -25,20 +25,20 @@ class EntrezGeneInfoParser(Parser):
 
         # define a csv reader object
         info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info), delimiter="\t", quotechar="\"")
-        self.columns_for_gene_info = ["tax_id", "GeneID", "Symbol", "LocusTag", "Synonyms", "dbXrefs", \
+        self.gene_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag", "Synonyms", "dbXrefs", \
                                       "chromosome", "map_location", "description", "type_of_gene", \
                                       "Symbol_from_nomenclature_authority", \
                                       "Full_name_from_nomenclature_authority", "Nomenclature_status", \
                                       "Other_designations", "Modification_date"]
 
          # Dictionary for base gene info
-        info_dict = {}
-        
-        for row in info_csvreader:
-            if row[0] in ("9606", "10090", "10116"):
-                for index, item in enumerate(self.columns_for_gene_info):
-                    info_dict[item] = row[index]
-                    yield info_dict
+        temp_dict = dict()
+        info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info), delimiter='\t', fieldnames=self.gene_info_headers)
+        for row in info_csvr:
+            if row["tax_id"] in ("9606", "10090", "10116"):
+                temp_dict = row
+                yield temp_dict
+                
 
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -60,20 +60,19 @@ class EntrezGeneHistoryParser(Parser):
     def parse(self):
 
         # define a csv reader object
-        history_csvreader =  csv.reader(gzip_to_text(self.entrez_gene_history), delimiter="\t", 
-                                        quotechar="\"")
+        # history_csvreader =  csv.reader(gzip_to_text(self.entrez_gene_history), delimiter="\t", 
+        #                                quotechar="\"")
 
-        self.columns_for_gene_history = ["tax_id", "GeneID", "Discontinued_GeneID", "Discontinued_Symbol", \
+        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID", "Discontinued_Symbol", \
                                               "Discontinued_Date"]
 
          # Dictionary for base gene info
-        history_dict = {}
-        
-        for row in history_csvreader:
-            if row[0] in ("9606", "10090", "10116"):
-                for index, item in enumerate(self.columns_for_gene_history):
-                    history_dict[item] = row[index]
-                    yield history_dict
+        temp_dict = dict()
+        history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history), delimiter='\t', fieldnames=self.gene_history_headers)
+        for row in history_csvr:
+            if row["tax_id"] in ("9606", "10090", "10116"):
+                temp_dict = row
+                yield temp_dict
  
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -95,7 +94,7 @@ class HGNCParser(Parser):
         # use iso-8859-1 as default encoding.
         with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
             # open csv file
-            hgnc_csvr = csv.reader(hgncf, delimiter="\t", quotechar="\"")
+            # hgnc_csvr = csv.reader(hgncf, delimiter="\t", quotechar="\"")
 
             # columns from the HGNC dataset
             self.hgnc_column_headers = ["HGNC ID", "Approved Symbol", "Approved Name", "Status", \
@@ -111,10 +110,10 @@ class HGNCParser(Parser):
                                "Mouse Genome Database ID", "Rat Genome Database ID"]
 
             temp_dict = dict()
+            hgnc_csvr = csv.DictReader(hgncf, delimiter='\t', fieldnames=self.hgnc_column_headers)
             for row in hgnc_csvr:
-                for index, item in enumerate(self.hgnc_column_headers):
-                    temp_dict[item] = row[index]
-                    yield temp_dict
+                temp_dict = row
+                yield temp_dict
 
     def __str__(self):
         return "HGNC_Parser"
@@ -130,20 +129,20 @@ class MGIParser(Parser):
     def parse(self):
         with open(self.mgi_file, "r") as mgif:
             # open csv file
-            mgi_csvr = csv.reader(mgif, delimiter="\t", quotechar="\"")
+            # mgi_csvr = csv.reader(mgif, delimiter="\t", quotechar="\"")
 
            # columns from the MGI dataset
-            mgi_column_headers = ["MGI Marker Accession ID", "Chr", "cM Position", \
+            self.mgi_column_headers = ["MGI Marker Accession ID", "Chr", "cM Position", \
                                        "genome coordinate start", "genome coordinate end", \
                                        "strand", "Marker Symbol", "Status", "Marker Name", \
                                        "Marker Type", "Feature Type", \
                                        "Marker Synonyms (pipe-separated)"]
 
             temp_dict = dict()
+            mgi_csvr = csv.DictReader(mgif, delimiter='\t', fieldnames=self.mgi_column_headers)
             for row in mgi_csvr:
-                for index, item in enumerate(mgi_column_headers):
-                    temp_dict[item] = row[index]
-                    yield temp_dict
+                temp_dict = row
+                yield temp_dict
 
     def __str__(self):
         return "MGI_Parser"
@@ -159,10 +158,10 @@ class RGDParser(Parser):
     def parse(self):
         with open(self.rgd_file, "r") as rgdf:
             # open csv file
-            rgd_csvr = csv.reader(rgdf, delimiter="\t", quotechar="\"")
+            # rgd_csvr = csv.reader(rgdf, delimiter="\t", quotechar="\"")
 
            # columns from the RGD dataset
-            rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME", "GENE_DESC", "CHROMOSOME_CELERA", \
+            self.rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME", "GENE_DESC", "CHROMOSOME_CELERA", \
                                   "CHROMOSOME_3.1", "CHROMOSOME_3.4", "FISH_BAND", "START_POS_CELERA", \
                                   "STOP_POS_CELERA", "STRAND_CELERA", "START_POS_3.1", "STOP_POS_3.1", \
                                   "STRAND_3.1", "START_POS_3.4", "STOP_POS_3.4", "STRAND_3.4", \
@@ -174,12 +173,15 @@ class RGDParser(Parser):
                                   "ENSEMBL_ID", "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
 
             temp_dict = dict()
-            # RGD file contains ~40-50 lines of comments that begin with '#', so skip all of these.
+
+            rgd_csvr = csv.DictReader(filter(lambda row:  not row[0].startswith('#') and str(row[0]).isdigit(), rgdf), \
+                                          delimiter='\t', fieldnames=self.rgd_column_headers)
+
+            #rgd_csvr = csv.DictReader(rgdf, delimiter='\t', fieldnames=self.rgd_column_headers)
             for row in rgd_csvr:
-                if row[0] != '#' and str(row[0]).isdigit():
-                    for index, item in enumerate(rgd_column_headers):
-                        temp_dict[item] = row[index]
-                        yield temp_dict
+                #if row[0] != '#' and str(row[0]).isdigit():
+                    temp_dict = row
+                    yield temp_dict
     
     def __str__(self):
         return "RGD_Parser"
@@ -201,21 +203,19 @@ class SwissProtParser(Parser):
         sprot_dict = {}
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
- 
+
             temp_dict = dict()
             for ev, e in ctx:
+  
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get("dataset") != "Swiss-Prot":
                     return
-                #print ("got here")
+     
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find("{http://uniprot.org/uniprot}organism")
                 if org is not None:
                     # restrict by NCBI Taxonomy reference
                     dbr = org.find("{http://uniprot.org/uniprot}dbReference")
-                   # print("----------------------DEBUG------------------------")
-                   # print("----------- NCBI Tax ID :" +dbr.get("id") + " -----")
-                   # print("----------------------DEBUG------------------------")
                     if dbr.get("id") not in ("9606", "10090", "10116"):
                         yield temp_dict
                     else:
@@ -226,29 +226,39 @@ class SwissProtParser(Parser):
                 entry_name = e.find("{http://uniprot.org/uniprot}name").text
                 temp_dict["name"] = entry_name
                 
-                # get protein data
-                prot = e.find("{http://uniprot.org/uniprot}protein")
-                rec_name = prot.find("recommendedName")
-                rec_full_name = rec_name.find("fullName").text
-                # add recommended name to dict
-                temp_dict["recommendedName"] = rec_full_name
-                alt_names = []
-                # add each alternate name to the list, then put in the dict
-                for alternate_name in prot.findall("alternateName"):
-                    for full_name in alternate_name:
-                        alt_names.append(full_name.text)
-                temp_dict["alternateNames"] = alt_names
+                # get protein data, add recommended full and short names to the dict
+                protein = e.find("{http://uniprot.org/uniprot}protein")
+                print ("--- Getting recommendedNames ---")
+                for child in protein.find("{http://uniprot.org/uniprot}recommendedName"):
+                    if child.tag == "{http://uniprot.org/uniprot}fullName":
+                        temp_dict["recommendedFullName"] = child.text
+                    if child.tag == "{http://uniprot.org/uniprot}shortName":
+                        temp_dict["recommendedShortName"] = child.text
+                        
+                alt_shortnames = []
+                alt_fullnames = []
+
+                protein = e.find("{http://uniprot.org/uniprot}protein")
+                for altName in protein.findall("{http://uniprot.org/uniprot}alternativeName"):
+                    for child in altName:
+                        if child.tag == "{http://uniprot.org/uniprot}fullName":
+                            alt_fullnames.append(child.text)
+                        if child.tag == "{http://uniprot.org/uniprot}shortName":
+                            alt_shortnames.append(child.text)
+
+                temp_dict["alternativeFullNames"] = alt_fullnames
+                temp_dict["alternativeShortNames"] = alt_shortnames
 
                 # get gene data
-                names = []
-                gene = e.find("{http://uniprot.org/uniprot}gene")
-                for name in gene.find("name"):
-                    if name.get("type") == "primary":
-                        temp_dict["primary"] = name.text
-                    if name.get("type") == "synonym":
-                        names.apped(name.text)
+                # names = []
+                # gene = e.find("{http://uniprot.org/uniprot}gene")
+                # for child in gene.find("name"):
+                #    if child.get("type") == "primary":
+                #        temp_dict["primary"] = name.text
+                #    if child.get("type") == "synonym":
+                #        names.apped(name.text)
                 # add gene data to the dict
-                temp_dict["synonyms"] = names
+                # temp_dict["synonyms"] = names
 
                 # get all accessions
                 entry_accessions = []

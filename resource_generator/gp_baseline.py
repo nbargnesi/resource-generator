@@ -71,11 +71,10 @@ gp_dict = {}
 #        json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse dependent datasets
-print ("before datasets")
+# print ("before datasets")
 for d in gp_datasets:
     for path, url in d.file_to_url.items():
         download(url, path)
-        #print ("in dataset for: " +str(d))
         parser = d.parser_class(d.file_to_url)
         print ("Running " + str(parser))
         with open(str(parser) +'.txt', 'w') as f:
@@ -83,10 +82,10 @@ for d in gp_datasets:
                 json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 print("Completed gene protein resource generation.")
-print("Number of namespace entries: %d" %(len(gp_dict)))
+#print("Number of namespace entries: %d" %(len(gp_dict)))
 
-with open("equivalence.dict", "wb") as df:
-    pickle.dump(gp_dict, df)
+#with open("equivalence.dict", "wb") as df:
+#    pickle.dump(gp_dict, df)
 
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):

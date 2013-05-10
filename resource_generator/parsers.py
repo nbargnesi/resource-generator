@@ -174,14 +174,13 @@ class RGDParser(Parser):
 
             temp_dict = dict()
 
+            # skip all the comment lines beginning with '#' and also the header.
             rgd_csvr = csv.DictReader(filter(lambda row:  not row[0].startswith('#') and str(row[0]).isdigit(), rgdf), \
                                           delimiter='\t', fieldnames=self.rgd_column_headers)
 
-            #rgd_csvr = csv.DictReader(rgdf, delimiter='\t', fieldnames=self.rgd_column_headers)
             for row in rgd_csvr:
-                #if row[0] != '#' and str(row[0]).isdigit():
-                    temp_dict = row
-                    yield temp_dict
+                temp_dict = row
+                yield temp_dict
     
     def __str__(self):
         return "RGD_Parser"
@@ -209,7 +208,7 @@ class SwissProtParser(Parser):
   
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get("dataset") != "Swiss-Prot":
-                    return
+                    yield temp_dict
      
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find("{http://uniprot.org/uniprot}organism")
@@ -228,7 +227,7 @@ class SwissProtParser(Parser):
                 
                 # get protein data, add recommended full and short names to the dict
                 protein = e.find("{http://uniprot.org/uniprot}protein")
-                print ("--- Getting recommendedNames ---")
+                # print ("--- Getting recommendedNames ---")
                 for child in protein.find("{http://uniprot.org/uniprot}recommendedName"):
                     if child.tag == "{http://uniprot.org/uniprot}fullName":
                         temp_dict["recommendedFullName"] = child.text
@@ -240,10 +239,15 @@ class SwissProtParser(Parser):
 
                 protein = e.find("{http://uniprot.org/uniprot}protein")
                 for altName in protein.findall("{http://uniprot.org/uniprot}alternativeName"):
+                    #print (str(altName))
                     for child in altName:
+                        #print ("The child of altName: ", child.tag)
+                        #print ("The text of that child: ", child.text)
                         if child.tag == "{http://uniprot.org/uniprot}fullName":
+                           # print("Adding a full name.")
                             alt_fullnames.append(child.text)
                         if child.tag == "{http://uniprot.org/uniprot}shortName":
+                            #print ("Adding a short name.")
                             alt_shortnames.append(child.text)
 
                 temp_dict["alternativeFullNames"] = alt_fullnames

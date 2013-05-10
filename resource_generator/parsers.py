@@ -25,6 +25,8 @@ class EntrezGeneInfoParser(Parser):
 
         # define a csv reader object
         info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info), delimiter="\t", quotechar="\"")
+
+        # columns for an Entrez gene info dataset.
         self.gene_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag", "Synonyms", "dbXrefs", \
                                       "chromosome", "map_location", "description", "type_of_gene", \
                                       "Symbol_from_nomenclature_authority", \
@@ -58,11 +60,7 @@ class EntrezGeneHistoryParser(Parser):
         self.entrez_gene_history = next(file_keys)
 
     def parse(self):
-
-        # define a csv reader object
-        # history_csvreader =  csv.reader(gzip_to_text(self.entrez_gene_history), delimiter="\t", 
-        #                                quotechar="\"")
-
+        # columns from the Entrez history dataset
         self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID", "Discontinued_Symbol", \
                                               "Discontinued_Date"]
 
@@ -93,9 +91,7 @@ class HGNCParser(Parser):
     def parse(self):
         # use iso-8859-1 as default encoding.
         with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
-            # open csv file
-            # hgnc_csvr = csv.reader(hgncf, delimiter="\t", quotechar="\"")
-
+  
             # columns from the HGNC dataset
             self.hgnc_column_headers = ["HGNC ID", "Approved Symbol", "Approved Name", "Status", \
                                "Locus Type", "Locus Group", "Previous Symbols", "Previous Names", \
@@ -128,9 +124,7 @@ class MGIParser(Parser):
 
     def parse(self):
         with open(self.mgi_file, "r") as mgif:
-            # open csv file
-            # mgi_csvr = csv.reader(mgif, delimiter="\t", quotechar="\"")
-
+  
            # columns from the MGI dataset
             self.mgi_column_headers = ["MGI Marker Accession ID", "Chr", "cM Position", \
                                        "genome coordinate start", "genome coordinate end", \
@@ -157,10 +151,8 @@ class RGDParser(Parser):
 
     def parse(self):
         with open(self.rgd_file, "r") as rgdf:
-            # open csv file
-            # rgd_csvr = csv.reader(rgdf, delimiter="\t", quotechar="\"")
-
-           # columns from the RGD dataset
+     
+            # columns from the RGD dataset
             self.rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME", "GENE_DESC", "CHROMOSOME_CELERA", \
                                   "CHROMOSOME_3.1", "CHROMOSOME_3.4", "FISH_BAND", "START_POS_CELERA", \
                                   "STOP_POS_CELERA", "STRAND_CELERA", "START_POS_3.1", "STOP_POS_3.1", \
@@ -227,7 +219,7 @@ class SwissProtParser(Parser):
                 
                 # get protein data, add recommended full and short names to the dict
                 protein = e.find("{http://uniprot.org/uniprot}protein")
-                # print ("--- Getting recommendedNames ---")
+     
                 for child in protein.find("{http://uniprot.org/uniprot}recommendedName"):
                     if child.tag == "{http://uniprot.org/uniprot}fullName":
                         temp_dict["recommendedFullName"] = child.text
@@ -239,15 +231,10 @@ class SwissProtParser(Parser):
 
                 protein = e.find("{http://uniprot.org/uniprot}protein")
                 for altName in protein.findall("{http://uniprot.org/uniprot}alternativeName"):
-                    #print (str(altName))
                     for child in altName:
-                        #print ("The child of altName: ", child.tag)
-                        #print ("The text of that child: ", child.text)
                         if child.tag == "{http://uniprot.org/uniprot}fullName":
-                           # print("Adding a full name.")
                             alt_fullnames.append(child.text)
                         if child.tag == "{http://uniprot.org/uniprot}shortName":
-                            #print ("Adding a short name.")
                             alt_shortnames.append(child.text)
 
                 temp_dict["alternativeFullNames"] = alt_fullnames

@@ -20,6 +20,7 @@ import sys
 import tarfile
 import parsers
 import json
+from equivalence_dictionaries import EGID_to_HGNC, EGID_to_MGI, EGID_to_SP, EGID_eq
 
 parser = argparse.ArgumentParser(description="Generate namespace and equivalence files for gene/protein datasets.")
 parser.add_argument("-o", required=False, nargs=1, metavar="EQUIVALENCE FILE", help="The old namespace equivalence dictionary file.")
@@ -54,29 +55,28 @@ for path, url in gp_reference_info.file_to_url.items():
 parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
 print("Running " + str(parser))
 
+#####   Temporary Block   #####
+equiv_dict = {}
+entrez_dict = {}
+hgnc_dict = {}
+mgi_dict = {}
+sp_dict = {}
+
+#Build equivalence dictionary. This maps Entrez id# to its HGNC, MGD, and SP types OR NONE if there is none.
+for k in EGID_eq.keys():
+    equiv_dict[k] = {
+        "hgnc_eq" : 'NONE' if (k not in EGID_to_HGNC) else EGID_to_HGNC.get(k), 
+        "mgi_eq" :  'NONE' if (k not in EGID_to_MGI) else EGID_to_MGI.get(k),
+        "sp_eq" :   'NONE' if (k not in EGID_to_SP) else EGID_to_SP.get(k) }
+
+
 gene_info_dict = parser.parse()
 with open('entrez_info.txt', 'w') as f:
     for x in gene_info_dict:
-        if x.get("Synonyms") is not None:
-            if 'E_synonyms' in gp_dict:
-                gp_dict["E_synonyms"].append(x.get("Synonyms"))
-            else:
-                gp_dict['E_synonyms'] = [x.get('Synonyms')]
-        if x.get("Other_designations") is not None:
-            if 'E_other_designations' in gp_dict:
-                gp_dict["E_other_designations"].append(x.get("Other_designations"))
-            else:
-                gp_dict['E_other_designations'] = [x.get('Other_designations')]
-        if x.get("Full_name_from_nomenclature_authority") is not None:
-            if 'E_full_name_from_nomenclature_authority' in gp_dict:
-                gp_dict["E_full_name_from_nomenclature_authority"].append(x.get("Full_name_from_nomenclature_authority"))
-            else:
-                gp_dict['E_full_name_from_nomenclature_authority'] = [x.get('Full_name_from_nomenclature_authority')]
-        if x.get("GeneID") is not None:
-            if 'GendeID' in gp_dict:
-                gp_dict["E_gene_id"].append(x.get("GeneID"))
-            else:
-                gp_dict['GeneID'] = [x.get('GeneID')]
+        entrez_dict[x.get('GeneID')] = {
+                'Full_name_from_nomenclature_authority' : x.get('Full_name_from_nomenclature_authority'),
+                'Other_designations' : [x.get('Other_designations')],
+                'Synonyms' : [x.get('Synonyms')] }
         json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse reference dataset HISTORY (entrez gene)
@@ -87,9 +87,7 @@ print("Running " + str(parser))
 
 gene_history_dict = parser.parse()
 with open('entrez_history.txt', 'w') as f:
-    #print ('-------DEBUG-----' + str(type(gene_history_dict)))
     for x in gene_history_dict:
-    #    print ('-------DEBUG-----' + str(type(x)))
         json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse dependent datasets
@@ -101,75 +99,64 @@ for d in gp_datasets:
         print ("Running " + str(parser))
         with open(str(parser) +'.txt', 'w') as f:
             for x in parser.parse():
-                if str(parser) == "HGNC_Parser":
-                    if x.get("Synonyms") is not None:
-                        if 'H_synonyms' in gp_dict:
-                            gp_dict["H_synonyms"].append(x.get('Synonyms'))
-                        else:
-                            gp_dict["H_synonyms"] = [x.get('Synonyms')]
-                    if x.get("Approved Symbol") is not None:
-                        if 'H_approved_symbol' in gp_dict:
-                            gp_dict["H_approved_symbol"].append(x.get("Approved Symbol"))
-                        else:
-                            gp_dict['H_approved_symbol'] = [x.get("Approved Symbol")]
-                    if x.get("Previous Names") is not None:
-                        if 'H_previous_names' in gp_dict:
-                            gp_dict["H_previous_names"].append(x.get("Previous Names"))
-                        else:
-                            gp_dict['H_previous_names'] = [x.get("Previous Names")]
-                    if x.get("Previous Symbols") is not None:
-                        if 'H_previous_symbols' in gp_dict:
-                            gp_dict["H_previous_symbols"].append(x.get("Previous Symbols"))
-                        else:
-                            gp_dict['H_previous_symbols'] = [x.get("Previous Symbols")]
-                    if x.get("Name Synonyms") is not None:
-                        if 'H_name_synonyms' in gp_dict:
-                            gp_dict["H_name_synonyms"].append(x.get("Name Synonyms"))
-                        else:
-                            gp_dict['H_name_synonyms'] = [x.get("Name Synonyms")]
-                if str(parser) == "MGI_Parser":
-                    if x.get("Marker Synonyms (pipe-separated)") is not None:
-                        if 'M_synonyms' in gp_dict:
-                            gp_dict["M_synonyms"].append(x.get("Marker Synonyms (pipe-separated)"))
-                        else:
-                            gp_dict['M_synonyms'] = [x.get('Marker Synonyms (pipe-separated)')]
-                    if x.get("Marker Symbol") is not None:
-                        if 'M_marker_symbol' in gp_dict:
-                            gp_dict["M_marker_symbol"].append(x.get("Marker Symbol"))
-                        else:
-                            gp_dict['M_marker_symbol'] = [x.get('Marker Symbol')]
-                if str(parser) == 'SwissProt_Parser':
-                    if x.get('name') is not None:
-                        if 's_name' in gp_dict:
-                            gp_dict['s_name'].append(x.get('name'))
-                        else:
-                            gp_dict['s_name'] = [x.get('name')]
-                    if x.get('recommendedFullName') is not None:
-                        if 's_recommendedFullName' in gp_dict:
-                            gp_dict['s_recommendedFullName'].append(x.get('recommendedFullName'))
-                        else:
-                            gp_dict['s_recommendedFullName'] = [x.get('recommendedFullName')]
-                    if x.get('recommendedShortName') is not None:
-                        if 's_recommendedShortName' in gp_dict:
-                            gp_dict['s_recommendedShortName'].append(x.get('recommendedShortName'))
-                        else:
-                            gp_dict['s_recommendedShortName'] = [x.get('recommendedShortname')]
-                    if x.get('alternativeFullNames') is not None:
-                        if 's_alternativeFullNames' in gp_dict:
-                            gp_dict['s_alternativeFullNames'].append(x.get('alternativeFullNames'))
-                        else:
-                            gp_dict['s_alternativeFullNames'] = [x.get('alternativeFullNames')]
-                    if x.get('alternativeShortNames') is not None:
-                        if 's_alternativeShortNames' in gp_dict:
-                            gp_dict['s_alternativeShortNames'].append(x.get('alternativeShortNames'))
-                        else:
-                            gp_dict['s_alternativeFullNames'] = [x.get('alternativeFullNames')]
-                json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
+                # build a dict for the hgnc dataset, where the keys will be the 'Approved Symbol'
+                if (str(parser)) == 'HGNC_Parser':
+                    hgnc_dict[x.get('Approved Symbol')] = {
+                        'Previous Names' : [x.get('Previous Names')],
+                        'Previous Symbols' : [x.get('Previous Symbols')],
+                        'Name Synonyms' : [x.get('Name Synonyms')],
+                        'Synonyms' : [x.get('Synonyms')] }
+                # Build a dict for the mgi dataset, where the keys will be the 'Marker Symbol'
+                if (str(parser)) == 'MGI_Parser':
+                    mgi_dict[x.get('Marker Symbol')] = {
+                        'Marker Synonyms' : [x.get('Marker Synonyms')] }
+                # build a dict for the swissprot data set, where the keys will be the 'name'
+                if (str(parser)) == 'SwissProt_Parser':
+                    sp_dict[x.get('name')] = {
+                        'recommendedFullName' : x.get('recommendedFullName'),
+                        'recommendedShortName' : x.get('recommendedShortName'),
+                        'alternativeFullNames' : [x.get('alternativeFullNames')],
+                        'althernativeShortNames' : [x.get('alternativeShortNames')] }
+            json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 print("Completed gene protein resource generation.")
+print("Starting to gather data for merging...")
 
+for k in filter(lambda x: x is not None, entrez_dict.keys()):
+    # append new values to the dict returned by entrez(k) and replace with new dict
+    print("Length of entrez keys: %d" %(len(entrez_dict)))
+    print ("K is : " +str(k))
+
+    if k is not None and k is not 'NONE':
+        hgnc_name = equiv_dict.get(k).get('hgnc_eq')
+        mgi_name = equiv_dict.get(k).get('mgi_eq')
+        sp_name = equiv_dict.get(k).get('sp_eq')
+
+        new_dict = entrez_dict.get(k)
+
+        # could be 'NONE' if there is no equivalent from Entrez to that particular dataset
+        if hgnc_name is not 'NONE' and hgnc_name is not None :
+            new_dict['HGNC_approved_symbol'] = hgnc_name
+            new_dict['HGNC_previous_names'] = hgnc_dict.get(hgnc_name).get('Previous Names')
+            new_dict['HGNC_previous_symbols'] = hgnc_dict.get(hgnc_name).get('Previous Symbols')
+            new_dict['HGNC_name_synonyms'] = hgnc_dict.get(hgnc_name).get('Name Synonyms')
+            new_dict['HGNC_synonyms'] = hgnc_dict.get(hgnc_name).get('Synonyms')
+    
+        if mgi_name is not 'NONE' and mgi_name is not None:
+            new_dict['MGI_marker_symbol'] = mgi_name
+            new_dict['MGI_marker_synonyms'] = mgi_dict.get(mgi_name).get('Marker Synonyms')
+            
+        if sp_name is not 'NONE' and sp_name is not None:
+            new_dict['SP_name'] = sp_name
+            new_dict['SP_recommendedFullName'] = sp_dict.get(sp_name).get('recommendedFullName')
+            new_dict['SP_recommendedShortName'] = sp_dict.get(sp_name).get('recommendedShortName')
+            new_dict['SP_alternativeFullNames'] = sp_dict.get(sp_name).get('alternativeFullNames')
+            new_dict['SP_alternativeShortNames'] = sp_dict.get(sp_name).get('alternativeShortNames')
+
+    entrez_dict[k] = new_dict
+                                                     
 with open('equiv.txt', 'w') as fp:
-    json.dump(gp_dict, fp, sort_keys=True, indent=4, separators=(',', ':'))
+    json.dump(entrez_dict, fp, sort_keys=True, indent=4, separators=(',', ':'))
         
 #print("Number of namespace entries: %d" %(len(gp_dict)))
 

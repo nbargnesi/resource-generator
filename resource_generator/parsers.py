@@ -241,15 +241,15 @@ class SwissProtParser(Parser):
                 temp_dict["alternativeShortNames"] = alt_shortnames
 
                 # get gene data
-                # names = []
-                # gene = e.find("{http://uniprot.org/uniprot}gene")
-                # for child in gene.find("name"):
+                #names = []
+                #gene = e.find("{http://uniprot.org/uniprot}gene")
+                #for child in gene.findall("name"):
                 #    if child.get("type") == "primary":
-                #        temp_dict["primary"] = name.text
+                #        names.append(name.text)
                 #    if child.get("type") == "synonym":
                 #        names.apped(name.text)
-                # add gene data to the dict
-                # temp_dict["synonyms"] = names
+                 # add gene data to the dict
+                #temp_dict["synonyms"] = names
 
                 # get all accessions
                 entry_accessions = []

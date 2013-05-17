@@ -68,10 +68,10 @@ gp_reference_history = dataset({os.path.join(path_constants.dataset_dir, "eg-gen
 
 gp_datasets = []
 
-gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "hgnc-hgnc_downloads.tsv") : "http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag"}, parsers.HGNCParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "hgnc-hgnc_downloads.tsv") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp/datasets/hgnc-hgnc_downloads.tsv"}, parsers.HGNCParser))
 
-gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "ftp://ftp.informatics.jax.org/pub/reports/MRK_List2.rpt"},  parsers.MGIParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp/datasets/mgi-mgi_gtpgup.gff.tsv"},  parsers.MGIParser))
 
-gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
+#gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
 
-gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "sprot-uniprot_sprot.xml.gz") : "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz"}, parsers.SwissProtParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "sprot-uniprot_sprot.xml.gz") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp/datasets/sprot-uniprot_sprot.xml.gz"}, parsers.SwissProtParser))

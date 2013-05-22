@@ -34,12 +34,11 @@ class EntrezGeneInfoParser(Parser):
                                       "Other_designations", "Modification_date"]
 
          # Dictionary for base gene info
-        temp_dict = dict()
+        temp_dict = {}
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info), delimiter='\t', fieldnames=self.gene_info_headers)
         for row in info_csvr:
-            if row["tax_id"] in ("9606", "10090", "10116"):
-                temp_dict = row
-                yield temp_dict
+            if row["tax_id"] in ("9606", "10090"):  # 10116
+                yield row
                 
 
     def __walk__(self, history_dict, val):
@@ -65,12 +64,12 @@ class EntrezGeneHistoryParser(Parser):
                                               "Discontinued_Date"]
 
          # Dictionary for base gene info
-        temp_dict = dict()
+        temp_dict = {}
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history), delimiter='\t', fieldnames=self.gene_history_headers)
+   
         for row in history_csvr:
             if row["tax_id"] in ("9606", "10090", "10116"):
-                temp_dict = row
-                yield temp_dict
+                yield row
  
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -105,11 +104,9 @@ class HGNCParser(Parser):
                                "OMIM ID", "RefSeq", "UniProtID", "Ensembl ID", "UCSC ID", \
                                "Mouse Genome Database ID", "Rat Genome Database ID"]
 
-            temp_dict = dict()
             hgnc_csvr = csv.DictReader(hgncf, delimiter='\t', fieldnames=self.hgnc_column_headers)
             for row in hgnc_csvr:
-                temp_dict = row
-                yield temp_dict
+                yield row
 
     def __str__(self):
         return "HGNC_Parser"
@@ -132,11 +129,9 @@ class MGIParser(Parser):
                                        "Marker Type", "Feature Type", \
                                        "Marker Synonyms (pipe-separated)"]
 
-            temp_dict = dict()
             mgi_csvr = csv.DictReader(mgif, delimiter='\t', fieldnames=self.mgi_column_headers)
             for row in mgi_csvr:
-                temp_dict = row
-                yield temp_dict
+                yield row
 
     def __str__(self):
         return "MGI_Parser"
@@ -164,15 +159,12 @@ class RGDParser(Parser):
                                   "NOMENCLATURE_STATUS", "SPLICE_RGD_ID", "SPLICE_SYMBOL", "GENE_TYPE", \
                                   "ENSEMBL_ID", "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
 
-            temp_dict = dict()
-
             # skip all the comment lines beginning with '#' and also the header.
             rgd_csvr = csv.DictReader(filter(lambda row:  not row[0].startswith('#') and str(row[0]).isdigit(), rgdf), \
                                           delimiter='\t', fieldnames=self.rgd_column_headers)
 
             for row in rgd_csvr:
-                temp_dict = row
-                yield temp_dict
+                yield row
     
     def __str__(self):
         return "RGD_Parser"
@@ -192,53 +184,59 @@ class SwissProtParser(Parser):
 
     def parse(self):
         sprot_dict = {}
+        n_dict = {}
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
 
-            temp_dict = dict()
+            temp_dict = {}
             for ev, e in ctx:
-  
+                print (str(ev))
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
-                if e.get("dataset") != "Swiss-Prot":
+                if e.get('dataset') != 'Swiss-Prot':
                     yield temp_dict
      
                 # stop evaluating if this entry is not for human, mouse, or rat
-                org = e.find("{http://uniprot.org/uniprot}organism")
-                if org is not None:
-                    # restrict by NCBI Taxonomy reference
-                    dbr = org.find("{http://uniprot.org/uniprot}dbReference")
-                    if dbr.get("id") not in ("9606", "10090", "10116"):
-                        yield temp_dict
-                    else:
-                        # add NCBI Taxonomy and the id for the entry to the dict
-                        temp_dict[dbr.get("type")] = dbr.get("id")
+                org = e.find('{http://uniprot.org/uniprot}organism')
+                org_child = org.find("[dbReference]")
+                
+                #if org_child is not None:
+                #    print ('org child: ' +str(org_child))
+                #    # restrict by NCBI Taxonomy reference
+                #    if org_child.get('id') not in {'9606', '10090', '10116'}:
+                #        print ('---- not here ----')
+                #        print ('Childs ID: ' +org_child.get('id'))
+                #        yield temp_dict
+                #    else:
+                #        # add NCBI Taxonomy and the id for the entry to the dict
+                #        print ('child ID : ' +child.get('id'))
+                #        temp_dict[org_child.get('type')] = org_child.get('id')
                         
                 # get entry name, add it to the dict
-                entry_name = e.find("{http://uniprot.org/uniprot}name").text
-                temp_dict["name"] = entry_name
-                
+                entry_name = e.find('{http://uniprot.org/uniprot}name').text
+                temp_dict['name'] = entry_name
+           
                 # get protein data, add recommended full and short names to the dict
-                protein = e.find("{http://uniprot.org/uniprot}protein")
+                protein = e.find('{http://uniprot.org/uniprot}protein')
      
-                for child in protein.find("{http://uniprot.org/uniprot}recommendedName"):
-                    if child.tag == "{http://uniprot.org/uniprot}fullName":
-                        temp_dict["recommendedFullName"] = child.text
-                    if child.tag == "{http://uniprot.org/uniprot}shortName":
-                        temp_dict["recommendedShortName"] = child.text
+                for child in protein.find('{http://uniprot.org/uniprot}recommendedName'):
+                    if child.tag == '{http://uniprot.org/uniprot}fullName':
+                        temp_dict['recommendedFullName'] = child.text
+                    if child.tag == '{http://uniprot.org/uniprot}shortName':
+                        temp_dict['recommendedShortName'] = child.text
                         
                 alt_shortnames = []
                 alt_fullnames = []
 
-                protein = e.find("{http://uniprot.org/uniprot}protein")
-                for altName in protein.findall("{http://uniprot.org/uniprot}alternativeName"):
+                protein = e.find('{http://uniprot.org/uniprot}protein')
+                for altName in protein.findall('{http://uniprot.org/uniprot}alternativeName'):
                     for child in altName:
-                        if child.tag == "{http://uniprot.org/uniprot}fullName":
+                        if child.tag == '{http://uniprot.org/uniprot}fullName':
                             alt_fullnames.append(child.text)
-                        if child.tag == "{http://uniprot.org/uniprot}shortName":
+                        if child.tag == '{http://uniprot.org/uniprot}shortName':
                             alt_shortnames.append(child.text)
 
-                temp_dict["alternativeFullNames"] = alt_fullnames
-                temp_dict["alternativeShortNames"] = alt_shortnames
+                temp_dict['alternativeFullNames'] = alt_fullnames
+                temp_dict['alternativeShortNames'] = alt_shortnames
 
                 # get gene data
                 #names = []
@@ -253,7 +251,7 @@ class SwissProtParser(Parser):
 
                 # get all accessions
                 entry_accessions = []
-                for entry_accession in e.findall("{http://uniprot.org/uniprot}accession"):
+                for entry_accession in e.findall('{http://uniprot.org/uniprot}accession'):
                     acc = entry_accession.text
                     entry_accessions.append(acc)
                     if acc in self.accession_numbers:
@@ -264,23 +262,22 @@ class SwissProtParser(Parser):
                 # add the array of accessions to the dict
                 temp_dict["accessions"] = entry_accessions
                     
-                type_set = ["GeneId", "MGI", "HGNC", "RGD"]
+                # add dbReference type and gene ids to the dict
+                type_set = ['GeneId', 'MGI', 'HGNC', 'RGD']
                 entry_gene_ids = []
-                for dbr in e.findall("{http://uniprot.org/uniprot}dbReference"):
-                    if dbr.get("type") in type_set:
-                        gene_id = dbr.get("id")
-                        entry_gene_ids.append(gene_id)
-                        if gene_id in self.gene_ids:
-                            self.gene_ids[gene_id] = None
-                        else:
-                            self.gene_ids[gene_id] = 1
-                            # add dbReference type and gene ids to the dict
-                            temp_dict["dbReference"] = {dbr.get("type") : entry_gene_ids}
+                for dbr in e.findall('{http://uniprot.org/uniprot}dbReference'):
+                    if dbr.get('type') in type_set:
+                        gene_id = dbr.get('id')
+                        n_dict[dbr.get('type')] = dbr.get('id')
+                temp_dict['dbReference'] = n_dict
+
                 e.clear()
                 while e.getprevious() is not None:
                     del e.getparent()[0]
                 yield temp_dict
 
     def __str__(self):
-        return "SwissProt_Parser"
+        return 'SwissProt_Parser'
+
+    
 

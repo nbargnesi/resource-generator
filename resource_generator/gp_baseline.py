@@ -103,8 +103,19 @@ for d in gp_datasets:
                 # build a dict for the hgnc dataset, where the keys will be the 'Approved Symbol'
                 if (str(parser)) == 'HGNC_Parser':
                     # print ('Synomyms: ' +str(x.get('Synonyms')))
+
+                    test = x.get('Previous Names')
+                    if test is not None:
+                        new = test.split('", ')
+                        for n in new:
+                            #print('before split: ' +n)
+                            #print('type is: ' +str(type(n)))
+                            t = n.split(', \"')
+                            #print('after split: ' +n)
+                            test = t
+
                     hgnc_dict[x.get('Approved Symbol')] = {
-                        'Previous Names' : x.get('Previous Names'),
+                        'Previous Names' : new,
                         'Previous Symbols' : x.get('Previous Symbols'),
                         'Name Synonyms' : x.get('Name Synonyms'),
                         'Synonyms' : x.get('Synonyms') }
@@ -121,7 +132,8 @@ for d in gp_datasets:
                         'recommendedShortName' : x.get('recommendedShortName'),
                         'alternativeFullNames' : x.get('alternativeFullNames'),
                         'althernativeShortNames' : x.get('alternativeShortNames') }
-            json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
+
+                json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 print('Completed gene protein resource generation.')
 print('Gathering data for merging ... ')
@@ -138,7 +150,7 @@ for k in filter(lambda x: x is not None, entrez_dict.keys()):
             hgnc_name = var.get('hgnc_eq')
             mgi_name = var.get('mgi_eq')
             sp_name = var.get('sp_eq')
-
+            # print ('SP name: ' +sp_name)
             new_dict = entrez_dict.get(k)
 
             # could be 'NONE' if there is no equivalent from Entrez to that particular dataset
@@ -170,7 +182,7 @@ for k in filter(lambda x: x is not None, entrez_dict.keys()):
                     new_dict['SP_alternativeFullNames'] = var.get('alternativeFullNames')
                     new_dict['SP_alternativeShortNames'] = var.get('alternativeShortNames')
 
-    entrez_dict[k] = new_dict
+            entrez_dict[k] = new_dict
 
 print ('Merging the datasets ... ')
 some_dict = {}
@@ -199,10 +211,13 @@ for k in filter(lambda x: x is not None, entrez_dict.keys()):
         if ('HGNC_previous_names' in index.keys()):
             n = index.get('HGNC_previous_names')
             if n is not None:
+                #if k == 100009613:
+                 #   print('Here is previous nameooooooooo: ' +str(n))
                 name_syn.extend(n)
         if ('HGNC_name_synonyms' in index.keys()):
             n = index.get('HGNC_name_synonyms')
             if n is not None:
+                #n = n.split(',')
                 name_syn.append(n)
         if ('SP_recommendedFullName' in index.keys()):
             n = index.get('SP_recommendedFullName')

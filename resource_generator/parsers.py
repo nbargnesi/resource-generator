@@ -188,28 +188,24 @@ class SwissProtParser(Parser):
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
 
-            temp_dict = {}
             for ev, e in ctx:
-                print (str(ev))
+                temp_dict = {}
+
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
-                    yield temp_dict
+                    continue
      
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find('{http://uniprot.org/uniprot}organism')
-                org_child = org.find("[dbReference]")
                 
-                #if org_child is not None:
-                #    print ('org child: ' +str(org_child))
-                #    # restrict by NCBI Taxonomy reference
-                #    if org_child.get('id') not in {'9606', '10090', '10116'}:
-                #        print ('---- not here ----')
-                #        print ('Childs ID: ' +org_child.get('id'))
-                #        yield temp_dict
-                #    else:
-                #        # add NCBI Taxonomy and the id for the entry to the dict
-                #        print ('child ID : ' +child.get('id'))
-                #        temp_dict[org_child.get('type')] = org_child.get('id')
+                for org_child in org:
+                    if org_child.tag == '{http://uniprot.org/uniprot}dbReference':
+                        # restrict by NCBI Taxonomy reference
+                        if org_child.get('id') not in {'9606', '10090', '10116'}:
+                            continue
+                        else:
+                            # add NCBI Taxonomy and the id for the entry to the dict
+                            temp_dict[org_child.get('type')] = org_child.get('id')
                         
                 # get entry name, add it to the dict
                 entry_name = e.find('{http://uniprot.org/uniprot}name').text
@@ -262,7 +258,7 @@ class SwissProtParser(Parser):
                 # add the array of accessions to the dict
                 temp_dict["accessions"] = entry_accessions
                     
-                # add dbReference type and gene ids to the dict
+                # add dbReference type (human, rat, and mouse) and gene ids to the dict
                 type_set = ['GeneId', 'MGI', 'HGNC', 'RGD']
                 entry_gene_ids = []
                 for dbr in e.findall('{http://uniprot.org/uniprot}dbReference'):
@@ -274,6 +270,7 @@ class SwissProtParser(Parser):
                 e.clear()
                 while e.getprevious() is not None:
                     del e.getparent()[0]
+
                 yield temp_dict
 
     def __str__(self):

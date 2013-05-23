@@ -58,9 +58,9 @@ print("Running " + str(parser))
 #####   Temporary Block   #####
 equiv_dict = {}
 entrez_dict = {}
-hgnc_dict = {}
-mgi_dict = {}
-sp_dict = {}
+#hgnc_dict = {}
+#mgi_dict = {}
+#sp_dict = {}
 
 #Build equivalence dictionary. This maps Entrez id# to its HGNC, MGD, and SP types OR NONE if there is none.
 for k in EGID_eq.keys():
@@ -99,6 +99,9 @@ for d in gp_datasets:
         print ("Running " + str(parser))
         with open(str(parser) +'.txt', 'w') as f:
             for x in parser.parse():
+                hgnc_dict = {}
+                mgi_dict = {}
+                sp_dict = {}
 
                 # build a dict for the hgnc dataset, where the keys will be the 'Approved Symbol'
                 if (str(parser)) == 'HGNC_Parser':

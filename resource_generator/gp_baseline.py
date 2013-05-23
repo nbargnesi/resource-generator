@@ -52,6 +52,7 @@ gp_dict = {}
 
 for path, url in gp_reference_info.file_to_url.items():
     download(url, path)
+
 parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
 print("Running " + str(parser))
 
@@ -65,7 +66,6 @@ for k in EGID_eq.keys():
         "mgi_eq" :  'NONE' if (k not in EGID_to_MGI) else EGID_to_MGI.get(k),
         "sp_eq" :   'NONE' if (k not in EGID_to_SP) else EGID_to_SP.get(k) }
 
-
 gene_info_dict = parser.parse()
 with open('entrez_info.txt', 'w') as f:
     for x in gene_info_dict:
@@ -78,6 +78,7 @@ with open('entrez_info.txt', 'w') as f:
 # parse reference dataset HISTORY (entrez gene)
 for path, url in gp_reference_history.file_to_url.items():
     download(url, path)
+
 parser = gp_reference_history.parser_class(gp_reference_history.file_to_url)
 print("Running " + str(parser))
 
@@ -87,7 +88,6 @@ with open('entrez_history.txt', 'w') as f:
         json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
 # parse dependent datasets
-# print ("before datasets")
 for d in gp_datasets:
     for path, url in d.file_to_url.items():
         download(url, path)
@@ -99,18 +99,14 @@ for d in gp_datasets:
                 mgi_dict = {}
                 sp_dict = {}
 
-                # build a dict for the hgnc dataset, where the keys will be the 'Approved Symbol'
+                # build a dict for the HGNC dataset, where the keys will be the 'Approved Symbol'
                 if (str(parser)) == 'HGNC_Parser':
-                    # print ('Synomyms: ' +str(x.get('Synonyms')))
 
                     test = x.get('Previous Names')
                     if test is not None:
                         new = test.split('", ')
                         for n in new:
-                            #print('before split: ' +n)
-                            #print('type is: ' +str(type(n)))
                             t = n.split(', \"')
-                            #print('after split: ' +n)
                             test = t
 
                     hgnc_dict[x.get('Approved Symbol')] = {
@@ -119,12 +115,12 @@ for d in gp_datasets:
                         'Name Synonyms' : x.get('Name Synonyms'),
                         'Synonyms' : x.get('Synonyms') }
 
-                # Build a dict for the mgi dataset, where the keys will be the 'Marker Symbol'
+                # build a dict for the MGI dataset, where the keys will be the 'Marker Symbol'
                 if (str(parser)) == 'MGI_Parser':
                     mgi_dict[x.get('Marker Symbol')] = {
                         'Marker Synonyms' : x.get('Marker Synonyms') }
 
-                # build a dict for the swissprot data set, where the keys will be the 'name'
+                # build a dict for the SwissProt data set, where the keys will be the 'name'
                 if (str(parser)) == 'SwissProt_Parser':
                     sp_dict[x.get('name')] = {
                         'recommendedFullName' : x.get('recommendedFullName'),

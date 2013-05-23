@@ -13,6 +13,7 @@ class Parser(object):
     def parse():
         pass
 
+
 class EntrezGeneInfoParser(Parser):
     resourceLocation = 'http://resource.belframework.org/belframework/1.0/namespace/entrez-gene-ids-hmr.belns'
 
@@ -49,6 +50,7 @@ class EntrezGeneInfoParser(Parser):
     def __str__(self):
         return "EntrezGeneInfo_Parser"
 
+
 class EntrezGeneHistoryParser(Parser):
     resourceLocation = """"http://resource.belframework.org/belframework/1.0/namespace/
                            entrez-gene-ids-hmr.belns"""
@@ -78,6 +80,7 @@ class EntrezGeneHistoryParser(Parser):
 
     def __str__(self):
         return "EntrezGeneHistory_Parser"
+
 
 class HGNCParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
@@ -111,6 +114,7 @@ class HGNCParser(Parser):
     def __str__(self):
         return "HGNC_Parser"
 
+
 class MGIParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
                           mgi-approved-symbols.belns"""
@@ -135,6 +139,7 @@ class MGIParser(Parser):
 
     def __str__(self):
         return "MGI_Parser"
+
 
 class RGDParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
@@ -169,6 +174,15 @@ class RGDParser(Parser):
     def __str__(self):
         return "RGD_Parser"
 
+
+# this exists mainly as a work around to break the iteration loop if needed during merging.
+class GeneTypeError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+
 class SwissProtParser(Parser):
     resourceLocation_accession_numbers = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-accession-numbers.belns"
     resourceLocation_entry_names = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-entry-names.belns"
@@ -184,32 +198,34 @@ class SwissProtParser(Parser):
 
     def parse(self):
         sprot_dict = {}
-        n_dict = {}
+
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
 
             for ev, e in ctx:
                 temp_dict = {}
-
+                n_dict = {}
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
-                    #e.clear()
-                    #yield temp_dict
+                    e.clear()
                     continue
      
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find('{http://uniprot.org/uniprot}organism')
                 
-                for org_child in org:
-                    if org_child.tag == '{http://uniprot.org/uniprot}dbReference':
-                        # restrict by NCBI Taxonomy reference
-                        if org_child.get('id') not in {'9606', '10090', '10116'}:
-                            #e.clear()
-                            #yield temp_dict
-                            continue
-                        else:
-                            # add NCBI Taxonomy and the id for the entry to the dict
-                            temp_dict[org_child.get('type')] = org_child.get('id')
+                # use a custom exception to break to next iteration (e) if tax ref is not found.
+                try:
+                    for org_child in org:
+                        if org_child.tag == '{http://uniprot.org/uniprot}dbReference':
+                            # restrict by NCBI Taxonomy reference
+                            if org_child.get('id') not in {'9606', '10090', '10116'}:
+                                e.clear()
+                                raise GeneTypeError(org_child.get('id'))
+                            else:
+                                # add NCBI Taxonomy and the id for the entry to the dict
+                                temp_dict[org_child.get('type')] = org_child.get('id')
+                except GeneTypeError:
+                    continue
                         
                 # get entry name, add it to the dict
                 entry_name = e.find('{http://uniprot.org/uniprot}name').text
@@ -271,6 +287,7 @@ class SwissProtParser(Parser):
                         n_dict[dbr.get('type')] = dbr.get('id')
                 temp_dict['dbReference'] = n_dict
 
+                # clear the tree before next iteration
                 e.clear()
                 while e.getprevious() is not None:
                     del e.getparent()[0]

@@ -194,7 +194,8 @@ class SwissProtParser(Parser):
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
                     #e.clear()
-                    yield temp_dict
+                    #yield temp_dict
+                    continue
      
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find('{http://uniprot.org/uniprot}organism')
@@ -204,7 +205,8 @@ class SwissProtParser(Parser):
                         # restrict by NCBI Taxonomy reference
                         if org_child.get('id') not in {'9606', '10090', '10116'}:
                             #e.clear()
-                            yield temp_dict
+                            #yield temp_dict
+                            continue
                         else:
                             # add NCBI Taxonomy and the id for the entry to the dict
                             temp_dict[org_child.get('type')] = org_child.get('id')

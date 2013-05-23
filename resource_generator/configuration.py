@@ -72,6 +72,6 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "hgnc-hgnc_
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/mgi-mgi_gtpgup.gff.tsv"},  parsers.MGIParser))
 
-#gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "sprot-uniprot_sprot.xml.gz") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/sprot-uniprot_sprot.xml.gz"}, parsers.SwissProtParser))

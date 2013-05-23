@@ -14,7 +14,7 @@ class Parser(object):
         pass
 
 class EntrezGeneInfoParser(Parser):
-    resourceLocation = "http://resource.belframework.org/belframework/1.0/namespace/entrez-gene-ids-hmr.belns"
+    resourceLocation = 'http://resource.belframework.org/belframework/1.0/namespace/entrez-gene-ids-hmr.belns'
 
     def __init__(self, file_to_url):
         super(EntrezGeneInfoParser, self).__init__(file_to_url)
@@ -33,11 +33,11 @@ class EntrezGeneInfoParser(Parser):
                                       "Full_name_from_nomenclature_authority", "Nomenclature_status", \
                                       "Other_designations", "Modification_date"]
 
-         # Dictionary for base gene info
+        # Dictionary for base gene info
         temp_dict = {}
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info), delimiter='\t', fieldnames=self.gene_info_headers)
         for row in info_csvr:
-            if row["tax_id"] in ("9606", "10090"):  # 10116
+            if row["tax_id"] in ("9606", "10090", "10116"):
                 yield row
                 
 
@@ -193,7 +193,8 @@ class SwissProtParser(Parser):
 
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
-                    continue
+                    #e.clear()
+                    yield temp_dict
      
                 # stop evaluating if this entry is not for human, mouse, or rat
                 org = e.find('{http://uniprot.org/uniprot}organism')
@@ -202,7 +203,8 @@ class SwissProtParser(Parser):
                     if org_child.tag == '{http://uniprot.org/uniprot}dbReference':
                         # restrict by NCBI Taxonomy reference
                         if org_child.get('id') not in {'9606', '10090', '10116'}:
-                            continue
+                            #e.clear()
+                            yield temp_dict
                         else:
                             # add NCBI Taxonomy and the id for the entry to the dict
                             temp_dict[org_child.get('type')] = org_child.get('id')

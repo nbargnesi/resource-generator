@@ -21,7 +21,7 @@ class paths(object):
     @property
     def dataset_config(self):
         return self.__dataset_config
-    
+
     @property
     def dataset_dir(self):
         return self.__dataset_dir
@@ -70,7 +70,7 @@ gp_datasets = []
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "hgnc-hgnc_downloads.tsv") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/hgnc-hgnc_downloads.tsv"}, parsers.HGNCParser))
 
-gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/mgi-mgi_gtpgup.gff.tsv"},  parsers.MGIParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "ftp://ftp.informatics.jax.org/pub/reports/MRK_List2.rpt"},  parsers.MGIParser))
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
 

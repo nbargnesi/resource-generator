@@ -15,32 +15,38 @@ class Parser(object):
 
 
 class EntrezGeneInfoParser(Parser):
-    resourceLocation = 'http://resource.belframework.org/belframework/1.0/namespace/entrez-gene-ids-hmr.belns'
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/
+                          namespace/entrez-gene-ids-hmr.belns"""
 
     def __init__(self, file_to_url):
         super(EntrezGeneInfoParser, self).__init__(file_to_url)
         file_keys = iter(file_to_url.keys())
         self.entrez_gene_info = next(file_keys)
-   
-    def parse(self):
 
+    def parse(self):
+        gene_dict = {}
         # define a csv reader object
-        info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info), delimiter="\t", quotechar="\"")
+        info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info),
+                                    delimiter="\t", quotechar="\"")
 
         # columns for an Entrez gene info dataset.
-        self.gene_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag", "Synonyms", "dbXrefs", \
-                                      "chromosome", "map_location", "description", "type_of_gene", \
-                                      "Symbol_from_nomenclature_authority", \
-                                      "Full_name_from_nomenclature_authority", "Nomenclature_status", \
-                                      "Other_designations", "Modification_date"]
+        self.gene_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag",
+                                  "Synonyms", "dbXrefs", "chromosome",
+                                  "map_location", "description",
+                                  "type_of_gene",
+                                  "Symbol_from_nomenclature_authority",
+                                  "Full_name_from_nomenclature_authority",
+                                  "Nomenclature_status",
+                                  "Other_designations", "Modification_date"]
 
         # Dictionary for base gene info
         temp_dict = {}
-        info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info), delimiter='\t', fieldnames=self.gene_info_headers)
+        info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info),
+                                   delimiter='\t',
+                                   fieldnames=self.gene_info_headers)
         for row in info_csvr:
-            if row["tax_id"] in ("9606", "10090", "10116"):
+            if row['tax_id'] in ('9606', '10090', '10116'):
                 yield row
-                
 
     def __walk__(self, history_dict, val):
         while val in history_dict:
@@ -52,8 +58,8 @@ class EntrezGeneInfoParser(Parser):
 
 
 class EntrezGeneHistoryParser(Parser):
-    resourceLocation = """"http://resource.belframework.org/belframework/1.0/namespace/
-                           entrez-gene-ids-hmr.belns"""
+    resourceLocation = """"http://resource.belframework.org/belframework/1.0/
+                           namespace/entrez-gene-ids-hmr.belns"""
 
     def __init__(self, file_to_url):
         super(EntrezGeneHistoryParser, self).__init__(file_to_url)
@@ -62,17 +68,19 @@ class EntrezGeneHistoryParser(Parser):
 
     def parse(self):
         # columns from the Entrez history dataset
-        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID", "Discontinued_Symbol", \
-                                              "Discontinued_Date"]
+        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",\
+                                     "Discontinued_Symbol", "Discontinued_Date"]
 
          # Dictionary for base gene info
         temp_dict = {}
-        history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history), delimiter='\t', fieldnames=self.gene_history_headers)
-   
+        history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history),
+                                      delimiter='\t',
+                                      fieldnames=self.gene_history_headers)
+
         for row in history_csvr:
             if row["tax_id"] in ("9606", "10090", "10116"):
                 yield row
- 
+
     def __walk__(self, history_dict, val):
         while val in history_dict:
             val = history_dict[val]
@@ -83,8 +91,8 @@ class EntrezGeneHistoryParser(Parser):
 
 
 class HGNCParser(Parser):
-    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
-                          hgnc-approved-symbols.belns"""
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/
+                          namespace/hgnc-approved-symbols.belns"""
 
     def __init__(self, file_to_url):
         super(HGNCParser, self).__init__(file_to_url)
@@ -93,21 +101,39 @@ class HGNCParser(Parser):
     def parse(self):
         # use iso-8859-1 as default encoding.
         with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
-  
-            # columns from the HGNC dataset
-            self.hgnc_column_headers = ["HGNC ID", "Approved Symbol", "Approved Name", "Status", \
-                               "Locus Type", "Locus Group", "Previous Symbols", "Previous Names", \
-                               "Synonyms", "Name Synonyms", "Chromosome", "Date Approved", \
-                               "Date Modified", "Date Symbol Changed", "Date Name Changed", \
-                               "Accession Numbers", "Enzyme IDs", "Entrez0 Gene ID", "Ensembl Gene ID", \
-                               "Mouse Genome Database ID", "Specialist Database Links", \
-                               "Specialist Database IDs", "Pubmed IDs", "RefSeq IDs", "Gene Family Tag", \
-                               "Gene family description", "Record Type", "Primary IDs", "Secondary IDs", \
-                               "CCDS IDs", "VEGA IDs", "Locus Specific Databases", "Entrez1 gene ID", \
-                               "OMIM ID", "RefSeq", "UniProtID", "Ensembl ID", "UCSC ID", \
-                               "Mouse Genome Database ID", "Rat Genome Database ID"]
 
-            hgnc_csvr = csv.DictReader(hgncf, delimiter='\t', fieldnames=self.hgnc_column_headers)
+            # columns from the HGNC dataset
+            self.hgnc_column_headers = ["HGNC ID", "Approved Symbol",
+                                        "Approved Name", "Status",
+                                        "Locus Type", "Locus Group",
+                                        "Previous Symbols", "Previous Names",
+                                        "Synonyms", "Name Synonyms",
+                                        "Chromosome", "Date Approved",
+                                        "Date Modified", "Date Symbol Changed",
+                                        "Date Name Changed",
+                                        "Accession Numbers", "Enzyme IDs",
+                                        "Entrez0 Gene ID", "Ensembl Gene ID",
+                                        "Mouse Genome Database ID",
+                                        "Specialist Database Links",
+                                        "Specialist Database IDs",
+                                        "Pubmed IDs", "RefSeq IDs",
+                                        "Gene Family Tag",
+                                        "Gene family description",
+                                        "Record Type", "Primary IDs",
+                                        "Secondary IDs",
+                                        "CCDS IDs", "VEGA IDs",
+                                        "Locus Specific Databases",
+                                        "Entrez1 Gene ID", "OMIM ID", "RefSeq",
+                                        "UniProtID", "Ensembl ID", "UCSC ID",
+                                        "Mouse Genome Database ID",
+                                        "Rat Genome Database ID"]
+
+            hgnc_csvr = csv.DictReader(hgncf, delimiter='\t',
+                                       fieldnames=self.hgnc_column_headers)
+
+            # skip the first header row
+            next(hgnc_csvr)
+
             for row in hgnc_csvr:
                 yield row
 
@@ -116,8 +142,8 @@ class HGNCParser(Parser):
 
 
 class MGIParser(Parser):
-    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
-                          mgi-approved-symbols.belns"""
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/
+                          namespace/mgi-approved-symbols.belns"""
 
     def __init__(self, file_to_url):
         super(MGIParser, self).__init__(file_to_url)
@@ -125,15 +151,20 @@ class MGIParser(Parser):
 
     def parse(self):
         with open(self.mgi_file, "r") as mgif:
-  
+
            # columns from the MGI dataset
-            self.mgi_column_headers = ["MGI Marker Accession ID", "Chr", "cM Position", \
-                                       "genome coordinate start", "genome coordinate end", \
-                                       "strand", "Marker Symbol", "Status", "Marker Name", \
-                                       "Marker Type", "Feature Type", \
+            self.mgi_column_headers = ["MGI Marker Accession ID", "Chr",
+                                       "cM Position", "genome coordinate start",
+                                       "genome coordinate end", "strand",
+                                       "Marker Symbol", "Status", "Marker Name",
+                                       "Marker Type", "Feature Type",
                                        "Marker Synonyms (pipe-separated)"]
 
-            mgi_csvr = csv.DictReader(mgif, delimiter='\t', fieldnames=self.mgi_column_headers)
+            mgi_csvr = csv.DictReader(mgif, delimiter='\t',
+                                      fieldnames=self.mgi_column_headers)
+
+            # skip the first header row
+            next(mgi_csvr)
             for row in mgi_csvr:
                 yield row
 
@@ -142,8 +173,8 @@ class MGIParser(Parser):
 
 
 class RGDParser(Parser):
-    resourceLocation = """http://resource.belframework.org/belframework/1.0/namespace/
-                          rgd-approved-symbols.belns""" 
+    resourceLocation = """http://resource.belframework.org/belframework/1.0/
+                          namespace/rgd-approved-symbols.belns"""
 
     def __init__(self, file_to_url):
         super(RGDParser, self).__init__(file_to_url)
@@ -151,31 +182,45 @@ class RGDParser(Parser):
 
     def parse(self):
         with open(self.rgd_file, "r") as rgdf:
-     
+
             # columns from the RGD dataset
-            self.rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME", "GENE_DESC", "CHROMOSOME_CELERA", \
-                                  "CHROMOSOME_3.1", "CHROMOSOME_3.4", "FISH_BAND", "START_POS_CELERA", \
-                                  "STOP_POS_CELERA", "STRAND_CELERA", "START_POS_3.1", "STOP_POS_3.1", \
-                                  "STRAND_3.1", "START_POS_3.4", "STOP_POS_3.4", "STRAND_3.4", \
-                                  "CURATED_REF_RGD_ID", "CURATED_REF_PUBMED_ID", "UNCURATED_PUBMED_ID", \
-                                  "ENTREZ_GENE", "UNIPROT_ID", "UNUSED", "GENBANK_NUCLEOTIDE", \
-                                  "TIGR_ID", "GENBANK_PROTEIN", "UNIGENE_ID", "SSLP_RGD_ID", \
-                                  "SSLP_SYMBOL", "OLD_SYMBOL", "OLD_NAME", "QTL_RGD_ID", "QTL_SYMBOL", \
-                                  "NOMENCLATURE_STATUS", "SPLICE_RGD_ID", "SPLICE_SYMBOL", "GENE_TYPE", \
-                                  "ENSEMBL_ID", "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
+            self.rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME",
+                                       "GENE_DESC", "CHROMOSOME_CELERA",
+                                       "CHROMOSOME_3.1", "CHROMOSOME_3.4",
+                                       "FISH_BAND", "START_POS_CELERA",
+                                       "STOP_POS_CELERA", "STRAND_CELERA",
+                                       "START_POS_3.1", "STOP_POS_3.1",
+                                       "STRAND_3.1", "START_POS_3.4",
+                                       "STOP_POS_3.4", "STRAND_3.4",
+                                       "CURATED_REF_RGD_ID",
+                                       "CURATED_REF_PUBMED_ID",
+                                       "UNCURATED_PUBMED_ID", "ENTREZ_GENE",
+                                       "UNIPROT_ID", "UNUSED",
+                                       "GENBANK_NUCLEOTIDE", "TIGR_ID",
+                                       "GENBANK_PROTEIN", "UNIGENE_ID",
+                                       "SSLP_RGD_ID", "SSLP_SYMBOL",
+                                       "OLD_SYMBOL", "OLD_NAME", "QTL_RGD_ID",
+                                       "QTL_SYMBOL", "NOMENCLATURE_STATUS",
+                                       "SPLICE_RGD_ID", "SPLICE_SYMBOL",
+                                       "GENE_TYPE", "ENSEMBL_ID",
+                                       "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
 
             # skip all the comment lines beginning with '#' and also the header.
-            rgd_csvr = csv.DictReader(filter(lambda row:  not row[0].startswith('#') and str(row[0]).isdigit(), rgdf), \
-                                          delimiter='\t', fieldnames=self.rgd_column_headers)
+            rgd_csvr = csv.DictReader(filter(lambda row:
+                                                 not row[0].startswith('#') and
+                                             str(row[0]).isdigit(), rgdf),
+                                      delimiter='\t',
+                                      fieldnames=self.rgd_column_headers)
 
             for row in rgd_csvr:
                 yield row
-    
+
     def __str__(self):
         return "RGD_Parser"
 
 
-# this exists mainly as a work around to break the iteration loop if needed during merging.
+# this exists mainly as a way to break the iteration loop if needed during
+# parsing process.
 class GeneTypeError(Exception):
     def __init__(self, value):
         self.value = value
@@ -184,23 +229,35 @@ class GeneTypeError(Exception):
 
 
 class SwissProtParser(Parser):
-    resourceLocation_accession_numbers = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-accession-numbers.belns"
-    resourceLocation_entry_names = "http://resource.belframework.org/belframework/1.0/namespace/swissprot-entry-names.belns"
+    resourceLocation_accession_numbers = """http://resource.belframework.org/
+                belframework/1.0/namespace/swissprot-accession-numbers.belns"""
+    resourceLocation_entry_names = """http://resource.belframework.org/
+                      belframework/1.0/namespace/swissprot-entry-names.belns"""
 
     def __init__(self, file_to_url):
         super(SwissProtParser, self).__init__(file_to_url)
         self.sprot_file = next(iter(file_to_url.keys()))
-        self.encoding = "GRP"
         self.entries = {}
         self.accession_numbers = {}
         self.gene_ids = {}
-        self.entry_names = set({})
+        self.tax_ids = {'9606', '10090', '10116'}
+        self.pro = '{http://uniprot.org/uniprot}protein'
+        self.rec_name = '{http://uniprot.org/uniprot}recommendedName'
+        self.full_name = '{http://uniprot.org/uniprot}fullName'
+        self.short_name = '{http://uniprot.org/uniprot}shortName'
+        self.alt_name = '{http://uniprot.org/uniprot}alternativeName'
+        self.db_ref = '{http://uniprot.org/uniprot}dbReference'
+        self.organism = '{http://uniprot.org/uniprot}organism'
+        self.entry = '{http://uniprot.org/uniprot}entry'
+        self.accession = '{http://uniprot.org/uniprot}accession'
+        self.name = '{http://uniprot.org/uniprot}name'
 
     def parse(self):
         sprot_dict = {}
 
         with gzip.open(self.sprot_file) as sprotf:
-            ctx = etree.iterparse(sprotf, events=('end',), tag='{http://uniprot.org/uniprot}entry')
+            ctx = etree.iterparse(sprotf, events=('end',),
+                                  tag=self.entry)
 
             for ev, e in ctx:
                 temp_dict = {}
@@ -209,65 +266,56 @@ class SwissProtParser(Parser):
                 if e.get('dataset') != 'Swiss-Prot':
                     e.clear()
                     continue
-     
+
                 # stop evaluating if this entry is not for human, mouse, or rat
-                org = e.find('{http://uniprot.org/uniprot}organism')
-                
-                # use a custom exception to break to next iteration (e) if tax ref is not found.
+                org = e.find(self.organism)
+
+                # use a custom exception to break to next iteration (e)
+                # if tax ref is not found.
                 try:
                     for org_child in org:
-                        if org_child.tag == '{http://uniprot.org/uniprot}dbReference':
+                        if org_child.tag == self.db_ref:
                             # restrict by NCBI Taxonomy reference
-                            if org_child.get('id') not in {'9606', '10090', '10116'}:
+                            if org_child.get('id') not in self.tax_ids:
                                 e.clear()
                                 raise GeneTypeError(org_child.get('id'))
                             else:
-                                # add NCBI Taxonomy and the id for the entry to the dict
-                                temp_dict[org_child.get('type')] = org_child.get('id')
+                                # add NCBI Taxonomy and the id for the entry
+                                # to the dict
+                                temp_dict[org_child.get('type')] = \
+                                    org_child.get('id')
                 except GeneTypeError:
                     continue
-                        
+
                 # get entry name, add it to the dict
-                entry_name = e.find('{http://uniprot.org/uniprot}name').text
+                entry_name = e.find(self.name).text
                 temp_dict['name'] = entry_name
-           
-                # get protein data, add recommended full and short names to the dict
-                protein = e.find('{http://uniprot.org/uniprot}protein')
-     
-                for child in protein.find('{http://uniprot.org/uniprot}recommendedName'):
-                    if child.tag == '{http://uniprot.org/uniprot}fullName':
+
+                # get protein data, add recommended full and short names to dict
+                protein = e.find(self.pro)
+
+                for child in protein.find(self.rec_name):
+                    if child.tag == self.full_name:
                         temp_dict['recommendedFullName'] = child.text
-                    if child.tag == '{http://uniprot.org/uniprot}shortName':
+                    if child.tag == self.short_name:
                         temp_dict['recommendedShortName'] = child.text
-                        
                 alt_shortnames = []
                 alt_fullnames = []
 
-                protein = e.find('{http://uniprot.org/uniprot}protein')
-                for altName in protein.findall('{http://uniprot.org/uniprot}alternativeName'):
+                protein = e.find(self.pro)
+                for altName in protein.findall(self.alt_name):
                     for child in altName:
-                        if child.tag == '{http://uniprot.org/uniprot}fullName':
+                        if child.tag == self.full_name:
                             alt_fullnames.append(child.text)
-                        if child.tag == '{http://uniprot.org/uniprot}shortName':
+                        if child.tag == self.short_name:
                             alt_shortnames.append(child.text)
 
                 temp_dict['alternativeFullNames'] = alt_fullnames
                 temp_dict['alternativeShortNames'] = alt_shortnames
 
-                # get gene data
-                #names = []
-                #gene = e.find("{http://uniprot.org/uniprot}gene")
-                #for child in gene.findall("name"):
-                #    if child.get("type") == "primary":
-                #        names.append(name.text)
-                #    if child.get("type") == "synonym":
-                #        names.apped(name.text)
-                 # add gene data to the dict
-                #temp_dict["synonyms"] = names
-
                 # get all accessions
                 entry_accessions = []
-                for entry_accession in e.findall('{http://uniprot.org/uniprot}accession'):
+                for entry_accession in e.findall(self.accession):
                     acc = entry_accession.text
                     entry_accessions.append(acc)
                     if acc in self.accession_numbers:
@@ -277,11 +325,12 @@ class SwissProtParser(Parser):
 
                 # add the array of accessions to the dict
                 temp_dict["accessions"] = entry_accessions
-                    
-                # add dbReference type (human, rat, and mouse) and gene ids to the dict
+
+                # add dbReference type (human, rat, and mouse) and gene ids to
+                # the dict
                 type_set = ['GeneId', 'MGI', 'HGNC', 'RGD']
                 entry_gene_ids = []
-                for dbr in e.findall('{http://uniprot.org/uniprot}dbReference'):
+                for dbr in e.findall(self.db_ref):
                     if dbr.get('type') in type_set:
                         gene_id = dbr.get('id')
                         n_dict[dbr.get('type')] = dbr.get('id')
@@ -297,5 +346,16 @@ class SwissProtParser(Parser):
     def __str__(self):
         return 'SwissProt_Parser'
 
-    
 
+class AffyParser(Parser):
+    resourceLocation_accession_numbers = """http://resource.belframework.org/
+                belframework/1.0/namespace/swissprot-accession-numbers.belns"""
+    resourceLocation_entry_names = """http://resource.belframework.org/
+                belframework/1.0/namespace/swissprot-entry-names.belns"""
+
+    def __init__(self, file_to_url):
+        super(AffyParser, self).__init__(file_to_url)
+        self.affy_file = next(iter(file_to_url.keys()))
+
+    def __str__(self):
+        return 'Affy_Parser'

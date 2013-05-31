@@ -5,7 +5,8 @@ import parsers
 from collections import OrderedDict
 
 class paths(object):
-    def __init__(self, build_dir, dataset_config, dataset_dir, equivalence_dict, equivalence_dir, info, namespace_dir):
+    def __init__(self, build_dir, dataset_config, dataset_dir, equivalence_dict,
+                 equivalence_dir, info, namespace_dir):
         self.__build_dir = build_dir
         self.__dataset_config = dataset_config
         self.__dataset_dir = dataset_dir
@@ -73,5 +74,7 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "hgnc-hgnc_
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "mgi-mgi_gtpgup.gff.tsv") : "ftp://ftp.informatics.jax.org/pub/reports/MRK_List2.rpt"},  parsers.MGIParser))
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "rgd-genes_rat.tsv") : "ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt"}, parsers.RGDParser))
+
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "sprot-uniprot_sprot.xml.gz") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/sprot-uniprot_sprot.xml.gz"}, parsers.SwissProtParser))
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir, "sprot-uniprot_sprot.xml.gz") : "file:///media/home/jordan/Workspaces/openbel-contributions/resource_generator/tmp0/datasets/sprot-uniprot_sprot.xml.gz"}, parsers.SwissProtParser))

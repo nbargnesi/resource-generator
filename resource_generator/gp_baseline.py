@@ -53,9 +53,6 @@ os.chdir(resource_dir)
 if not os.path.exists(path_constants.dataset_dir):
     os.mkdir(path_constants.dataset_dir)
 
-# create empty dictionary to hold all ns values and equivalence
-#gp_dict = {}
-
 # parse reference dataset INFO (entrez gene)
 for path, url in gp_reference_info.file_to_url.items():
     download(url, path)
@@ -179,7 +176,7 @@ with open('entrez_info.txt', 'w') as f:
                     x.get('Full_name_from_nomenclature_authority'),
                 'Other_designations' : x.get('Other_designations').split('|'),
                 'Synonyms' : x.get('Synonyms').split('|') }
-        json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
+        pickle.dump(x, f)
 
 # parse reference dataset HISTORY (entrez gene)
 for path, url in gp_reference_history.file_to_url.items():
@@ -199,7 +196,7 @@ for d in gp_datasets:
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         print ("Running " + str(parser))
-        with open(str(parser) +'.json', 'w') as f:
+        with open(str(parser) +'.txt', 'w') as f:
             for x in parser.parse():
                 hgnc_dict = {}
                 mgi_dict = {}
@@ -241,8 +238,32 @@ for d in gp_datasets:
                 # put together the namespace file for each dataset
                 make_namespace(x, parser)
 
-                # dump each dataset to a .json file
-                json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
+                # dump each dataset to a pickle file
+                pickle.dump(x, f)
+
+# build equivalencies, starting with Entrez. Assign UUID to each unique gene.
+entrez_eq = {}
+hgnc_eq = {}
+mgi_eq = {}
+rgd_eq = {}
+sp_eq = {}
+
+entrez = pickle.load('EntrezGeneInfo_Parser')
+hgnc = pickle.load('HGNC_Parser')
+mgi = pickle.load('MGI_Parser')
+rgd = pickle.load('RGD_Parser')
+sp = pickle.load('SwissProt_Parser')
+
+# entrez is the root, so just generate a UUID for each entry.
+for k, v in entrez:
+    entrez_symbol = k.get('GeneID')
+    # this symbol could be HGNC, MGI, or RGD. Will need to check tax_id.
+    varity_symbol = k.get('Symbol_from_nomenclature_authority')
+    entrez_eq[symbol] = uuid.uuid4()
+
+# use symbol (AKT1), and tax_id column to decide which species it is
+for k, v in hgnc:
+    symbol = k
 
 # write out the namespace files (maybe in another module also?)
 print('Writing namespaces to file ...')

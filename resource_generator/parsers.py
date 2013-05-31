@@ -348,10 +348,6 @@ class SwissProtParser(Parser):
 
 
 class AffyParser(Parser):
-    resourceLocation_accession_numbers = """http://resource.belframework.org/
-                belframework/1.0/namespace/swissprot-accession-numbers.belns"""
-    resourceLocation_entry_names = """http://resource.belframework.org/
-                belframework/1.0/namespace/swissprot-entry-names.belns"""
 
     def __init__(self, file_to_url):
         super(AffyParser, self).__init__(file_to_url)

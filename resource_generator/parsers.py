@@ -5,6 +5,9 @@ from lxml import etree
 import csv
 import gzip
 import uuid
+import urllib
+import zipfile
+import io
 
 class Parser(object):
     def __init__(self, file_to_url):
@@ -68,7 +71,7 @@ class EntrezGeneHistoryParser(Parser):
 
     def parse(self):
         # columns from the Entrez history dataset
-        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",\
+        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
                                      "Discontinued_Symbol", "Discontinued_Date"]
 
          # Dictionary for base gene info
@@ -347,11 +350,97 @@ class SwissProtParser(Parser):
         return 'SwissProt_Parser'
 
 
+def get_data(url):
+    # from url, download and save file
+    REQ = urllib.request.urlopen(url)
+    file_name = url.split('/')[-1]
+    with open(file_name,'b+w') as f:
+        f.write(REQ.read())
+    return file_name
+
+def filter_plus_print(row):
+    #print('Row -- ' +str(row))
+    #print('Row Type -- ' +str(type(row)))
+    return not row.startswith('#')
+    #print("Keeping:" if result else "Removing:", row)
+    #return result
+
 class AffyParser(Parser):
 
     def __init__(self, file_to_url):
         super(AffyParser, self).__init__(file_to_url)
         self.affy_file = next(iter(file_to_url.keys()))
+
+    # here maybe take the downloading and exctracting the files out of
+    # parser() and call only once from __init__. As it is, the data
+    # is being re-downloaded and parsed every time.
+    def parse(self):
+
+        # the arrays we are concerned with
+        array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
+                       'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
+                       'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
+                       'Rat230_2']
+        affy_column_headers = ['Probe Set ID', 'GeneChip Array',
+                               'Species Scientific Name', 'Annotation Date',
+                               'Sequence Type', 'Sequence Source',
+                               'Transcript ID(Array Design)',
+                               'Target Description',
+                               'Representative Public ID',
+                               'Archival UniGene Cluster', 'UniGene ID',
+                               'Genome Version', 'Alignments', 'Gene Title',
+                               'Gene Symbol', 'Chromosomal Location',
+                               'Unigene Cluster Type', 'Ensembl',
+                               'Entrez Gene', 'SwissProt', 'EC', 'OMIM',
+                               'RefSeq Protein ID', 'RefSeq Transcript ID',
+                               'FlyBase', 'AGI', 'WormBase', 'MGI Name',
+                               'RGD Name', 'SGD accession number',
+                               'Gene Ontology Biological Process',
+                               'Gene Ontology Cellular Component',
+                               'Gene Ontology Molecular Function', 'Pathway',
+                               'InterPro', 'Trans Membrane', 'QTL',
+                               'Annotation Description',
+                               'Annotation Transcript Cluster',
+                               'Transcript Assignments', 'Annotation Notes']
+        urls = []
+        with open(self.affy_file, 'rb') as affyf:
+            ctx = etree.iterparse(affyf, events=('start', 'end'))
+
+            # This is certainly not the best way to traverse this tree. Look at
+            # the lxml.etree API more closely for possible implementations when
+            # refactoring
+            for ev, e in ctx:
+                # iterate the Array elements
+                for n in e.findall('Array'):
+                    name = n.get('name')
+                    if name in array_names:
+                        # iterate Annotation elements
+                        for child in n:
+                            if child.get('type') == 'Annot CSV':
+                                # iterate File elements
+                                for g_child in child:
+                                    # get the URL and add to the list
+                                    for gg_child in g_child:
+                                        urls.append(gg_child.text)
+
+        # iterate over the list of URLs returned from the Affy XML feed
+        for link in urls:
+            affy_reader = {}
+
+            # get_data() downloads the file, saves it as a .csv.zip, and
+            # returns a pointer to the file.
+            n = get_data(link)
+            z = zipfile.ZipFile(n, 'r')
+
+            # only want the .csv from the archive (also contains a .txt)
+            for name in z.namelist():
+                if '.csv' in name:
+                    print('Extracting - ' +name)
+                    affy_reader = csv.DictReader(filter(filter_plus_print,
+                                                        io.TextIOWrapper(z.open(name))),
+                                                        delimiter=',')
+                    for x in affy_reader:
+                        yield x
 
     def __str__(self):
         return 'Affy_Parser'

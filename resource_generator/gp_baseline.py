@@ -22,6 +22,7 @@ import sys
 import tarfile
 import parsers
 import json
+from collections import defaultdict
 from equivalence_dictionaries import EGID_to_HGNC, EGID_to_MGI, EGID_to_SP, \
      EGID_eq
 
@@ -69,6 +70,7 @@ mgi_ns_dict = {}
 rgd_ns_dict = {}
 sp_ns_dict = {}
 sp_acc_ns_dict = {}
+affy_ns_dict = {}
 
 # miscRNA should not be used here, as it will be handled in a special case.
 # For completion sake it is included.
@@ -162,13 +164,16 @@ def make_namespace(row, parser):
         sp_ns_dict[row.get('name')] = 'GRP'
         accessions = row.get('accessions')
         for acc in accessions:
-            sp_acc_ns_dict[acc] = 'GRM'
+            sp_acc_ns_dict[acc] = 'GRP'
 
-###############################################################################
+    if str(parser) == 'Affy_Parser':
+        probe_set_id = x.get('Probe Set ID')
+        if probe_set_id not in affy_ns_dict:
+            affy_ns_dict[probe_set_id] = 'R'
 
 entrez_dict = {}
 gene_info_dict = parser.parse()
-with open('entrez_info.txt', 'w') as f:
+with open('entrez_info.txt', 'wb') as f:
     for x in gene_info_dict:
         make_namespace(x, parser)
         entrez_dict[x.get('GeneID')] = {
@@ -190,17 +195,21 @@ with open('entrez_history.txt', 'w') as f:
     for x in gene_history_dict:
         json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
+affy_def = defaultdict(list)
 # parse dependent datasets
 for d in gp_datasets:
     for path, url in d.file_to_url.items():
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         print ("Running " + str(parser))
-        with open(str(parser) +'.txt', 'w') as f:
+        if str(parser) is not 'Affy_Parser':
+            break
+        with open(str(parser) +'.txt', 'wb') as f:
             for x in parser.parse():
                 hgnc_dict = {}
                 mgi_dict = {}
                 sp_dict = {}
+                affy_dict = {}
 
                 # build a dict for the HGNC dataset, where the keys will be the
                 # 'Approved Symbol'
@@ -221,13 +230,13 @@ for d in gp_datasets:
 
                 # build a dict for the MGI dataset, where the keys will be the
                 # 'Marker Symbol'
-                if (str(parser)) == 'MGI_Parser':
+                if str(parser) == 'MGI_Parser':
                     mgi_dict[x.get('Marker Symbol')] = {
                         'Marker Synonyms' : x.get('Marker Synonyms') }
 
                 # build a dict for the SwissProt data set, where the keys will
                 # be the 'name'
-                if (str(parser)) == 'SwissProt_Parser':
+                if str(parser) == 'SwissProt_Parser':
                     sp_dict[x.get('name')] = {
                         'recommendedFullName' : x.get('recommendedFullName'),
                         'recommendedShortName' : x.get('recommendedShortName'),
@@ -235,10 +244,18 @@ for d in gp_datasets:
                         'althernativeShortNames' :
                             x.get('alternativeShortNames') }
 
+                # build a dict for the Affy dataset, where the keys will be the
+                # Probe Set ID
+                if str(parser) == 'Affy_Parser':
+                    probe_set_id = x.get('Probe Set ID')
+                    affy_def[probe_set_id].append(x.get('Entrez Gene'))
+                    affy_dict[probe_set_id] = {
+                        'Entrez Gene': x.get('Entrez Gene').split('///')}
+
                 # put together the namespace file for each dataset
                 make_namespace(x, parser)
-
-                # dump each dataset to a pickle file
+                #json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
+                # dump each dataset in bytes to a file (can be loaded later on)
                 pickle.dump(x, f)
 
 # build equivalencies, starting with Entrez. Assign UUID to each unique gene.
@@ -248,24 +265,45 @@ mgi_eq = {}
 rgd_eq = {}
 sp_eq = {}
 
-entrez = pickle.load('EntrezGeneInfo_Parser')
-hgnc = pickle.load('HGNC_Parser')
-mgi = pickle.load('MGI_Parser')
-rgd = pickle.load('RGD_Parser')
-sp = pickle.load('SwissProt_Parser')
+#entrez = pickle.load('EntrezGeneInfo_Parser.txt')
+#hgnc = pickle.load('HGNC_Parser.txt')
+#mgi = pickle.load('MGI_Parser.txt')
+#rgd = pickle.load('RGD_Parser.txt')
+
+'''
+with open('/home/jhourani/openbel-contributions/resource_generator/SwissProt_Parser.txt', 'rb') as f:
+    sp = pickle.load(f)
+count = 0
+acc_list = []
+dup_list = []
+for k, v in sp.items():
+    listo = sp.get('accessions')
+    for a in listo:
+        if a in acc_list:
+            count = count +1
+            dup_list.append(a)
+        else:
+            acc_list.append(a)
+
+print('Count is: ' +str(count))
+for n in dup_list:
+    print(n)
+'''
 
 # entrez is the root, so just generate a UUID for each entry.
-for k, v in entrez:
-    entrez_symbol = k.get('GeneID')
+#for k, v in entrez:
+#    entrez_symbol = k.get('GeneID')
     # this symbol could be HGNC, MGI, or RGD. Will need to check tax_id.
-    varity_symbol = k.get('Symbol_from_nomenclature_authority')
-    entrez_eq[symbol] = uuid.uuid4()
+#    varity_symbol = k.get('Symbol_from_nomenclature_authority')
+#    entrez_eq[symbol] = uuid.uuid4()
 
 # use symbol (AKT1), and tax_id column to decide which species it is
-for k, v in hgnc:
-    symbol = k
+#for k, v in hgnc:
+#    symbol = k
 
 # write out the namespace files (maybe in another module also?)
+
+'''
 print('Writing namespaces to file ...')
 
 with open('entrez-namespace.belns', 'w') as fp:
@@ -291,8 +329,26 @@ with open('swissprot-namespace.belns', 'w') as fp:
 with open('swissprot-accessions-namespace.belns', 'w') as fp:
     for key in sorted(sp_acc_ns_dict):
         fp.write('{0}|{1}\n'.format(key, sp_acc_ns_dict[key]))
+'''
+#with open('/home/jhourani/openbel-contributions/resource_generator/tmp/Affy_Parser.txt', 'rb') as f:
+#    ap = pickle.load(f)
+#    print('Size of affy_dict: ' +str(len(ap)))
+
+with open('affy-namespace.belns', 'w') as fp:
+    for key in sorted(affy_ns_dict):
+        fp.write('{0}|{1}\n'.format(key, affy_ns_dict[key]))
 
 print('Completed gene protein resource generation.')
+print('The length of affy_default_dict: ' +str(len(affy_def)))
+with open('spotcheck.txt', 'w') as f:
+    for k, v in affy_def.items():
+        f.write('The list: ' +str(v) +'\n')
+        new_s = set(v)
+        f.write('The set: ' +str(new_s) +'\n')
+        if len(new_s) > 1:
+            print('CONFLICT!!!')
+            print('Probe Set ID: ' +str(k))
+            print('Problematic values: ' +str(new_s))
 
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):

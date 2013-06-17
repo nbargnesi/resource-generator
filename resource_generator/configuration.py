@@ -135,5 +135,5 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
                                          "affy_data.xml") :
-                               "http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013 "},
+                                'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/affy_data.xml.gz'},
                            parsers.AffyParser))

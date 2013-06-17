@@ -7,6 +7,7 @@ import gzip
 import uuid
 import urllib
 import zipfile
+from collections import defaultdict
 import io
 
 class Parser(object):
@@ -27,13 +28,9 @@ class EntrezGeneInfoParser(Parser):
         self.entrez_gene_info = next(file_keys)
 
     def parse(self):
-        gene_dict = {}
-        # define a csv reader object
-        info_csvreader = csv.reader(gzip_to_text(self.entrez_gene_info),
-                                    delimiter="\t", quotechar="\"")
 
         # columns for an Entrez gene info dataset.
-        self.gene_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag",
+        entrez_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag",
                                   "Synonyms", "dbXrefs", "chromosome",
                                   "map_location", "description",
                                   "type_of_gene",
@@ -42,19 +39,14 @@ class EntrezGeneInfoParser(Parser):
                                   "Nomenclature_status",
                                   "Other_designations", "Modification_date"]
 
-        # Dictionary for base gene info
-        temp_dict = {}
+      # Dictionary for base gene info
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info),
                                    delimiter='\t',
-                                   fieldnames=self.gene_info_headers)
+                                   fieldnames=entrez_info_headers)
+
         for row in info_csvr:
             if row['tax_id'] in ('9606', '10090', '10116'):
                 yield row
-
-    def __walk__(self, history_dict, val):
-        while val in history_dict:
-            val = history_dict[val]
-        return None if val == '-' else val
 
     def __str__(self):
         return "EntrezGeneInfo_Parser"
@@ -70,24 +62,18 @@ class EntrezGeneHistoryParser(Parser):
         self.entrez_gene_history = next(file_keys)
 
     def parse(self):
-        # columns from the Entrez history dataset
-        self.gene_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
-                                     "Discontinued_Symbol", "Discontinued_Date"]
+
+        entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
+                                "Discontinued_Symbol", "Discontinued_Date"]
 
          # Dictionary for base gene info
-        temp_dict = {}
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history),
                                       delimiter='\t',
-                                      fieldnames=self.gene_history_headers)
+                                      fieldnames=entrez_history_headers)
 
         for row in history_csvr:
-            if row["tax_id"] in ("9606", "10090", "10116"):
+            if row['tax_id'] in ("9606", "10090", "10116"):
                 yield row
-
-    def __walk__(self, history_dict, val):
-        while val in history_dict:
-            val = history_dict[val]
-        return None if val == '-' else val
 
     def __str__(self):
         return "EntrezGeneHistory_Parser"
@@ -102,40 +88,16 @@ class HGNCParser(Parser):
         self.hgnc_file = next(iter(file_to_url.keys()))
 
     def parse(self):
+
         # use iso-8859-1 as default encoding.
         with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
 
-            # columns from the HGNC dataset
-            self.hgnc_column_headers = ["HGNC ID", "Approved Symbol",
-                                        "Approved Name", "Status",
-                                        "Locus Type", "Locus Group",
-                                        "Previous Symbols", "Previous Names",
-                                        "Synonyms", "Name Synonyms",
-                                        "Chromosome", "Date Approved",
-                                        "Date Modified", "Date Symbol Changed",
-                                        "Date Name Changed",
-                                        "Accession Numbers", "Enzyme IDs",
-                                        "Entrez0 Gene ID", "Ensembl Gene ID",
-                                        "Mouse Genome Database ID",
-                                        "Specialist Database Links",
-                                        "Specialist Database IDs",
-                                        "Pubmed IDs", "RefSeq IDs",
-                                        "Gene Family Tag",
-                                        "Gene family description",
-                                        "Record Type", "Primary IDs",
-                                        "Secondary IDs",
-                                        "CCDS IDs", "VEGA IDs",
-                                        "Locus Specific Databases",
-                                        "Entrez1 Gene ID", "OMIM ID", "RefSeq",
-                                        "UniProtID", "Ensembl ID", "UCSC ID",
-                                        "Mouse Genome Database ID",
-                                        "Rat Genome Database ID"]
-
-            hgnc_csvr = csv.DictReader(hgncf, delimiter='\t',
-                                       fieldnames=self.hgnc_column_headers)
-
-            # skip the first header row
-            next(hgnc_csvr)
+            # Note that HGNC uses TWO columns named the same thing for Entrez
+            # Gene ID. Currently we are not using these columns and it is not a
+            # big deal, but in the future we could account for this by using
+            # custom headers, (like EntrezGeneInfo_Parser) or resolving to the
+            # SECOND of the Entrez Gene ID columns.
+            hgnc_csvr = csv.DictReader(hgncf, delimiter='\t')
 
             for row in hgnc_csvr:
                 yield row
@@ -154,20 +116,8 @@ class MGIParser(Parser):
 
     def parse(self):
         with open(self.mgi_file, "r") as mgif:
+            mgi_csvr = csv.DictReader(mgif, delimiter='\t')
 
-           # columns from the MGI dataset
-            self.mgi_column_headers = ["MGI Marker Accession ID", "Chr",
-                                       "cM Position", "genome coordinate start",
-                                       "genome coordinate end", "strand",
-                                       "Marker Symbol", "Status", "Marker Name",
-                                       "Marker Type", "Feature Type",
-                                       "Marker Synonyms (pipe-separated)"]
-
-            mgi_csvr = csv.DictReader(mgif, delimiter='\t',
-                                      fieldnames=self.mgi_column_headers)
-
-            # skip the first header row
-            next(mgi_csvr)
             for row in mgi_csvr:
                 yield row
 
@@ -185,35 +135,10 @@ class RGDParser(Parser):
 
     def parse(self):
         with open(self.rgd_file, "r") as rgdf:
-
-            # columns from the RGD dataset
-            self.rgd_column_headers = ["GENE_RGD_ID", "SYMBOL", "NAME",
-                                       "GENE_DESC", "CHROMOSOME_CELERA",
-                                       "CHROMOSOME_3.1", "CHROMOSOME_3.4",
-                                       "FISH_BAND", "START_POS_CELERA",
-                                       "STOP_POS_CELERA", "STRAND_CELERA",
-                                       "START_POS_3.1", "STOP_POS_3.1",
-                                       "STRAND_3.1", "START_POS_3.4",
-                                       "STOP_POS_3.4", "STRAND_3.4",
-                                       "CURATED_REF_RGD_ID",
-                                       "CURATED_REF_PUBMED_ID",
-                                       "UNCURATED_PUBMED_ID", "ENTREZ_GENE",
-                                       "UNIPROT_ID", "UNUSED",
-                                       "GENBANK_NUCLEOTIDE", "TIGR_ID",
-                                       "GENBANK_PROTEIN", "UNIGENE_ID",
-                                       "SSLP_RGD_ID", "SSLP_SYMBOL",
-                                       "OLD_SYMBOL", "OLD_NAME", "QTL_RGD_ID",
-                                       "QTL_SYMBOL", "NOMENCLATURE_STATUS",
-                                       "SPLICE_RGD_ID", "SPLICE_SYMBOL",
-                                       "GENE_TYPE", "ENSEMBL_ID",
-                                       "GENE_REFSEQ_STATUS", "UNUSED_OTHER"]
-
             # skip all the comment lines beginning with '#' and also the header.
             rgd_csvr = csv.DictReader(filter(lambda row:
-                                                 not row[0].startswith('#') and
-                                             str(row[0]).isdigit(), rgdf),
-                                      delimiter='\t',
-                                      fieldnames=self.rgd_column_headers)
+                                                 not row[0].startswith('#'), rgdf),
+                                      delimiter='\t')
 
             for row in rgd_csvr:
                 yield row
@@ -222,8 +147,8 @@ class RGDParser(Parser):
         return "RGD_Parser"
 
 
-# this exists mainly as a way to break the iteration loop if needed during
-# parsing process.
+# This class exists mainly as a way to break the iteration loop during parsing
+# of the SwissProt dataset if needed.
 class GeneTypeError(Exception):
     def __init__(self, value):
         self.value = value
@@ -332,11 +257,13 @@ class SwissProtParser(Parser):
                 # add dbReference type (human, rat, and mouse) and gene ids to
                 # the dict
                 type_set = ['GeneId', 'MGI', 'HGNC', 'RGD']
-                entry_gene_ids = []
                 for dbr in e.findall(self.db_ref):
                     if dbr.get('type') in type_set:
                         gene_id = dbr.get('id')
-                        n_dict[dbr.get('type')] = dbr.get('id')
+                        if dbr.get('type') not in n_dict:
+                            n_dict[dbr.get('type')] = [dbr.get('id')]
+                        else:
+                            n_dict[dbr.get('type')].append(dbr.get('id'))
                 temp_dict['dbReference'] = n_dict
 
                 # clear the tree before next iteration
@@ -350,6 +277,8 @@ class SwissProtParser(Parser):
         return 'SwissProt_Parser'
 
 
+# Helper function for AffyParser. This will save each of the downloaded
+# URLs and return the file pointer.
 def get_data(url):
     # from url, download and save file
     REQ = urllib.request.urlopen(url)
@@ -359,11 +288,8 @@ def get_data(url):
     return file_name
 
 def filter_plus_print(row):
-    #print('Row -- ' +str(row))
-    #print('Row Type -- ' +str(type(row)))
     return not row.startswith('#')
-    #print("Keeping:" if result else "Removing:", row)
-    #return result
+
 
 class AffyParser(Parser):
 
@@ -381,27 +307,7 @@ class AffyParser(Parser):
                        'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
                        'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
                        'Rat230_2']
-        affy_column_headers = ['Probe Set ID', 'GeneChip Array',
-                               'Species Scientific Name', 'Annotation Date',
-                               'Sequence Type', 'Sequence Source',
-                               'Transcript ID(Array Design)',
-                               'Target Description',
-                               'Representative Public ID',
-                               'Archival UniGene Cluster', 'UniGene ID',
-                               'Genome Version', 'Alignments', 'Gene Title',
-                               'Gene Symbol', 'Chromosomal Location',
-                               'Unigene Cluster Type', 'Ensembl',
-                               'Entrez Gene', 'SwissProt', 'EC', 'OMIM',
-                               'RefSeq Protein ID', 'RefSeq Transcript ID',
-                               'FlyBase', 'AGI', 'WormBase', 'MGI Name',
-                               'RGD Name', 'SGD accession number',
-                               'Gene Ontology Biological Process',
-                               'Gene Ontology Cellular Component',
-                               'Gene Ontology Molecular Function', 'Pathway',
-                               'InterPro', 'Trans Membrane', 'QTL',
-                               'Annotation Description',
-                               'Annotation Transcript Cluster',
-                               'Transcript Assignments', 'Annotation Notes']
+
         urls = []
         with open(self.affy_file, 'rb') as affyf:
             ctx = etree.iterparse(affyf, events=('start', 'end'))
@@ -436,9 +342,12 @@ class AffyParser(Parser):
             for name in z.namelist():
                 if '.csv' in name:
                     print('Extracting - ' +name)
-                    affy_reader = csv.DictReader(filter(filter_plus_print,
+                    # wrap in a TextIOWrapper. otherwise it returns bytes.
+                    affy_reader = csv.DictReader(filter(lambda x:
+                                                        not x.startswith('#'),
                                                         io.TextIOWrapper(z.open(name))),
                                                         delimiter=',')
+
                     for x in affy_reader:
                         yield x
 

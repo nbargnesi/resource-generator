@@ -26,7 +26,7 @@ import uuid
 import pdb
 import namespaces
 import equiv
-import write_files
+import write
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
@@ -63,17 +63,12 @@ for path, url in gp_reference_info.file_to_url.items():
 parser = gp_reference_info.parser_class(gp_reference_info.file_to_url)
 print("Running " + str(parser))
 
-entrez_dict = {}
 entrez_info_dict = parser.parse()
 with open('entrez_info.txt', 'wb') as f:
     for x in entrez_info_dict:
         namespaces.make_namespace(x, parser)
+        # generate a new UUID for all entrez (only first time though!)
         equiv.equiv(x.get('GeneID'), 'entrez')
-        entrez_dict[x.get('GeneID')] = {
-            'Full_name_from_nomenclature_authority' :
-                x.get('Full_name_from_nomenclature_authority'),
-            'Other_designations' : x.get('Other_designations').split('|'),
-            'Synonyms' : x.get('Synonyms').split('|') }
         equiv.make_eq_dict(x.get('GeneID'),
                            x.get('Symbol_from_nomenclature_authority'),
                            x.get('tax_id'))
@@ -97,21 +92,22 @@ for d in gp_datasets:
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         print ("Running " + str(parser))
-        spaces = ['HGNC_Parser', 'MGI_Parser', 'RGD_Parser', 'SwissProt_Parser']
-        if str(parser) not in spaces:
+        if 'Affy' in str(parser):
             break
         for x in parser.parse():
-            # put together the namespace file for each dataset
-            namespaces.make_namespace(x, parser)
+            if str(parser) == 'SwissProt_Parser':
+                # this method contains a boolean value to ensure it is only
+                # called once (the first iteration).
+                equiv.build_equivs()
+                namespaces.make_namespace(x, parser)
+            else:
+                # put together the namespace file for each dataset
+                namespaces.make_namespace(x, parser)
 
-print('Writing namespaces to file ...')
-print('Writing uuids ... ')
 print('Completed gene protein resource generation.')
-print('Number of new HGNC uuids: ' +str(len(hgnc_list)))
-print('Number of new MGI uuids: ' +str(len(mgi_list)))
-print('Number of new RGD uuids: ' +str(len(rgd_list)))
-print('Number of new SP uuids: ' +str(len(sp_list)))
-
+print('Writing namespaces to file ...')
+write.write_out()
+equiv.changes()
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):
         datasets.add(fname)

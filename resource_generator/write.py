@@ -57,6 +57,10 @@ def write_out():
         for key in sorted(equiv.sp_eq):
             fp.write('{0}|{1}\n'.format(key, equiv.sp_eq[key]))
 
+    with open('sp-accession-uuids.txt', 'w') as fp:
+        for key in sorted(equiv.sp_acc_eq):
+            fp.write('{0}|{1}\n'.format(key, equiv.sp_acc_eq[key]))
+
     with open('new-hgnc.txt', 'w') as fp:
         for val in equiv.hgnc_list:
             fp.write(val +'\n')
@@ -73,6 +77,7 @@ def write_out():
         for val in equiv.sp_list:
             fp.write(val +'\n')
 
+def changes():
     print('Number of new HGNC uuids: ' +str(len(equiv.hgnc_list)))
     print('Number of new MGI uuids: ' +str(len(equiv.mgi_list)))
     print('Number of new RGD uuids: ' +str(len(equiv.rgd_list)))

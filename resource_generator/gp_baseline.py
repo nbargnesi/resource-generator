@@ -92,7 +92,7 @@ for d in gp_datasets:
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         print ("Running " + str(parser))
-        if 'Affy' in str(parser):
+        if str(parser) == 'Affy_Parser':
             break
         for x in parser.parse():
             if str(parser) == 'SwissProt_Parser':
@@ -104,10 +104,11 @@ for d in gp_datasets:
                 # put together the namespace file for each dataset
                 namespaces.make_namespace(x, parser)
 
+equiv.finish()
 print('Completed gene protein resource generation.')
 print('Writing namespaces to file ...')
 write.write_out()
-equiv.changes()
+write.changes()
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):
         datasets.add(fname)

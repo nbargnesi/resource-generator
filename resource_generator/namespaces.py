@@ -127,15 +127,18 @@ def make_namespace(row, parser):
         rgd_map[row.get('GENE_RGD_ID')] = row.get('SYMBOL')
 
     if str(parser) == 'SwissProt_Parser':
-        sp_ns_dict[row.get('name')] = 'GRP'
+        gene_name = row.get('name')
+        sp_ns_dict[gene_name] = 'GRP'
         accessions = row.get('accessions')
         # build equivalency for SwissProt here, because we have access to the
         # entry from the file being parsed. Maybe move during refactoring.
         equiv.build_sp_eq(row)
+        equiv.build_acc_data(accessions, gene_name)
         for acc in accessions:
             sp_acc_ns_dict[acc] = 'GRP'
 
     if str(parser) == 'Affy_Parser':
+        equiv.finish_acc()
         probe_set_id = row.get('Probe Set ID')
         if probe_set_id not in affy_ns_dict:
             affy_ns_dict[probe_set_id] = 'R'

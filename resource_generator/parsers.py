@@ -7,7 +7,6 @@ import gzip
 import uuid
 import urllib
 import zipfile
-from collections import defaultdict
 import io
 
 class Parser(object):

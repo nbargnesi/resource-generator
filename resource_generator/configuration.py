@@ -134,6 +134,16 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
                            parsers.SwissProtParser))
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
+                                               'gene2acc.gz') :
+                                      'file:///home/jhourani/Downloads/gene2accession.gz'},
+                                 parsers.Gene2AccParser))
+
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
                                          "affy_data.xml") :
                                 'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/affy_data.xml.gz'},
                            parsers.AffyParser))
+
+# gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
+#                                                'gene2acc.gz') :
+#                                       'ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz'},
+#                                  parsers.Gene2AccParser))

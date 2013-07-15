@@ -1,28 +1,8 @@
-#!/usr/bin/env python3
 # coding: utf-8
 #
 # namespaces.py
 
-from common import download
-from configparser import ConfigParser
-from configuration import path_constants, gp_datasets, gp_reference_info, \
-     gp_reference_history
-import argparse
-import errno
-import os
-import pdb
-import pickle
-import re
-import sys
-import tarfile
-import parsers
-import json
-import uuid
-import pdb
-from collections import defaultdict
 import equiv
-#from equivalence_dictionaries import EGID_to_HGNC, EGID_to_MGI, EGID_to_SP, \
-#     EGID_eq
 
 # namespace dictionaries
 entrez_ns_dict = {}
@@ -133,12 +113,15 @@ def make_namespace(row, parser):
         # build equivalency for SwissProt here, because we have access to the
         # entry from the file being parsed. Maybe move during refactoring.
         equiv.build_sp_eq(row)
+        # equivalency for accessions
         equiv.build_acc_data(accessions, gene_name)
         for acc in accessions:
             sp_acc_ns_dict[acc] = 'GRP'
 
     if str(parser) == 'Affy_Parser':
-        equiv.finish_acc()
+        # affy equivalence does not need the namespace necessarily, so its ok
+        # to compute this now, before namespace is complete.
+        equiv.affys(row)
         probe_set_id = row.get('Probe Set ID')
         if probe_set_id not in affy_ns_dict:
             affy_ns_dict[probe_set_id] = 'R'

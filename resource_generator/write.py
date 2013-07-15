@@ -3,10 +3,11 @@
 # As of now, this is just a module to print out the datasets
 # in some readable format so the results can be evaluated.
 #
-# write_files.py
+# write.py
 
 import namespaces
 import equiv
+import json
 
 def write_out():
     with open('entrez-namespace.belns', 'w') as fp:
@@ -61,6 +62,10 @@ def write_out():
         for key in sorted(equiv.sp_acc_eq):
             fp.write('{0}|{1}\n'.format(key, equiv.sp_acc_eq[key]))
 
+    with open('affy-uuids.txt', 'w') as fp:
+        for key in sorted(equiv.affy_eq):
+            fp.write('{0}|{1}\n'.format(key, equiv.affy_eq[key]))
+
     with open('new-hgnc.txt', 'w') as fp:
         for val in equiv.hgnc_list:
             fp.write(val +'\n')
@@ -76,6 +81,11 @@ def write_out():
     with open('new-sp.txt', 'w') as fp:
         for val in equiv.sp_list:
             fp.write(val +'\n')
+
+    print('refseq size: ' +str(len(equiv.refseq)))
+    with open('refseq.txt', 'w') as fp:
+        for x in equiv.refseq:
+            json.dump(x, fp, sort_keys=True, indent=4, separators=(',', ':'))
 
 def changes():
     print('Number of new HGNC uuids: ' +str(len(equiv.hgnc_list)))

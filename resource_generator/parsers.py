@@ -1,10 +1,11 @@
 # coding: utf-8
+#
+# parsers.py
 
 from common import gzip_to_text
 from lxml import etree
 import csv
 import gzip
-import uuid
 import urllib
 import zipfile
 import io
@@ -38,7 +39,7 @@ class EntrezGeneInfoParser(Parser):
                                   "Nomenclature_status",
                                   "Other_designations", "Modification_date"]
 
-      # Dictionary for base gene info
+      # dictionary for base gene info
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info),
                                    delimiter='\t',
                                    fieldnames=entrez_info_headers)
@@ -65,7 +66,7 @@ class EntrezGeneHistoryParser(Parser):
         entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
                                 "Discontinued_Symbol", "Discontinued_Date"]
 
-         # Dictionary for base gene info
+         # dictionary for base gene info
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history),
                                       delimiter='\t',
                                       fieldnames=entrez_history_headers)
@@ -180,7 +181,6 @@ class SwissProtParser(Parser):
         self.name = '{http://uniprot.org/uniprot}name'
 
     def parse(self):
-        sprot_dict = {}
 
         with gzip.open(self.sprot_file) as sprotf:
             ctx = etree.iterparse(sprotf, events=('end',),
@@ -189,6 +189,7 @@ class SwissProtParser(Parser):
             for ev, e in ctx:
                 temp_dict = {}
                 n_dict = {}
+
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
                     e.clear()
@@ -260,9 +261,9 @@ class SwissProtParser(Parser):
                     if dbr.get('type') in type_set:
                         gene_id = dbr.get('id')
                         if dbr.get('type') not in n_dict:
-                            n_dict[dbr.get('type')] = [dbr.get('id')]
+                            n_dict[dbr.get('type')] = [gene_id]
                         else:
-                            n_dict[dbr.get('type')].append(dbr.get('id'))
+                            n_dict[dbr.get('type')].append(gene_id)
                 temp_dict['dbReference'] = n_dict
 
                 # clear the tree before next iteration
@@ -296,7 +297,7 @@ class AffyParser(Parser):
         super(AffyParser, self).__init__(file_to_url)
         self.affy_file = next(iter(file_to_url.keys()))
 
-    # here maybe take the downloading and exctracting the files out of
+    # Here maybe take the downloading and exctracting the files out of
     # parser() and call only once from __init__. As it is, the data
     # is being re-downloaded and parsed every time.
     def parse(self):
@@ -352,3 +353,33 @@ class AffyParser(Parser):
 
     def __str__(self):
         return 'Affy_Parser'
+
+class Gene2AccParser(Parser):
+
+    def __init__(self, file_to_url):
+        super(Gene2AccParser, self).__init__(file_to_url)
+        self.gene2acc_file = next(iter(file_to_url.keys()))
+
+    def parse(self):
+
+        # would like to have DictReader handle this, but need a way to
+        # deal with the special case of the first value beginning with
+        # a hashtag. i.e. #Format: <-- is NOT a column header.
+        column_headers = ['tax_id', 'GeneID', 'status',
+                          'RNA nucleotide accession.version',
+                          'RNA nucleotide gi', 'protein accession.version',
+                          'protein gi', 'genomic nucleotide accession.version',
+                          'genomic nucleotide gi',
+                          'start position on the genomic accession',
+                          'end position on the genomic accession',
+                          'orientation', 'assembly',
+                          'mature peptide accession.version',
+                          'mature peptide gi', 'Symbol']
+
+        g2a_reader = csv.DictReader(gzip_to_text(self.gene2acc_file), delimiter='\t',
+                                    fieldnames=column_headers)
+        for row in g2a_reader:
+            yield row
+
+    def __str__(self):
+        return 'Gene2Acc_Parser'

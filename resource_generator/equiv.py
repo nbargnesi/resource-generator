@@ -4,7 +4,6 @@
 #
 import uuid
 import namespaces
-import pdb
 from collections import deque, defaultdict
 
 entrez_eq = {}
@@ -21,6 +20,7 @@ rgd_list = []
 sp_list = []
 booly = False
 
+# this method is called once, to build an equivalence dict
 def build_equivs():
     global booly
     if not booly:
@@ -131,10 +131,10 @@ def build_sp_eq(row):
                     sp_eq[sp_name] = uuid.uuid4()
                 else:
                     sp_eq[sp_name] = temp_id
-        # more than one alt_id then generate a new uuid
+        # > 1 alt_id then generate a new uuid
         else:
             sp_eq[row.get('name')] = uuid.uuid4()
-    # more than one Entrez id than generate a new uuid
+    # > 1 entrez id than generate a new uuid
     else:
         sp_eq[row.get('name')] = uuid.uuid4()
 
@@ -143,6 +143,7 @@ sp_acc_eq = {}
 def build_acc_data(accessions, gene_name):
     # turn list into a queue
     q = deque(accessions)
+    # primary accession name is first one on the queue
     primary = q.popleft()
     for item in q:
         acc_helper_dict[item].append(gene_name)
@@ -152,14 +153,87 @@ def build_acc_data(accessions, gene_name):
 def finish():
     for sec_acc_id, v in acc_helper_dict.items():
         # only maps to one primary accession, same uuid
-        #pdb.set_trace()
         if len(v) == 1:
             sp_acc_eq[sec_acc_id] = sp_eq.get(v[0])
-       # maps to > 1 primary accession, give it a new uuid.
-        elif len(v) > 1:
-            sp_acc_eq[sec_acc_id] = uuid.uuid4()
+        # maps to > 1 primary accession, give it a new uuid.
         else:
-            print('YOU GOTTA PROBLEM MAN!!!')
+            sp_acc_eq[sec_acc_id] = uuid.uuid4()
+
+refseq = {}
+sd = {}
+# fills a dict mapping (entrez_gene -> refseq status)
+def build_refseq(row):
+    target_pool = ['9606', '10116', '10090']
+    valid_status = ['REVIEWED', 'VALIDATED', 'PROVISIONAL', 'PREDICTED',
+                    'MODEL', 'INFERRED']
+    taxid = row.get('tax_id')
+    status = row.get('status')
+    entrez_gene = row.get('GeneID')
+    if taxid in target_pool and status in valid_status:
+        refseq[entrez_gene] = status
+
+ref_status = {'REVIEWED' : 0,
+              'VALIDATED' : 1,
+              'PROVISIONAL' : 2,
+              'PREDICTED' : 3,
+              'MODEL' : 4,
+              'INFERRED' : 5,
+              '-' : 6}
+affy_eq = {}
+def affys(row):
+    gene_id = row.get('Entrez Gene')
+    probe_id = row.get('Probe Set ID')
+    if probe_id == '100167_f_at':
+        print('gene_id to start with - '+gene_id)
+
+    if gene_id is not None and '---' not in gene_id:
+
+        # need the space before and after '///' because that is how it is parsed.
+        entrez_ids = gene_id.split(' /// ')
+
+        # for 1 entrez mapping, use the entez uuid
+        if len(entrez_ids) == 1:
+            status = entrez_eq.get(entrez_ids[0])
+            if status is None:
+                affy_eq[probe_id] = uuid.uuid4()
+            else:
+                affy_eq[probe_id] = status
+        # we have > 1 entrez mapping, resolve to one.
+        else:
+            adjacent_list = []
+            for entrez_gene in entrez_ids:
+                refstatus = refseq.get(entrez_gene)
+                adjacent_list.append(ref_status.get(refstatus))
+
+            # zipping yields a list of tuples like [('5307',0), ('104',2), ('3043',None)]
+            # i.e. [(entrez_id, refseq_status)]
+            list_of_tuples = list(zip(entrez_ids, adjacent_list))
+
+            # get rid of all 'None' tuples (No entrez mapping)
+            list_of_tuples = [tup for tup in list_of_tuples if tup[1] is not None]
+
+            # no mapping, generate new uuid
+            if len(list_of_tuples) == 0:
+                affy_eq[probe_id] = uuid.uuid4()
+
+            # multiple entrez, resolve by refseq status
+            else:
+                # min tuple is highest refseq status (0 the best choice)
+                min_tuple = min(list_of_tuples, key=lambda x: x[1])
+                min_refseq = min_tuple[1]
+                lowest_tuples = []
+
+                for item in list_of_tuples:
+                    if item[1] == min_refseq:
+                        lowest_tuples.append(item)
+
+                # if mutiple genes with same refseq, resolve by lowest gene #
+                target_tuple = min(lowest_tuples)
+                affy_eq[probe_id] = entrez_eq.get(target_tuple[0])
+
+    # no entrez mapping, create a new uuid
+    else:
+        affy_eq[probe_id] = uuid.uuid4()
 
 def to_entrez(gene_id):
     converted_id = entrez_eq_dict.get(gene_id)

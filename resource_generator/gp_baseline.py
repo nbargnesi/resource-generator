@@ -9,25 +9,22 @@
 #   -v    enables verbose mode
 
 from common import download
-from configparser import ConfigParser
 from configuration import path_constants, gp_datasets, gp_reference_info, \
      gp_reference_history
 import argparse
-import errno
 import os
 import pdb
 import pickle
-import re
-import sys
 import tarfile
-import parsers
 import json
-import uuid
 import pdb
 import namespaces
 import equiv
 import write
+import time
 
+# start program timer
+start_time = time.time()
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
 parser.add_argument("-o", required=False, nargs=1, metavar="EQUIVALENCE FILE",
@@ -88,13 +85,18 @@ with open('entrez_history.txt', 'w') as f:
 
 # parse dependent datasets
 for d in gp_datasets:
+    p_time = time.time()
     for path, url in d.file_to_url.items():
         download(url, path)
         parser = d.parser_class(d.file_to_url)
-        print ("Running " + str(parser))
-        if str(parser) == 'Affy_Parser':
-            break
+        print('Running ' +str(parser))
+        #pool = ['RGD_Parser', 'MGI_Parser', 'SwissProt_Parser', 'HGNC_Parser']
+        #if str(parser) in pool:
+        #    break
         for x in parser.parse():
+            if str(parser) == 'Gene2Acc_Parser':
+                # to be used in affy probe set equivalencing
+                equiv.build_refseq(x)
             if str(parser) == 'SwissProt_Parser':
                 # this method contains a boolean value to ensure it is only
                 # called once (the first iteration).
@@ -103,12 +105,17 @@ for d in gp_datasets:
             else:
                 # put together the namespace file for each dataset
                 namespaces.make_namespace(x, parser)
+        print(str(parser) +' ran in ' +str(((time.time() - p_time) / 60)) \
+                  +' minutes')
 
 equiv.finish()
 print('Completed gene protein resource generation.')
 print('Writing namespaces to file ...')
 write.write_out()
 write.changes()
+
+# print runtime of the program
+print('Total runtime is ' +str(((time.time() - start_time) / 60)) +' minutes')
 with tarfile.open("datasets.tar", "w") as datasets:
     for fname in os.listdir(path_constants.dataset_dir):
         datasets.add(fname)

@@ -6,7 +6,7 @@ from common import gzip_to_text
 from lxml import etree
 import csv
 import gzip
-import urllib
+import urllib.request
 import zipfile
 import io
 
@@ -64,7 +64,7 @@ class EntrezGeneHistoryParser(Parser):
     def parse(self):
 
         entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
-                                "Discontinued_Symbol", "Discontinued_Date"]
+                                  "Discontinued_Symbol", "Discontinued_Date"]
 
          # dictionary for base gene info
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history),
@@ -95,7 +95,7 @@ class HGNCParser(Parser):
             # Note that HGNC uses TWO columns named the same thing for Entrez
             # Gene ID. Currently we are not using these columns and it is not a
             # big deal, but in the future we could account for this by using
-            # custom headers, (like EntrezGeneInfo_Parser) or resolving to the
+            # custom headers (like EntrezGeneInfo_Parser), or resolving to the
             # SECOND of the Entrez Gene ID columns.
             hgnc_csvr = csv.DictReader(hgncf, delimiter='\t')
 
@@ -357,8 +357,8 @@ class AffyParser(Parser):
 class Gene2AccParser(Parser):
 
     def __init__(self, file_to_url):
-        super(Gene2AccParser, self).__init__(file_to_url)
-        self.gene2acc_file = next(iter(file_to_url.keys()))
+       super(Gene2AccParser, self).__init__(file_to_url)
+       self.gene2acc_file = next(iter(file_to_url.keys()))
 
     def parse(self):
 
@@ -383,3 +383,26 @@ class Gene2AccParser(Parser):
 
     def __str__(self):
         return 'Gene2Acc_Parser'
+
+class BELNamespaceParser(Parser):
+
+    def __init__(self):
+        self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
+        self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
+        self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
+        self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
+
+    def parse(self):
+
+        tree = etree.parse(self.old_files)
+
+        # xpath will return all elements under this namespace (list of bel namespace urls)
+        urls = tree.xpath('//*[local-name()="namespace"]/@idx:resourceLocation',
+                          namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                                      'idx' : 'http://www.belscript.org/schema/index'})
+
+        for u in urls:
+            yield u
+
+    def __str__(self):
+        return 'BELNamespace_Parser'

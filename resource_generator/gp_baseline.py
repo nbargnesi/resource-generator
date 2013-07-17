@@ -79,7 +79,7 @@ parser = gp_reference_history.parser_class(gp_reference_history.file_to_url)
 print("Running " + str(parser))
 
 gene_history_dict = parser.parse()
-with open('entrez_history.txt', 'w') as f:
+with open('entrez_history.json', 'w') as f:
     for x in gene_history_dict:
         json.dump(x, f, sort_keys=True, indent=4, separators=(',', ':'))
 
@@ -90,9 +90,6 @@ for d in gp_datasets:
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         print('Running ' +str(parser))
-        #pool = ['RGD_Parser', 'MGI_Parser', 'SwissProt_Parser', 'HGNC_Parser']
-        #if str(parser) in pool:
-        #    break
         for x in parser.parse():
             if str(parser) == 'Gene2Acc_Parser':
                 # to be used in affy probe set equivalencing

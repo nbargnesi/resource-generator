@@ -82,7 +82,6 @@ def write_out():
         for val in equiv.sp_list:
             fp.write(val +'\n')
 
-    print('refseq size: ' +str(len(equiv.refseq)))
     with open('refseq.txt', 'w') as fp:
         for x in equiv.refseq:
             json.dump(x, fp, sort_keys=True, indent=4, separators=(',', ':'))

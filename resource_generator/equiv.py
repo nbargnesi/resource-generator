@@ -20,7 +20,7 @@ rgd_list = []
 sp_list = []
 booly = False
 
-# this method is called once, to build an equivalence dict
+# this method is called once, to build an equivalence dict used by SwissProt
 def build_equivs():
     global booly
     if not booly:

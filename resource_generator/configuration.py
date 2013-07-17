@@ -2,7 +2,6 @@
 
 import os
 import parsers
-from collections import OrderedDict
 
 class paths(object):
     def __init__(self, build_dir, dataset_config, dataset_dir, equivalence_dict,

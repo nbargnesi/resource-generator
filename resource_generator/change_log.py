@@ -6,12 +6,16 @@
 import parsers
 import urllib
 import os
+import write_log
+import datetime
+import pickle
 import ipdb
-from configuration import gp_reference_history
+import time
+from configuration import hgnc_update_data, mgi_update_data, \
+    rgd_update_data, gp_reference_history
 
 parser = parsers.BELNamespaceParser()
 print('Running BELNamespace_Parser')
-
 old_entrez = set()
 old_hgnc = set()
 old_mgi = set()
@@ -123,7 +127,6 @@ for root, dirs, filenames in os.walk(indir):
             if 'affy' in newf.name:
                 fp = open(newf.name, 'r')
                 for line in fp:
-                    #ipdb.set_trace()
                     # if '[Values]' in str(line):
                     #     marker = True
                     #     continue
@@ -176,21 +179,23 @@ with open('hgnc-new-values.txt', 'w') as fp:
     for val in hgnc_gained:
         fp.write(val +'\n')
 
-# iterate old values, find out if they are withdrawn or replaced. If
-# replaced, map oldname->newname. Otherwise map oldname->withdrawn.
-
+# iterate lost values for each dataset, find out if they are withdrawn or
+# replaced. If replaced, map oldname->newname. Otherwise map oldname->withdrawn.
 change_log = {}
-f = open('/home/jhourani/openbel-contributions/resource_generator/touchdown/datasets/eg-gene_history.gz', 'r')
+
 # entrez changes
-parser = parsers.EntrezGeneHistoryParser(f)
+parser = parsers.EntrezGeneHistoryParser(gp_reference_history.file_to_url)
+print('Gathering Entrez update info...')
 for row in parser.parse():
     discontinued_id  = row.get('Discontinued_GeneID')
-    replacement_id = row.get('Gene_ID') if not '-' else 'withdrawn'
+    gid = row.get('GeneID')
+    replacement_id = gid if gid != '-' else 'withdrawn'
+#    ipdb.set_trace()
     change_log[discontinued_id] = replacement_id
-    ipdb.set_trace()
 
 # hgnc changes
-parser = parsers.HGNCParser()
+parser = parsers.HGNCParser(hgnc_update_data.file_to_url)
+print('Gathering HGNC update info...')
 for row in parser.parse():
     val = row.get('Approved Symbol')
     if '~withdrawn' in val:
@@ -206,7 +211,8 @@ for row in parser.parse():
             change_log[old_val] = new_val
 
 # mgi changes
-parser = parsers.MGIParser()
+parser = parsers.MGIParser(mgi_update_data.file_to_url)
+print('Gathering MGI update info...')
 for row in parser.parse():
     old_val = row.get('Marker Symbol')
     name = row.get('Marker Name')
@@ -216,7 +222,8 @@ for row in parser.parse():
         change_log[old_val] = 'withdrawn'
 
 # rgd changes (still dont know if withdrawn or replaced!!)
-parser = parsers.RGDParser()
+parser = parsers.RGDParser(rgd_update_data.file_to_url)
+print('Gathering RGD update info...')
 for row in parser.parse():
     new_val = row.get('SYMBOL')
     lost_vals = row.get('OLD_SYMBOL').split(';')
@@ -224,7 +231,59 @@ for row in parser.parse():
         change_log[symbol] = new_val
 
 # swissprot change
+print('Gathering SwissProt update info...')
+start_time = time.time()
+cache_hits = 0
+cache_misses = 0
+#os.mkdir('cache/')
 for acc in sp_lost:
+    cached = False
     url = 'http://www.uniprot.org/uniprot/?query=mnemonic%3a'+acc+'+active%3ayes&format=tab&columns=entry%20name'
-    u = urllib.request.urlretrieve(url)
-    ipdb.set_trace()
+    hashed_url = hash(url)
+    ###################### For Testing Only - use cache ########################
+    files = set()
+    for f in os.listdir('cache/'):
+        if os.path.isfile('cache/' +f):
+            files.add(f)
+    if hashed_url in files:
+        cached = True
+        cache_hits += 1
+        content = pickle.load('cache/' +hashed_url)
+    else:
+        cache_misses += 1
+        content = urllib.request.urlopen(url)
+
+    # get the contents returned from the HTTPResponse object
+    content_list = [x.decode().strip() for x in content.readlines()]
+    if not cached:
+        with open('cache/'+str(hashed_url), 'wb') as fp:
+            pickle.dump(content_list, fp)
+    ############################################################################
+
+    # no replacement
+    if len(content_list) is 0:
+        change_log[acc] = 'withdrawn'
+    # get the new name
+    else:
+        new_name = content_list[1]
+        change_log[acc] = new_name
+end_time = time.time()
+print('total runtime is '+str(((end_time - start_time) / 60)) +' minutes.')
+
+# verification and error checking
+e_unknowns = [x for x in entrez_lost if x not in change_log]
+hgnc_unknowns = [x for x in hgnc_lost if x not in change_log]
+mgi_unknowns = [x for x in mgi_lost if x not in change_log]
+rgd_unknowns = [x for x in rgd_lost if x not in change_log]
+sp_unknowns = [x for x in sp_lost if x not in change_log]
+print('entrez unknowns: ' +str(len(e_unknowns)))
+print('hgnc unknowns: ' +str(len(hgnc_unknowns)))
+print('mgi unknowns: ' +str(len(mgi_unknowns)))
+print('rgd unknowns: ' +str(len(rgd_unknowns)))
+print('swissprot unknowns: ' +str(len(sp_unknowns)))
+print('Cache checks: ' +str(cache_hits))
+print('Cache misses: ' +str(cache_misses))
+# add the date
+today = str(datetime.date.today())
+change_log['date'] = today
+write_log.write(change_log)

@@ -42,6 +42,7 @@ class paths(object):
     def namespace_dir(self):
         return self.__namespace_dir
 
+
 class dataset(object):
     def __init__(self, file_to_url, parser_class):
         self.__file_to_url = file_to_url
@@ -110,6 +111,21 @@ gp_reference_history = dataset({os.path.join(path_constants.dataset_dir,
                                     "file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/eg-gene_history.gz"},
                                parsers.EntrezGeneHistoryParser)
 
+hgnc_update_data = dataset({os.path.join(path_constants.dataset_dir,
+                                         'hgnc-hgnc_downloads.tsv') :
+                                'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/hgnc-hgnc_downloads.tsv'},
+                           parsers.HGNCParser)
+
+mgi_update_data = dataset({os.path.join(path_constants.dataset_dir,
+                                        'mgi-mrk_list1.rpt') :
+                               'ftp://ftp.informatics.jax.org/pub/reports/MRK_List1.rpt'},
+                          parsers.MGIParser)
+
+rgd_update_data = dataset({os.path.join(path_constants.dataset_dir,
+                                         'rgd-genes_rat.tsv') :
+                                'ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt'},
+                           parsers.RGDParser)
+
 gp_datasets = []
 
 gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
@@ -141,6 +157,11 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
                                          "affy_data.xml") :
                                 'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/affy_data.xml.gz'},
                            parsers.AffyParser))
+
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
+                                         "chebi.owl") :
+                                'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/chebi.owl'},
+                           parsers.CHEBIParser))
 
 # gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
 #                                                'gene2acc.gz') :

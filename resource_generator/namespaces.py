@@ -12,6 +12,8 @@ rgd_ns_dict = {}
 sp_ns_dict = {}
 sp_acc_ns_dict = {}
 affy_ns_dict = {}
+chebi_name_ns_dict = {}
+chebi_id_ns_dict = {}
 
 # miscRNA should not be used here, as it will be handled in a special case.
 # For completion sake it is included.
@@ -125,3 +127,14 @@ def make_namespace(row, parser):
         probe_set_id = row.get('Probe Set ID')
         if probe_set_id not in affy_ns_dict:
             affy_ns_dict[probe_set_id] = 'R'
+
+    if str(parser) == 'CHEBI_Parser':
+        names = row.get('names')
+        ids = row.get('ids')
+        alt_ids = row.get('alt_ids')
+        for name in names:
+            chebi_name_ns_dict[name] = 'A'
+        for i_d in ids:
+            chebi_id_ns_dict[i_d] = 'A'
+        for altId in alt_ids:
+            chebi_id_ns_dict[altId] = 'A'

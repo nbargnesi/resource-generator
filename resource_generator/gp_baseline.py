@@ -17,7 +17,7 @@ import pdb
 import pickle
 import tarfile
 import json
-import pdb
+import ipdb
 import namespaces
 import equiv
 import write
@@ -89,7 +89,12 @@ for d in gp_datasets:
     for path, url in d.file_to_url.items():
         download(url, path)
         parser = d.parser_class(d.file_to_url)
+        #if str(parser) == 'CHEBI_Parser':
+        #    ipdb.set_trace()
         print('Running ' +str(parser))
+        test_pool = ['HGNC_Parser', 'MGI_Parser', 'RGD_Parser', 'SwissProt_Parser', 'Affy_Parser', 'Gene2Acc_Parser']
+        if str(parser) in test_pool:
+            break
         for x in parser.parse():
             if str(parser) == 'Gene2Acc_Parser':
                 # to be used in affy probe set equivalencing

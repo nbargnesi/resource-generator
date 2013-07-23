@@ -9,6 +9,7 @@ import gzip
 import urllib.request
 import zipfile
 import io
+import ipdb
 
 class Parser(object):
     def __init__(self, file_to_url):
@@ -31,13 +32,13 @@ class EntrezGeneInfoParser(Parser):
 
         # columns for an Entrez gene info dataset.
         entrez_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag",
-                                  "Synonyms", "dbXrefs", "chromosome",
-                                  "map_location", "description",
-                                  "type_of_gene",
-                                  "Symbol_from_nomenclature_authority",
-                                  "Full_name_from_nomenclature_authority",
-                                  "Nomenclature_status",
-                                  "Other_designations", "Modification_date"]
+                               "Synonyms", "dbXrefs", "chromosome",
+                               "map_location", "description",
+                               "type_of_gene",
+                               "Symbol_from_nomenclature_authority",
+                               "Full_name_from_nomenclature_authority",
+                               "Nomenclature_status",
+                               "Other_designations", "Modification_date"]
 
       # dictionary for base gene info
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info),
@@ -315,6 +316,8 @@ class AffyParser(Parser):
             # This is certainly not the best way to traverse this tree. Look at
             # the lxml.etree API more closely for possible implementations when
             # refactoring
+            # NOTES - put some debugging in here to see how this is parsing,
+            # may be a better way to parse (like using diff events).
             for ev, e in ctx:
                 # iterate the Array elements
                 for n in e.findall('Array'):
@@ -406,3 +409,58 @@ class BELNamespaceParser(Parser):
 
     def __str__(self):
         return 'BELNamespace_Parser'
+
+
+class CHEBIParser(Parser):
+
+    def __init__(self, file_to_url):
+        super(CHEBIParser, self).__init__(file_to_url)
+        self.chebi_file = file_to_url.get('datasets/chebi.owl')
+
+    def parse(self):
+
+        namespace = {
+            'base' : 'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
+            'obo' : 'http://purl.obolibrary.org/obo/',
+            'xsd' : 'http://www.w3.org/2001/XMLSchema#',
+            'obo2' : 'http://purl.obolibrary.org/obo#',
+            'dc' : 'http://purl.org/dc/elements/1.1/',
+            'rdfs' : 'http://www.w3.org/2000/01/rdf-schema#',
+            'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            'owl' : 'http://www.w3.org/2002/07/owl#' }
+
+        tree = etree.parse(self.chebi_file)
+
+        name_resources = tree.xpath('//owl:Class/*[local-name()="label"]', namespaces=namespace)
+        id_resources = tree.xpath('//owl:Class/@rdf:about', namespaces=namespace)
+        altId_resources = tree.xpath('//owl:Class/*[local-name()="altId"]', namespaces=namespace)
+
+        names = [x.text for x in name_resources]
+        ids = [x.split('CHEBI_')[1] for x in id_resources]
+        alt_ids = [x.text.split(':')[1] for x in altId_resources]
+
+        resource_dict = {
+            'names' : names,
+            'ids' : ids,
+            'alt_ids' : alt_ids }
+
+        yield resource_dict
+
+    def __str__(self):
+        return 'CHEBI_Parser'
+
+# class CHEBICompoundParser(Parser):
+
+#     def __init__(self, file_to_url):
+#         super(CHEBICompoundParser, self).__init__(file_to_url)
+#         self.chebi_comp_file = file_to_url.get('datasets/chebi.owl')
+
+#     def parse(self):
+#         with open(self.chebi_comp_file, 'r') as cf:
+#             chebi_comp_csvr = csv.DictReader(cf, delimiter='\t')
+
+#             for row in chebi_comp_csvr:
+#                 yield row
+
+#     def __str__(self):
+#         return 'CHEBI_Compound_Parser'

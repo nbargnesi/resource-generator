@@ -38,6 +38,14 @@ def write_out():
         for key in sorted(namespaces.affy_ns_dict):
             fp.write('{0}|{1}\n'.format(key, namespaces.affy_ns_dict[key]))
 
+    with open('chebi_name-namespace.belns', 'w') as fp:
+        for key in sorted(namespaces.chebi_name_ns_dict):
+            fp.write('{0}|{1}\n'.format(key, namespaces.chebi_name_ns_dict[key]))
+
+    with open('chebi_id-namespace.belns', 'w') as fp:
+        for key in sorted(namespaces.chebi_id_ns_dict):
+            fp.write('{0}|{1}\n'.format(key, namespaces.chebi_id_ns_dict[key]))
+
     with open('entrez-uuids.txt', 'w') as fp:
         for key in sorted(equiv.entrez_eq):
             fp.write('{0}|{1}\n'.format(key, equiv.entrez_eq[key]))

@@ -163,7 +163,7 @@ gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
                                 'file:///home/jhourani/openbel-contributions/resource_generator/base/datasets/chebi.owl'},
                            parsers.CHEBIParser))
 
-# gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
-#                                                'gene2acc.gz') :
-#                                       'ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz'},
-#                                  parsers.Gene2AccParser))
+gp_datasets.append(dataset({os.path.join(path_constants.dataset_dir,
+                                         "CID-Synonym-filtered.gz") :
+                                'file:///home/jhourani/openbel-contributions/resource_generator/datasets/CID-Synonym-filtered.gz'},
+                           parsers.PUBCHEMParser))

@@ -4,6 +4,7 @@
 
 from common import gzip_to_text
 from lxml import etree
+from collections import defaultdict
 import csv
 import gzip
 import urllib.request
@@ -184,8 +185,7 @@ class SwissProtParser(Parser):
     def parse(self):
 
         with gzip.open(self.sprot_file) as sprotf:
-            ctx = etree.iterparse(sprotf, events=('end',),
-                                  tag=self.entry)
+            ctx = etree.iterparse(sprotf, tag=self.entry)
 
             for ev, e in ctx:
                 temp_dict = {}
@@ -415,39 +415,70 @@ class CHEBIParser(Parser):
 
     def __init__(self, file_to_url):
         super(CHEBIParser, self).__init__(file_to_url)
-        self.chebi_file = file_to_url.get('datasets/chebi.owl')
+        self.chebi_file = '/home/jhourani/openbel-contributions/resource_generator/base/datasets/chebi.owl'
+        self.classy = '{http://www.w3.org/2002/07/owl#}Class'
+        self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
+        self.altId = '{http://purl.obolibrary.org/obo#}altId'
 
     def parse(self):
 
-        namespace = {
-            'base' : 'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
-            'obo' : 'http://purl.obolibrary.org/obo/',
-            'xsd' : 'http://www.w3.org/2001/XMLSchema#',
-            'obo2' : 'http://purl.obolibrary.org/obo#',
-            'dc' : 'http://purl.org/dc/elements/1.1/',
-            'rdfs' : 'http://www.w3.org/2000/01/rdf-schema#',
-            'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-            'owl' : 'http://www.w3.org/2002/07/owl#' }
-
-        tree = etree.parse(self.chebi_file)
-
-        name_resources = tree.xpath('//owl:Class/*[local-name()="label"]', namespaces=namespace)
-        id_resources = tree.xpath('//owl:Class/@rdf:about', namespaces=namespace)
-        altId_resources = tree.xpath('//owl:Class/*[local-name()="altId"]', namespaces=namespace)
-
-        names = [x.text for x in name_resources]
-        ids = [x.split('CHEBI_')[1] for x in id_resources]
-        alt_ids = [x.text.split(':')[1] for x in altId_resources]
-
-        resource_dict = {
-            'names' : names,
-            'ids' : ids,
-            'alt_ids' : alt_ids }
-
-        yield resource_dict
+        chebi_dict = defaultdict(list)
+        with open(self.chebi_file, 'rb') as cf:
+            tree = etree.iterparse(cf, tag=self.classy)
+            for event, elem in tree:
+                if len(elem.values()) != 0:
+                    vals = elem.values()
+                    chebi_dict['primary_id'] = vals[0].split('CHEBI_')[1]
+                    children = elem.getchildren()
+                    for child in children:
+                        if child.tag == self.label:
+                            chebi_dict['name'] = child.text
+                        if child.tag == self.altId:
+                            chebi_dict['alt_ids'].append(child.text.split(':')[1])
+                    #ipdb.set_trace()
+                    yield chebi_dict
 
     def __str__(self):
         return 'CHEBI_Parser'
+
+
+# class CHEBIParser(Parser):
+
+#     def __init__(self, file_to_url):
+#         super(CHEBIParser, self).__init__(file_to_url)
+#         self.chebi_file = file_to_url.get('datasets/chebi.owl')
+
+#     def parse(self):
+
+#         namespace = {
+#             'base' : 'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
+#             'obo' : 'http://purl.obolibrary.org/obo/',
+#             'xsd' : 'http://www.w3.org/2001/XMLSchema#',
+#             'obo2' : 'http://purl.obolibrary.org/obo#',
+#             'dc' : 'http://purl.org/dc/elements/1.1/',
+#             'rdfs' : 'http://www.w3.org/2000/01/rdf-schema#',
+#             'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+#             'owl' : 'http://www.w3.org/2002/07/owl#' }
+
+#         tree = etree.parse(self.chebi_file)
+
+#         name_resources = tree.xpath('//owl:Class/*[local-name()="label"]', namespaces=namespace)
+#         id_resources = tree.xpath('//owl:Class/@rdf:about', namespaces=namespace)
+#         altId_resources = tree.xpath('//owl:Class/*[local-name()="altId"]', namespaces=namespace)
+
+#         names = [x.text for x in name_resources]
+#         ids = [x.split('CHEBI_')[1] for x in id_resources]
+#         alt_ids = [x.text.split(':')[1] for x in altId_resources]
+
+#         resource_dict = {
+#             'name' : names[0],
+#             'primary_id' : ids[0],
+#             'alt_ids' : alt_ids }
+
+#         yield resource_dict
+
+#     def __str__(self):
+#         return 'CHEBI_Parser'
 
 # class CHEBICompoundParser(Parser):
 
@@ -464,3 +495,21 @@ class CHEBIParser(Parser):
 
 #     def __str__(self):
 #         return 'CHEBI_Compound_Parser'
+
+
+class PUBCHEMParser(Parser):
+
+    def __init__(self, file_to_url):
+       super(PUBCHEMParser, self).__init__(file_to_url)
+       self.pub_file = next(iter(file_to_url.keys()))
+
+    def parse(self):
+
+        column_headers = ['pubchem_id', 'synonym']
+        pub_reader = csv.DictReader(gzip_to_text(self.pub_file), delimiter='\t',
+                                    fieldnames=column_headers)
+        for row in pub_reader:
+            yield row
+
+    def __str__(self):
+        return 'PUBCHEM_Parser'

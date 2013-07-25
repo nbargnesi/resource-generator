@@ -90,9 +90,11 @@ for d in gp_datasets:
         download(url, path)
         parser = d.parser_class(d.file_to_url)
         #if str(parser) == 'CHEBI_Parser':
-        #    ipdb.set_trace()
+            #ipdb.set_trace()
         print('Running ' +str(parser))
-        test_pool = ['HGNC_Parser', 'MGI_Parser', 'RGD_Parser', 'SwissProt_Parser', 'Affy_Parser', 'Gene2Acc_Parser']
+        test_pool = ['HGNC_Parser', 'MGI_Parser', 'RGD_Parser',
+                     'SwissProt_Parser', 'Affy_Parser', 'Gene2Acc_Parser',
+                     'PUBCHEM_Parser']
         if str(parser) in test_pool:
             break
         for x in parser.parse():

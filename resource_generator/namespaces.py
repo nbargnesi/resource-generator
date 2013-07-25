@@ -3,6 +3,7 @@
 # namespaces.py
 
 import equiv
+import ipdb
 
 # namespace dictionaries
 entrez_ns_dict = {}
@@ -14,6 +15,7 @@ sp_acc_ns_dict = {}
 affy_ns_dict = {}
 chebi_name_ns_dict = {}
 chebi_id_ns_dict = {}
+pub_ns_dict = {}
 
 # miscRNA should not be used here, as it will be handled in a special case.
 # For completion sake it is included.
@@ -129,12 +131,17 @@ def make_namespace(row, parser):
             affy_ns_dict[probe_set_id] = 'R'
 
     if str(parser) == 'CHEBI_Parser':
-        names = row.get('names')
-        ids = row.get('ids')
-        alt_ids = row.get('alt_ids')
-        for name in names:
-            chebi_name_ns_dict[name] = 'A'
-        for i_d in ids:
-            chebi_id_ns_dict[i_d] = 'A'
-        for altId in alt_ids:
-            chebi_id_ns_dict[altId] = 'A'
+        name = row.get('name')
+        primary_id = row.get('primary_id')
+        altIds = row.get('alt_ids')
+        #ipdb.set_trace()
+        chebi_name_ns_dict[name] = 'A'
+        chebi_id_ns_dict[primary_id] = 'A'
+        if altIds:
+            for i in altIds:
+                chebi_id_ns_dict[i] = 'A'
+
+    if str(parser) == 'PUBCHEM_Parser':
+        pub_id = row.get('pubchem_id')
+        #synonym = row.get('synonym')
+        pub_ns_dict[pub_id] = 'A'

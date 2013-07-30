@@ -50,8 +50,8 @@ def make_eq_dict(d):
 
 # gene_id = 'AKT1' data_type = 'hgnc'
 def equiv(d):
-    if 'entrez' in d:
-        for gene_id in d:
+    if str(d) == 'entrez':
+        for gene_id in d.get_dictionary():
             entrez_eq[gene_id] = uuid.uuid4()
     if data_type is 'hgnc':
         new_id = to_entrez('HGNC:'+gene_id)

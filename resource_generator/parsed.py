@@ -116,29 +116,8 @@ def build_data(entry, parser):
         pub_id = entry.get('pubchem_id')
         synonym = entry.get('synonym')
 
-        #ipdb.set_trace()
         pubchem[pub_id] = {
             'synonym' : synonym }
-
-# may not be best way to initialize these
-def set_dict(parser):
-    if parser == 'EntrezGeneInfo_Parser':
-        entrez_data = EntrezData(entrez_info)
-    if parser == 'HGNC_Parser':
-        hgnc_data = HGNCData(hgnc)
-    if parser == 'MGI_Parser':
-        mgi_data = MGIData(mgi)
-    if parser == 'RGD_Parser':
-        rgd_data = RGDData(rgd)
-    if parser == 'SwissProt_Parser':
-        swiss_data = SwissProtData(swiss)
-    if parser == 'Affy_Parser':
-        affy_data = AffyData(affy)
-    if parser == 'CHEBI_Parser':
-        chebi_data = CHEBIData(chebi)
-    if parser == 'PUBCHEM_Parser':
-        pub_data = PUBCHEMData(pubchem)
-
 
 def load_data(label):
 

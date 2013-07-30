@@ -12,7 +12,7 @@ class DataSet(object):
         self.dict = dictionary
 
     def get_dictionary(self):
-        pass
+        return self.dict
 
     def __str__(self):
         return 'DataSet_Object'

@@ -3,7 +3,6 @@
 # namespaces.py
 
 import ipdb
-from constants import *
 
 # namespace dictionaries
 entrez_ns_dict = {}
@@ -77,13 +76,13 @@ def make_namespace(d):
                 if gene_type == 'miscRNA':
                     if 'microRNA' in description:
                         fp.write(delim.join((gene_id, 'GRM'))+'\n')
-#                        entrez_ns_dict[gene_id] = 'GRM'
+                        entrez_ns_dict[gene_id] = 'GRM'
                     else:
                         fp.write(delim.join((gene_id, 'GR'))+'\n')
-#                        entrez_ns_dict[gene_id] = 'GR'
+                        entrez_ns_dict[gene_id] = 'GR'
                 else:
                     fp.write(delim.join((gene_id, entrez_encoding[gene_type]))+'\n')
-#                    entrez_ns_dict[gene_id] = entrez_encoding[gene_type]
+                    entrez_ns_dict[gene_id] = entrez_encoding[gene_type]
 
     if str(d) == 'hgnc':
         with open('hgnc-namespace.belns', 'w') as fp:
@@ -92,7 +91,7 @@ def make_namespace(d):
                 # withdrawn genes NOT included in this namespace
                 if locus_type is not 'withdrawn' and 'withdrawn' not in approved_symb:
                     fp.write(delim.join((approved_symb, hgnc_encoding[locus_type]))+'\n')
-#                    hgnc_ns_dict[app_symb] = hgnc_encoding[locus_type]
+                    hgnc_ns_dict[approved_symb] = hgnc_encoding[locus_type]
                 hgnc_map[hgnc_id] = approved_symb
 
     if str(d) == 'mgi':
@@ -101,7 +100,7 @@ def make_namespace(d):
                 marker_symbol, feature_type, acc_id, marker_type = vals
                 if marker_type == 'Gene' or marker_type == 'Pseudogene':
                     fp.write(delim.join((marker_symbol, mgi_encoding[feature_type]))+'\n')
-#                    mgi_ns_dict[marker_symbol] = mgi_encoding[feature_type]
+                    mgi_ns_dict[marker_symbol] = mgi_encoding[feature_type]
                 mgi_map[acc_id] = marker_symbol
 
     # withdrawn genes are NOT included in this namespace
@@ -109,27 +108,27 @@ def make_namespace(d):
         with open('rgd-namespace.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 symbol, gene_type, name, rgd_id = vals
-            if gene_type == 'miscrna' and 'microRNA' in name:
-                fp.write(delim.join((symbol, 'GRM'))+'\n')
-#                rgd_ns_dict[symbol] = 'GRM'
-            elif gene_type == 'miscrna' and 'microRNA' not in name:
-                fp.write(delim.join((symbol, 'GR'))+'\n')
-#                rgd_ns_dict[symbol] = 'GR'
-            else:
-                if gene_type is not '':
-                    fp.write(delim.join((symbol, rgd_encoding[gene_type]))+'\n')
-#                    rgd_ns_dict[symbol] = rgd_encoding[gene_type]
-            rgd_map[rgd_id] = symbol
+                if gene_type == 'miscrna' and 'microRNA' in name:
+                    fp.write(delim.join((symbol, 'GRM'))+'\n')
+                    rgd_ns_dict[symbol] = 'GRM'
+                elif gene_type == 'miscrna' and 'microRNA' not in name:
+                    fp.write(delim.join((symbol, 'GR'))+'\n')
+                    rgd_ns_dict[symbol] = 'GR'
+                else:
+                    if gene_type is not '':
+                        fp.write(delim.join((symbol, rgd_encoding[gene_type]))+'\n')
+                        rgd_ns_dict[symbol] = rgd_encoding[gene_type]
+                rgd_map[rgd_id] = symbol
 
     if str(d) == 'swiss':
         with open('swiss-namespace.belns', 'w') as fp, open('swiss-acc-namespace.belns', 'w') as f:
             for vals in d.get_ns_values():
                 gene_name, accessions = vals
                 fp.write(delim.join((gene_name, 'GRP'))+'\n')
-#                sp_ns_dict[gene_name] = 'GRP'
+                sp_ns_dict[gene_name] = 'GRP'
                 for acc in accessions:
                     f.write(delim.join((acc, 'GRP'))+'\n')
-#                    sp_acc_ns_dict[acc] = 'GRP'
+                    sp_acc_ns_dict[acc] = 'GRP'
 
     # are there duplicates being taken in here??
     if str(d) == 'affy':
@@ -146,17 +145,19 @@ def make_namespace(d):
             for vals in d.get_ns_values():
                 name, primary_id, altIds = vals
                 fp.write(delim.join((name, 'A'))+'\n')
-#            chebi_name_ns_dict[name] = 'A'
-                f.write(delim.join((primary_id, 'A'))+'\n')  ### <--- can open 2 files at once??
-#            chebi_id_ns_dict[primary_id] = 'A'
+                chebi_name_ns_dict[name] = 'A'
+                f.write(delim.join((primary_id, 'A'))+'\n')
+                chebi_id_ns_dict[primary_id] = 'A'
                 if altIds:
                     for i in altIds:
-                        f.write(delim.join((i, 'A'))+'\n')
-#                        chebi_id_ns_dict[i] = 'A'
+                        # this check should not be needed...(more pythonic way?)
+                        if i not in chebi_id_ns_dict:
+                            f.write(delim.join((i, 'A'))+'\n')
+                        chebi_id_ns_dict[i] = 'A'
 
     if str(d) == 'pubchem':
         with open('chebi-namespace.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 pid = vals
                 fp.write(delim.join((pid, 'A'))+'\n')
-#                pub_ns_dict[pid] = 'A'
+                pub_ns_dict[pid] = 'A'

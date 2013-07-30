@@ -14,12 +14,10 @@ import argparse
 import os
 import namespaces
 import parsed
-import time
+#import time
 #import equiv
-from constants import *
+from constants import RES_LOCATION, PARSER_TYPE
 
-# start program timer
-start_time = time.time()
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
 parser.add_argument("-o", required=False, nargs=1, metavar="EQUIVALENCE FILE",
@@ -57,15 +55,12 @@ print('\n======= Phase One, downloading data =======')
 for label, data_tuple in baseline_data_opt.items():
     url = data_tuple[RES_LOCATION]
     parser = data_tuple[PARSER_TYPE](url)
-    #ipdb.set_trace()
     print('Running ' +str(parser))
     if str(parser) in too_much:
         continue
     else:
         for x in parser.parse():
             parsed.build_data(x, str(parser))
-        # add the complete dict to DataSet object
-        #parsed.set_dict(str(parser))
 
 print('\n======= Phase Two, building namespaces =======')
 # load parsed data to build namespaces
@@ -83,9 +78,8 @@ chebi = parsed.load_data('chebi')
 data = [ei, hg, mg, rg, sp, af, chebi]
 
 for d in data:
+    print('.', end='')
     namespaces.make_namespace(d)
-
-#namespaces.write_namespaces()
 
 print('\n======= Phase Three, building equivalencies =======')
 

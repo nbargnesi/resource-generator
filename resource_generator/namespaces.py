@@ -2,8 +2,8 @@
 #
 # namespaces.py
 
-import equiv
 import ipdb
+from constants import *
 
 # namespace dictionaries
 entrez_ns_dict = {}
@@ -19,129 +19,144 @@ pub_ns_dict = {}
 
 # miscRNA should not be used here, as it will be handled in a special case.
 # For completion sake it is included.
-entrez_encoding = {"protein-coding" : "GRP", "miscRNA" : "GR", "ncRNA" : "GR",
-                   "snoRNA" : "GR", "snRNA" : "GR", "tRNA" : "GR",
-                   "scRNA" : "GR", "other" : "G", "pseudo" : "GR",
-                   "unknown" : "GRP", "rRNA" : "GR"}
+entrez_encoding = {'protein-coding' : 'GRP', 'miscRNA' : 'GR', 'ncRNA' : 'GR',
+                   'snoRNA' : 'GR', 'snRNA' : 'GR', 'tRNA' : 'GR',
+                   'scRNA' : 'GR', 'other' : 'G', 'pseudo' : 'GR',
+                   'unknown' : 'GRP', 'rRNA' : 'GR'}
 
-hgnc_encoding = {"gene with protein product" : "GRP", "RNA, cluster" : "GR",
-                 "RNA, long non-coding" : "GR", "RNA, micro" : "GRM",
-                 "RNA, ribosomal" : "GR", "RNA, small cytoplasmic" : "GR",
-                 "RNA, small misc" : "GR", "RNA, small nuclear" : "GR",
-                 "RNA, small nucleolar" : "GR", "RNA, transfer" : "GR",
-                 "phenotype only" : "G", "RNA, pseudogene" : "GR",
-                 "T cell receptor pseudogene" : "GR",
-                 "immunoglobulin pseudogene" : "GR", "pseudogene" : "GR",
-                 "T cell receptor gene" : "GRP",
-                 "complex locus constituent" : "GRP",
-                 "endogenous retrovirus" : "G", "fragile site" : "G",
-                 "immunoglobulin gene" : "GRP", "protocadherin" : "GRP",
-                 "readthrough" : "GR", "region" : "G",
-                 "transposable element" : "G", "unknown" : "GRP",
-                 "virus integration site" : "G", "RNA, micro" : "GRM",
-                 "RNA, misc" : "GR", "RNA, Y" : "GR", "RNA, vault" : "GR",
+hgnc_encoding = {'gene with protein product' : 'GRP', 'RNA, cluster' : 'GR',
+                 'RNA, long non-coding' : 'GR', 'RNA, micro' : 'GRM',
+                 'RNA, ribosomal' : 'GR', 'RNA, small cytoplasmic' : 'GR',
+                 'RNA, small misc' : 'GR', 'RNA, small nuclear' : 'GR',
+                 'RNA, small nucleolar' : 'GR', 'RNA, transfer' : 'GR',
+                 'phenotype only' : 'G', 'RNA, pseudogene' : 'GR',
+                 'T cell receptor pseudogene' : 'GR',
+                 'immunoglobulin pseudogene' : 'GR', 'pseudogene' : 'GR',
+                 'T cell receptor gene' : 'GRP',
+                 'complex locus constituent' : 'GRP',
+                 'endogenous retrovirus' : 'G', 'fragile site' : 'G',
+                 'immunoglobulin gene' : 'GRP', 'protocadherin' : 'GRP',
+                 'readthrough' : 'GR', 'region' : 'G',
+                 'transposable element' : 'G', 'unknown' : 'GRP',
+                 'virus integration site' : 'G', 'RNA, micro' : 'GRM',
+                 'RNA, misc' : 'GR', 'RNA, Y' : 'GR', 'RNA, vault' : 'GR',
                  }
 
-mgi_encoding = {"gene" : "GRP", "protein coding gene" : "GRP",
-                "non-coding RNA gene" : "GR", "rRNA gene" : "GR",
-                "tRNA gene" : "GR", "snRNA gene" : "GR", "snoRNA gene" : "GR",
-                "miRNA gene" : "GRM", "scRNA gene" : "GR",
-                "lincRNA gene" : "GR", "RNase P RNA gene" : "GR",
-                "RNase MRP RNA gene" : "GR", "telomerase RNA gene" : "GR",
-                "unclassified non-coding RNA gene" : "GR",
-                "heritable phenotypic marker" : "G", "gene segment" : "G",
-                "unclassified gene" : "GRP", "other feature types" : "G",
-                "pseudogene" : "GR", "transgene" : "G",
-                "other genome feature" : "G", "pseudogenic region" : "GR",
-                "polymorphic pseudogene" : "GRP",
-                "pseudogenic gene segment" : "GR", "SRP RNA gene" : "GR"}
+mgi_encoding = {'gene' : 'GRP', 'protein coding gene' : 'GRP',
+                'non-coding RNA gene' : 'GR', 'rRNA gene' : 'GR',
+                'tRNA gene' : 'GR', 'snRNA gene' : 'GR', 'snoRNA gene' : 'GR',
+                'miRNA gene' : 'GRM', 'scRNA gene' : 'GR',
+                'lincRNA gene' : 'GR', 'RNase P RNA gene' : 'GR',
+                'RNase MRP RNA gene' : 'GR', 'telomerase RNA gene' : 'GR',
+                'unclassified non-coding RNA gene' : 'GR',
+                'heritable phenotypic marker' : 'G', 'gene segment' : 'G',
+                'unclassified gene' : 'GRP', 'other feature types' : 'G',
+                'pseudogene' : 'GR', 'transgene' : 'G',
+                'other genome feature' : 'G', 'pseudogenic region' : 'GR',
+                'polymorphic pseudogene' : 'GRP',
+                'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'}
 
-rgd_encoding = {"gene" : "GRP", "miscrna" : "GR", "predicted-high" : "GRP",
-                "predicted-low" : "GRP", "predicted-moderate" : "GRP",
-                "protein-coding" : "GRP", "pseudo" : "GR", "snrna" : "GR",
-                "trna" : "GR", "rrna" : "GR"}
+rgd_encoding = {'gene' : 'GRP', 'miscrna' : 'GR', 'predicted-high' : 'GRP',
+                'predicted-low' : 'GRP', 'predicted-moderate' : 'GRP',
+                'protein-coding' : 'GRP', 'pseudo' : 'GR', 'snrna' : 'GR',
+                'trna' : 'GR', 'rrna' : 'GR'}
 
 hgnc_map = {}
 mgi_map = {}
 rgd_map = {}
-def make_namespace(row, parser):
+# takes a dataset 'Object' and build namespace
+def make_namespace(d):
 
-    # build the namespace values (to be refactored later)
+    # build and write out the namespace values
+    delim = '|'
+    if str(d) == 'entrez':
+        with open('entrez-info_namespace.belns', 'w') as fp:
+            # tuple of (gene_id, gene_type, description)
+            for vals in d.get_ns_values():
+                gene_id, gene_type, description = vals
+                if gene_type == 'miscRNA':
+                    if 'microRNA' in description:
+                        fp.write(delim.join((gene_id, 'GRM'))+'\n')
+#                        entrez_ns_dict[gene_id] = 'GRM'
+                    else:
+                        fp.write(delim.join((gene_id, 'GR'))+'\n')
+#                        entrez_ns_dict[gene_id] = 'GR'
+                else:
+                    fp.write(delim.join((gene_id, entrez_encoding[gene_type]))+'\n')
+#                    entrez_ns_dict[gene_id] = entrez_encoding[gene_type]
 
-    if str(parser) == 'EntrezGeneInfo_Parser':
-        gene_id = row.get('GeneID')
-        gene_type = row.get('type_of_gene')
-        if gene_type == 'miscRNA':
-            desc = row.get('description')
-            if 'microRNA' in desc:
-                entrez_ns_dict[gene_id] = 'GRM'
-            else:
-                entrez_ns_dict[gene_id] = 'GR'
-        else:
-            entrez_ns_dict[gene_id] = entrez_encoding[gene_type]
+    if str(d) == 'hgnc':
+        with open('hgnc-namespace.belns', 'w') as fp:
+            for vals in d.get_ns_values():
+                approved_symb, locus_type, hgnc_id = vals
+                # withdrawn genes NOT included in this namespace
+                if locus_type is not 'withdrawn' and 'withdrawn' not in approved_symb:
+                    fp.write(delim.join((approved_symb, hgnc_encoding[locus_type]))+'\n')
+#                    hgnc_ns_dict[app_symb] = hgnc_encoding[locus_type]
+                hgnc_map[hgnc_id] = approved_symb
 
-    if str(parser) == 'HGNC_Parser':
-        gene_id = row.get('Approved Symbol')
-        locus_type = row.get('Locus Type')
-        # withdrawn genes not included in this namespace
-        if locus_type is not 'withdrawn' and 'withdrawn' not in gene_id:
-            hgnc_ns_dict[gene_id] = hgnc_encoding[locus_type]
-        hgnc_map[row.get('HGNC ID')] = row.get('Approved Symbol')
-
-    if str(parser) == 'MGI_Parser':
-        feature_type = row.get('Feature Type')
-        symbol = row.get('Marker Symbol')
-        flag = row.get('Marker Type')
-        if flag == 'Gene' or flag == 'Pseudogene':
-            mgi_ns_dict[symbol] = mgi_encoding[feature_type]
-        mgi_map[row.get('MGI Accession ID')] = row.get('Marker Symbol')
+    if str(d) == 'mgi':
+        with open('mgi-namespace.belns', 'w') as fp:
+            for vals in d.get_ns_values():
+                marker_symbol, feature_type, acc_id, marker_type = vals
+                if marker_type == 'Gene' or marker_type == 'Pseudogene':
+                    fp.write(delim.join((marker_symbol, mgi_encoding[feature_type]))+'\n')
+#                    mgi_ns_dict[marker_symbol] = mgi_encoding[feature_type]
+                mgi_map[acc_id] = marker_symbol
 
     # withdrawn genes are NOT included in this namespace
-    if str(parser) == 'RGD_Parser':
-        g_type = row.get('GENE_TYPE')
-        name = row.get('NAME')
-        symbol = row.get('SYMBOL')
-        if g_type == 'miscrna' and 'microRNA' in name:
-            rgd_ns_dict[symbol] = 'GRM'
-        elif g_type == 'miscrna' and 'microRNA' not in name:
-            rgd_ns_dict[symbol] = 'GR'
-        else:
-            if g_type is not '':
-                rgd_ns_dict[symbol] = rgd_encoding[g_type]
-        rgd_map[row.get('GENE_RGD_ID')] = row.get('SYMBOL')
+    if str(d) == 'rgd':
+        with open('rgd-namespace.belns', 'w') as fp:
+            for vals in d.get_ns_values():
+                symbol, gene_type, name, rgd_id = vals
+            if gene_type == 'miscrna' and 'microRNA' in name:
+                fp.write(delim.join((symbol, 'GRM'))+'\n')
+#                rgd_ns_dict[symbol] = 'GRM'
+            elif gene_type == 'miscrna' and 'microRNA' not in name:
+                fp.write(delim.join((symbol, 'GR'))+'\n')
+#                rgd_ns_dict[symbol] = 'GR'
+            else:
+                if gene_type is not '':
+                    fp.write(delim.join((symbol, rgd_encoding[gene_type]))+'\n')
+#                    rgd_ns_dict[symbol] = rgd_encoding[gene_type]
+            rgd_map[rgd_id] = symbol
 
-    if str(parser) == 'SwissProt_Parser':
-        gene_name = row.get('name')
-        sp_ns_dict[gene_name] = 'GRP'
-        accessions = row.get('accessions')
-        # build equivalency for SwissProt here, because we have access to the
-        # entry from the file being parsed. Maybe move during refactoring.
-        equiv.build_sp_eq(row)
-        # equivalency for accessions
-        equiv.build_acc_data(accessions, gene_name)
-        for acc in accessions:
-            sp_acc_ns_dict[acc] = 'GRP'
+    if str(d) == 'swiss':
+        with open('swiss-namespace.belns', 'w') as fp, open('swiss-acc-namespace.belns', 'w') as f:
+            for vals in d.get_ns_values():
+                gene_name, accessions = vals
+                fp.write(delim.join((gene_name, 'GRP'))+'\n')
+#                sp_ns_dict[gene_name] = 'GRP'
+                for acc in accessions:
+                    f.write(delim.join((acc, 'GRP'))+'\n')
+#                    sp_acc_ns_dict[acc] = 'GRP'
 
-    if str(parser) == 'Affy_Parser':
-        # affy equivalence does not need the namespace necessarily, so its ok
-        # to compute this now, before namespace is complete.
-        equiv.affys(row)
-        probe_set_id = row.get('Probe Set ID')
-        if probe_set_id not in affy_ns_dict:
-            affy_ns_dict[probe_set_id] = 'R'
+    # are there duplicates being taken in here??
+    if str(d) == 'affy':
+        with open('affy-namespace.belns', 'w') as fp:
+            for vals in d.get_ns_values():
+                probe_set_ids = vals
+                for pid in probe_set_ids:
+                    fp.write(delim.join((pid, 'R'))+'\n')
+#                    if pid not in affy_ns_dict:
+#                        affy_ns_dict[pid] = 'R'
 
-    if str(parser) == 'CHEBI_Parser':
-        name = row.get('name')
-        primary_id = row.get('primary_id')
-        altIds = row.get('alt_ids')
-        #ipdb.set_trace()
-        chebi_name_ns_dict[name] = 'A'
-        chebi_id_ns_dict[primary_id] = 'A'
-        if altIds:
-            for i in altIds:
-                chebi_id_ns_dict[i] = 'A'
+    if str(d) == 'chebi':
+        with open('chebi-namespace.belns', 'w') as fp, open('chebi-id-namespace.belns', 'w') as f:
+            for vals in d.get_ns_values():
+                name, primary_id, altIds = vals
+                fp.write(delim.join((name, 'A'))+'\n')
+#            chebi_name_ns_dict[name] = 'A'
+                f.write(delim.join((primary_id, 'A'))+'\n')  ### <--- can open 2 files at once??
+#            chebi_id_ns_dict[primary_id] = 'A'
+                if altIds:
+                    for i in altIds:
+                        f.write(delim.join((i, 'A'))+'\n')
+#                        chebi_id_ns_dict[i] = 'A'
 
-    if str(parser) == 'PUBCHEM_Parser':
-        pub_id = row.get('pubchem_id')
-        #synonym = row.get('synonym')
-        pub_ns_dict[pub_id] = 'A'
+    if str(d) == 'pubchem':
+        with open('chebi-namespace.belns', 'w') as fp:
+            for vals in d.get_ns_values():
+                pid = vals
+                fp.write(delim.join((pid, 'A'))+'\n')
+#                pub_ns_dict[pid] = 'A'

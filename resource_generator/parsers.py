@@ -13,8 +13,8 @@ import io
 import ipdb
 
 class Parser(object):
-    def __init__(self, file_to_url):
-        self.file_to_url = file_to_url
+    def __init__(self, url):
+        self.url = url
 
     def parse():
         pass
@@ -24,10 +24,9 @@ class EntrezGeneInfoParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/
                           namespace/entrez-gene-ids-hmr.belns"""
 
-    def __init__(self, file_to_url):
-        super(EntrezGeneInfoParser, self).__init__(file_to_url)
-        file_keys = iter(file_to_url.keys())
-        self.entrez_gene_info = next(file_keys)
+    def __init__(self, url):
+        super(EntrezGeneInfoParser, self).__init__(url)
+        self.entrez_info = url
 
     def parse(self):
 
@@ -42,7 +41,7 @@ class EntrezGeneInfoParser(Parser):
                                "Other_designations", "Modification_date"]
 
       # dictionary for base gene info
-        info_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_info),
+        info_csvr = csv.DictReader(gzip_to_text(self.entrez_info),
                                    delimiter='\t',
                                    fieldnames=entrez_info_headers)
 
@@ -58,10 +57,9 @@ class EntrezGeneHistoryParser(Parser):
     resourceLocation = """"http://resource.belframework.org/belframework/1.0/
                            namespace/entrez-gene-ids-hmr.belns"""
 
-    def __init__(self, file_to_url):
-        super(EntrezGeneHistoryParser, self).__init__(file_to_url)
-        file_keys = iter(file_to_url.keys())
-        self.entrez_gene_history = next(file_keys)
+    def __init__(self, url):
+        super(EntrezGeneHistoryParser, self).__init__(url)
+        self.entrez_history = url
 
     def parse(self):
 
@@ -69,7 +67,7 @@ class EntrezGeneHistoryParser(Parser):
                                   "Discontinued_Symbol", "Discontinued_Date"]
 
          # dictionary for base gene info
-        history_csvr = csv.DictReader(gzip_to_text(self.entrez_gene_history),
+        history_csvr = csv.DictReader(gzip_to_text(self.entrez_history),
                                       delimiter='\t',
                                       fieldnames=entrez_history_headers)
 
@@ -85,9 +83,9 @@ class HGNCParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/
                           namespace/hgnc-approved-symbols.belns"""
 
-    def __init__(self, file_to_url):
-        super(HGNCParser, self).__init__(file_to_url)
-        self.hgnc_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+        super(HGNCParser, self).__init__(url)
+        self.hgnc_file = url
 
     def parse(self):
 
@@ -112,9 +110,9 @@ class MGIParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/
                           namespace/mgi-approved-symbols.belns"""
 
-    def __init__(self, file_to_url):
-        super(MGIParser, self).__init__(file_to_url)
-        self.mgi_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+        super(MGIParser, self).__init__(url)
+        self.mgi_file = url
 
     def parse(self):
         with open(self.mgi_file, "r") as mgif:
@@ -131,9 +129,9 @@ class RGDParser(Parser):
     resourceLocation = """http://resource.belframework.org/belframework/1.0/
                           namespace/rgd-approved-symbols.belns"""
 
-    def __init__(self, file_to_url):
-        super(RGDParser, self).__init__(file_to_url)
-        self.rgd_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+        super(RGDParser, self).__init__(url)
+        self.rgd_file = url
 
     def parse(self):
         with open(self.rgd_file, "r") as rgdf:
@@ -164,9 +162,9 @@ class SwissProtParser(Parser):
     resourceLocation_entry_names = """http://resource.belframework.org/
                       belframework/1.0/namespace/swissprot-entry-names.belns"""
 
-    def __init__(self, file_to_url):
-        super(SwissProtParser, self).__init__(file_to_url)
-        self.sprot_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+        super(SwissProtParser, self).__init__(url)
+        self.sprot_file = url
         self.entries = {}
         self.accession_numbers = {}
         self.gene_ids = {}
@@ -294,9 +292,9 @@ def filter_plus_print(row):
 
 class AffyParser(Parser):
 
-    def __init__(self, file_to_url):
-        super(AffyParser, self).__init__(file_to_url)
-        self.affy_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+        super(AffyParser, self).__init__(url)
+        self.affy_file = url
 
     # Here maybe take the downloading and exctracting the files out of
     # parser() and call only once from __init__. As it is, the data
@@ -344,7 +342,7 @@ class AffyParser(Parser):
             # only want the .csv from the archive (also contains a .txt)
             for name in z.namelist():
                 if '.csv' in name:
-                    print('Extracting - ' +name)
+                    print('\tExtracting - ' +name)
                     # wrap in a TextIOWrapper. otherwise it returns bytes.
                     affy_reader = csv.DictReader(filter(lambda x:
                                                         not x.startswith('#'),
@@ -359,9 +357,9 @@ class AffyParser(Parser):
 
 class Gene2AccParser(Parser):
 
-    def __init__(self, file_to_url):
-       super(Gene2AccParser, self).__init__(file_to_url)
-       self.gene2acc_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+       super(Gene2AccParser, self).__init__(url)
+       self.gene2acc_file = url
 
     def parse(self):
 
@@ -387,35 +385,35 @@ class Gene2AccParser(Parser):
     def __str__(self):
         return 'Gene2Acc_Parser'
 
-class BELNamespaceParser(Parser):
+# class BELNamespaceParser(Parser):
 
-    def __init__(self):
-        self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
-        self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
-        self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
-        self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
+#     def __init__(self):
+#         self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
+#         self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
+#         self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
+#         self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
 
-    def parse(self):
+#     def parse(self):
 
-        tree = etree.parse(self.old_files)
+#         tree = etree.parse(self.old_files)
 
-        # xpath will return all elements under this namespace (list of bel namespace urls)
-        urls = tree.xpath('//*[local-name()="namespace"]/@idx:resourceLocation',
-                          namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                                      'idx' : 'http://www.belscript.org/schema/index'})
+#         # xpath will return all elements under this namespace (list of bel namespace urls)
+#         urls = tree.xpath('//*[local-name()="namespace"]/@idx:resourceLocation',
+#                           namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+#                                       'idx' : 'http://www.belscript.org/schema/index'})
 
-        for u in urls:
-            yield u
+#         for u in urls:
+#             yield u
 
-    def __str__(self):
-        return 'BELNamespace_Parser'
+#     def __str__(self):
+#         return 'BELNamespace_Parser'
 
 
 class CHEBIParser(Parser):
 
-    def __init__(self, file_to_url):
-        super(CHEBIParser, self).__init__(file_to_url)
-        self.chebi_file = '/home/jhourani/openbel-contributions/resource_generator/base/datasets/chebi.owl'
+    def __init__(self, url):
+        super(CHEBIParser, self).__init__(url)
+        self.chebi_file = url
         self.classy = '{http://www.w3.org/2002/07/owl#}Class'
         self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
         self.altId = '{http://purl.obolibrary.org/obo#}altId'
@@ -499,9 +497,9 @@ class CHEBIParser(Parser):
 
 class PUBCHEMParser(Parser):
 
-    def __init__(self, file_to_url):
-       super(PUBCHEMParser, self).__init__(file_to_url)
-       self.pub_file = next(iter(file_to_url.keys()))
+    def __init__(self, url):
+       super(PUBCHEMParser, self).__init__(url)
+       self.pub_file = url
 
     def parse(self):
 

@@ -36,18 +36,23 @@ def build_equivs():
                     equiv(k, 'rgd')
         booly = True
 
-def make_eq_dict(entrez_id, symbol, tax_id):
-    if tax_id == '9606':
-        entrez_eq_dict['HGNC:'+symbol] = entrez_id
-    if tax_id == '10116':
-        entrez_eq_dict['RGD:'+symbol] = entrez_id
-    if tax_id == '10090':
-        entrez_eq_dict['MGI:'+symbol] = entrez_id
+def make_eq_dict(d):
+    for entry, val in d.items():
+        entrez_id = entry
+        
+        tax_id = d.get('tax_id')
+        if tax_id == '9606':
+            entrez_eq_dict['HGNC:'+symbol] = entrez_id
+        if tax_id == '10116':
+            entrez_eq_dict['RGD:'+symbol] = entrez_id
+        if tax_id == '10090':
+            entrez_eq_dict['MGI:'+symbol] = entrez_id
 
 # gene_id = 'AKT1' data_type = 'hgnc'
-def equiv(gene_id, data_type):
-    if data_type is 'entrez':
-        entrez_eq[gene_id] = uuid.uuid4()
+def equiv(d):
+    if 'entrez' in d:
+        for gene_id in d:
+            entrez_eq[gene_id] = uuid.uuid4()
     if data_type is 'hgnc':
         new_id = to_entrez('HGNC:'+gene_id)
         if new_id is None:
@@ -162,13 +167,14 @@ def finish():
 refseq = {}
 sd = {}
 # fills a dict mapping (entrez_gene -> refseq status)
-def build_refseq(row):
+def build_refseq(d):
     target_pool = ['9606', '10116', '10090']
     valid_status = ['REVIEWED', 'VALIDATED', 'PROVISIONAL', 'PREDICTED',
                     'MODEL', 'INFERRED']
-    taxid = row.get('tax_id')
-    status = row.get('status')
-    entrez_gene = row.get('GeneID')
+
+    taxid = d.get('tax_id')
+    status = d.get('status')
+    entrez_gene = d.get('GeneID')
     if taxid in target_pool and status in valid_status:
         refseq[entrez_gene] = status
 

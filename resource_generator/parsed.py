@@ -15,16 +15,18 @@ swiss = defaultdict(list)
 affy = defaultdict(list)
 gene2acc = {}
 chebi = {}
-pubchem = defaultdict(list)
+pub_equiv_dict = {}
+pub_ns_dict = defaultdict(list)
 
-entrez_data = EntrezData(entrez_info)
+entrez_data = EntrezInfoData(entrez_info)
 hgnc_data = HGNCData(hgnc)
 mgi_data = MGIData(mgi)
 rgd_data = RGDData(rgd)
 swiss_data = SwissProtData(swiss)
 affy_data = AffyData(affy)
 chebi_data = CHEBIData(chebi)
-pubchem_data = PUBCHEMData(pubchem)
+pub_ns_data = PubNamespaceData(pub_ns_dict)
+pub_equiv_data = PubEquivData(pub_equiv_dict)
 
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
@@ -44,14 +46,19 @@ def build_data(entry, parser):
         type_of_gene = entry.get('type_of_gene')
         description = entry.get('description')
         tax_id = entry.get('tax_id')
-
+        symbol = entry.get('Symbol_from_nomenclature_authority')
         entrez_info[gene_id] = {
             'type_of_gene' : type_of_gene,
             'description' : description,
-            'tax_id' : tax_id }
+            'tax_id' : tax_id,
+            'Symbol_from_nomenclature_authority' : symbol }
 
     if parser == 'EntrezGeneHistory_Parser':
-        return
+        gene_id = entry.get('GeneID')
+        discontinued_id = entry.get('Discontinued_GeneID')
+
+        entrez_history[gene_id] = {
+            'Discontinued_GeneID' : discontinued_id }
 
     if parser == 'HGNC_Parser':
         app_symb = entry.get('Approved Symbol')
@@ -88,10 +95,12 @@ def build_data(entry, parser):
         name = entry.get('name')
         acc = entry.get('accessions')
         gene_type = entry.get('type')
+        dbref = entry.get('dbreference')
 
         swiss[name] = {
             'type' : gene_type,
-            'accessions' : acc}
+            'accessions' : acc,
+            'dbreference' : dbref }
 
     if parser == 'Affy_Parser':
         probe_id = entry.get('Probe Set ID')
@@ -101,7 +110,14 @@ def build_data(entry, parser):
             'Entrez Gene' : entrez_gene }
 
     if parser == 'Gene2Accession_Parser':
-        return
+        status = entry.get('status')
+        taxid = entry.get('tax_id')
+        entrez_gene = entry.get('GeneID')
+
+        gene2acc[entrez_gene] = {
+            'status' : status,
+            'tax_id' : taxid,
+            'entrez_gene' : entrez_gene }
 
     if parser == 'CHEBI_Parser':
         name = entry.get('name')
@@ -116,13 +132,23 @@ def build_data(entry, parser):
         pub_id = entry.get('pubchem_id')
         synonym = entry.get('synonym')
 
-        pubchem[pub_id] = {
+        pub_ns_dict[pub_id] = {
             'synonym' : synonym }
+
+    if parser == 'CID_Parser':
+        source = entry.get('Source')
+        cid = entry.get('PubChem CID')
+        sid = entry.get('Pubchem SID')
+
+        pub_equiv_dict[sid] = {
+            'Source' : source,
+            'PubChem CID' : cid }
 
 def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
-                swiss_data, affy_data, chebi_data, pubchem_data]
+                swiss_data, affy_data, chebi_data, pub_ns_data,
+                gene2acc, entrez_history, pub_equiv_data]
 
     for d in datasets:
         if str(d) == label:

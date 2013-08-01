@@ -18,18 +18,42 @@ class DataSet(object):
         return 'DataSet_Object'
 
 
-class EntrezData(DataSet):
+class EntrezInfoData(DataSet):
 
     def __init__(self, dictionary):
-        super(EntrezData, self).__init__(dictionary)
-        self.entrez_dict = dictionary
+        super(EntrezInfoData, self).__init__(dictionary)
+        self.entrez_info_dict = dictionary
 
     def get_dictionary(self):
-        return self.entrez_dict
+        return self.entrez_info_dict
 
     def get_ns_values(self):
-        for gene_id in self.entrez_dict:
-            mapping = self.entrez_dict.get(gene_id)
+        for gene_id in self.entrez_info_dict:
+            mapping = self.entrez_info_dict.get(gene_id)
+            gene_type = mapping.get('type_of_gene')
+            description = mapping.get('description')
+            yield gene_id, gene_type, description
+
+    def get_eq_values(self):
+        for gene_id in self.entrez_info_dict:
+            yield gene_id
+
+    def __str__(self):
+        return 'entrez_info'
+
+
+class EntrezHistoryData(DataSet):
+
+    def __init__(self, dictionary):
+        super(EntrezHistoryData, self).__init__(dictionary)
+        self.entrez_history_dict = dictionary
+
+    def get_dictionary(self):
+        return self.entrez_history_dict
+
+    def get_ns_values(self):
+        for gene_id in self.entrez_history_dict:
+            mapping = self.entrez_history_dict.get(gene_id)
             gene_type = mapping.get('type_of_gene')
             description = mapping.get('description')
             yield gene_id, gene_type, description
@@ -54,6 +78,10 @@ class HGNCData(DataSet):
             hgnc_id = mapping.get('HGNC ID')
             yield symbol, loc_type, hgnc_id
 
+    def get_eq_values(self):
+        for approved_symbol in self.hgnc_dict:
+            yield approved_symbol
+
     def __str__(self):
         return 'hgnc'
 
@@ -74,6 +102,10 @@ class MGIData(DataSet):
             acc_id = mapping.get('MGI Accession ID')
             marker_type = mapping.get('Marker Type')
             yield marker_symbol, feature_type, acc_id, marker_type
+
+    def get_eq_values(self):
+        for marker_symbol in self.mgi_dict:
+            yield marker_symbol
 
     def __str__(self):
         return 'mgi'
@@ -96,6 +128,10 @@ class RGDData(DataSet):
             rgd_id = mapping.get('GENE_RGD_ID')
             yield symbol, gene_type, name, rgd_id
 
+    def get_eq_values(self):
+        for symbol in self.rgd_dict:
+            yield symbol
+
     def __str__(self):
         return 'rgd'
 
@@ -114,6 +150,13 @@ class SwissProtData(DataSet):
             mapping = self.sp_dict.get(name)
             acc = mapping.get('accessions')
             yield name, acc
+
+    def get_eq_values(self):
+        for name in self.sp_dict:
+            mapping = self.sp_dict.get(name)
+            dbrefs = mapping.get('dbreference')
+            acc = mapping.get('accessions')
+            yield name, dbrefs, acc
 
     def __str__(self):
         return 'swiss'
@@ -149,6 +192,12 @@ class AffyData(DataSet):
         for probe_id in self.affy_dict:
             yield probe_id
 
+    def get_eq_values(self):
+        for probe_id in self.affy_dict:
+            mapping = self.affy_dict.get(probe_id)
+            gene_id  = mapping.get('Entrez Gene')
+            yield probe_id, gene_id
+
     def __str__(self):
         return 'affy'
 
@@ -169,14 +218,41 @@ class CHEBIData(DataSet):
             altIds = mapping.get('alt_ids')
             yield name, primary_id, altIds
 
+    def get_primary_ids(self):
+        for name in self.chebi_dict:
+            mapping = self.chebi_dict.get(name)
+            primary_id = mapping.get('primary_id')
+            yield primary_id
+
+    def alt_to_primary(self, alt):
+        for name in self.chebi_dict:
+            mapping = self.chebi_dict.get(name)
+            altIds = mapping.get('alt_ids')
+            if alt in altIds:
+                primary_id = mapping.get('primary_id')
+                yield primary_id
+
+    def name_to_primary(self, name):
+        mapping = self.chebi_dict.get(name)
+        primary_id = mapping.get('primary_id')
+        yield primary_id
+
+    def get_alt_ids(self):
+        for name in self.chebi_dict:
+            mapping = self.chebi_dict.get(name)
+            altIds = mapping.get('alt_ids')
+            if altIds is not None:
+                for alt in altIds:
+                    yield alt
+
     def __str__(self):
         return 'chebi'
 
 
-class PUBCHEMData(DataSet):
+class PubNamespaceData(DataSet):
 
     def __init__(self, dictionary):
-        super(PUBCHEMData, self).__init__(dictionary)
+        super(PubNamespaceData, self).__init__(dictionary)
         self.pub_dict = dictionary
 
     def get_dictionary(self):
@@ -187,4 +263,44 @@ class PUBCHEMData(DataSet):
             yield pid
 
     def __str__(self):
-        return 'pubchem'
+        return 'pubchem_namespace'
+
+
+class Gene2AccData(DataSet):
+
+    def __init__(self, dictionary):
+        super(Gene2AccData, self).__init__(dictionary)
+        self.g2a_dict = dictionary
+
+    def get_dictionary(self):
+        return self.g2a_dict
+
+    def get_eq_values(self):
+        for entrez_gene in self.g2a_dict:
+            mapping = self.g2a_dict.get(entrez_gene)
+            status = mapping.get('status')
+            taxid = mapping.get('tax_id')
+            yield entrez_gene, status, taxid
+
+    def __str__(self):
+        return 'gene2acc'
+
+
+class PubEquivData(DataSet):
+
+    def __init__(self, dictionary):
+        super(PubEquivData, self).__init__(dictionary)
+        self.pub_eq_dict = dictionary
+
+    def get_dictionary(self):
+        return self.pub_eq_dict
+
+    def get_eq_values(self):
+        for sid in self.pub_eq_dict:
+            mapping = self.pub_eq_dict.get(sid)
+            source = mapping.get('Source')
+            cid = mapping.get('PubChem CID')
+            yield sid, source, cid
+
+    def __str__(self):
+        return 'pubchem_equiv'

@@ -495,10 +495,10 @@ class CHEBIParser(Parser):
 #         return 'CHEBI_Compound_Parser'
 
 
-class PUBCHEMParser(Parser):
+class PubNamespaceParser(Parser):
 
     def __init__(self, url):
-       super(PUBCHEMParser, self).__init__(url)
+       super(PubNamespaceParser, self).__init__(url)
        self.pub_file = url
 
     def parse(self):
@@ -510,4 +510,22 @@ class PUBCHEMParser(Parser):
             yield row
 
     def __str__(self):
-        return 'PUBCHEM_Parser'
+        return 'PubNamespace_Parser'
+
+
+class PubEquivParser(Parser):
+
+    def __init__(self, url):
+       super(PubEquivParser, self).__init__(url)
+       self.cid_file = url
+
+    def parse(self):
+
+        column_headers = ['PubChem SID', 'Source', 'External ID', 'PubChem CID']
+        cid_reader = csv.DictReader(gzip_to_text(self.cid_file), delimiter='\t',
+                                    fieldnames=column_headers)
+        for row in cid_reader:
+            yield row
+
+    def __str__(self):
+        return 'PubEquiv_Parser'

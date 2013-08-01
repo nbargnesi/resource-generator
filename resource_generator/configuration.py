@@ -26,4 +26,5 @@ baseline_data_opt = {
     'affy' : ('datasets/affy_data.xml.gz', parsers.AffyParser),
     'gene2acc' : ('datasets/gene2accession.gz', parsers.Gene2AccParser),
     'chebi' : ('datasets/chebi.owl', parsers.CHEBIParser),
-    'pubchem' : ('datasets/CID-Synonym-filtered.gz', parsers.PUBCHEMParser) }
+    'pubchem_namespace' : ('datasets/CID-Synonym-filtered.gz', parsers.PubNamespaceParser),
+    'pubchem_equiv' : ('datasets/SID-Map.gz', parsers.PubEquivParser)}

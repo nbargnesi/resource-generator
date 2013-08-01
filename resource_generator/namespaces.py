@@ -68,7 +68,7 @@ def make_namespace(d):
 
     # build and write out the namespace values
     delim = '|'
-    if str(d) == 'entrez':
+    if str(d) == 'entrez_info':
         with open('entrez-info_namespace.belns', 'w') as fp:
             # tuple of (gene_id, gene_type, description)
             for vals in d.get_ns_values():

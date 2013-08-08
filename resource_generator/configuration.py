@@ -26,5 +26,8 @@ baseline_data_opt = {
     'affy' : ('datasets/affy_data.xml.gz', parsers.AffyParser),
     'gene2acc' : ('datasets/gene2accession.gz', parsers.Gene2AccParser),
     'chebi' : ('datasets/chebi.owl', parsers.CHEBIParser),
+    'schem' : ('datasets/selventa-legacy-chemical-names.belns', parsers.SCHEMParser),
+    'schem_to_chebi' : ('datasets/SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser),
     'pubchem_namespace' : ('datasets/CID-Synonym-filtered.gz', parsers.PubNamespaceParser),
     'pubchem_equiv' : ('datasets/SID-Map.gz', parsers.PubEquivParser)}
+#    'go' : ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOParser)}

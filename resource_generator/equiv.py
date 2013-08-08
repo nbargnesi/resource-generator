@@ -51,7 +51,6 @@ def build_equivs():
 
 def make_eq_dict(d):
     temp_dict = d.get_dictionary()
-#    ipdb.set_trace()
     for entry in temp_dict:
         entrez_id = entry
         mapping = temp_dict.get(entrez_id)
@@ -75,7 +74,7 @@ def equiv(d):
                 fp.write(delim.join((gene_id, str(uid)))+'\n')
                 entrez_eq[gene_id] = uuid.uuid4()
         make_eq_dict(d)
-    if str(d) == 'hgnc':
+    elif str(d) == 'hgnc':
         with open('hgnc_eq.beleq', 'w') as fp:
             for approved_symbol in d.get_eq_values():
                 new_id = to_entrez('HGNC:'+approved_symbol)
@@ -91,7 +90,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((approved_symbol, str(uid)))+'\n')
                     hgnc_eq[approved_symbol] = uid
-    if str(d) == 'mgi':
+    elif str(d) == 'mgi':
         with open('mgi_eq.beleq', 'w') as fp:
             for marker_symbol in d.get_eq_values():
                 new_id = to_entrez('MGI:'+marker_symbol)
@@ -107,7 +106,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((marker_symbol, str(uid)))+'\n')
                     mgi_eq[marker_symbol] = uid
-    if str(d) == 'rgd':
+    elif str(d) == 'rgd':
         with open('rgd_eq.beleq', 'w') as fp:
             for symbol in d.get_eq_values():
                 new_id = to_entrez('RGD:'+symbol)
@@ -123,7 +122,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((symbol, str(uid)))+'\n')
                     rgd_eq[symbol] = uid
-    if str(d) == 'swiss':
+    elif str(d) == 'swiss':
         with open('swiss_eq.beleq', 'w') as fp:
             # dbrefs is a dict, i.e { reference_type : id_of_that_gene}
             for name, dbrefs, accessions in d.get_eq_values():
@@ -201,7 +200,7 @@ def equiv(d):
                 # finally, generate .beleq for accession data also
                 build_acc_data(accessions, name)
             finish()
-    if str(d) == 'affy':
+    elif str(d) == 'affy':
         with open('aff_eq.beleq', 'w') as fp:
             for probe_id, gene_id in d.get_eq_values():
 
@@ -264,7 +263,7 @@ def equiv(d):
                     affy_eq[probe_id] = uid
     # equiv for alt ids and names relies on the equivalence for
     # primary ids being completely generated.
-    if str(d) == 'chebi':
+    elif str(d) == 'chebi':
         with open('chebi-ids_eq.beleq', 'w') as fp, open('chebi-names_eq.beleq', 'w') as f:
             # like Entrez, new uuid for primary ids only the FIRST time.
             for primary_id in d.get_primary_ids():
@@ -272,29 +271,32 @@ def equiv(d):
                 fp.write(delim.join((primary_id, str(uid)))+'\n')
                 chebi_id_eq[primary_id] = uid
             for alt_id in d.get_alt_ids():
-                # get its primary equivalent and use its uuid
-                primary = d.alt_to_primary(alt_id)
-                uid = chebi_id_eq.get(primary)
-                fp.write(delim.join((alt_id, str(uid)))+'\n')
-                chebi_id_eq[primary_id] = uid
+                if alt_id not in chebi_id_eq:
+                    # get its primary equivalent and use its uuid
+                    primary = d.alt_to_primary(alt_id)
+                    uid = chebi_id_eq.get(primary)
+                    fp.write(delim.join((alt_id, str(uid)))+'\n')
+                    chebi_id_eq[alt_id] = uid
             for name in d.get_names():
                 primary = d.name_to_primary(name)
                 uid = chebi_id_eq.get(primary)
                 f.write(delim.join((name, str(uid)))+'\n')
                 chebi_name_eq[name] = uid
-    if str(d) == 'pubchem_equiv':
+    elif str(d) == 'pubchem_equiv':
         with open('pubchem_eq.beleq', 'w') as fp:
             for sid, source, cid in d.get_eq_values():
                 if 'ChEBI' in source and cid is not None:  # <-- verify that NO PubChem CID == 'None'
                     # use the CHEBI uuid
                     chebi_equiv = source.split(':')[1]
                     uid = chebi_id_eq.get(chebi_equiv)
-                    f.write(delim.join((sid, str(uid)))+'\n')
+                    fp.write(delim.join((sid, str(uid)))+'\n')
                     pub_eq_dict[sid] = uid
                 else:
                     # generate a new uuid
                     uid = uuid.uuid4()
-                    f.write(delim.join((sid, str(uid)))+'\n')
+                    fp.write(delim.join((sid, str(uid)))+'\n')
+#    elif str(d) == 'schem':
+#        old_ns = parsed.load_data('
 
 acc_helper_dict = defaultdict(list)
 sp_acc_eq = {}

@@ -6,6 +6,15 @@ import ipdb
 from datasets import *
 from collections import defaultdict
 
+# if os.path.exists('cached_data'):
+#     c_data = []
+#     indir = '/home/jhourani/openbel-contributions/resource_generator/touchdown/cached_data'
+#     for root, dirs, filenames in os.walk(indir):
+#         for f in filenames:
+#             with open(os.path.join(root, f), 'r') as fp:
+#                 c_data.append(pickle.load(fp))
+
+
 entrez_info = {}
 entrez_history = {}
 hgnc = {}
@@ -15,19 +24,25 @@ swiss = defaultdict(list)
 affy = defaultdict(list)
 gene2acc = {}
 chebi = {}
+schem = {}
+schem_to_chebi = {}
 pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 
 entrez_data = EntrezInfoData(entrez_info)
+entrez_history_data = EntrezHistoryData(entrez_history)
 hgnc_data = HGNCData(hgnc)
 mgi_data = MGIData(mgi)
 rgd_data = RGDData(rgd)
 swiss_data = SwissProtData(swiss)
 affy_data = AffyData(affy)
 chebi_data = CHEBIData(chebi)
+gene2acc_data = Gene2AccData(gene2acc)
+schem_data = SCHEMData(schem)
+schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
 pub_ns_data = PubNamespaceData(pub_ns_dict)
 pub_equiv_data = PubEquivData(pub_equiv_dict)
-
+count = 0
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
 def build_data(entry, parser):
@@ -53,14 +68,14 @@ def build_data(entry, parser):
             'tax_id' : tax_id,
             'Symbol_from_nomenclature_authority' : symbol }
 
-    if parser == 'EntrezGeneHistory_Parser':
+    elif parser == 'EntrezGeneHistory_Parser':
         gene_id = entry.get('GeneID')
         discontinued_id = entry.get('Discontinued_GeneID')
 
         entrez_history[gene_id] = {
             'Discontinued_GeneID' : discontinued_id }
 
-    if parser == 'HGNC_Parser':
+    elif parser == 'HGNC_Parser':
         app_symb = entry.get('Approved Symbol')
         loc_type = entry.get('Locus Type')
         hgnc_id = entry.get('HGNC ID')
@@ -69,7 +84,7 @@ def build_data(entry, parser):
             'Locus Type' : loc_type,
             'HGNC ID' : hgnc_id }
 
-    if parser == 'MGI_Parser':
+    elif parser == 'MGI_Parser':
         m_symbol = entry.get('Marker Symbol')
         feature_type = entry.get('Feature Type')
         m_type = entry.get('Marker Type')
@@ -80,7 +95,7 @@ def build_data(entry, parser):
             'Marker Type' : m_type,
             'MGI Accession ID' : acc_id }
 
-    if parser == 'RGD_Parser':
+    elif parser == 'RGD_Parser':
         gene_type = entry.get('GENE_TYPE')
         name = entry.get('NAME')
         symb = entry.get('SYMBOL')
@@ -91,7 +106,7 @@ def build_data(entry, parser):
             'NAME' : name,
             'GENE_RGD_ID' : rgd_id }
 
-    if parser == 'SwissProt_Parser':
+    elif parser == 'SwissProt_Parser':
         name = entry.get('name')
         acc = entry.get('accessions')
         gene_type = entry.get('type')
@@ -102,14 +117,14 @@ def build_data(entry, parser):
             'accessions' : acc,
             'dbreference' : dbref }
 
-    if parser == 'Affy_Parser':
+    elif parser == 'Affy_Parser':
         probe_id = entry.get('Probe Set ID')
         entrez_gene = entry.get('Entrez Gene')
 
         affy[probe_id] = {
             'Entrez Gene' : entrez_gene }
 
-    if parser == 'Gene2Accession_Parser':
+    elif parser == 'Gene2Acc_Parser':
         status = entry.get('status')
         taxid = entry.get('tax_id')
         entrez_gene = entry.get('GeneID')
@@ -119,7 +134,21 @@ def build_data(entry, parser):
             'tax_id' : taxid,
             'entrez_gene' : entrez_gene }
 
-    if parser == 'CHEBI_Parser':
+    elif parser == 'SCHEM_Parser':
+        schem_id = entry.get('schem_id')
+
+        schem[schem_id] = 'A'
+
+    elif parser == 'SCHEMtoCHEBI_Parser':
+        schem_term = entry.get('SCHEM_term')
+        chebi_id = entry.get('CHEBIID')
+        chebi_name = entry.get('CHEBI_name')
+
+        schem_to_chebi[schem_term] = {
+            'CHEBIID' : chebi_id,
+            'CHEBI_name' : chebi_name }
+
+    elif parser == 'CHEBI_Parser':
         name = entry.get('name')
         primary_id = entry.get('primary_id')
         alt_ids = entry.get('alt_ids')
@@ -128,17 +157,24 @@ def build_data(entry, parser):
             'primary_id' : primary_id,
             'alt_ids' : alt_ids }
 
-    if parser == 'PUBCHEM_Parser':
+    elif parser == 'PubNamespace_Parser':
         pub_id = entry.get('pubchem_id')
         synonym = entry.get('synonym')
+        global count
+        count = count + 1
+        if count % 50000 == 0:
+            print('Entry number ' +str(count))
+            print('Pub ID: '+pub_id)
+        #delim = '|'
+        #with open('test.txt', 'w') as fp:
+        #    fp.write(delim.join((pub_id, 'A')))
+        pub_ns_dict[pub_id].append(synonym)
+#        ipdb.set_trace()
 
-        pub_ns_dict[pub_id] = {
-            'synonym' : synonym }
-
-    if parser == 'CID_Parser':
+    elif parser == 'PubEquiv_Parser':
         source = entry.get('Source')
         cid = entry.get('PubChem CID')
-        sid = entry.get('Pubchem SID')
+        sid = entry.get('PubChem SID')
 
         pub_equiv_dict[sid] = {
             'Source' : source,
@@ -148,7 +184,8 @@ def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
                 swiss_data, affy_data, chebi_data, pub_ns_data,
-                gene2acc, entrez_history, pub_equiv_data]
+                gene2acc_data, entrez_history_data, pub_equiv_data,
+                schem_data, schem_to_chebi_data]
 
     for d in datasets:
         if str(d) == label:

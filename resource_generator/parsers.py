@@ -44,6 +44,10 @@ class EntrezGeneInfoParser(Parser):
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_info),
                                    delimiter='\t',
                                    fieldnames=entrez_info_headers)
+        # with open(self.entrez_info, 'r') as fp:
+        #     info_csvr = csv.DictReader(fp,
+        #                                delimiter='\t',
+        #                                fieldnames=entrez_info_headers)
 
         for row in info_csvr:
             if row['tax_id'] in ('9606', '10090', '10116'):
@@ -70,6 +74,10 @@ class EntrezGeneHistoryParser(Parser):
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_history),
                                       delimiter='\t',
                                       fieldnames=entrez_history_headers)
+        # with open(self.entrez_history, 'r') as fp:
+        #     history_csvr = csv.DictReader(fp,
+        #                                   delimiter='\t',
+        #                                   fieldnames=entrez_history_headers)
 
         for row in history_csvr:
             if row['tax_id'] in ("9606", "10090", "10116"):
@@ -183,6 +191,7 @@ class SwissProtParser(Parser):
     def parse(self):
 
         with gzip.open(self.sprot_file) as sprotf:
+#        with open(self.sprot_file, 'rb') as sprotf:
             ctx = etree.iterparse(sprotf, tag=self.entry)
 
             for ev, e in ctx:
@@ -379,6 +388,10 @@ class Gene2AccParser(Parser):
 
         g2a_reader = csv.DictReader(gzip_to_text(self.gene2acc_file), delimiter='\t',
                                     fieldnames=column_headers)
+
+        # with open(self.gene2acc_file, 'r') as fp:
+        #     g2a_reader = csv.DictReader(fp, delimiter='\t',
+        #                                 fieldnames=column_headers)
         for row in g2a_reader:
             yield row
 
@@ -433,7 +446,6 @@ class CHEBIParser(Parser):
                             chebi_dict['name'] = child.text
                         if child.tag == self.altId:
                             chebi_dict['alt_ids'].append(child.text.split(':')[1])
-                    #ipdb.set_trace()
                     yield chebi_dict
 
     def __str__(self):
@@ -502,10 +514,14 @@ class PubNamespaceParser(Parser):
        self.pub_file = url
 
     def parse(self):
-
         column_headers = ['pubchem_id', 'synonym']
         pub_reader = csv.DictReader(gzip_to_text(self.pub_file), delimiter='\t',
                                     fieldnames=column_headers)
+
+        # with open(self.pub_file, 'r') as fp:
+        #     pub_reader = csv.DictReader(fp, delimiter='\t',
+        #                                 fieldnames=column_headers)
+
         for row in pub_reader:
             yield row
 
@@ -524,8 +540,68 @@ class PubEquivParser(Parser):
         column_headers = ['PubChem SID', 'Source', 'External ID', 'PubChem CID']
         cid_reader = csv.DictReader(gzip_to_text(self.cid_file), delimiter='\t',
                                     fieldnames=column_headers)
+        # with open(self.cid_file, 'r') as fp:
+        #     cid_reader = csv.DictReader(fp, delimiter='\t',
+        #                                 fieldnames=column_headers)
+
         for row in cid_reader:
             yield row
 
     def __str__(self):
         return 'PubEquiv_Parser'
+
+
+class SCHEMParser(Parser):
+
+    def __init__(self, url):
+        super(SCHEMParser, self).__init__(url)
+        self.schem_file = url
+
+    def parse(self):
+        isFalse = True
+        with open(self.schem_file, 'r') as fp:
+            for line in fp.readlines():
+                if '[Values]' not in line and isFalse:
+                    continue
+                elif '[Values]' in line:
+                    isFalse = False
+                    continue
+                else:
+                    schem_id = line.split('|')[0]
+                    yield {'schem_id' : schem_id }
+
+    def __str__(self):
+        return 'SCHEM_Parser'
+
+
+class SCHEMtoCHEBIParser(Parser):
+
+    def __init__(self, url):
+        super(SCHEMtoCHEBIParser, self).__init__(url)
+        self.schem_to_chebi = url
+
+    def parse(self):
+
+        column_headers = ['SCHEM_term', 'CHEBIID', 'CHEBI_name']
+
+        with open(self.schem_to_chebi, 'r') as fp:
+            rdr = csv.DictReader(fp, delimiter='\t', fieldnames=column_headers)
+
+            for row in rdr:
+                yield row
+
+    def __str__(self):
+        return 'SCHEMtoChebi_Parser'
+
+
+class GOParser(Parser):
+
+    def __init__(self, url):
+        super(GOParser, self).__init__(url)
+        self.go_file = url
+
+    def parse(self):
+        yield
+
+    def __str__(self):
+        return 'GO_Parser'

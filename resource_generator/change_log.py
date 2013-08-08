@@ -14,6 +14,8 @@ import time
 from configuration import hgnc_update_data, mgi_update_data, \
     rgd_update_data, gp_reference_history
 
+# BELNamespaceParser - parse() returns the specific url for each namespace
+# currently published on resource.belframework.org
 parser = parsers.BELNamespaceParser()
 print('Running BELNamespace_Parser')
 old_entrez = set()
@@ -23,12 +25,15 @@ old_rgd = set()
 old_sp = set()
 old_sp_acc = set()
 old_affy = set()
+old_chebi = set()
+
 # iterate over the urls to the .belns files, collecting the entries
 # for the old data.
 for url in parser.parse():
     namespaces = { 'entrez' : (False, old_entrez), 'hgnc' : (False, old_hgnc),
                    'mgi' : (False, old_mgi), 'rgd' : (False, old_rgd),
-                   'swissprot' : (False, old_sp), 'affy' : (False, old_affy) }
+                   'swissprot' : (False, old_sp), 'affy' : (False, old_affy),
+                   'chebi' : (False, old_chebi)}
     open_url = urllib.request.urlopen(url)
     for ns in namespaces:
         if ns in open_url.url:
@@ -55,6 +60,7 @@ print('len of old mgi is ' +str(len(old_mgi)))
 print('len of old rgd is ' +str(len(old_rgd)))
 print('len of old swissprot is ' +str(len(old_sp)))
 print('len of old affy is ' +str(len(old_affy)))
+print('len of old chebi is ' +str(len(old_chebi)))
 print('===========================================')
 
 new_entrez = set()
@@ -63,6 +69,7 @@ new_mgi = set()
 new_rgd = set()
 new_sp = set()
 new_affy = set()
+new_chebi = set()
 # gather the new data for comparison (locally stored for now)
 indir = '/home/jhourani/openbel-contributions/resource_generator/touchdown'
 for root, dirs, filenames in os.walk(indir):
@@ -135,6 +142,17 @@ for root, dirs, filenames in os.walk(indir):
                     tokenized = str(line).split('|')
                     token = tokenized[0]
                     new_affy.add(token)
+            if 'chebi' in newf.name:
+                fp = open(newf.name, 'r')
+                for line in fp:
+                    # if '[Values]' in str(line):
+                    #     marker = True
+                    #     continue
+                    # if marker is False:
+                    #     continue
+                    tokenized = str(line).split('|')
+                    token = tokenized[0]
+                    new_chebi.add(token)
 
 print('len of new entrez is ' +str(len(new_entrez)))
 print('len of new hgnc is ' +str(len(new_hgnc)))
@@ -142,6 +160,7 @@ print('len of new mgi is ' +str(len(new_mgi)))
 print('len of new rgd is ' +str(len(new_rgd)))
 print('len of new swissprot is ' +str(len(new_sp)))
 print('len of new affy is ' +str(len(new_affy)))
+print('len of new chebi is ' +str(len(new_chebi)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
 entrez_lost = [x for x in old_entrez if x not in new_entrez]
@@ -150,6 +169,8 @@ mgi_lost = [x for x in old_mgi if x not in new_mgi]
 rgd_lost = [x for x in old_rgd if x not in new_rgd]
 sp_lost = [x for x in old_sp if x not in new_sp]
 affy_lost = [x for x in old_affy if x not in new_affy]
+chebi_lost = [x for x in old_chebi if x not in new_chebi]
+
 print('===========================================')
 print('lost entrez values ' +str(len(entrez_lost)))
 print('lost hgnc values ' +str(len(hgnc_lost)))
@@ -157,6 +178,7 @@ print('lost mgi values ' +str(len(mgi_lost)))
 print('lost rgd values ' +str(len(rgd_lost)))
 print('lost swissprot values ' +str(len(sp_lost)))
 print('lost affy values ' +str(len(affy_lost)))
+print('lost chebi values ' +str(len(chebi_lost)))
 print('===========================================')
 
 # values in the new data that are not in the old (either new or a replacement)
@@ -166,6 +188,7 @@ mgi_gained = [x for x in new_mgi if x not in old_mgi]
 rgd_gained = [x for x in new_rgd if x not in old_rgd]
 sp_gained = [x for x in new_sp if x not in old_sp]
 affy_gained = [x for x in new_affy if x not in old_affy]
+chebi_gained = [x for x in new_chebi if x not in old_chebi]
 print('===========================================')
 print('gained entrez values ' +str(len(entrez_gained)))
 print('gained hgnc values ' +str(len(hgnc_gained)))
@@ -173,11 +196,12 @@ print('gained mgi values ' +str(len(mgi_gained)))
 print('gained rgd values ' +str(len(rgd_gained)))
 print('gained swissprot values ' +str(len(sp_gained)))
 print('gained affy values ' +str(len(affy_gained)))
+print('gained chebi values ' +str(len(chebi_gained)))
 print('===========================================')
 
-with open('hgnc-new-values.txt', 'w') as fp:
-    for val in hgnc_gained:
-        fp.write(val +'\n')
+# with open('hgnc-new-values.txt', 'w') as fp:
+#     for val in hgnc_gained:
+#         fp.write(val +'\n')
 
 # iterate lost values for each dataset, find out if they are withdrawn or
 # replaced. If replaced, map oldname->newname. Otherwise map oldname->withdrawn.
@@ -190,7 +214,6 @@ for row in parser.parse():
     discontinued_id  = row.get('Discontinued_GeneID')
     gid = row.get('GeneID')
     replacement_id = gid if gid != '-' else 'withdrawn'
-#    ipdb.set_trace()
     change_log[discontinued_id] = replacement_id
 
 # hgnc changes

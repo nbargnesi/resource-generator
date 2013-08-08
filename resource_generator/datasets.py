@@ -7,7 +7,7 @@
 
 import ipdb
 
-class DataSet(object):
+class DataSet():
     def __init__(self, dictionary):
         self.dict = dictionary
 
@@ -59,7 +59,7 @@ class EntrezHistoryData(DataSet):
             yield gene_id, gene_type, description
 
     def __str__(self):
-        return 'entrez_info'
+        return 'entrez_history'
 
 
 class HGNCData(DataSet):
@@ -218,11 +218,23 @@ class CHEBIData(DataSet):
             altIds = mapping.get('alt_ids')
             yield name, primary_id, altIds
 
+    def get_names(self):
+        for name in self.chebi_dict:
+            yield name
+
     def get_primary_ids(self):
         for name in self.chebi_dict:
             mapping = self.chebi_dict.get(name)
             primary_id = mapping.get('primary_id')
             yield primary_id
+
+    def get_alt_ids(self):
+        for name in self.chebi_dict:
+            mapping = self.chebi_dict.get(name)
+            altIds = mapping.get('alt_ids')
+            if altIds is not None:
+                for alt in altIds:
+                    yield alt
 
     def alt_to_primary(self, alt):
         for name in self.chebi_dict:
@@ -237,16 +249,49 @@ class CHEBIData(DataSet):
         primary_id = mapping.get('primary_id')
         yield primary_id
 
-    def get_alt_ids(self):
-        for name in self.chebi_dict:
-            mapping = self.chebi_dict.get(name)
-            altIds = mapping.get('alt_ids')
-            if altIds is not None:
-                for alt in altIds:
-                    yield alt
-
     def __str__(self):
         return 'chebi'
+
+
+class SCHEMData(DataSet):
+
+    def __init__(self, dictionary):
+        super(SCHEMData, self).__init__(dictionary)
+        self.schem_dict = dictionary
+
+    def get_dictionary(self):
+        return self.schem_dict
+
+    def get_eq_values(self):
+        for entry in self.schem_dict:
+            yield entry
+
+    def __str__(self):
+        return 'schem'
+
+
+class SCHEMtoCHEBIData(DataSet):
+
+    def __init__(self, dictionary):
+        super(SCHEMtoCHEBIData, self).__init__(dictionary)
+        self.schem_to_chebi = dictionary
+
+    def get_dictionary(self):
+        return self.schem_to_chebi
+
+    def has_equivalance(self, schem_id):
+        if schem_id in self.schem_to_chebi:
+            return True
+        else:
+            return False
+
+    def get_equivalance(self, schem_id):
+        mapping = self.schem_to_chebi.get(schem_id)
+        chebi_id = mapping.get('CHEBIID')
+        return chebi_id
+
+    def __str__(self):
+        return 'schem_to_chebi'
 
 
 class PubNamespaceData(DataSet):
@@ -264,6 +309,27 @@ class PubNamespaceData(DataSet):
 
     def __str__(self):
         return 'pubchem_namespace'
+
+
+class PubEquivData(DataSet):
+
+    def __init__(self, dictionary):
+        super(PubEquivData, self).__init__(dictionary)
+        self.pub_eq_dict = dictionary
+
+    def get_dictionary(self):
+        return self.pub_eq_dict
+
+    def get_eq_values(self):
+        for sid in self.pub_eq_dict:
+            mapping = self.pub_eq_dict.get(sid)
+            source = mapping.get('Source')
+            cid = mapping.get('PubChem CID')
+
+            yield sid, source, cid
+
+    def __str__(self):
+        return 'pubchem_equiv'
 
 
 class Gene2AccData(DataSet):
@@ -284,23 +350,3 @@ class Gene2AccData(DataSet):
 
     def __str__(self):
         return 'gene2acc'
-
-
-class PubEquivData(DataSet):
-
-    def __init__(self, dictionary):
-        super(PubEquivData, self).__init__(dictionary)
-        self.pub_eq_dict = dictionary
-
-    def get_dictionary(self):
-        return self.pub_eq_dict
-
-    def get_eq_values(self):
-        for sid in self.pub_eq_dict:
-            mapping = self.pub_eq_dict.get(sid)
-            source = mapping.get('Source')
-            cid = mapping.get('PubChem CID')
-            yield sid, source, cid
-
-    def __str__(self):
-        return 'pubchem_equiv'

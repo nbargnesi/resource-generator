@@ -350,3 +350,60 @@ class Gene2AccData(DataSet):
 
     def __str__(self):
         return 'gene2acc'
+
+
+class GOBPData(DataSet):
+
+    def __init__(self, dictionary):
+        super(GOBPData, self).__init__(dictionary)
+        self.gobp_dict = dictionary
+
+    def get_dictionary(self):
+        return self.gobp_dict
+
+    def get_ns_values(self):
+        for termid in self.gobp_dict:
+            mapping = self.gobp_dict.get(termid)
+            termname = mapping.get('termname')
+            altids = mapping.get('altids')
+
+            yield termid, termname, altids
+
+    def get_eq_values(self):
+        for termid in self.gobp_dict:
+            mapping = self.gobp_dict.get(termid)
+            termname = mapping.get('termname')
+
+            yield termid, termname
+
+    def __str__(self):
+        return 'gobp'
+
+
+class GOCCData(DataSet):
+
+    def __init__(self, dictionary):
+        super(GOCCData, self).__init__(dictionary)
+        self.gocc_dict = dictionary
+
+    def get_dictionary(self):
+        return self.gocc_dict
+
+    def get_ns_values(self):
+        for termid in self.gocc_dict:
+            mapping = self.gocc_dict.get(termid)
+            termname = mapping.get('termname')
+            complex = mapping.get('complex')
+            altids = mapping.get('altids')
+
+            yield termid, termname, altids, complex
+
+    def get_eq_values(self):
+        for termid in self.gocc_dict:
+            mapping = self.gocc_dict.get(termid)
+            termname = mapping.get('termname')
+
+            yield termid, termname
+
+    def __str__(self):
+        return 'gocc'

@@ -5,6 +5,7 @@
 import uuid
 import namespaces
 import ipdb
+import csv
 from collections import deque, defaultdict
 
 hgnc_list = []
@@ -24,6 +25,8 @@ sd = {}
 chebi_id_eq = {}
 chebi_name_eq = {}
 pub_eq_dict = {}
+gobp_eq_dict = {}
+gocc_eq_dict = {}
 ref_status = {'REVIEWED' : 0,
               'VALIDATED' : 1,
               'PROVISIONAL' : 2,
@@ -74,6 +77,7 @@ def equiv(d):
                 fp.write(delim.join((gene_id, str(uid)))+'\n')
                 entrez_eq[gene_id] = uuid.uuid4()
         make_eq_dict(d)
+
     elif str(d) == 'hgnc':
         with open('hgnc_eq.beleq', 'w') as fp:
             for approved_symbol in d.get_eq_values():
@@ -90,6 +94,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((approved_symbol, str(uid)))+'\n')
                     hgnc_eq[approved_symbol] = uid
+
     elif str(d) == 'mgi':
         with open('mgi_eq.beleq', 'w') as fp:
             for marker_symbol in d.get_eq_values():
@@ -106,6 +111,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((marker_symbol, str(uid)))+'\n')
                     mgi_eq[marker_symbol] = uid
+
     elif str(d) == 'rgd':
         with open('rgd_eq.beleq', 'w') as fp:
             for symbol in d.get_eq_values():
@@ -122,6 +128,7 @@ def equiv(d):
                     uid = entrez_eq.get(new_id)
                     fp.write(delim.join((symbol, str(uid)))+'\n')
                     rgd_eq[symbol] = uid
+
     elif str(d) == 'swiss':
         with open('swiss_eq.beleq', 'w') as fp:
             # dbrefs is a dict, i.e { reference_type : id_of_that_gene}
@@ -200,6 +207,7 @@ def equiv(d):
                 # finally, generate .beleq for accession data also
                 build_acc_data(accessions, name)
             finish()
+
     elif str(d) == 'affy':
         with open('aff_eq.beleq', 'w') as fp:
             for probe_id, gene_id in d.get_eq_values():
@@ -261,6 +269,7 @@ def equiv(d):
                     uid = uuid.uuid4()
                     fp.write(delim.join((probe_id, str(uid)))+'\n')
                     affy_eq[probe_id] = uid
+
     # equiv for alt ids and names relies on the equivalence for
     # primary ids being completely generated.
     elif str(d) == 'chebi':
@@ -282,6 +291,7 @@ def equiv(d):
                 uid = chebi_id_eq.get(primary)
                 f.write(delim.join((name, str(uid)))+'\n')
                 chebi_name_eq[name] = uid
+
     elif str(d) == 'pubchem_equiv':
         with open('pubchem_eq.beleq', 'w') as fp:
             for sid, source, cid in d.get_eq_values():
@@ -295,6 +305,26 @@ def equiv(d):
                     # generate a new uuid
                     uid = uuid.uuid4()
                     fp.write(delim.join((sid, str(uid)))+'\n')
+
+    elif str(d) == 'gobp':
+        with open('gobp-eq.beleq', 'w') as gobp, open('gobp_id-eq.beleq', 'w') as gobp_id:
+            for vals in d.get_eq_values():
+                termid, termname = vals
+                uid = uuid.uuid4()
+                gobp_id.write(delim.join((termid, str(uid)))+'\n')
+                gobp.write(delim.join((termname, str(uid)))+'\n')
+
+    # GO is the baseline, so new uuids the first time.
+    elif str(d) == 'gocc':
+
+        with open('gocc-eq.beleq', 'w') as gocc, open('gocc_id-eq.beleq', 'w') as gocc_id:
+
+            for vals in d.get_eq_values():
+                termid, termname = vals
+                uid = uuid.uuid4()
+                gocc_id.write(delim.join((termid, str(uid)))+'\n')
+                gocc.write(delim.join((termname, str(uid)))+'\n')
+
 #    elif str(d) == 'schem':
 #        old_ns = parsed.load_data('
 

@@ -161,3 +161,31 @@ def make_namespace(d):
                 pid = vals
                 fp.write(delim.join((pid, 'A'))+'\n')
                 pub_ns.add(pid)
+
+    elif str(d) == 'gobp':
+        with open('gobp-namespace.belns', 'w') as gobp, \
+                open('gobp_id-namespace.belns', 'w') as gobp_id:
+
+            for vals in d.get_ns_values():
+                termid, termname, altids = vals
+                gobp.write(delim.join((termname, 'B'))+'\n')
+                gobp_id.write(delim.join((termid, 'B'))+'\n')
+                for alt in altids:
+                    gobp_id.write(delim.join((alt, 'B'))+'\n')
+
+    elif str(d) == 'gocc':
+
+        with open('gocc-namespace.belns', 'w') as gocc, \
+                open('gocc_id-namespace.belns', 'w') as gocc_id:
+            for vals in d.get_ns_values():
+                termid, termname, altids, complex = vals
+                if complex:
+                    gocc.write(delim.join((termname, 'C'))+'\n')
+                    gocc_id.write(delim.join((termid, 'C'))+'\n')
+                    for alt in altids:
+                        gocc_id.write(delim.join((alt, 'C'))+'\n')
+                else:
+                    gocc.write(delim.join((termname, 'A'))+'\n')
+                    gocc_id.write(delim.join((termid, 'A'))+'\n')
+                    for alt in altids:
+                        gocc_id.write(delim.join((alt, 'A'))+'\n')

@@ -4,6 +4,7 @@
 
 import ipdb
 from datasets import *
+import csv
 from collections import defaultdict
 
 # if os.path.exists('cached_data'):
@@ -28,6 +29,8 @@ schem = {}
 schem_to_chebi = {}
 pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
+gobp_dict = {}
+gocc_dict = {}
 
 entrez_data = EntrezInfoData(entrez_info)
 entrez_history_data = EntrezHistoryData(entrez_history)
@@ -42,6 +45,9 @@ schem_data = SCHEMData(schem)
 schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
 pub_ns_data = PubNamespaceData(pub_ns_dict)
 pub_equiv_data = PubEquivData(pub_equiv_dict)
+gobp_data = GOBPData(gobp_dict)
+gocc_data = GOCCData(gocc_dict)
+
 count = 0
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
@@ -175,17 +181,41 @@ def build_data(entry, parser):
         source = entry.get('Source')
         cid = entry.get('PubChem CID')
         sid = entry.get('PubChem SID')
-
+        global count
+        count = count + 1
+        if count % 50000 == 0:
+            print(str(count))
         pub_equiv_dict[sid] = {
             'Source' : source,
             'PubChem CID' : cid }
+
+    elif parser == 'GOBP_Parser':
+        termid = entry.get('termid')
+        termname = entry.get('termname')
+        altids = entry.get('altids')
+
+        gobp_dict[termid] = {
+            'termname' : termname,
+            'altids' : altids }
+
+    elif parser == 'GOCC_Parser':
+        termid = entry.get('termid')
+        termname = entry.get('termname')
+        complex = entry.get('complex')
+        altids = entry.get('altids')
+
+        gocc_dict[termid] = {
+            'termname' : termname,
+            'complex' : complex,
+            'altids' : altids }
 
 def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
                 swiss_data, affy_data, chebi_data, pub_ns_data,
                 gene2acc_data, entrez_history_data, pub_equiv_data,
-                schem_data, schem_to_chebi_data]
+                schem_data, schem_to_chebi_data, gobp_data,
+                gocc_data]
 
     for d in datasets:
         if str(d) == label:

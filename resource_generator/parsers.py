@@ -10,6 +10,7 @@ import gzip
 import urllib.request
 import zipfile
 import io
+import uuid
 import ipdb
 
 class Parser(object):
@@ -31,14 +32,14 @@ class EntrezGeneInfoParser(Parser):
     def parse(self):
 
         # columns for an Entrez gene info dataset.
-        entrez_info_headers = ["tax_id", "GeneID", "Symbol", "LocusTag",
-                               "Synonyms", "dbXrefs", "chromosome",
-                               "map_location", "description",
-                               "type_of_gene",
-                               "Symbol_from_nomenclature_authority",
-                               "Full_name_from_nomenclature_authority",
-                               "Nomenclature_status",
-                               "Other_designations", "Modification_date"]
+        entrez_info_headers = ['tax_id', 'GeneID', 'Symbol', 'LocusTag',
+                               'Synonyms', 'dbXrefs', 'chromosome',
+                               'map_location', 'description',
+                               'type_of_gene',
+                               'Symbol_from_nomenclature_authority',
+                               'Full_name_from_nomenclature_authority',
+                               'Nomenclature_status',
+                               'Other_designations', 'Modification_date']
 
       # dictionary for base gene info
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_info),
@@ -546,6 +547,15 @@ class PubEquivParser(Parser):
 
         for row in cid_reader:
             yield row
+        # sources = {}
+        # for row in cid_reader:
+        #     src = row.get('Source')
+        #     if src not in sources:
+        #         sources[src] = src
+        #     else:
+        #         src = sources[src]
+        #     row['Source'] = src
+        #     yield row
 
     def __str__(self):
         return 'PubEquiv_Parser'
@@ -594,14 +604,90 @@ class SCHEMtoCHEBIParser(Parser):
         return 'SCHEMtoChebi_Parser'
 
 
-class GOParser(Parser):
+class GOBPParser(Parser):
 
     def __init__(self, url):
-        super(GOParser, self).__init__(url)
+        super(GOBPParser, self).__init__(url)
         self.go_file = url
 
     def parse(self):
-        yield
+
+        # mg_eq = {}
+        # with open(self.mesh_file) as meshf:
+        #     mg_eq = dict([(rec[2], rec[3]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
+
+        # parse xml tree using lxml
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
+        with gzip.open(self.go_file, 'r') as go:
+            root = etree.parse(go, parser)
+            bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and not(is_obsolete)]")
+
+            # iterate the biological_process terms
+            for t in bp_terms:
+                bp_termid = t.find('id').text.split(':')[1]
+                bp_termname = t.find('name').text
+                if t.findall('alt_id') is not None:
+                    bp_altids = [x.text for x in t.findall('alt_id')]
+                else:
+                    bp_altids = False
+                yield { 'termid' : bp_termid, 'termname' : bp_termname,
+                        'alt_ids' : bp_altids }
 
     def __str__(self):
-        return 'GO_Parser'
+        return 'GOBP_Parser'
+
+
+class GOCCParser(Parser):
+
+    def __init__(self, url):
+        super(GOCCParser, self).__init__(url)
+        self.go_file = url
+        self.mesh_file = 'meshcs_to_gocc.csv'
+
+    def parse(self):
+
+        # initialize empty dictionaries using tuple assignment
+        cc_parents, accession_dict, term_dict = {}, {}, {}
+
+        # parse xml tree using lxml
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
+        root = etree.parse(self.go_file, parser)
+        cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and not(is_obsolete)]")
+
+        # iterate the complex terms to build parent dictionary
+        for t in cc_terms:
+            cc_termid = t.find("id").text
+            cc_parent_ids = [isa.text for isa in t.findall("is_a")]
+            cc_parents[cc_termid] = cc_parent_ids
+
+        for t in cc_terms:
+            cc_termid = t.find('id').text
+            cc_termname = t.find('name').text
+            cc_parent_stack = cc_parents[cc_termid]
+            if t.findall('alt_id') is not None:
+                cc_altids = [x.text for x in t.findall('alt_id')]
+            else:
+                cc_altids = False
+            complex = False
+
+            if cc_termid == "GO:0032991":
+                complex = True
+            elif t.find("is_root") is not None:
+                complex = False
+            else:
+                cc_parent_stack.extend(cc_parents[cc_termid])
+                while len(cc_parent_stack) > 0:
+                    cc_parent_id = cc_parent_stack.pop()
+
+                    if cc_parent_id == "GO:0032991":
+                        complex = True
+                        break
+
+                    if cc_parent_id in cc_parents:
+                        cc_parent_stack.extend(cc_parents[cc_parent_id])
+
+            yield { 'termid' : cc_termid.split(':')[1], 'termname' : cc_termname,
+                    'altids' : cc_altids, 'complex' : complex }
+
+    def __str__(self):
+        return 'GOCC_Parser'

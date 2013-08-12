@@ -50,8 +50,8 @@ if not os.path.exists('datasets'):
 # test_pool = ['HGNC_Parser', 'MGI_Parser', 'RGD_Parser',
 #                  'SwissProt_Parser', 'Affy_Parser', 'Gene2Acc_Parser',
 #                  'PUBCHEM_Parser']
-too_much = ['PubNamespace_Parser', 'PubEquiv_Parser', 'Gene2Acc_Parser',
-            'SwissProt_Parser', 'Affy_Parser']
+#too_much = ['PubNamespace_Parser', 'PubEquiv_Parser', 'Gene2Acc_Parser',
+#            'SwissProt_Parser', 'Affy_Parser']
 start_time = time.time()
 print('\n======= Phase One, downloading data =======')
 
@@ -82,11 +82,14 @@ g2 = parsed.load_data('gene2acc')
 chebi = parsed.load_data('chebi')
 schem = parsed.load_data('schem')
 schem_to_chebi = parsed.load_data('schem_to_chebi')
-pub_eq = parsed.load_data('pubchem_equiv')
-pub_ns = parsed.load_data('pubchem_namespace')
+gobp = parsed.load_data('gobp')
+gocc = parsed.load_data('gocc')
+#pub_eq = parsed.load_data('pubchem_equiv')
+#pub_ns = parsed.load_data('pubchem_namespace')
 
 # does not include pubchem currently
-obj_list = [ei, eh, hg, mg, rg, sp, af, g2, chebi, schem, schem_to_chebi]
+obj_list = [ei, eh, hg, mg, rg, sp, af, g2, chebi, schem, schem_to_chebi,
+            gobp, gocc]
 for obj in obj_list:
     with open(str(obj), 'wb') as fp:
         pickle.dump(obj, fp)
@@ -116,7 +119,7 @@ for obj in obj_list:
 #pub_ns = pickle.load('pubchem_ns')
 
 # does not include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, pub_ns]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc]
 
 for d in ns_data:
     print('Generating namespace file for ' +str(d))
@@ -127,7 +130,7 @@ interval_time = time.time()
 print('\n======= Phase Three, building equivalencies =======')
 
 # build some references to be used during equivalencing
-equiv_data = [ei, hg, mg, rg, sp, af, chebi, pub_eq, schem]
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, schem, gobp, gocc]
 for d in equiv_data:
     print('Generating equivalence file for ' +str(d))
     equiv.equiv(d)

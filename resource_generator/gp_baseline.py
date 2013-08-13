@@ -86,10 +86,11 @@ gobp = parsed.load_data('gobp')
 gocc = parsed.load_data('gocc')
 #pub_eq = parsed.load_data('pubchem_equiv')
 #pub_ns = parsed.load_data('pubchem_namespace')
+mesh = parsed.load_data('mesh')
 
 # does not include pubchem currently
 obj_list = [ei, eh, hg, mg, rg, sp, af, g2, chebi, schem, schem_to_chebi,
-            gobp, gocc]
+            gobp, gocc, mesh]
 for obj in obj_list:
     with open(str(obj), 'wb') as fp:
         pickle.dump(obj, fp)
@@ -119,7 +120,7 @@ for obj in obj_list:
 #pub_ns = pickle.load('pubchem_ns')
 
 # does not include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh]
 
 for d in ns_data:
     print('Generating namespace file for ' +str(d))
@@ -130,7 +131,7 @@ interval_time = time.time()
 print('\n======= Phase Three, building equivalencies =======')
 
 # build some references to be used during equivalencing
-equiv_data = [ei, hg, mg, rg, sp, af, chebi, schem, gobp, gocc]
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, schem, gobp, gocc, mesh]
 for d in equiv_data:
     print('Generating equivalence file for ' +str(d))
     equiv.equiv(d)

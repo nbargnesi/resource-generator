@@ -2,7 +2,6 @@
 #
 # parsed.py
 
-import ipdb
 from datasets import *
 import csv
 from collections import defaultdict
@@ -31,6 +30,7 @@ pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 gobp_dict = {}
 gocc_dict = {}
+mesh_dict = {}
 
 entrez_data = EntrezInfoData(entrez_info)
 entrez_history_data = EntrezHistoryData(entrez_history)
@@ -47,6 +47,7 @@ pub_ns_data = PubNamespaceData(pub_ns_dict)
 pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
+mesh_data = MESHData(mesh_dict)
 
 count = 0
 # entry passed to this function will be one row from
@@ -209,13 +210,26 @@ def build_data(entry, parser):
             'complex' : complex,
             'altids' : altids }
 
+    elif parser == 'MESH_Parser':
+        ui = entry.get('ui')
+        mh = entry.get('mesh_header')
+        mns = entry.get('mns')
+        sts = entry.get('sts')
+        synonyms = entry.get('synonyms')
+
+        mesh_dict[ui] = {
+            'mesh_header' : mh,
+            'sts' : sts,
+            'mns' : mns,
+            'synonyms' : synonyms }
+
 def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
                 swiss_data, affy_data, chebi_data, pub_ns_data,
                 gene2acc_data, entrez_history_data, pub_equiv_data,
                 schem_data, schem_to_chebi_data, gobp_data,
-                gocc_data]
+                gocc_data, mesh_data]
 
     for d in datasets:
         if str(d) == label:

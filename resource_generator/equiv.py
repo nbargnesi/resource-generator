@@ -4,7 +4,6 @@
 #
 import uuid
 import namespaces
-import ipdb
 import csv
 from collections import deque, defaultdict
 
@@ -27,6 +26,7 @@ chebi_name_eq = {}
 pub_eq_dict = {}
 gobp_eq_dict = {}
 gocc_eq_dict = {}
+
 ref_status = {'REVIEWED' : 0,
               'VALIDATED' : 1,
               'PROVISIONAL' : 2,
@@ -37,6 +37,11 @@ ref_status = {'REVIEWED' : 0,
 
 delim = '|'
 
+# create a reference, used in MeSH equivalencing
+mesh_to_gocc = '/home/jhourani/openbel-contributions/resource_generator/lions/datasets/meshcs_to_gocc.csv'
+mg_eq = {}
+with open(mesh_to_gocc, 'r') as meshf:
+    mg_eq = dict([(rec[0], rec[2]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
 
 # this method is called once, to build an equivalence dict used by SwissProt
 def build_equivs():
@@ -313,6 +318,7 @@ def equiv(d):
                 uid = uuid.uuid4()
                 gobp_id.write(delim.join((termid, str(uid)))+'\n')
                 gobp.write(delim.join((termname, str(uid)))+'\n')
+                gobp_eq_dict[termname] = uid
 
     # GO is the baseline, so new uuids the first time.
     elif str(d) == 'gocc':
@@ -324,6 +330,45 @@ def equiv(d):
                 uid = uuid.uuid4()
                 gocc_id.write(delim.join((termid, str(uid)))+'\n')
                 gocc.write(delim.join((termname, str(uid)))+'\n')
+                gocc_eq_dict[termid] = uid
+
+    elif str(d) == 'mesh':
+
+        with open('mesh-cellular-locations.beleq', 'w') as mesha, \
+                open('mesh-diseases.beleq', 'w') as meshc, \
+                open('mesh-biological-processes.beleq', 'w') as meshg:
+            for vals in d.get_eq_values():
+                ui, mh, mns, synonyms = vals
+                if any('A11.284' in branch for branch in mns):
+                    # get GO equiv if there is one
+                    uid = None
+                    go_id = mg_eq.get(mh)
+                    # meshcs_to_gocc contains OBSOLETE GO terms at the moment.
+                    # It is possible this lookup will return None, this the
+                    # elif clause to generate a new uuid if this happens.
+                    if go_id is not None:
+                        uid = gocc_eq_dict.get(go_id.split(':')[1])
+                        # try to find out why lookups fail - maybe OBSOLETE?
+                        if uid is None:
+                            print('Lookup failed for: '+str(go_id.split(':')[1]))
+                    elif uid is None:
+                        uid = uuid.uuid4()
+                    mesha.write(delim.join((mh, str(uid)))+'\n')
+                elif any('C' in branch for branch in mns):
+                    uid = uuid.uuid4()
+                    meshc.write(delim.join((mh, str(uid)))+'\n')
+                elif any('G' in branch for branch in mns):
+                    # synonyms for MeSH
+                    uid = None
+                    for syn in synonyms:
+                        # root 'G' branch in GOBP
+                        for name in gobp_eq_dict:
+                            if syn.lower() == name.lower():
+#                                ipdb.set_trace()
+                                uid = gobp_eq_dict.get(name)
+                    if uid is None:
+                        uid = uuid.uuid4()
+                    meshg.write(delim.join((mh, str(uid)))+'\n')
 
 #    elif str(d) == 'schem':
 #        old_ns = parsed.load_data('

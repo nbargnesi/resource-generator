@@ -407,3 +407,34 @@ class GOCCData(DataSet):
 
     def __str__(self):
         return 'gocc'
+
+
+class MESHData(DataSet):
+
+    def __init__(self, dictionary):
+        super(MESHData, self).__init__(dictionary)
+        self.mesh_dict = dictionary
+
+    def get_dictionary(self):
+        return self.mesh_dict
+
+    def get_ns_values(self):
+        for ui in self.mesh_dict:
+            mapping = self.mesh_dict.get(ui)
+            mh = mapping.get('mesh_header')
+            mns = mapping.get('mns')
+            sts = mapping.get('sts')
+
+            yield ui, mh, mns, sts
+
+    def get_eq_values(self):
+        for ui in self.mesh_dict:
+            mapping = self.mesh_dict.get(ui)
+            mh = mapping.get('mesh_header')
+            mns = mapping.get('mns')
+            synonyms = mapping.get('synonyms')
+
+            yield ui, mh, mns, synonyms
+
+    def __str__(self):
+        return 'mesh'

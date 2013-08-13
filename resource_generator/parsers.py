@@ -10,8 +10,6 @@ import gzip
 import urllib.request
 import zipfile
 import io
-import uuid
-import ipdb
 
 class Parser(object):
     def __init__(self, url):
@@ -691,3 +689,77 @@ class GOCCParser(Parser):
 
     def __str__(self):
         return 'GOCC_Parser'
+
+
+class MESHParser(Parser):
+
+    def __init__(self, url):
+        super(MESHParser, self).__init__(url)
+        self.mesh_file = url
+
+    def parse(self):
+
+        # ui - unique identifier / mh - mesh header
+        # mn - tree # / st - semantic type
+        ui = ''
+        mh = ''
+        mns = set()
+        sts = set()
+        synonyms = set()
+        firstTime = True
+        with open(self.mesh_file, 'r') as fp:
+            for line in fp.readlines():
+                if line.startswith('MH ='):
+                    mh = line.split('=')[1].strip()
+                elif line.startswith('UI ='):
+                    ui = line.split('=')[1].strip()
+                elif line.startswith('MN ='):
+                    mn = line.split('=')[1].strip()
+                    mns.add(mn)
+                elif line.startswith('ST ='):
+                    st = line.split('=')[1].strip()
+                    sts.add(st)
+                elif line.startswith('PRINT ENTRY ='):
+                    entry = line.split('=')[1].strip()
+                    if '|EQV|' in line:
+                        entries = entry.split('|')
+                        last = entries[-1]
+                        num_syns = last.count('a')
+                        while num_syns > 0:
+                            num_syns = num_syns - 1
+                            s = entries[num_syns]
+                            synonyms.add(s.strip())
+                    else:
+                        if '|' not in entry:
+                            synonyms.add(entry)
+                elif line.startswith('ENTRY ='):
+                    entry = line.split('=')[1].strip()
+                    if '|EQV|' in line:
+                        entries = entry.split('|')
+                        last = entries[-1]
+                        num_syns = last.count('a')
+                        while num_syns > 0:
+                            num_syns = num_syns - 1
+                            s = entries[num_syns]
+                            synonyms.add(s.strip())
+                    else:
+                        if '|' not in entry:
+                            synonyms.add(entry)
+                elif line.startswith('*NEWRECORD'):
+                    # file begins with *NEWRECORD so skip that one (dont yield)
+                    if firstTime:
+                        firstTime = False
+                        continue
+                    else:
+
+                        yield { 'ui' : ui, 'mesh_header' : mh,
+                                'mns' : mns, 'sts' : sts,
+                                'synonyms' : synonyms }
+                        ui = ''
+                        mh = ''
+                        mns = set()
+                        sts = set()
+                        synonyms = set()
+
+    def __str__(self):
+        return 'MESH_Parser'

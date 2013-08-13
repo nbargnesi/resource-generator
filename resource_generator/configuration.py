@@ -33,6 +33,7 @@ baseline_data_opt = OrderedDict()
 # baseline_data_opt['pubchem_equiv'] = ('datasets/SID-Map.gz', parsers.PubEquivParser)
 baseline_data_opt['gobp'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
 baseline_data_opt['gocc'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
+baseline_data_opt['mesh'] = ('datasets/d2013.bin', parsers.MESHParser)
 
 # baseline_data_opt = OrderedDict({
 #     'entrez_info' : ('datasets/eg-gene_info.gz', parsers.EntrezGeneInfoParser),

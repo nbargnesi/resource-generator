@@ -2,7 +2,6 @@
 #
 # namespaces.py
 
-import ipdb
 
 # namespace dictionaries
 entrez_ns = set()
@@ -170,8 +169,9 @@ def make_namespace(d):
                 termid, termname, altids = vals
                 gobp.write(delim.join((termname, 'B'))+'\n')
                 gobp_id.write(delim.join((termid, 'B'))+'\n')
-                for alt in altids:
-                    gobp_id.write(delim.join((alt, 'B'))+'\n')
+                if altids is not None:
+                    for alt in altids:
+                        gobp_id.write(delim.join((alt, 'B'))+'\n')
 
     elif str(d) == 'gocc':
 
@@ -187,5 +187,31 @@ def make_namespace(d):
                 else:
                     gocc.write(delim.join((termname, 'A'))+'\n')
                     gocc_id.write(delim.join((termid, 'A'))+'\n')
-                    for alt in altids:
-                        gocc_id.write(delim.join((alt, 'A'))+'\n')
+                    if altids is not None:
+                        for alt in altids:
+                            gocc_id.write(delim.join((alt, 'A'))+'\n')
+
+    elif str(d) == 'mesh':
+
+        with open('mesh-cellular-locations.belns', 'w') as meshf, \
+                open('mesh-diseases.belns', 'w') as meshd, \
+                open('mesh-biological-processes.belns', 'w') as meshb:
+            for vals in d.get_ns_values():
+                ui, mh, mns, sts = vals
+                # all entries from A11.284 branch (abundances)
+                if any('A11.284' in branch for branch in mns):
+                    meshf.write(delim.join((mh, 'A'))+'\n')
+                # all entries from the C branch (pathology)
+                elif any('C' in branch for branch in mns):
+                    meshd.write(delim.join((mh, 'O'))+'\n')
+                # G branch (bio process) - exclude G01 G02 G15 G17 branches
+                elif any('G' in branch for branch in mns):
+                    excluded = False
+                    for branch in mns:
+                        if branch.startswith('MN = G01') \
+                                or branch.startswith('MN = G02') \
+                                or branch.startswith('MN = G15') \
+                                or branch.startswith('MN = G17'):
+                            excluded = True
+                    if not excluded:
+                        meshb.write(delim.join((mh, 'B'))+'\n')

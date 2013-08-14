@@ -429,6 +429,7 @@ class CHEBIParser(Parser):
         self.classy = '{http://www.w3.org/2002/07/owl#}Class'
         self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
         self.altId = '{http://purl.obolibrary.org/obo#}altId'
+        self.synonym = '{http://purl.obolibrary.org/obo#}Synonym'
 
     def parse(self):
 
@@ -445,6 +446,8 @@ class CHEBIParser(Parser):
                             chebi_dict['name'] = child.text
                         if child.tag == self.altId:
                             chebi_dict['alt_ids'].append(child.text.split(':')[1])
+                        if child.tag == self.synonym:
+                            chebi_dict['synonyms'].append(child.text)
                     yield chebi_dict
 
     def __str__(self):
@@ -599,7 +602,7 @@ class SCHEMtoCHEBIParser(Parser):
                 yield row
 
     def __str__(self):
-        return 'SCHEMtoChebi_Parser'
+        return 'SCHEMtoCHEBI_Parser'
 
 
 class GOBPParser(Parser):

@@ -262,7 +262,7 @@ class SCHEMData(DataSet):
     def get_dictionary(self):
         return self.schem_dict
 
-    def get_eq_values(self):
+    def get_ns_values(self):
         for entry in self.schem_dict:
             yield entry
 
@@ -279,16 +279,22 @@ class SCHEMtoCHEBIData(DataSet):
     def get_dictionary(self):
         return self.schem_to_chebi
 
-    def has_equivalance(self, schem_id):
-        if schem_id in self.schem_to_chebi:
-            return True
-        else:
-            return False
+    def has_equivalence(self, schem_name):
+        equiv = False
+        for schem_term in self.schem_to_chebi:
+            mapping = self.schem_to_chebi.get(schem_term)
+            chebi_name = mapping.get('CHEBI_name')
+            # if schem_name == '(-)-Catechin':
+            #     ipdb.set_trace()
+#            ipdb.set_trace()
+            if schem_name.lower() == chebi_name.lower():
+                equiv = True
+        return equiv
 
-    def get_equivalance(self, schem_id):
+    def get_equivalence(self, schem_id):
         mapping = self.schem_to_chebi.get(schem_id)
-        chebi_id = mapping.get('CHEBIID')
-        return chebi_id
+        chebi_name = mapping.get('CHEBI_name')
+        return chebi_name
 
     def __str__(self):
         return 'schem_to_chebi'

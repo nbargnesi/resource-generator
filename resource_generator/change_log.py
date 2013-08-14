@@ -22,18 +22,24 @@ old_entrez = set()
 old_hgnc = set()
 old_mgi = set()
 old_rgd = set()
-old_sp = set()
+old_sp_names = set()
 old_sp_acc = set()
 old_affy = set()
-old_chebi = set()
-
+old_chebi_names = set()
+old_chebi_ids = set()
 # iterate over the urls to the .belns files, collecting the entries
-# for the old data.
+# from the old data.
 for url in parser.parse():
-    namespaces = { 'entrez' : (False, old_entrez), 'hgnc' : (False, old_hgnc),
-                   'mgi' : (False, old_mgi), 'rgd' : (False, old_rgd),
-                   'swissprot' : (False, old_sp), 'affy' : (False, old_affy),
-                   'chebi' : (False, old_chebi)}
+    namespaces = { 'entrez' : (False, old_entrez),
+                   'hgnc' : (False, old_hgnc),
+                   'mgi' : (False, old_mgi),
+                   'rgd' : (False, old_rgd),
+                   'swissprot-entry' : (False, old_sp_names),
+                   'swissprot-accession' : (False, old_sp_acc),
+                   'affy' : (False, old_affy),
+                   'chebi-name' : (False, old_chebi_names),
+                   'chebi-id' : (False, old_chebi_ids) }
+
     open_url = urllib.request.urlopen(url)
     for ns in namespaces:
         if ns in open_url.url:
@@ -58,18 +64,22 @@ print('len of old entrez is ' +str(len(old_entrez)))
 print('len of old hgnc is ' +str(len(old_hgnc)))
 print('len of old mgi is ' +str(len(old_mgi)))
 print('len of old rgd is ' +str(len(old_rgd)))
-print('len of old swissprot is ' +str(len(old_sp)))
+print('len of old swissprot names is ' +str(len(old_sp_names)))
+print('len of old swissprot accessions is ' +str(len(old_sp_acc)))
 print('len of old affy is ' +str(len(old_affy)))
-print('len of old chebi is ' +str(len(old_chebi)))
+print('len of old chebi names is ' +str(len(old_chebi_names)))
+print('len of old chebi ids is' +str(len(old_chebi_ids)))
 print('===========================================')
 
 new_entrez = set()
 new_hgnc = set()
 new_mgi = set()
 new_rgd = set()
-new_sp = set()
+new_sp_names = set()
+new_sp_acc = set()
 new_affy = set()
-new_chebi = set()
+new_chebi_names = set()
+new_chebi_ids = set()
 # gather the new data for comparison (locally stored for now)
 indir = '/home/jhourani/openbel-contributions/resource_generator/touchdown'
 for root, dirs, filenames in os.walk(indir):
@@ -120,7 +130,7 @@ for root, dirs, filenames in os.walk(indir):
                     tokenized = str(line).split('|')
                     token = tokenized[0]
                     new_rgd.add(token)
-            if 'swissprot' in newf.name:
+            if 'swiss-acc' in newf.name:
                 fp = open(newf.name, 'r')
                 for line in fp:
                     # if '[Values]' in str(line):
@@ -130,7 +140,18 @@ for root, dirs, filenames in os.walk(indir):
                     #     continue
                     tokenized = str(line).split('|')
                     token = tokenized[0]
-                    new_sp.add(token)
+                    new_sp_acc.add(token)
+            if 'swiss-names' in newf.name:
+                fp = open(newf.name, 'r')
+                for line in fp:
+                    # if '[Values]' in str(line):
+                    #     marker = True
+                    #     continue
+                    # if marker is False:
+                    #     continue
+                    tokenized = str(line).split('|')
+                    token = tokenized[0]
+                    new_sp_names.add(token)
             if 'affy' in newf.name:
                 fp = open(newf.name, 'r')
                 for line in fp:
@@ -142,7 +163,7 @@ for root, dirs, filenames in os.walk(indir):
                     tokenized = str(line).split('|')
                     token = tokenized[0]
                     new_affy.add(token)
-            if 'chebi' in newf.name:
+            if 'chebi-names' in newf.name:
                 fp = open(newf.name, 'r')
                 for line in fp:
                     # if '[Values]' in str(line):
@@ -152,33 +173,51 @@ for root, dirs, filenames in os.walk(indir):
                     #     continue
                     tokenized = str(line).split('|')
                     token = tokenized[0]
-                    new_chebi.add(token)
+                    new_chebi_names.add(token)
+            if 'chebi-ids' in newf.name:
+                fp = open(newf.name, 'r')
+                for line in fp:
+                    # if '[Values]' in str(line):
+                    #     marker = True
+                    #     continue
+                    # if marker is False:
+                    #     continue
+                    tokenized = str(line).split('|')
+                    token = tokenized[0]
+                    new_chebi_ids.add(token)
+
 
 print('len of new entrez is ' +str(len(new_entrez)))
 print('len of new hgnc is ' +str(len(new_hgnc)))
 print('len of new mgi is ' +str(len(new_mgi)))
 print('len of new rgd is ' +str(len(new_rgd)))
-print('len of new swissprot is ' +str(len(new_sp)))
+print('len of new swiss names is ' +str(len(new_sp_names)))
+print('len of new swiss acc is ' +str(len(new_sp_acc)))
 print('len of new affy is ' +str(len(new_affy)))
-print('len of new chebi is ' +str(len(new_chebi)))
+print('len of new chebi names is ' +str(len(new_chebi_names)))
+print('len of new chebi ids is ' +str(len(new_chebi_ids)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
 entrez_lost = [x for x in old_entrez if x not in new_entrez]
 hgnc_lost = [x for x in old_hgnc if x not in new_hgnc]
 mgi_lost = [x for x in old_mgi if x not in new_mgi]
 rgd_lost = [x for x in old_rgd if x not in new_rgd]
-sp_lost = [x for x in old_sp if x not in new_sp]
+sp_lost_names = [x for x in old_sp_names if x not in new_sp_names]
+sp_lost_acc = [x for x in old_sp_acc if x not in new_sp_acc]
 affy_lost = [x for x in old_affy if x not in new_affy]
-chebi_lost = [x for x in old_chebi if x not in new_chebi]
+chebi_lost_names = [x for x in old_chebi_names if x not in new_chebi_names]
+chebi_lost_ids = [x for x in old_chebi_ids if x not in new_chebi_ids]
 
 print('===========================================')
 print('lost entrez values ' +str(len(entrez_lost)))
 print('lost hgnc values ' +str(len(hgnc_lost)))
 print('lost mgi values ' +str(len(mgi_lost)))
 print('lost rgd values ' +str(len(rgd_lost)))
-print('lost swissprot values ' +str(len(sp_lost)))
+print('lost swissprot names ' +str(len(sp_lost_names)))
+print('lost swissprot ids ' +str(len(sp_lost_acc)))
 print('lost affy values ' +str(len(affy_lost)))
-print('lost chebi values ' +str(len(chebi_lost)))
+print('lost chebi names ' +str(len(chebi_lost_names)))
+print('lost chebi ids ' +str(len(chebi_lost_ids)))
 print('===========================================')
 
 # values in the new data that are not in the old (either new or a replacement)
@@ -186,17 +225,22 @@ entrez_gained = [x for x in new_entrez if x not in old_entrez]
 hgnc_gained = [x for x in new_hgnc if x not in old_hgnc]
 mgi_gained = [x for x in new_mgi if x not in old_mgi]
 rgd_gained = [x for x in new_rgd if x not in old_rgd]
-sp_gained = [x for x in new_sp if x not in old_sp]
+sp_gained_names = [x for x in new_sp_names if x not in old_sp_names]
+sp_gained_acc = [x for x in new_sp_acc if x not in old_sp_acc]
 affy_gained = [x for x in new_affy if x not in old_affy]
-chebi_gained = [x for x in new_chebi if x not in old_chebi]
+chebi_gained_names = [x for x in new_chebi_names if x not in old_chebi_names]
+chebi_gained_ids = [x for x in new_chebi_ids if x not in old_chebi_ids]
+
 print('===========================================')
 print('gained entrez values ' +str(len(entrez_gained)))
 print('gained hgnc values ' +str(len(hgnc_gained)))
 print('gained mgi values ' +str(len(mgi_gained)))
 print('gained rgd values ' +str(len(rgd_gained)))
-print('gained swissprot values ' +str(len(sp_gained)))
+print('gained swissprot names ' +str(len(sp_gained_names)))
+print('gained swissprot ids ' +str(len(sp_gained_acc)))
 print('gained affy values ' +str(len(affy_gained)))
-print('gained chebi values ' +str(len(chebi_gained)))
+print('gained chebi names ' +str(len(chebi_gained_names)))
+print('gained chebi ids ' +str(len(chebi_gained_ids)))
 print('===========================================')
 
 # with open('hgnc-new-values.txt', 'w') as fp:

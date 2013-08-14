@@ -2,6 +2,8 @@
 #
 # namespaces.py
 
+import parsed
+import ipdb
 
 # namespace dictionaries
 entrez_ns = set()
@@ -68,7 +70,7 @@ def make_namespace(d):
     # build and write out the namespace values
     delim = '|'
     if str(d) == 'entrez_info':
-        with open('entrez-info_namespace.belns', 'w') as fp:
+        with open('entrez-gene-ids-hmr.belns', 'w') as fp:
             # tuple of (gene_id, gene_type, description)
             for vals in d.get_ns_values():
                 gene_id, gene_type, description = vals
@@ -84,7 +86,7 @@ def make_namespace(d):
                     entrez_ns.add(gene_id)
 
     elif str(d) == 'hgnc':
-        with open('hgnc-namespace.belns', 'w') as fp:
+        with open('hgnc-approved-symbols.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 approved_symb, locus_type, hgnc_id = vals
                 # withdrawn genes NOT included in this namespace
@@ -94,7 +96,7 @@ def make_namespace(d):
                 hgnc_map[hgnc_id] = approved_symb
 
     elif str(d) == 'mgi':
-        with open('mgi-namespace.belns', 'w') as fp:
+        with open('mgi-approved-symbols.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 marker_symbol, feature_type, acc_id, marker_type = vals
                 if marker_type == 'Gene' or marker_type == 'Pseudogene':
@@ -104,7 +106,7 @@ def make_namespace(d):
 
     # withdrawn genes are NOT included in this namespace
     elif str(d) == 'rgd':
-        with open('rgd-namespace.belns', 'w') as fp:
+        with open('rgd-approved-symbols.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 symbol, gene_type, name, rgd_id = vals
                 if gene_type == 'miscrna' and 'microRNA' in name:
@@ -120,7 +122,8 @@ def make_namespace(d):
                 rgd_map[rgd_id] = symbol
 
     elif str(d) == 'swiss':
-        with open('swiss-namespace.belns', 'w') as fp, open('swiss-acc-namespace.belns', 'w') as f:
+        with open('swiss-entry-names.belns', 'w') as fp, \
+                open('swiss-accession-numbers.belns', 'w') as f:
             for vals in d.get_ns_values():
                 gene_name, accessions = vals
                 fp.write(delim.join((gene_name, 'GRP'))+'\n')
@@ -131,7 +134,7 @@ def make_namespace(d):
 
     # are there duplicates being taken in here??
     elif str(d) == 'affy':
-        with open('affy-namespace.belns', 'w') as fp:
+        with open('affy-probeset-ids.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 probe_set_ids = vals
                 for pid in probe_set_ids:
@@ -140,7 +143,8 @@ def make_namespace(d):
 #                        affy_ns_dict[pid] = 'R'
 
     elif str(d) == 'chebi':
-        with open('chebi-namespace.belns', 'w') as fp, open('chebi-id-namespace.belns', 'w') as f:
+        with open('chebi-names.belns', 'w') as fp, \
+                open('chebi-ids.belns', 'w') as f:
             for vals in d.get_ns_values():
                 name, primary_id, altIds = vals
                 fp.write(delim.join((name, 'A'))+'\n')
@@ -155,16 +159,16 @@ def make_namespace(d):
                         chebi_id_ns.add(i)
 
     elif str(d) == 'pubchem_namespace':
-        with open('pubchem-namespace.belns', 'w') as fp:
+        with open('pubchem-ids.belns', 'w') as fp:
             for vals in d.get_ns_values():
                 pid = vals
                 fp.write(delim.join((pid, 'A'))+'\n')
                 pub_ns.add(pid)
 
     elif str(d) == 'gobp':
-        with open('gobp-namespace.belns', 'w') as gobp, \
-                open('gobp_id-namespace.belns', 'w') as gobp_id:
-
+        with open('go-biological-processes-names.belns', 'w') as gobp, \
+                open('go-biological-processes-accession-numbers.belns', 'w') \
+                as gobp_id:
             for vals in d.get_ns_values():
                 termid, termname, altids = vals
                 gobp.write(delim.join((termname, 'B'))+'\n')
@@ -175,8 +179,9 @@ def make_namespace(d):
 
     elif str(d) == 'gocc':
 
-        with open('gocc-namespace.belns', 'w') as gocc, \
-                open('gocc_id-namespace.belns', 'w') as gocc_id:
+        with open('go-cellular-component-terms.belns', 'w') as gocc, \
+                open('go-cellular-component-accession-numbers.belns', 'w') \
+                as gocc_id:
             for vals in d.get_ns_values():
                 termid, termname, altids, complex = vals
                 if complex:
@@ -190,6 +195,20 @@ def make_namespace(d):
                     if altids is not None:
                         for alt in altids:
                             gocc_id.write(delim.join((alt, 'A'))+'\n')
+
+    elif str(d) == 'schem':
+        schem_to_chebi = parsed.load_data('schem_to_chebi')
+        count = 0
+        with open('selventa-legacy-chemical-names.belns', 'w') as f:
+            for entry in d.get_ns_values():
+                # try to get a chebi equivalent, if there is one do not
+                # write this value to the new namespace
+                if schem_to_chebi.has_equivalence(entry):
+                    count = count + 1
+                    continue
+                else:
+                    f.write(delim.join((entry, 'A'))+'\n')
+        print('Able to resolve ' +str(count)+ ' SCHEM names to CHEBI.')
 
     elif str(d) == 'mesh':
 

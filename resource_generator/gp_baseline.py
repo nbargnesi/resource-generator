@@ -120,7 +120,7 @@ for obj in obj_list:
 #pub_ns = pickle.load('pubchem_ns')
 
 # does not include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem]
 
 for d in ns_data:
     print('Generating namespace file for ' +str(d))

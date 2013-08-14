@@ -159,10 +159,12 @@ def build_data(entry, parser):
         name = entry.get('name')
         primary_id = entry.get('primary_id')
         alt_ids = entry.get('alt_ids')
+        synonyms = entry.get('synonyms')
 
         chebi[name] = {
             'primary_id' : primary_id,
-            'alt_ids' : alt_ids }
+            'alt_ids' : alt_ids,
+            'synonyms' : synonyms }
 
     elif parser == 'PubNamespace_Parser':
         pub_id = entry.get('pubchem_id')

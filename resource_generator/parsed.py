@@ -160,7 +160,8 @@ def build_data(entry, parser):
         primary_id = entry.get('primary_id')
         alt_ids = entry.get('alt_ids')
         synonyms = entry.get('synonyms')
-
+#        print('Name - ' +name)
+#        ipdb.set_trace()
         chebi[name] = {
             'primary_id' : primary_id,
             'alt_ids' : alt_ids,

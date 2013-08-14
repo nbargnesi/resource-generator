@@ -433,21 +433,28 @@ class CHEBIParser(Parser):
 
     def parse(self):
 
-        chebi_dict = defaultdict(list)
         with open(self.chebi_file, 'rb') as cf:
             tree = etree.iterparse(cf, tag=self.classy)
             for event, elem in tree:
                 if len(elem.values()) != 0:
+                    chebi_dict = {}
+                    synonyms = set()
+                    alt_ids = set()
+                    name = ''
                     vals = elem.values()
                     chebi_dict['primary_id'] = vals[0].split('CHEBI_')[1]
                     children = elem.getchildren()
                     for child in children:
                         if child.tag == self.label:
-                            chebi_dict['name'] = child.text
+                            name = child.text
                         if child.tag == self.altId:
-                            chebi_dict['alt_ids'].append(child.text.split(':')[1])
+                            alt_ids.add(child.text.split(':')[1])
                         if child.tag == self.synonym:
-                            chebi_dict['synonyms'].append(child.text)
+                            synonyms.add(child.text)
+                        chebi_dict['name'] = name
+                        chebi_dict['alt_ids'] = alt_ids
+                        chebi_dict['synonyms'] = synonyms
+
                     yield chebi_dict
 
     def __str__(self):

@@ -11,8 +11,15 @@ import datetime
 import pickle
 import ipdb
 import time
+import datasets
 from configuration import hgnc_update_data, mgi_update_data, \
     rgd_update_data, gp_reference_history
+
+# parse any files needed for change-log resolution
+parser = parsers.SwissWithdrawnParser()
+print('Running ' +str(parser))
+
+
 
 # BELNamespaceParser - parse() returns the specific url for each namespace
 # currently published on resource.belframework.org
@@ -297,15 +304,16 @@ for row in parser.parse():
     for symbol in lost_vals:
         change_log[symbol] = new_val
 
-# swissprot change
+# swissprot changes
 print('Gathering SwissProt update info...')
 start_time = time.time()
 cache_hits = 0
 cache_misses = 0
 #os.mkdir('cache/')
-for acc in sp_lost:
+for name in sp_lost_names:
     cached = False
-    url = 'http://www.uniprot.org/uniprot/?query=mnemonic%3a'+acc+'+active%3ayes&format=tab&columns=entry%20name'
+    url = 'http://www.uniprot.org/uniprot/?query=mnemonic%3a'+name+ \
+        '+active%3ayes&format=tab&columns=entry%20name'
     hashed_url = hash(url)
     ###################### For Testing Only - use cache ########################
     files = set()
@@ -329,11 +337,14 @@ for acc in sp_lost:
 
     # no replacement
     if len(content_list) is 0:
-        change_log[acc] = 'withdrawn'
+        change_log[name] = 'withdrawn'
     # get the new name
     else:
         new_name = content_list[1]
-        change_log[acc] = new_name
+        change_log[name] = new_name
+
+for acc in sp_lost_acc:
+    
 end_time = time.time()
 print('total runtime is '+str(((end_time - start_time) / 60)) +' minutes.')
 
@@ -342,12 +353,20 @@ e_unknowns = [x for x in entrez_lost if x not in change_log]
 hgnc_unknowns = [x for x in hgnc_lost if x not in change_log]
 mgi_unknowns = [x for x in mgi_lost if x not in change_log]
 rgd_unknowns = [x for x in rgd_lost if x not in change_log]
-sp_unknowns = [x for x in sp_lost if x not in change_log]
+sp_unknown_names = [x for x in sp_lost_names if x not in change_log]
+sp_unknown_acc = [x for x in sp_lost_acc if x not in change_log]
+chebi_unknown_names = [x for x in chebi_lost_names if x not in change_log]
+chebi_unknown_ids = [x for x in chebi_lost_ids if x not in change_log]
+
 print('entrez unknowns: ' +str(len(e_unknowns)))
 print('hgnc unknowns: ' +str(len(hgnc_unknowns)))
 print('mgi unknowns: ' +str(len(mgi_unknowns)))
 print('rgd unknowns: ' +str(len(rgd_unknowns)))
-print('swissprot unknowns: ' +str(len(sp_unknowns)))
+print('swissprot unknown names: ' +str(len(sp_unknown_names)))
+print('swissprot unknown acc: ' +str(len(sp_unknown_acc)))
+print('chebi unknown names: ' +str(len(chebi_unknown_names)))
+print('chebi unknown ids: ' +str(len(chebi_unknown_ids)))
+
 print('Cache checks: ' +str(cache_hits))
 print('Cache misses: ' +str(cache_misses))
 # add the date

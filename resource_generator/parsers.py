@@ -397,28 +397,52 @@ class Gene2AccParser(Parser):
     def __str__(self):
         return 'Gene2Acc_Parser'
 
-# class BELNamespaceParser(Parser):
+class BELNamespaceParser(Parser):
 
-#     def __init__(self):
-#         self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
-#         self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
-#         self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
-#         self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
+    def __init__(self):
+        self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
+        self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
+        self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
+        self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
 
-#     def parse(self):
+    def parse(self):
 
-#         tree = etree.parse(self.old_files)
+        tree = etree.parse(self.old_files)
 
-#         # xpath will return all elements under this namespace (list of bel namespace urls)
-#         urls = tree.xpath('//*[local-name()="namespace"]/@idx:resourceLocation',
-#                           namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-#                                       'idx' : 'http://www.belscript.org/schema/index'})
+        # xpath will return all elements under this namespace (list of bel namespace urls)
+        urls = tree.xpath('//*[local-name()="namespace"]/@idx:resourceLocation',
+                          namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                                      'idx' : 'http://www.belscript.org/schema/index'})
 
-#         for u in urls:
-#             yield u
+        for url in urls:
+            yield url
 
-#     def __str__(self):
-#         return 'BELNamespace_Parser'
+    def __str__(self):
+        return 'BELNamespace_Parser'
+
+
+class BELEquivalenceParser(Parser):
+
+    def __init__(self):
+        self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
+        self.anno_def = '{http://www.belscript.org/schema/annotationdefinitions}annotationdefinitions'
+        self.namespace = '{http://www.belscript.org/schema/namespace}namespace'
+        self.namespaces = '{http://www.belscript.org/schema/namespaces}namespaces'
+
+    def parse(self):
+
+        tree = etree.parse(self.old_files)
+
+        # xpath will return all elements under this namespace (list of bel equivalence urls)
+        urls = tree.xpath('//*[local-name()="equivalence"]/@idx:resourceLocation',
+                          namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                                      'idx' : 'http://www.belscript.org/schema/index'})
+
+        for url in urls:
+            yield url
+
+    def __str__(self):
+        return 'BELEquivalence_Parser'
 
 
 class CHEBIParser(Parser):
@@ -641,6 +665,29 @@ class GOBPParser(Parser):
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
                         'alt_ids' : bp_altids }
 
+    def update_parse(self):
+        # mg_eq = {}
+        # with open(self.mesh_file) as meshf:
+        #     mg_eq = dict([(rec[2], rec[3]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
+
+        # parse xml tree using lxml
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
+        with gzip.open(self.go_file, 'r') as go:
+            root = etree.parse(go, parser)
+            bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and is_obsolete]")
+
+            # iterate the biological_process terms
+            for t in bp_terms:
+                bp_termid = t.find('id').text.split(':')[1]
+                bp_termname = t.find('name').text
+                if t.findall('alt_id') is not None:
+                    bp_altids = [x.text for x in t.findall('alt_id')]
+                else:
+                    bp_altids = False
+                yield { 'termid' : bp_termid, 'termname' : bp_termname,
+                        'alt_ids' : bp_altids }
+
+
     def __str__(self):
         return 'GOBP_Parser'
 
@@ -773,3 +820,26 @@ class MESHParser(Parser):
 
     def __str__(self):
         return 'MESH_Parser'
+
+
+class SwissWithdrawnParser(Parser):
+
+    def __init__(self, url):
+        super(SwissWithdrawnParser, self).__init__(url)
+        self.s_file = url
+
+    def parse(self):
+
+        with open(self.s_file, 'r') as fp:
+            marker = False
+            for line in fp.readlines():
+                if '____' in line:
+                    marker = True
+                    continue
+                if marker is False:
+                    continue
+
+                yield {'accession' : line.strip()}
+
+    def __str__(self):
+        return 'SwissWithdrawn_Parser'

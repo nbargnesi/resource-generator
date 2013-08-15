@@ -23,10 +23,11 @@ baseline_data_opt['entrez_history'] = ('datasets/eg-gene_history.gz', parsers.En
 baseline_data_opt['hgnc'] = ('datasets/hgnc-hgnc_downloads.tsv', parsers.HGNCParser)
 baseline_data_opt['mgi'] = ('datasets/MRK_List2.rpt', parsers.MGIParser)
 baseline_data_opt['rgd'] = ('datasets/rgd-genes_rat.tsv', parsers.RGDParser)
+baseline_data_opt['chebi'] = ('datasets/chebi.owl', parsers.CHEBIParser)
 baseline_data_opt['swiss'] = ('datasets/sprot-uniprot_sprot.xml.gz', parsers.SwissProtParser)
 baseline_data_opt['affy'] = ('datasets/affy_data.xml.gz', parsers.AffyParser)
 baseline_data_opt['gene2acc'] = ('datasets/gene2accession.gz', parsers.Gene2AccParser)
-baseline_data_opt['chebi'] = ('datasets/chebi.owl', parsers.CHEBIParser)
+#baseline_data_opt['chebi'] = ('datasets/chebi.owl', parsers.CHEBIParser)
 baseline_data_opt['schem'] = ('datasets/selventa-legacy-chemical-names.belns', parsers.SCHEMParser)
 baseline_data_opt['schem_to_chebi'] = ('datasets/SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
 #baseline_data_opt['puchem_namespace'] = ('datasets/CID-Synonym-filtered.gz', parsers.PubNamespaceParser)
@@ -34,19 +35,3 @@ baseline_data_opt['schem_to_chebi'] = ('datasets/SCHEM_to_CHEBIID.txt', parsers.
 baseline_data_opt['gobp'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
 baseline_data_opt['gocc'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
 baseline_data_opt['mesh'] = ('datasets/d2013.bin', parsers.MESHParser)
-
-# baseline_data_opt = OrderedDict({
-#     'entrez_info' : ('datasets/eg-gene_info.gz', parsers.EntrezGeneInfoParser),
-#     'entrez_history' : ('datasets/eg-gene_history.gz', parsers.EntrezGeneHistoryParser),
-#     'hgnc' : ('datasets/hgnc-hgnc_downloads.tsv', parsers.HGNCParser),
-#     'mgi' : ('datasets/MRK_List2.rpt', parsers.MGIParser),
-#     'rgd' : ('datasets/rgd-genes_rat.tsv', parsers.RGDParser),
-#     'swiss' : ('datasets/sprot-uniprot_sprot.xml.gz', parsers.SwissProtParser),
-#     'affy' : ('datasets/affy_data.xml.gz', parsers.AffyParser),
-#     'gene2acc' : ('datasets/gene2accession.gz', parsers.Gene2AccParser),
-#     'chebi' : ('datasets/chebi.owl', parsers.CHEBIParser),
-#     'schem' : ('datasets/selventa-legacy-chemical-names.belns', parsers.SCHEMParser),
-#     'schem_to_chebi' : ('datasets/SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser),
-#    'pubchem_namespace' : ('datasets/CID-Synonym-filtered.gz', parsers.PubNamespaceParser)}
-#     'pubchem_equiv' : ('datasets/SID-Map.gz', parsers.PubEquivParser)}
-#     'go' : ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOParser)})

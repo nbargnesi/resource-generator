@@ -15,6 +15,7 @@ from collections import defaultdict
 #                 c_data.append(pickle.load(fp))
 
 
+####### Data needed for namespacing and equivalencing
 entrez_info = {}
 entrez_history = {}
 hgnc = {}
@@ -50,6 +51,13 @@ gocc_data = GOCCData(gocc_dict)
 mesh_data = MESHData(mesh_dict)
 
 count = 0
+
+####### Data needed for the change log
+swiss_withdrawn_acc_dict = {}
+
+swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
+
+
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
 def build_data(entry, parser):
@@ -226,13 +234,18 @@ def build_data(entry, parser):
             'mns' : mns,
             'synonyms' : synonyms }
 
+    elif parser == 'SwissWithdrawn_Parser':
+        acc = entry.get('accession')
+
+        swiss_withdrawn_acc_dict['accessions'].append(acc)
+
 def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
                 swiss_data, affy_data, chebi_data, pub_ns_data,
                 gene2acc_data, entrez_history_data, pub_equiv_data,
                 schem_data, schem_to_chebi_data, gobp_data,
-                gocc_data, mesh_data]
+                gocc_data, mesh_data, swiss_withdrawn_acc_data]
 
     for d in datasets:
         if str(d) == label:

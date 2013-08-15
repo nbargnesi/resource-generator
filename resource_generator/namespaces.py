@@ -136,9 +136,8 @@ def make_namespace(d):
     elif str(d) == 'affy':
         with open('affy-probeset-ids.belns', 'w') as fp:
             for vals in d.get_ns_values():
-                probe_set_ids = vals
-                for pid in probe_set_ids:
-                    fp.write(delim.join((pid, 'R'))+'\n')
+                pid = vals
+                fp.write(delim.join((pid, 'R'))+'\n')
 #                    if pid not in affy_ns_dict:
 #                        affy_ns_dict[pid] = 'R'
 

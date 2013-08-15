@@ -444,3 +444,22 @@ class MESHData(DataSet):
 
     def __str__(self):
         return 'mesh'
+
+
+class SwissWithdrawnData(DataSet):
+
+    def __init__(self, dictionary):
+        super(SwissWithdrawnData, self).__init__(dictionary)
+        self.s_dict = dictionary
+
+    def get_dictionary(self):
+        return self.s_dict
+
+    def get_withdrawn_accessions(self):
+        accessions = self.s_dict.get('accessions')
+        return accessions
+        # for acc in accessions:
+        #     yield acc
+
+    def __str__(self):
+        return 'swiss-withdrawn'

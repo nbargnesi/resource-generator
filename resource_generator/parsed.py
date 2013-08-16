@@ -4,18 +4,10 @@
 
 from datasets import *
 import csv
+import dbm
 from collections import defaultdict
 
-# if os.path.exists('cached_data'):
-#     c_data = []
-#     indir = '/home/jhourani/openbel-contributions/resource_generator/touchdown/cached_data'
-#     for root, dirs, filenames in os.walk(indir):
-#         for f in filenames:
-#             with open(os.path.join(root, f), 'r') as fp:
-#                 c_data.append(pickle.load(fp))
-
-
-####### Data needed for namespacing and equivalencing
+# Data needed for namespacing and equivalencing
 entrez_info = {}
 entrez_history = {}
 hgnc = {}
@@ -52,7 +44,7 @@ mesh_data = MESHData(mesh_dict)
 
 count = 0
 
-####### Data needed for the change log
+# Data needed for the change-log
 swiss_withdrawn_acc_dict = {}
 
 swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
@@ -61,15 +53,6 @@ swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
 def build_data(entry, parser):
-
-    # entrez_info['entrez_info'] = 'parsed from eg-gene_info.gz'
-    # hgnc['hgnc'] = 'parsed from hgnc-hgnc_downloads.tsv'
-    # mgi['mgi'] = 'parsed from MRK_list2.rpt'
-    # rgd['rgd'] = 'parsed from rgd-genes_rat.tsv'
-    # swiss['swiss_names'] = 'parsed from sprot-uniprot_sprot.xml.gz'
-    # affy['affy'] = 'parsed from affy_data.xml.gz'
-    # pubchem['pubchem'] = 'parsed fromo CID-Synonym-filtered.gz'
-    # chebi['chebi'] = 'parsed from chebi.owl'
 
     if parser == 'EntrezGeneInfo_Parser':
         gene_id = entry.get('GeneID')
@@ -180,13 +163,16 @@ def build_data(entry, parser):
         synonym = entry.get('synonym')
         global count
         count = count + 1
-        if count % 50000 == 0:
+        if count % 1000 == 0:
             print('Entry number ' +str(count))
             print('Pub ID: '+pub_id)
         #delim = '|'
         #with open('test.txt', 'w') as fp:
         #    fp.write(delim.join((pub_id, 'A')))
-        pub_ns_dict[pub_id].append(synonym)
+        pub_db = dbm.open('pub-names', 'c')
+        pub_db[bytes(pub_id, 'utf-8')] = bytes(synonym, 'utf-8')
+        pub_db.close()
+#        pub_ns_dict[pub_id].append(synonym)
 #        ipdb.set_trace()
 
     elif parser == 'PubEquiv_Parser':

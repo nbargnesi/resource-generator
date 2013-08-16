@@ -39,14 +39,10 @@ class EntrezGeneInfoParser(Parser):
                                'Nomenclature_status',
                                'Other_designations', 'Modification_date']
 
-      # dictionary for base gene info
+        # dictionary for base gene info
         info_csvr = csv.DictReader(gzip_to_text(self.entrez_info),
                                    delimiter='\t',
                                    fieldnames=entrez_info_headers)
-        # with open(self.entrez_info, 'r') as fp:
-        #     info_csvr = csv.DictReader(fp,
-        #                                delimiter='\t',
-        #                                fieldnames=entrez_info_headers)
 
         for row in info_csvr:
             if row['tax_id'] in ('9606', '10090', '10116'):
@@ -69,14 +65,10 @@ class EntrezGeneHistoryParser(Parser):
         entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
                                   "Discontinued_Symbol", "Discontinued_Date"]
 
-         # dictionary for base gene info
+        # dictionary for base gene info
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_history),
                                       delimiter='\t',
                                       fieldnames=entrez_history_headers)
-        # with open(self.entrez_history, 'r') as fp:
-        #     history_csvr = csv.DictReader(fp,
-        #                                   delimiter='\t',
-        #                                   fieldnames=entrez_history_headers)
 
         for row in history_csvr:
             if row['tax_id'] in ("9606", "10090", "10116"):
@@ -319,7 +311,7 @@ class AffyParser(Parser):
         with open(self.affy_file, 'rb') as affyf:
             ctx = etree.iterparse(affyf, events=('start', 'end'))
 
-            # This is certainly not the best way to traverse this tree. Look at
+            # This is probably not the best way to traverse this tree. Look at
             # the lxml.etree API more closely for possible implementations when
             # refactoring
             # NOTES - put some debugging in here to see how this is parsing,
@@ -388,9 +380,6 @@ class Gene2AccParser(Parser):
         g2a_reader = csv.DictReader(gzip_to_text(self.gene2acc_file), delimiter='\t',
                                     fieldnames=column_headers)
 
-        # with open(self.gene2acc_file, 'r') as fp:
-        #     g2a_reader = csv.DictReader(fp, delimiter='\t',
-        #                                 fieldnames=column_headers)
         for row in g2a_reader:
             yield row
 
@@ -444,7 +433,8 @@ class BELEquivalenceParser(Parser):
     def __str__(self):
         return 'BELEquivalence_Parser'
 
-
+# This one uses iterparse(), much faster than xpath on the
+# bigger .owl file.
 class CHEBIParser(Parser):
 
     def __init__(self, url):
@@ -573,21 +563,9 @@ class PubEquivParser(Parser):
         column_headers = ['PubChem SID', 'Source', 'External ID', 'PubChem CID']
         cid_reader = csv.DictReader(gzip_to_text(self.cid_file), delimiter='\t',
                                     fieldnames=column_headers)
-        # with open(self.cid_file, 'r') as fp:
-        #     cid_reader = csv.DictReader(fp, delimiter='\t',
-        #                                 fieldnames=column_headers)
 
         for row in cid_reader:
             yield row
-        # sources = {}
-        # for row in cid_reader:
-        #     src = row.get('Source')
-        #     if src not in sources:
-        #         sources[src] = src
-        #     else:
-        #         src = sources[src]
-        #     row['Source'] = src
-        #     yield row
 
     def __str__(self):
         return 'PubEquiv_Parser'
@@ -644,10 +622,6 @@ class GOBPParser(Parser):
 
     def parse(self):
 
-        # mg_eq = {}
-        # with open(self.mesh_file) as meshf:
-        #     mg_eq = dict([(rec[2], rec[3]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
-
         # parse xml tree using lxml
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
         with gzip.open(self.go_file, 'r') as go:
@@ -665,10 +639,7 @@ class GOBPParser(Parser):
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
                         'alt_ids' : bp_altids }
 
-    def update_parse(self):
-        # mg_eq = {}
-        # with open(self.mesh_file) as meshf:
-        #     mg_eq = dict([(rec[2], rec[3]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
+    def obsolete_parse(self):
 
         # parse xml tree using lxml
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
@@ -708,6 +679,51 @@ class GOCCParser(Parser):
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
         root = etree.parse(self.go_file, parser)
         cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and not(is_obsolete)]")
+
+        # iterate the complex terms to build parent dictionary
+        for t in cc_terms:
+            cc_termid = t.find("id").text
+            cc_parent_ids = [isa.text for isa in t.findall("is_a")]
+            cc_parents[cc_termid] = cc_parent_ids
+
+        for t in cc_terms:
+            cc_termid = t.find('id').text
+            cc_termname = t.find('name').text
+            cc_parent_stack = cc_parents[cc_termid]
+            if t.findall('alt_id') is not None:
+                cc_altids = [x.text for x in t.findall('alt_id')]
+            else:
+                cc_altids = False
+            complex = False
+
+            if cc_termid == "GO:0032991":
+                complex = True
+            elif t.find("is_root") is not None:
+                complex = False
+            else:
+                cc_parent_stack.extend(cc_parents[cc_termid])
+                while len(cc_parent_stack) > 0:
+                    cc_parent_id = cc_parent_stack.pop()
+
+                    if cc_parent_id == "GO:0032991":
+                        complex = True
+                        break
+
+                    if cc_parent_id in cc_parents:
+                        cc_parent_stack.extend(cc_parents[cc_parent_id])
+
+            yield { 'termid' : cc_termid.split(':')[1], 'termname' : cc_termname,
+                    'altids' : cc_altids, 'complex' : complex }
+
+    def obsolete_parse(self):
+
+        # initialize empty dictionaries using tuple assignment
+        cc_parents, accession_dict, term_dict = {}, {}, {}
+
+        # parse xml tree using lxml
+        parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
+        root = etree.parse(self.go_file, parser)
+        cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and is_obsolete]")
 
         # iterate the complex terms to build parent dictionary
         for t in cc_terms:

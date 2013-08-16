@@ -31,3 +31,7 @@ changelog_data_opt['rgd'] = \
     ('lions/datasets/GENES_RAT.txt', parsers.RGDParser)
 changelog_data_opt['swiss_lost_accessions'] = \
     ('lions/datasets/delac_sp.txt', parsers.SwissWithdrawnParser)
+changelog_data_opt['gobp'] = \
+    ('lions/datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
+changelog_data_opt['gocc'] = \
+    ('lions/datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)

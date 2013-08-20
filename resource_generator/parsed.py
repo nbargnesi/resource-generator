@@ -24,6 +24,7 @@ pub_ns_dict = defaultdict(list)
 gobp_dict = {}
 gocc_dict = {}
 mesh_dict = {}
+do_dict = {}
 
 entrez_data = EntrezInfoData(entrez_info)
 entrez_history_data = EntrezHistoryData(entrez_history)
@@ -41,6 +42,7 @@ pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
 mesh_data = MESHData(mesh_dict)
+do_data = DOData(do_dict)
 
 count = 0
 
@@ -225,13 +227,22 @@ def build_data(entry, parser):
 
         swiss_withdrawn_acc_dict['accessions'].append(acc)
 
+    elif str(parser) == 'DO_Parser':
+        name = entry.get('name')
+        id = entry.get('id')
+        dbxrefs = entry.get('dbxrefs')
+        do_dict[name] = {
+            'id' : id,
+            'dbxrefs' : dbxrefs }
+
 def load_data(label):
 
     datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
                 swiss_data, affy_data, chebi_data, pub_ns_data,
                 gene2acc_data, entrez_history_data, pub_equiv_data,
                 schem_data, schem_to_chebi_data, gobp_data,
-                gocc_data, mesh_data, swiss_withdrawn_acc_data]
+                gocc_data, mesh_data, swiss_withdrawn_acc_data,
+                do_data]
 
     for d in datasets:
         if str(d) == label:

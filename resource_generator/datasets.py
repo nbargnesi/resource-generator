@@ -463,3 +463,20 @@ class SwissWithdrawnData(DataSet):
 
     def __str__(self):
         return 'swiss-withdrawn'
+
+
+class DOData(DataSet):
+
+    def __init__(self, dictionary):
+        super(DOData, self).__init__(dictionary)
+        self.do_dict = dictionary
+
+    def get_dictionary(self):
+        return self.do_dict
+
+    def get_ns_values(self):
+        for name in self.do_dict:
+            yield name
+
+    def __str__(self):
+        return 'do'

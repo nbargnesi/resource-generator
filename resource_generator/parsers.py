@@ -513,22 +513,6 @@ class CHEBIParser(Parser):
 #     def __str__(self):
 #         return 'CHEBI_Parser'
 
-# class CHEBICompoundParser(Parser):
-
-#     def __init__(self, file_to_url):
-#         super(CHEBICompoundParser, self).__init__(file_to_url)
-#         self.chebi_comp_file = file_to_url.get('datasets/chebi.owl')
-
-#     def parse(self):
-#         with open(self.chebi_comp_file, 'r') as cf:
-#             chebi_comp_csvr = csv.DictReader(cf, delimiter='\t')
-
-#             for row in chebi_comp_csvr:
-#                 yield row
-
-#     def __str__(self):
-#         return 'CHEBI_Compound_Parser'
-
 
 class PubNamespaceParser(Parser):
 
@@ -889,3 +873,43 @@ class MESHChangesParser(Parser):
 
     def __str__(self):
         return 'MESHChanges_Parser'
+
+
+class DOParser(Parser):
+
+    def __init__(self, url):
+        super(DOParser, self).__init__(url)
+        self.do_file = url
+        self.classy = '{http://www.w3.org/2002/07/owl#}Class'
+        self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
+        self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
+        self.id = '{http://www.geneontology.org/formats/oboInOwl#}id'
+        self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
+
+    def parse(self):
+
+        with open(self.do_file, 'rb') as df:
+            tree = etree.iterparse(df, tag=self.classy)
+            for event, elem in tree:
+                do_dict = {}
+                dbxrefs = []
+                name = ''
+                id = ''
+                if len(elem.values()) != 0:
+                    children = elem.getchildren()
+                    for child in children:
+                        if child.tag == self.deprecated:
+                            continue
+                        elif child.tag == self.dbxref:
+                            dbxrefs.append(child.text)
+                        elif child.tag == self.id:
+                            id = child.text.split(':')[1]
+                        elif child.tag == self.label:
+                            name = child.text
+                    do_dict['name'] = name
+                    do_dict['id'] = id
+                    do_dict['dbxrefs'] = dbxrefs
+                    yield do_dict
+
+    def __str__(self):
+        return 'DO_Parser'

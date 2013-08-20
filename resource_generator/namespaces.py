@@ -16,6 +16,7 @@ affy_ns = set()
 chebi_name_ns = set()
 chebi_id_ns = set()
 pub_ns = set()
+do_ns = set()
 
 # miscRNA should not be used here, as it will be handled in a special case.
 # For completion sake it is included.
@@ -233,3 +234,10 @@ def make_namespace(d):
                             excluded = True
                     if not excluded:
                         meshb.write(delim.join((mh, 'B'))+'\n')
+
+    elif str(d) == 'do':
+
+        with open('disease-ontology.belns', 'w') as df:
+            for vals in d.get_ns_values():
+                name = vals
+                df.write(delim.join((name, 'O'))+'\n')

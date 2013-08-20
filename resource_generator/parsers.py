@@ -4,7 +4,7 @@
 
 from common import gzip_to_text
 from lxml import etree
-from collections import defaultdict
+import os
 import csv
 import gzip
 import urllib.request
@@ -282,8 +282,10 @@ def get_data(url):
     # from url, download and save file
     REQ = urllib.request.urlopen(url)
     file_name = url.split('/')[-1]
+    os.chdir('datasets/')
     with open(file_name,'b+w') as f:
         f.write(REQ.read())
+    os.chdir('../')
     return file_name
 
 def filter_plus_print(row):
@@ -474,7 +476,8 @@ class CHEBIParser(Parser):
     def __str__(self):
         return 'CHEBI_Parser'
 
-
+# This version of the parser uses xpath, and has shown to be slower and
+# this less efficient then the iterparse version. It can probably be removed.
 # class CHEBIParser(Parser):
 
 #     def __init__(self, file_to_url):

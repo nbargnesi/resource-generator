@@ -35,3 +35,7 @@ changelog_data_opt['gobp'] = \
     ('lions/datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
 changelog_data_opt['gocc'] = \
     ('lions/datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
+changelog_data_opt['chebi'] = \
+    ('lions/datasets/chebi.owl', parsers.CHEBIParser)
+changelog_data_opt['mesh'] = \
+    ('lions/datasets/replace2013.txt', parsers.MESHChangesParser)

@@ -63,7 +63,7 @@ class EntrezGeneHistoryParser(Parser):
     def parse(self):
 
         entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
-                                  "Discontinued_Symbol", "Discontinued_Date"]
+                                  "Discontinued_Symbol", "Discontinue_Date"]
 
         # dictionary for base gene info
         history_csvr = csv.DictReader(gzip_to_text(self.entrez_history),
@@ -859,3 +859,33 @@ class SwissWithdrawnParser(Parser):
 
     def __str__(self):
         return 'SwissWithdrawn_Parser'
+
+
+class MESHChangesParser(Parser):
+
+    def __init__(self, url):
+        super(MESHChangesParser, self).__init__(url)
+        self.mesh_file = url
+
+    def parse(self):
+
+        with open(self.mesh_file, 'r') as fp:
+            for line in fp.readlines():
+                if 'MH OLD =' in line:
+                    mh_old = line.split('= ')[1]
+                    if '#' in mh_old:
+                        mh_old = mh_old.split(' #')[0]
+                    elif '[' in mh_old:
+                        mh_old = mh_old.split(' [')[0]
+                if 'MH NEW =' in line:
+                    mh_new = line.split('= ')[1]
+                    if '#' in mh_new:
+                        mh_new = mh_new.split(' #')[0]
+                    elif '[' in mh_new:
+                        mh_new = mh_new.split(' [')[0]
+                    yield { 'mh_old' : mh_old.strip(), 'mh_new' : mh_new.strip() }
+                    mh_old = ''
+                    mh_new = ''
+
+    def __str__(self):
+        return 'MESHChanges_Parser'

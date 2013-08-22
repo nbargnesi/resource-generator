@@ -283,7 +283,7 @@ def get_data(url):
     REQ = urllib.request.urlopen(url)
     file_name = url.split('/')[-1]
     os.chdir('datasets/')
-    with open(file_name,'b+w') as f:
+    with open(file_name,'wb') as f:
         f.write(REQ.read())
     os.chdir('../')
     return file_name
@@ -339,7 +339,7 @@ class AffyParser(Parser):
             # get_data() downloads the file, saves it as a .csv.zip, and
             # returns a pointer to the file.
             n = get_data(link)
-            z = zipfile.ZipFile(n, 'r')
+            z = zipfile.ZipFile('datasets/'+n, 'r')
 
             # only want the .csv from the archive (also contains a .txt)
             for name in z.namelist():

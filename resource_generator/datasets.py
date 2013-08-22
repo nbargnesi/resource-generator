@@ -5,7 +5,7 @@
 # Represent each parsed dataset as an object. This is
 # really just a wrapper to the underlying dictionaries.
 
-import ipdb
+#import ipdb
 
 class DataSet():
     def __init__(self, dictionary):
@@ -284,9 +284,6 @@ class SCHEMtoCHEBIData(DataSet):
         for schem_term in self.schem_to_chebi:
             mapping = self.schem_to_chebi.get(schem_term)
             chebi_name = mapping.get('CHEBI_name')
-            # if schem_name == '(-)-Catechin':
-            #     ipdb.set_trace()
-#            ipdb.set_trace()
             if schem_name.lower() == chebi_name.lower():
                 equiv = True
         return equiv
@@ -434,6 +431,15 @@ class MESHData(DataSet):
             yield ui, mh, mns, sts
 
     def get_eq_values(self):
+        for ui in self.mesh_dict:
+            mapping = self.mesh_dict.get(ui)
+            mh = mapping.get('mesh_header')
+            mns = mapping.get('mns')
+            synonyms = mapping.get('synonyms')
+
+            yield ui, mh, mns, synonyms
+
+    def get_annot_values(self):
         for ui in self.mesh_dict:
             mapping = self.mesh_dict.get(ui)
             mh = mapping.get('mesh_header')

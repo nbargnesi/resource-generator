@@ -3,7 +3,7 @@
 # namespaces.py
 
 import parsed
-import ipdb
+#import ipdb
 
 # namespace dictionaries
 entrez_ns = set()

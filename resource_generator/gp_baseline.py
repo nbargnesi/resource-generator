@@ -10,6 +10,7 @@
 
 
 from configuration import baseline_data_opt
+from configuration import baseline_data
 import argparse
 import os
 import namespaces
@@ -18,6 +19,8 @@ import time
 import equiv
 import pickle
 import ipdb
+import annotate
+from common import download
 from constants import RES_LOCATION, PARSER_TYPE
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
@@ -49,35 +52,52 @@ if not os.path.exists('datasets'):
 
 start_time = time.time()
 print('\n======= Phase One, downloading data =======')
+# for name, url in baseline_data.items():
+#     print('Downloading ' +str(name))
+#     path = os.path.join('datasets/', name)
+#     download(url, path)
+# ipdb.set_trace()
+
+working_dir = os.getcwd()
+for root, dirs, filenames in os.walk(working_dir):
+    for f in filenames:
+        if f in baseline_data:
+#            ipdb.set_trace()
+            data_tuple = baseline_data.get(f)
+            parser = data_tuple[PARSER_TYPE]('datasets/'+f)
+            print('Running ' +str(parser))
+            for x in parser.parse():
+                parsed.build_data(x, str(parser))
 
 # parse independent datasets
-for label, data_tuple in baseline_data_opt.items():
-    url = data_tuple[RES_LOCATION]
-    parser = data_tuple[PARSER_TYPE](url)
-    print('Running ' +str(parser))
-    for x in parser.parse():
-        parsed.build_data(x, str(parser))
+
+# for label, data_tuple in baseline_data_opt.items():
+#     url = data_tuple[RES_LOCATION]
+#     parser = data_tuple[PARSER_TYPE](url)
+#     print('Running ' +str(parser))
+#     for x in parser.parse():
+#         parsed.build_data(x, str(parser))
 
 print('Phase 1 ran in ' +str(((time.time() - start_time) / 60)) +' minutes')
 interval_time = time.time()
 print('\n======= Phase Two, building namespaces =======')
 # load parsed data to build namespaces
-# ei = parsed.load_data('entrez_info')
-# eh = parsed.load_data('entrez_history')
-# hg = parsed.load_data('hgnc')
-# mg = parsed.load_data('mgi')
-# rg = parsed.load_data('rgd')
-# sp = parsed.load_data('swiss')
-# af = parsed.load_data('affy')
-# g2 = parsed.load_data('gene2acc')
-# chebi = parsed.load_data('chebi')
-# schem = parsed.load_data('schem')
-# schem_to_chebi = parsed.load_data('schem_to_chebi')
-# gobp = parsed.load_data('gobp')
-# gocc = parsed.load_data('gocc')
-#pub_eq = parsed.load_data('pubchem_equiv')
-#pub_ns = parsed.load_data('pubchem_namespace')
-#mesh = parsed.load_data('mesh')
+ei = parsed.load_data('entrez_info')
+eh = parsed.load_data('entrez_history')
+hg = parsed.load_data('hgnc')
+mg = parsed.load_data('mgi')
+rg = parsed.load_data('rgd')
+sp = parsed.load_data('swiss')
+af = parsed.load_data('affy')
+g2 = parsed.load_data('gene2acc')
+chebi = parsed.load_data('chebi')
+schem = parsed.load_data('schem')
+schem_to_chebi = parsed.load_data('schem_to_chebi')
+gobp = parsed.load_data('gobp')
+gocc = parsed.load_data('gocc')
+# pub_eq = parsed.load_data('pubchem_equiv')
+# pub_ns = parsed.load_data('pubchem_namespace')
+mesh = parsed.load_data('mesh')
 do = parsed.load_data('do')
 
 ####### This is a cache used in testing - not currently in use. #########
@@ -115,23 +135,25 @@ do = parsed.load_data('do')
 #########################################################################
 
 # does not include pubchem currently
-#ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do]
-ns_data = [do]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do]
 for d in ns_data:
     print('Generating namespace file for ' +str(d))
     namespaces.make_namespace(d)
-
 print('Phase 2 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
+
 interval_time = time.time()
-print('\n======= Phase Three, building equivalencies =======')
+print('\n======= Phase Three, building annotations =======')
+annotate.make_annotations(mesh)
+print('Phase 3 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
 # build some references to be used during equivalencing
-#equiv_data = [ei, hg, mg, rg, sp, af, chebi, schem, gobp, gocc, mesh]
-# equiv_data = [do]
-# for d in equiv_data:
-#     print('Generating equivalence file for ' +str(d))
-#     equiv.equiv(d)
+interval_time = time.time()
+print('\n======= Phase Four, building equivalences =======')
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh]
+for d in equiv_data:
+    print('Generating equivalence file for ' +str(d))
+    equiv.equiv(d)
 
-print('Phase 3 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
-print('\n======= Phase Four, finished! =======')
+print('Phase 4 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
+print('\n======= Phase Five, finished! =======')
 print('Total runtime: ' +str(((time.time() - start_time) / 60)) +' minutes')

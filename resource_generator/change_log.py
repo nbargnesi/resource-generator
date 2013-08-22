@@ -11,18 +11,19 @@ import datetime
 import pickle
 import ipdb
 import parsed
+import argparse
 import time
 from changelog_config import changelog_data_opt
 from constants import RES_LOCATION, PARSER_TYPE
 
-# parse any files needed for change-log resolution
-# for label, data_tuple in changelog_data_opt.items():
-#     url = data_tuple[RES_LOCATION]
-#     parser = data_tuple[PARSER_TYPE](url)
-#     print('Running ' +str(parser))
-#     for x in parser.parse():
-#         parsed.build_data(x, str(parser))
 
+parser = argparse.ArgumentParser(description="""Generate namespace and
+                               equivalence files for gene/protein datasets.""")
+parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
+                    help="""Directory to the newly generated .belns and .beleq files.""")
+args = parser.parse_args()
+resource_dir = args.n[0]
+os.chdir(resource_dir)
 
 # BELNamespaceParser - parse() returns the specific url for each namespace
 # currently published on resource.belframework.org
@@ -45,6 +46,7 @@ old_gocc_ns_names = set()
 old_mesh_bio = set()
 old_mesh_cell = set()
 old_mesh_diseases = set()
+old_schem = set()
 
 old_chebi_eq_names = dict()
 old_chebi_eq_ids = dict()
@@ -72,7 +74,8 @@ for url in parser.parse():
                    'go-cellular-component-acc' : (False, old_gocc_ns_ids),
                    'mesh-bio' : (False, old_mesh_bio),
                    'mesh-cell' : (False, old_mesh_cell),
-                   'mesh-diseases' : (False, old_mesh_diseases)}
+                   'mesh-diseases' : (False, old_mesh_diseases),
+                   'selventa-legacy-chemical' : (False, old_schem)}
 
     open_url = urllib.request.urlopen(url)
     for ns in namespaces:
@@ -171,7 +174,7 @@ print('len of old hgnc is ' +str(len(old_hgnc)))
 print('len of old mgi is ' +str(len(old_mgi)))
 print('len of old rgd is ' +str(len(old_rgd)))
 print('len of old swissprot names is ' +str(len(old_sp_names)))
-print('len of old swissprot accessions is ' +str(len(old_sp_ids)))
+print('len of old swissprot ids is ' +str(len(old_sp_ids)))
 print('len of old affy is ' +str(len(old_affy)))
 print('len of old chebi names is ' +str(len(old_chebi_names)))
 print('len of old chebi ids is ' +str(len(old_chebi_ids)))
@@ -182,6 +185,7 @@ print('len of old gocc ids is ' +str(len(old_gocc_ns_ids)))
 print('len of old mesh-bio is ' +str(len(old_mesh_bio)))
 print('len of old mesh-cell is ' +str(len(old_mesh_cell)))
 print('len of old mesh-diseases is ' +str(len(old_mesh_diseases)))
+print('len of old selventa-legacy-chemicals is ' +str(len(old_schem)))
 print('===========================================')
 
 new_entrez = set()
@@ -200,9 +204,10 @@ new_gocc_ns_names = set()
 new_mesh_bio = set()
 new_mesh_cell = set()
 new_mesh_diseases = set()
+new_schem = set()
 
 # gather the new data for comparison (locally stored for now)
-indir = '/home/jhourani/openbel-contributions/resource_generator/lions'
+indir = os.getcwd()
 for root, dirs, filenames in os.walk(indir):
     for f in filenames:
         if '.belns' in f:
@@ -367,13 +372,23 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_diseases.add(token)
+                elif 'selventa-legacy-chem' in fp.name:
+                    for line in fp:
+                        # if '[Values]' in str(line):
+                        #     marker = True
+                        #     continue
+                        # if marker is False:
+                        #     continue
+                        tokenized = str(line).split('|')
+                        token = tokenized[0]
+                        new_schem.add(token)
 
 print('len of new entrez is ' +str(len(new_entrez)))
 print('len of new hgnc is ' +str(len(new_hgnc)))
 print('len of new mgi is ' +str(len(new_mgi)))
 print('len of new rgd is ' +str(len(new_rgd)))
-print('len of new swiss names is ' +str(len(new_sp_names)))
-print('len of new swiss ids is ' +str(len(new_sp_ids)))
+print('len of new swissprot names is ' +str(len(new_sp_names)))
+print('len of new swissprot ids is ' +str(len(new_sp_ids)))
 print('len of new affy is ' +str(len(new_affy)))
 print('len of new chebi names is ' +str(len(new_chebi_names)))
 print('len of new chebi ids is ' +str(len(new_chebi_ids)))
@@ -384,6 +399,7 @@ print('len of new gocc ids is ' +str(len(new_gocc_ns_ids)))
 print('len of new mesh-bio is ' +str(len(new_mesh_bio)))
 print('len of new mesh-cell is ' +str(len(new_mesh_cell)))
 print('len of new mesh-diseases is ' +str(len(new_mesh_diseases)))
+print('len of new selventa-legacy-chemicals is ' +str(len(new_schem)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
 entrez_lost = [x for x in old_entrez if x not in new_entrez]
@@ -402,6 +418,7 @@ gocc_lost_ns_ids = [x for x in old_gocc_ns_ids if x not in new_gocc_ns_ids]
 mesh_bio_lost = [x for x in old_mesh_bio if x not in new_mesh_bio]
 mesh_cell_lost = [x for x in old_mesh_cell if x not in new_mesh_cell]
 mesh_diseases_lost = [x for x in old_mesh_diseases if x not in new_mesh_diseases]
+schem_lost = [x for x in old_schem if x not in new_schem]
 
 print('===========================================')
 print('lost entrez values ' +str(len(entrez_lost)))
@@ -420,6 +437,7 @@ print('lost gocc ids ' +str(len(gocc_lost_ns_ids)))
 print('lost mesh_bio ' +str(len(mesh_bio_lost)))
 print('lost mesh_cell ' +str(len(mesh_cell_lost)))
 print('lost mesh_diseases ' +str(len(mesh_diseases_lost)))
+print('lost selventa-legacy-chemicals ' +str(len(schem_lost)))
 
 # values in the new data that are not in the old (either new or a replacement)
 entrez_gained = [x for x in new_entrez if x not in old_entrez]
@@ -438,6 +456,7 @@ gocc_gained_ns_ids = [x for x in new_gocc_ns_ids if x not in old_gocc_ns_ids]
 mesh_gained_bio = [x for x in new_mesh_bio if x not in old_mesh_bio]
 mesh_gained_cell = [x for x in new_mesh_cell if x not in old_mesh_cell]
 mesh_gained_diseases = [x for x in new_mesh_diseases if x not in old_mesh_diseases]
+schem_gained = [x for x in new_schem if x not in old_schem]
 
 print('===========================================')
 print('gained entrez values ' +str(len(entrez_gained)))
@@ -456,6 +475,7 @@ print('gained gocc ids ' +str(len(gocc_gained_ns_ids)))
 print('gained mesh_bio ' +str(len(mesh_gained_bio)))
 print('gained mesh_cell ' +str(len(mesh_gained_cell)))
 print('gained mesh_diseases ' +str(len(mesh_gained_diseases)))
+print('gained selventa-legacy-chemicals ' +str(len(schem_gained)))
 print('===========================================')
 
 # with open('hgnc-new-values.txt', 'w') as fp:
@@ -480,6 +500,7 @@ change_log['chebi-ids'] = {}
 change_log['mesh-bio'] = {}
 change_log['mesh-cell'] = {}
 change_log['mesh-diseases'] = {}
+change_log['schem'] = {}
 previous_symbols = []
 previous_names = []
 symbols_and_names = []
@@ -490,39 +511,37 @@ for label, data_tuple in changelog_data_opt.items():
 
     if str(parser) == 'EntrezGeneHistory_Parser':
         print('Gathering Entrez update info...')
-        with open('resolved-entrez.txt', 'w') as fp:
-            for row in parser.parse():
-                discontinued_id  = row.get('Discontinued_GeneID')
-                fp.write(str(discontinued_id)+'\n')
-                gid = row.get('GeneID')
-                replacement_id = gid if gid != '-' else 'withdrawn'
-                log = change_log.get('entrez')
-                log[discontinued_id] = replacement_id
+        for row in parser.parse():
+            discontinued_id  = row.get('Discontinued_GeneID')
+            gid = row.get('GeneID')
+            replacement_id = gid if gid != '-' else 'withdrawn'
+            log = change_log.get('entrez')
+            log[discontinued_id] = replacement_id
 
     elif str(parser) == 'HGNC_Parser':
         print('Gathering HGNC update info...')
-        with open('unresolved-hgnc.txt', 'w') as fp:
-            for row in parser.parse():
-                val = row.get('Approved Symbol')
-                # ps = row.get('Previous Symbols')
-                # pn = row.get('Previous Names')
-                # if len(ps) > 0:
-                #     previous_symbols.extend(ps.split(', '))
-                # if len(pn) > 0:
-                #     previous_names.extend(pn.split(', '))
-                if '~withdrawn' in val:
-                    approved_name = row.get('Approved Name')
-                    # no replacement
-                    if 'entry withdrawn' in approved_name:
-                        old_val = val.split('~')[0]
-                        log = change_log.get('hgnc')
-                        log[old_val] = 'withdrawn'
-                    # has a replacement
-                    if 'symbol withdrawn' in approved_name:
-                        old_val = val.split('~')[0]
-                        new_val = approved_name.split('see ')[1]
-                        log = change_log.get('hgnc')
-                        log[old_val] = new_val
+#        with open('unresolved-hgnc.txt', 'w') as fp:
+        for row in parser.parse():
+            val = row.get('Approved Symbol')
+            # ps = row.get('Previous Symbols')
+            # pn = row.get('Previous Names')
+            # if len(ps) > 0:
+            #     previous_symbols.extend(ps.split(', '))
+            # if len(pn) > 0:
+            #     previous_names.extend(pn.split(', '))
+            if '~withdrawn' in val:
+                approved_name = row.get('Approved Name')
+                # no replacement
+                if 'entry withdrawn' in approved_name:
+                    old_val = val.split('~')[0]
+                    log = change_log.get('hgnc')
+                    log[old_val] = 'withdrawn'
+                # has a replacement
+                if 'symbol withdrawn' in approved_name:
+                    old_val = val.split('~')[0]
+                    new_val = approved_name.split('see ')[1]
+                    log = change_log.get('hgnc')
+                    log[old_val] = new_val
             # symbols_and_names = previous_symbols + previous_names
             # unresolved = [x for x in hgnc_lost if x not in symbols_and_names \
             #                   and x not in change_log.get('hgnc')]
@@ -549,15 +568,14 @@ for label, data_tuple in changelog_data_opt.items():
     elif str(parser) == 'RGD_Parser':
         # rgd changes (still dont know if withdrawn or replaced!!)
         print('Gathering RGD update info...')
-        with open('resolved-rgd.txt', 'w') as fp:
-            for row in parser.parse():
-                new_val = row.get('SYMBOL')
-                lost_vals = row.get('OLD_SYMBOL').split(';')
-                if len(lost_vals) != 0:
-                    for symbol in lost_vals:
-                        fp.write(str(symbol)+'\n')
-                        log = change_log.get('rgd')
-                        log[symbol] = new_val
+        for row in parser.parse():
+            new_val = row.get('SYMBOL')
+            lost_vals = row.get('OLD_SYMBOL').split(';')
+            if len(lost_vals) != 0:
+                for symbol in lost_vals:
+                    fp.write(str(symbol)+'\n')
+                    log = change_log.get('rgd')
+                    log[symbol] = new_val
 
     elif str(parser) == 'SwissWithdrawn_Parser':
         # swissprot name changes
@@ -565,8 +583,8 @@ for label, data_tuple in changelog_data_opt.items():
         cache_hits = 0
         cache_misses = 0
         files = set()
-        for f in os.listdir('lions/cache/'):
-            if os.path.isfile('lions/cache/'+f):
+        for f in os.listdir('cache/'):
+            if os.path.isfile('cache/'+f):
                 files.add(f)
         for name in sp_lost_names:
             cached = False
@@ -578,7 +596,7 @@ for label, data_tuple in changelog_data_opt.items():
             if hashed_url in files:
                 cached = True
                 cache_hits += 1
-                with open('lions/cache/'+hashed_url, 'rb') as fp:
+                with open('cache/'+hashed_url, 'rb') as fp:
                     content = pickle.load(fp)
             else:
                 cache_misses += 1
@@ -590,7 +608,7 @@ for label, data_tuple in changelog_data_opt.items():
                 content_list = content
             else:
                 content_list = [x.decode().strip() for x in content.readlines()]
-                with open('lions/cache/'+hashed_url, 'wb') as fp:
+                with open('cache/'+hashed_url, 'wb') as fp:
                     pickle.dump(content_list, fp)
             ####################################################################
 
@@ -725,6 +743,19 @@ for label, data_tuple in changelog_data_opt.items():
             if val in old_to_new:
                 diseases_log[val] = old_to_new[val]
 
+    elif str(parser) == 'SCHEMtoCHEBI_Parser':
+        print('Gathering Selventa-legacy-chemicals update info...')
+        log = change_log.get('schem')
+        for row in parser.parse():
+            schem_term = row.get('SCHEM_term')
+            chebi_name = row.get('CHEBI_name')
+            if schem_term in schem_lost:
+                log[schem_term] = chebi_name
+            # this else shouldnt happen. All schem names returned from the
+            # parser should be in schem_lost.
+            else:
+                log[schem_term] = 'withdrawn'
+
 end_time = time.time()
 
 # verification and error checking
@@ -759,6 +790,23 @@ dataset = change_log.get('mesh-cell')
 mesh_cell_unresolved = [x for x in mesh_cell_lost if x not in dataset]
 dataset = change_log.get('mesh-diseases')
 mesh_diseases_unresolved = [x for x in mesh_diseases_lost if x not in dataset]
+
+change_log['unresolved'] = {
+    'entrez' : e_unresolved,
+    'hgnc' : hgnc_unresolved,
+    'mgi' : mgi_unresolved,
+    'rgd' : rgd_unresolved,
+    'sp_names' : sp_unresolved_names,
+    'sp_ids' : sp_unresolved_ids,
+    'gobp_names' : gobp_unresolved_names,
+    'gobp_ids' : gobp_unresolved_names,
+    'gocc_names' : gocc_unresolved_names,
+    'gocc_ids' : gocc_unresolved_ids,
+    'chebi_names' : chebi_unresolved_names,
+    'chebi_ids' : chebi_unresolved_ids,
+    'mesh_bio' : mesh_bio_unresolved,
+    'mesh_cell' : mesh_cell_unresolved,
+    'mesh_disease' : mesh_diseases_unresolved }
 
 print('===========================================')
 print('entrez unresolved: ' +str(len(e_unresolved)))

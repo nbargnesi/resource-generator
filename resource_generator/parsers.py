@@ -435,6 +435,27 @@ class BELEquivalenceParser(Parser):
     def __str__(self):
         return 'BELEquivalence_Parser'
 
+
+class BELAnnotationsParser(Parser):
+
+    def __init__(self):
+        self.old_files = 'http://resource.belframework.org./belframework/1.0/index.xml'
+
+    def parse(self):
+
+        tree = etree.parse(self.old_files)
+
+        # xpath will return all elements under this namespace (list of bel equivalence urls)
+        urls = tree.xpath('//*[local-name()="annotationdefinition"]/@idx:resourceLocation',
+                          namespaces={'xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                                      'idx' : 'http://www.belscript.org/schema/index'})
+
+        for url in urls:
+            yield url
+
+    def __str__(self):
+        return 'BELAnnotations_Parser'
+
 # This one uses iterparse(), much faster than xpath on the
 # bigger .owl file.
 class CHEBIParser(Parser):

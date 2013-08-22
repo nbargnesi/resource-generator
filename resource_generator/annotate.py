@@ -1,7 +1,12 @@
 # coding utf-8
 #
 # annotate.py
+# Python module to build three .belanno files.
+# 1. mesh-cell-structure.belanno
+# 2. mesh-diseases.belanno
+# 3. mesh-anatomy.belanno
 
+already_seen = set()
 def make_annotations(d):
     delim = '|'
     branches = ['A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08',
@@ -23,3 +28,4 @@ def make_annotations(d):
                 for branch in mns:
                     if any(b in branch for b in branches):
                         mesha.write(delim.join((mh, ui))+'\n')
+                        break

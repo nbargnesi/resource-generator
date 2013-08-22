@@ -2,6 +2,9 @@
 # coding: utf-8
 #
 # change_log.py
+# inputs:
+#   -n    new namespace/equivalence files generated after running
+#         gp_baseline.py (required)
 
 import parsers
 import urllib
@@ -9,8 +12,6 @@ import os
 import write_log
 import datetime
 import pickle
-import ipdb
-import parsed
 import argparse
 import time
 from changelog_config import changelog_data_opt
@@ -47,6 +48,9 @@ old_mesh_bio = set()
 old_mesh_cell = set()
 old_mesh_diseases = set()
 old_schem = set()
+old_mesh_diseases_anno = set()
+old_mesh_cell_anno = set()
+old_mesh_anatomy_anno = set()
 
 old_chebi_eq_names = dict()
 old_chebi_eq_ids = dict()
@@ -77,10 +81,12 @@ for url in parser.parse():
                    'mesh-diseases' : (False, old_mesh_diseases),
                    'selventa-legacy-chemical' : (False, old_schem)}
 
+
     open_url = urllib.request.urlopen(url)
-    for ns in namespaces:
-        if ns in open_url.url:
-            namespaces[ns] = (True, namespaces[ns][1])
+    if '.belns' in open_url.url:
+        for ns in namespaces:
+            if ns in open_url.url:
+                namespaces[ns] = (True, namespaces[ns][1])
     marker = False
     for u in open_url:
         if '[Values]' in str(u):
@@ -113,6 +119,35 @@ for url in parser.parse():
     for eq in equivalences:
         if eq in open_url.url:
             equivalences[ns] = (True, equivalences[eq][1])
+    marker = False
+    for u in open_url:
+        if '[Values]' in str(u):
+            marker = True
+            continue
+        if marker is False:
+            continue
+        # we are into namespace pairs with '|' delimiter
+        t = u.decode('utf-8')
+        tokenized = t.split('|')
+        value = tokenized[0]
+        uid = tokenized[1]
+        for k, v in equivalences.items():
+            if v[0]:
+                v[1][value] = uid
+
+# parse the old .belanno files needed for resolving lost values
+parser = parsers.BELAnnotationsParser()
+print('Running ' +str(parser))
+for url in parser.parse():
+
+    annotations = { 'mesh-diseases' : (False, old_mesh_diseases_anno),
+                    'mesh-cell-structure' : (False, old_mesh_cell_anno),
+                    'mesh-anatomy' : (False, old_mesh_anatomy_anno) }
+
+    open_url = urllib.request.urlopen(url)
+    for anno in annotations:
+        if anno in open_url.url:
+            annotations[anno] = (True, annotations[anno][1])
     marker = False
     for u in open_url:
         if '[Values]' in str(u):
@@ -205,6 +240,9 @@ new_mesh_bio = set()
 new_mesh_cell = set()
 new_mesh_diseases = set()
 new_schem = set()
+new_mesh_diseases_anno = set()
+new_mesh_cell_anno = set()
+new_mesh_anatomy_anno = set()
 
 # gather the new data for comparison (locally stored for now)
 indir = os.getcwd()
@@ -382,6 +420,39 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_schem.add(token)
+        elif '.belanno' in f:
+            with open(os.path.join(root, f), 'r') as fp:
+                if 'mesh-diseases' in fp.name:
+                    for line in fp:
+                        # if '[Values]' in str(line):
+                        #     marker = True
+                        #     continue
+                        # if marker is False:
+                        #     continue
+                        tokenized = str(line).split('|')
+                        token = tokenized[0]
+                        new_mesh_diseases_anno.add(token)
+                elif 'mesh-cell' in fp.name:
+                    for line in fp:
+                        # if '[Values]' in str(line):
+                        #     marker = True
+                        #     continue
+                        # if marker is False:
+                        #     continue
+                        tokenized = str(line).split('|')
+                        token = tokenized[0]
+                        new_mesh_cell_anno.add(token)
+                elif 'mesh-anatomy' in fp.name:
+                    for line in fp:
+                        # if '[Values]' in str(line):
+                        #     marker = True
+                        #     continue
+                        # if marker is False:
+                        #     continue
+                        tokenized = str(line).split('|')
+                        token = tokenized[0]
+                        new_mesh_diseases_anno.add(token)
+
 
 print('len of new entrez is ' +str(len(new_entrez)))
 print('len of new hgnc is ' +str(len(new_hgnc)))
@@ -400,6 +471,9 @@ print('len of new mesh-bio is ' +str(len(new_mesh_bio)))
 print('len of new mesh-cell is ' +str(len(new_mesh_cell)))
 print('len of new mesh-diseases is ' +str(len(new_mesh_diseases)))
 print('len of new selventa-legacy-chemicals is ' +str(len(new_schem)))
+print('len of new mesh-diseases-anno is ' +str(len(new_mesh_diseases_anno)))
+print('len of new mesh-cell is ' +str(len(new_mesh_cell_anno)))
+print('len of new mesh-anatomy is ' +str(len(new_mesh_anatomy_anno)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
 entrez_lost = [x for x in old_entrez if x not in new_entrez]
@@ -418,6 +492,9 @@ gocc_lost_ns_ids = [x for x in old_gocc_ns_ids if x not in new_gocc_ns_ids]
 mesh_bio_lost = [x for x in old_mesh_bio if x not in new_mesh_bio]
 mesh_cell_lost = [x for x in old_mesh_cell if x not in new_mesh_cell]
 mesh_diseases_lost = [x for x in old_mesh_diseases if x not in new_mesh_diseases]
+mesh_diseases_anno_lost = [x for x in old_mesh_diseases_anno if x not in new_mesh_diseases_anno]
+mesh_cell_anno_lost = [x for x in old_mesh_cell_anno if x not in new_mesh_cell_anno]
+mesh_anatomy_anno_lost = [x for x in old_mesh_anatomy_anno if x not in new_mesh_anatomy_anno]
 schem_lost = [x for x in old_schem if x not in new_schem]
 
 print('===========================================')
@@ -434,9 +511,12 @@ print('lost gobp names ' +str(len(gobp_lost_ns_names)))
 print('lost gobp ids ' +str(len(gobp_lost_ns_ids)))
 print('lost gocc names ' +str(len(gocc_lost_ns_names)))
 print('lost gocc ids ' +str(len(gocc_lost_ns_ids)))
-print('lost mesh_bio ' +str(len(mesh_bio_lost)))
-print('lost mesh_cell ' +str(len(mesh_cell_lost)))
-print('lost mesh_diseases ' +str(len(mesh_diseases_lost)))
+print('lost mesh-bio ' +str(len(mesh_bio_lost)))
+print('lost mesh-cell ' +str(len(mesh_cell_lost)))
+print('lost mesh-diseases ' +str(len(mesh_diseases_lost)))
+print('lost mesh-diseases-anno ' +str(len(mesh_diseases_anno_lost)))
+print('lost mesh-cell-anno ' +str(len(mesh_cell_anno_lost)))
+print('lost mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_lost)))
 print('lost selventa-legacy-chemicals ' +str(len(schem_lost)))
 
 # values in the new data that are not in the old (either new or a replacement)
@@ -456,6 +536,9 @@ gocc_gained_ns_ids = [x for x in new_gocc_ns_ids if x not in old_gocc_ns_ids]
 mesh_gained_bio = [x for x in new_mesh_bio if x not in old_mesh_bio]
 mesh_gained_cell = [x for x in new_mesh_cell if x not in old_mesh_cell]
 mesh_gained_diseases = [x for x in new_mesh_diseases if x not in old_mesh_diseases]
+mesh_diseases_anno_gained = [x for x in new_mesh_diseases_anno if x not in old_mesh_diseases_anno]
+mesh_cell_anno_gained = [x for x in new_mesh_cell_anno if x not in old_mesh_cell_anno]
+mesh_anatomy_anno_gained = [x for x in new_mesh_anatomy_anno if x not in old_mesh_anatomy_anno]
 schem_gained = [x for x in new_schem if x not in old_schem]
 
 print('===========================================')
@@ -475,12 +558,11 @@ print('gained gocc ids ' +str(len(gocc_gained_ns_ids)))
 print('gained mesh_bio ' +str(len(mesh_gained_bio)))
 print('gained mesh_cell ' +str(len(mesh_gained_cell)))
 print('gained mesh_diseases ' +str(len(mesh_gained_diseases)))
+print('gained mesh-diseases-anno ' +str(len(mesh_diseases_anno_gained)))
+print('gained mesh-cell-anno ' +str(len(mesh_cell_anno_gained)))
+print('gained mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_gained)))
 print('gained selventa-legacy-chemicals ' +str(len(schem_gained)))
 print('===========================================')
-
-# with open('hgnc-new-values.txt', 'w') as fp:
-#     for val in hgnc_gained:
-#         fp.write(val +'\n')
 
 # iterate lost values for each dataset, find out if they are withdrawn or
 # replaced. If replaced, map oldname->newname. Otherwise map oldname->withdrawn.
@@ -501,6 +583,7 @@ change_log['mesh-bio'] = {}
 change_log['mesh-cell'] = {}
 change_log['mesh-diseases'] = {}
 change_log['schem'] = {}
+
 previous_symbols = []
 previous_names = []
 symbols_and_names = []
@@ -573,7 +656,6 @@ for label, data_tuple in changelog_data_opt.items():
             lost_vals = row.get('OLD_SYMBOL').split(';')
             if len(lost_vals) != 0:
                 for symbol in lost_vals:
-                    fp.write(str(symbol)+'\n')
                     log = change_log.get('rgd')
                     log[symbol] = new_val
 

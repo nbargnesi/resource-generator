@@ -5,7 +5,7 @@
 # Represent each parsed dataset as an object. This is
 # really just a wrapper to the underlying dictionaries.
 
-#import ipdb
+import ipdb
 
 class DataSet():
     def __init__(self, dictionary):
@@ -483,6 +483,16 @@ class DOData(DataSet):
     def get_ns_values(self):
         for name in self.do_dict:
             yield name
+
+    def get_eq_values(self):
+        for name, mapping in self.do_dict.items():
+            yield mapping.get('id')
+
+    def get_xrefs(self, ref):
+        for name, mapping in self.do_dict.items():
+            dbxrefs = mapping.get('dbxrefs')
+            if ref in dbxrefs:
+                return mapping.get('id')
 
     def __str__(self):
         return 'do'

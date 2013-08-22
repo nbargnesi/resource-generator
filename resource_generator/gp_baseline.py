@@ -9,7 +9,6 @@
 #   -v    enables verbose mode
 
 
-from configuration import baseline_data_opt
 from configuration import baseline_data
 import argparse
 import os
@@ -21,7 +20,7 @@ import pickle
 import ipdb
 import annotate
 from common import download
-from constants import RES_LOCATION, PARSER_TYPE
+from constants import PARSER_TYPE, RES_LOCATION
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
@@ -52,10 +51,10 @@ if not os.path.exists('datasets'):
 
 start_time = time.time()
 print('\n======= Phase One, downloading data =======')
-# for name, url in baseline_data.items():
-#     print('Downloading ' +str(name))
-#     path = os.path.join('datasets/', name)
-#     download(url, path)
+for name, url in baseline_data.items():
+    print('Downloading ' +str(name))
+    path = os.path.join('datasets/', name)
+    download(url[RES_LOCATION], path)
 # ipdb.set_trace()
 
 working_dir = os.getcwd()
@@ -149,7 +148,7 @@ print('Phase 3 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 # build some references to be used during equivalencing
 interval_time = time.time()
 print('\n======= Phase Four, building equivalences =======')
-equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh]
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh]
 for d in equiv_data:
     print('Generating equivalence file for ' +str(d))
     equiv.equiv(d)

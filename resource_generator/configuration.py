@@ -23,37 +23,37 @@ baseline_data['gene2acc.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession
 baseline_data['affy.xml'] = ('http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
                              parsers.AffyParser)
 baseline_data['chebi.owl'] = ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
-                              parsers.CHEBIParser)
-baseline_data['CID-Synonym-filtered.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-Synonym-filtered.gz',
-                                         parsers.PubNamespaceParser)
-baseline_data['SID-map.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Substance/Extras/SID-Map.gz',
-                                     parsers.PubEquivParser)
-baseline_data['d2013.bin'] = ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/d2013.bin',
-                             parsers.MESHParser)
+                               parsers.CHEBIParser)
+# baseline_data['pubchem_namespace.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-Synonym-filtered.gz',
+                                         # parsers.PubNamespaceParser)
+# baseline_data['pubchem_equiv.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Substance/Extras/SID-Map.gz',
+#                                      parsers.PubEquivParser)
 #baseline_data['schem_to_chebi.txt'] = 'datasets/SCHEM_to_CHEBI.txt'
-baseline_data['go_201307-termdb.obo-xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',
+baseline_data['gobp.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',
                                 parsers.GOBPParser)
-baseline_data['go_201307-termdb.obo-xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',
-                                parsers.GOBParser)
+baseline_data['gocc.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',
+                                parsers.GOCCParser)
 baseline_data['doid.owl'] = ('http://purl.obolibrary.org/obo/doid.owl',
                              parsers.DOParser)
+baseline_data['mesh.bin'] = ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/d2013.bin',
+                              parsers.MESHParser)
 
 
-baseline_data_opt = OrderedDict()
-baseline_data_opt['entrez_info.gz'] = ('datasets/All_Mammalia.gene_info.gz', parsers.EntrezGeneInfoParser)
-baseline_data_opt['entrez_history.gz'] = ('datasets/gene_history.gz', parsers.EntrezGeneHistoryParser)
-baseline_data_opt['hgnc.tsv'] = ('datasets/hgnc-hgnc_downloads.tsv', parsers.HGNCParser)
-baseline_data_opt['mgi.rpt'] = ('datasets/MRK_List2.rpt', parsers.MGIParser)
-baseline_data_opt['rgd.txt'] = ('datasets/rgd-genes_rat.tsv', parsers.RGDParser)
-baseline_data_opt['chebi.owl'] = ('datasets/chebi.owl', parsers.CHEBIParser)
-baseline_data_opt['mesh.bin'] = ('datasets/d2013.bin', parsers.MESHParser)
-baseline_data_opt['swiss.xml.gz'] = ('datasets/sprot-uniprot_sprot.xml.gz', parsers.SwissProtParser)
-baseline_data_opt['affy.xml'] = ('datasets/affy_data.xml.gz', parsers.AffyParser)
-baseline_data_opt['gene2acc.gz'] = ('datasets/gene2accession.gz', parsers.Gene2AccParser)
-#baseline_data_opt['schem'] = ('datasets/selventa-legacy-chemical-names.belns', parsers.SCHEMParser)
-baseline_data_opt['schem_to_chebi.txt'] = ('datasets/SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
+# baseline_data_opt = OrderedDict()
+# baseline_data_opt['entrez_info.gz'] = ('datasets/All_Mammalia.gene_info.gz', parsers.EntrezGeneInfoParser)
+# baseline_data_opt['entrez_history.gz'] = ('datasets/gene_history.gz', parsers.EntrezGeneHistoryParser)
+# baseline_data_opt['hgnc.tsv'] = ('datasets/hgnc-hgnc_downloads.tsv', parsers.HGNCParser)
+# baseline_data_opt['mgi.rpt'] = ('datasets/MRK_List2.rpt', parsers.MGIParser)
+# baseline_data_opt['rgd.txt'] = ('datasets/rgd-genes_rat.tsv', parsers.RGDParser)
+# baseline_data_opt['chebi.owl'] = ('datasets/chebi.owl', parsers.CHEBIParser)
+# baseline_data_opt['swiss.xml.gz'] = ('datasets/sprot-uniprot_sprot.xml.gz', parsers.SwissProtParser)
+# baseline_data_opt['affy.xml'] = ('datasets/affy_data.xml.gz', parsers.AffyParser)
+# baseline_data_opt['gene2acc.gz'] = ('datasets/gene2accession.gz', parsers.Gene2AccParser)
+# baseline_data_opt['schem'] = ('datasets/selventa-legacy-chemical-names.belns', parsers.SCHEMParser)
+# baseline_data_opt['schem_to_chebi.txt'] = ('datasets/SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
 # baseline_data_opt['puchem_namespace.gz'] = ('datasets/CID-Synonym-filtered.gz', parsers.PubNamespaceParser)
 # baseline_data_opt['pubchem_equiv.gz'] = ('datasets/SID-Map.gz', parsers.PubEquivParser)
-baseline_data_opt['gobp.xml.gz'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
-baseline_data_opt['gocc.xml.gz'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
-baseline_data_opt['doid.owl'] = ('datasets/doid.owl', parsers.DOParser)
+# baseline_data_opt['gobp.xml.gz'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
+# baseline_data_opt['gocc.xml.gz'] = ('datasets/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
+# baseline_data_opt['doid.owl'] = ('datasets/doid.owl', parsers.DOParser)
+# baseline_data_opt['mesh.bin'] = ('datasets/d2013.bin', parsers.MESHParser)

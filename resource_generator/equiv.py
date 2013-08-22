@@ -5,7 +5,9 @@
 import uuid
 import namespaces
 import csv
+import parsed
 from collections import deque, defaultdict
+import ipdb
 
 hgnc_list = []
 mgi_list = []
@@ -26,6 +28,7 @@ chebi_name_eq = {}
 pub_eq_dict = {}
 gobp_eq_dict = {}
 gocc_eq_dict = {}
+do_eq_dict = {}
 
 ref_status = {'REVIEWED' : 0,
               'VALIDATED' : 1,
@@ -320,7 +323,7 @@ def equiv(d):
                 gobp.write(delim.join((termname, str(uid)))+'\n')
                 gobp_eq_dict[termname] = uid
 
-    # GO is the baseline, so new uuids the first time.
+    # GO is the baseline for processes, so new uuids the first time.
     elif str(d) == 'gocc':
 
         with open('gocc-eq.beleq', 'w') as gocc, open('gocc_id-eq.beleq', 'w') as gocc_id:
@@ -332,11 +335,21 @@ def equiv(d):
                 gocc.write(delim.join((termname, str(uid)))+'\n')
                 gocc_eq_dict[termid] = uid
 
+    elif str(d) == 'do':
+        # assign DO a new uuid and use as the primary for diseases
+        with open('disease-ontology.beleq', 'w') as dof:
+            for vals in d.get_eq_values():
+                id = vals
+                uid = uuid.uuid4()
+                dof.write(delim.join((id, str(uid)))+'\n')
+                do_eq_dict[id] = uid
+
     elif str(d) == 'mesh':
 
         with open('mesh-cellular-locations.beleq', 'w') as mesha, \
                 open('mesh-diseases.beleq', 'w') as meshc, \
                 open('mesh-biological-processes.beleq', 'w') as meshg:
+            do_data = parsed.load_data('do')
             for vals in d.get_eq_values():
                 ui, mh, mns, synonyms = vals
                 if any('A11.284' in branch for branch in mns):
@@ -344,18 +357,24 @@ def equiv(d):
                     uid = None
                     go_id = mg_eq.get(mh)
                     # meshcs_to_gocc contains OBSOLETE GO terms at the moment.
-                    # It is possible this lookup will return None, this the
-                    # elif clause to generate a new uuid if this happens.
+                    # It is possible this lookup will return None, in that
+                    # case generate a new uuid.
                     if go_id is not None:
                         uid = gocc_eq_dict.get(go_id.split(':')[1])
                         # try to find out why lookups fail - maybe OBSOLETE?
                         if uid is None:
                             print('Lookup failed for: '+str(go_id.split(':')[1]))
-                    elif uid is None:
+                            uid = uuid.uuid4()
+                    else:
                         uid = uuid.uuid4()
                     mesha.write(delim.join((mh, str(uid)))+'\n')
                 elif any('C' in branch for branch in mns):
-                    uid = uuid.uuid4()
+                    # does UI exist as a Xref in DO?
+                    xref = do_data.get_xrefs('MSH:'+ui)
+                    if xref:
+                        uid = do_eq_dict[xref]
+                    else:
+                        uid = uuid.uuid4()
                     meshc.write(delim.join((mh, str(uid)))+'\n')
                 elif any('G' in branch for branch in mns):
                     # synonyms for MeSH
@@ -369,9 +388,6 @@ def equiv(d):
                     if uid is None:
                         uid = uuid.uuid4()
                     meshg.write(delim.join((mh, str(uid)))+'\n')
-
-#    elif str(d) == 'schem':
-#        old_ns = parsed.load_data('
 
 acc_helper_dict = defaultdict(list)
 sp_acc_eq = {}

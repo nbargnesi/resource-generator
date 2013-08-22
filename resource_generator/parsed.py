@@ -3,9 +3,10 @@
 # parsed.py
 
 from datasets import *
-import csv
+import dbm.gnu
 import dbm
 from collections import defaultdict
+import ipdb
 
 # Data needed for namespacing and equivalencing
 entrez_info = {}
@@ -171,7 +172,8 @@ def build_data(entry, parser):
         #delim = '|'
         #with open('test.txt', 'w') as fp:
         #    fp.write(delim.join((pub_id, 'A')))
-        pub_db = dbm.open('pub-names', 'c')
+#        pub_db = dbm.open('pub-names', 'cf')
+        pub_db = dbm.gnu.open('pub-names', 'cfu')
         pub_db[bytes(pub_id, 'utf-8')] = bytes(synonym, 'utf-8')
         pub_db.close()
 #        pub_ns_dict[pub_id].append(synonym)

@@ -39,3 +39,5 @@ changelog_data_opt['chebi'] = \
     ('datasets/chebi.owl', parsers.CHEBIParser)
 changelog_data_opt['mesh'] = \
     ('datasets/replace2013.txt', parsers.MESHChangesParser)
+changelog_data_opt['do'] = \
+    ('datasets/doid.owl', parsers.DODeprecatedParser)

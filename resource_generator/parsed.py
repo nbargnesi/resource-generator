@@ -19,7 +19,9 @@ affy = defaultdict(list)
 gene2acc = {}
 chebi = {}
 schem = {}
+sdis = {}
 schem_to_chebi = {}
+sdis_to_do = {}
 pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 gobp_dict = {}
@@ -38,6 +40,8 @@ chebi_data = CHEBIData(chebi)
 gene2acc_data = Gene2AccData(gene2acc)
 schem_data = SCHEMData(schem)
 schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
+sdis_data = SDISData(sdis)
+sdis_to_do_data = SDIStoDOData(sdis_to_do)
 pub_ns_data = PubNamespaceData(pub_ns_dict)
 pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
@@ -149,13 +153,26 @@ def build_data(entry, parser):
             'CHEBIID' : chebi_id,
             'CHEBI_name' : chebi_name }
 
+    elif parser == 'SDIS_Parser':
+        sdis_id = entry.get('sdis_id')
+
+        sdis[sdis_id] = 'O'
+
+    elif parser == 'SDIStoDO_Parser':
+        sdis_term = entry.get('SDIS_term')
+        do_id = entry.get('DOID')
+        do_name = entry.get('DO_name')
+
+        sdis_to_do[sdis_term] = {
+            'DOID' : do_id,
+            'DO_name' : do_name }
+
     elif parser == 'CHEBI_Parser':
         name = entry.get('name')
         primary_id = entry.get('primary_id')
         alt_ids = entry.get('alt_ids')
         synonyms = entry.get('synonyms')
-#        print('Name - ' +name)
-#        ipdb.set_trace()
+
         chebi[name] = {
             'primary_id' : primary_id,
             'alt_ids' : alt_ids,
@@ -244,7 +261,7 @@ def load_data(label):
                 gene2acc_data, entrez_history_data, pub_equiv_data,
                 schem_data, schem_to_chebi_data, gobp_data,
                 gocc_data, mesh_data, swiss_withdrawn_acc_data,
-                do_data]
+                do_data, sdis_data, sdis_to_do_data]
 
     for d in datasets:
         if str(d) == label:

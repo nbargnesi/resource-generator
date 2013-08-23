@@ -3,7 +3,6 @@
 # namespaces.py
 
 import parsed
-#import ipdb
 
 # namespace dictionaries
 entrez_ns = set()
@@ -209,6 +208,20 @@ def make_namespace(d):
                 else:
                     f.write(delim.join((entry, 'A'))+'\n')
         print('Able to resolve ' +str(count)+ ' SCHEM names to CHEBI.')
+
+    elif str(d) == 'sdis':
+        sdis_to_do = parsed.load_data('sdis_to_do')
+        count = 0
+        with open('selventa-legacy-diseases.belns', 'w') as f:
+            for entry in d.get_ns_values():
+                # try to get a do equivalent, if there is one do not
+                # write this value to the new namespace
+                if sdis_to_do.has_equivalence(entry):
+                    count = count + 1
+                    continue
+                else:
+                    f.write(delim.join((entry, 'O'))+'\n')
+        print('Able to resolve ' +str(count)+ ' SDIS names to DO.')
 
     elif str(d) == 'mesh':
 

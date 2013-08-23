@@ -48,9 +48,11 @@ old_mesh_bio = set()
 old_mesh_cell = set()
 old_mesh_diseases = set()
 old_schem = set()
+old_sdis = set()
 old_mesh_diseases_anno = set()
 old_mesh_cell_anno = set()
 old_mesh_anatomy_anno = set()
+old_do_ns_names = set()
 
 old_chebi_eq_names = dict()
 old_chebi_eq_ids = dict()
@@ -58,7 +60,7 @@ old_gobp_eq_ids = dict()
 old_gobp_eq_names = dict()
 old_gocc_eq_ids = dict()
 old_gocc_eq_names = dict()
-
+old_do_eq_names = dict()
 # iterate over the urls to the .belns files, collecting the entries
 # from the old data.
 for url in parser.parse():
@@ -79,7 +81,9 @@ for url in parser.parse():
                    'mesh-bio' : (False, old_mesh_bio),
                    'mesh-cell' : (False, old_mesh_cell),
                    'mesh-diseases' : (False, old_mesh_diseases),
-                   'selventa-legacy-chemical' : (False, old_schem)}
+                   'selventa-legacy-chemical' : (False, old_schem),
+                   'selventa-legacy-diseases' : (False, old_sdis),
+                   'disease-ontology' : (False, old_do_ns_names)}
 
 
     open_url = urllib.request.urlopen(url)
@@ -113,7 +117,8 @@ for url in parser.parse():
         'go-cellular-component-terms' : (False, old_gocc_eq_names),
         'go-cellular-component-acc' : (False, old_gocc_eq_ids),
         'chebi-names' : (False, old_chebi_eq_names),
-        'chebi-ids' : (False, old_chebi_eq_ids)}
+        'chebi-ids' : (False, old_chebi_eq_ids),
+        'disease-ontology' : (False, old_do_eq_names)}
 
     open_url = urllib.request.urlopen(url)
     for eq in equivalences:
@@ -173,10 +178,15 @@ inv_gocc_names = {v:k for k, v in old_gocc_eq_names.items()}
 inv_chebi_ids = {v:k for k, v in old_chebi_eq_ids.items()}
 inv_chebi_names = {v:k for k, v in old_chebi_eq_names.items()}
 
+inv_do_eq_names = {v:k for k, v in old_do_eq_names.items()}
+inv_do_ns_names = {v:k for k, v in old_do_ns_names.items()}
+
 gobp_names_to_ids = {}
 gocc_names_to_ids = {}
 chebi_names_to_ids = {}
-# any keys that match up, get the corresponding name/id
+do_names_to_ids = {}
+# create a lookup for old ids/names. This is used to resolve lost
+# values between generations of the namespace.
 for uid in inv_gobp_ids:
     if uid in inv_gobp_names:
         name = inv_gobp_names.get(uid)
@@ -192,6 +202,11 @@ for uid in inv_chebi_ids:
         name = inv_chebi_names.get(uid)
         id = inv_chebi_ids.get(uid)
         chebi_names_to_ids[name] = id
+for uid in inv_do_eq_names:
+    if uid in inv_do_ns_names:
+        name = inv_do_ns_names.get(uid)
+        id = inv_do_eq_names.get(uid)
+        do_names_to_ids[name] = id
 
 def name_to_id(name):
     if name in gobp_names_to_ids:
@@ -200,6 +215,8 @@ def name_to_id(name):
         return gocc_names_to_ids[name]
     elif name in chebi_names_to_ids:
         return chebi_names_to_ids[name]
+    elif name in do_names_to_ids:
+        return do_names_to_ids[name]
     else:
         return None
 
@@ -221,6 +238,7 @@ print('len of old mesh-bio is ' +str(len(old_mesh_bio)))
 print('len of old mesh-cell is ' +str(len(old_mesh_cell)))
 print('len of old mesh-diseases is ' +str(len(old_mesh_diseases)))
 print('len of old selventa-legacy-chemicals is ' +str(len(old_schem)))
+print('len of old diseases-ontology is ' +str(len(old_do_ns_names)))
 print('===========================================')
 
 new_entrez = set()
@@ -243,6 +261,7 @@ new_schem = set()
 new_mesh_diseases_anno = set()
 new_mesh_cell_anno = set()
 new_mesh_anatomy_anno = set()
+new_do = set()
 
 # gather the new data for comparison (locally stored for now)
 indir = os.getcwd()
@@ -420,6 +439,16 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_schem.add(token)
+                elif 'disease-ontology' in fp.name:
+                    for line in fp:
+                        # if '[Values]' in str(line):
+                        #     marker = True
+                        #     continue
+                        # if marker is False:
+                        #     continue
+                        tokenized = str(line).split('|')
+                        token = tokenized[0]
+                        new_do.add(token)
         elif '.belanno' in f:
             with open(os.path.join(root, f), 'r') as fp:
                 if 'mesh-diseases' in fp.name:
@@ -474,6 +503,7 @@ print('len of new selventa-legacy-chemicals is ' +str(len(new_schem)))
 print('len of new mesh-diseases-anno is ' +str(len(new_mesh_diseases_anno)))
 print('len of new mesh-cell is ' +str(len(new_mesh_cell_anno)))
 print('len of new mesh-anatomy is ' +str(len(new_mesh_anatomy_anno)))
+print('len of new diseases-ontology is ' +str(len(new_do)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
 entrez_lost = [x for x in old_entrez if x not in new_entrez]
@@ -496,6 +526,7 @@ mesh_diseases_anno_lost = [x for x in old_mesh_diseases_anno if x not in new_mes
 mesh_cell_anno_lost = [x for x in old_mesh_cell_anno if x not in new_mesh_cell_anno]
 mesh_anatomy_anno_lost = [x for x in old_mesh_anatomy_anno if x not in new_mesh_anatomy_anno]
 schem_lost = [x for x in old_schem if x not in new_schem]
+do_lost = [x for x in old_do_ns_names if x not in new_do]
 
 print('===========================================')
 print('lost entrez values ' +str(len(entrez_lost)))
@@ -518,6 +549,7 @@ print('lost mesh-diseases-anno ' +str(len(mesh_diseases_anno_lost)))
 print('lost mesh-cell-anno ' +str(len(mesh_cell_anno_lost)))
 print('lost mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_lost)))
 print('lost selventa-legacy-chemicals ' +str(len(schem_lost)))
+print('lost diseases-ontology names ' +str(len(do_lost)))
 
 # values in the new data that are not in the old (either new or a replacement)
 entrez_gained = [x for x in new_entrez if x not in old_entrez]
@@ -540,6 +572,7 @@ mesh_diseases_anno_gained = [x for x in new_mesh_diseases_anno if x not in old_m
 mesh_cell_anno_gained = [x for x in new_mesh_cell_anno if x not in old_mesh_cell_anno]
 mesh_anatomy_anno_gained = [x for x in new_mesh_anatomy_anno if x not in old_mesh_anatomy_anno]
 schem_gained = [x for x in new_schem if x not in old_schem]
+do_gained = [x for x in new_do if x not in old_do_ns_names]
 
 print('===========================================')
 print('gained entrez values ' +str(len(entrez_gained)))
@@ -562,6 +595,7 @@ print('gained mesh-diseases-anno ' +str(len(mesh_diseases_anno_gained)))
 print('gained mesh-cell-anno ' +str(len(mesh_cell_anno_gained)))
 print('gained mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_gained)))
 print('gained selventa-legacy-chemicals ' +str(len(schem_gained)))
+print('gained diseases-ontology names ' +str(len(do_gained)))
 print('===========================================')
 
 # iterate lost values for each dataset, find out if they are withdrawn or
@@ -583,6 +617,7 @@ change_log['mesh-bio'] = {}
 change_log['mesh-cell'] = {}
 change_log['mesh-diseases'] = {}
 change_log['schem'] = {}
+change_log['do'] = {}
 
 previous_symbols = []
 previous_names = []
@@ -838,6 +873,29 @@ for label, data_tuple in changelog_data_opt.items():
             else:
                 log[schem_term] = 'withdrawn'
 
+    elif str(parser) == 'DODeprecated_Parser':
+        print('Gathering disease-ontology update info...')
+        new_do_ids_to_names = {}
+        dep_names = []
+        for row in parser.parse():
+            name = row.get('name')
+            id = row.get('id')
+            dep = row.get('deprecated')
+            if dep:
+                dep_names.append(name)
+            else:
+                new_do_ids_to_names[id] = name
+        for do_lost_name in do_lost:
+            log = change_log.get('do')
+            # could be withdrawn
+            if do_lost_name in dep_names:
+                log[do_lost_name] = 'withdrawn'
+            # if not withdrawn, get the new name using the id
+            else:
+                do_id = name_to_id(do_lost_name)
+                new_name = new_do_ids_to_names[do_id]
+                log[do_lost_name] = new_name
+
 end_time = time.time()
 
 # verification and error checking
@@ -851,7 +909,7 @@ dataset = change_log.get('rgd')
 rgd_unresolved = [x for x in rgd_lost if x not in dataset]
 dataset = change_log.get('swiss-names')
 sp_unresolved_names = [x for x in sp_lost_names if x not in dataset]
-# values that were "lost" but not in the file provided by SwissProt
+# values that were "lost" but NOT in the file provided by SwissProt
 dataset = change_log.get('swiss-ids')
 sp_unresolved_ids = [x for x in sp_lost_ids if x not in dataset]
 dataset = change_log.get('gobp-ids')

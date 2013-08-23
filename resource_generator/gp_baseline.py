@@ -50,36 +50,30 @@ if not os.path.exists('datasets'):
     os.mkdir('datasets')
 
 start_time = time.time()
-print('\n======= Phase One, downloading data =======')
-for name, url in baseline_data.items():
-    print('Downloading ' +str(name))
-    path = os.path.join('datasets/', name)
-    download(url[RES_LOCATION], path)
-# ipdb.set_trace()
+print('\n======= Phase I, downloading data =======')
+# for name, url_tuple in baseline_data.items():
+#     print('Downloading ' +str(name))
+#     path = os.path.join('datasets/', name)
+#     if url_tuple[RES_LOCATION].startswith('http') or \
+#             url_tuple[RES_LOCATION].startswith('ftp'):
+#         download(url_tuple[RES_LOCATION], path)
+print('Phase 1 ran in ' +str(((time.time() - start_time) / 60)) +' minutes')
 
+print('\n======= Phase II, parsing data =======')
+interval_time = time.time()
 working_dir = os.getcwd()
 for root, dirs, filenames in os.walk(working_dir):
     for f in filenames:
         if f in baseline_data:
-#            ipdb.set_trace()
             data_tuple = baseline_data.get(f)
             parser = data_tuple[PARSER_TYPE]('datasets/'+f)
             print('Running ' +str(parser))
             for x in parser.parse():
                 parsed.build_data(x, str(parser))
+print('Phase II ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
-# parse independent datasets
-
-# for label, data_tuple in baseline_data_opt.items():
-#     url = data_tuple[RES_LOCATION]
-#     parser = data_tuple[PARSER_TYPE](url)
-#     print('Running ' +str(parser))
-#     for x in parser.parse():
-#         parsed.build_data(x, str(parser))
-
-print('Phase 1 ran in ' +str(((time.time() - start_time) / 60)) +' minutes')
+print('\n======= Phase III, building namespaces =======')
 interval_time = time.time()
-print('\n======= Phase Two, building namespaces =======')
 # load parsed data to build namespaces
 ei = parsed.load_data('entrez_info')
 eh = parsed.load_data('entrez_history')
@@ -92,6 +86,8 @@ g2 = parsed.load_data('gene2acc')
 chebi = parsed.load_data('chebi')
 schem = parsed.load_data('schem')
 schem_to_chebi = parsed.load_data('schem_to_chebi')
+sdis = parsed.load_data('sdis')
+sdis_to_do = parsed.load_data('sdis_to_do')
 gobp = parsed.load_data('gobp')
 gocc = parsed.load_data('gocc')
 # pub_eq = parsed.load_data('pubchem_equiv')
@@ -134,25 +130,26 @@ do = parsed.load_data('do')
 #########################################################################
 
 # does not include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis]
 for d in ns_data:
     print('Generating namespace file for ' +str(d))
     namespaces.make_namespace(d)
-print('Phase 2 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
+print('Phase III ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
+print('\n======= Phase IV, building annotations =======')
 interval_time = time.time()
-print('\n======= Phase Three, building annotations =======')
 annotate.make_annotations(mesh)
-print('Phase 3 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
+print('Phase IV ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
 # build some references to be used during equivalencing
+print('\n======= Phase V, building equivalences =======')
 interval_time = time.time()
-print('\n======= Phase Four, building equivalences =======')
-equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh]
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
+              schem_to_chebi]
 for d in equiv_data:
     print('Generating equivalence file for ' +str(d))
     equiv.equiv(d)
+print('Phase V ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
-print('Phase 4 ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
-print('\n======= Phase Five, finished! =======')
+print('\n======= Phase VI, finished! =======')
 print('Total runtime: ' +str(((time.time() - start_time) / 60)) +' minutes')

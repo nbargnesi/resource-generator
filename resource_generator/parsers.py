@@ -10,6 +10,7 @@ import gzip
 import urllib.request
 import zipfile
 import io
+import ipdb
 
 class Parser(object):
     def __init__(self, url):
@@ -602,6 +603,29 @@ class SCHEMParser(Parser):
         return 'SCHEM_Parser'
 
 
+class SDISParser(Parser):
+
+    def __init__(self, url):
+        super(SDISParser, self).__init__(url)
+        self.sdis_file = url
+
+    def parse(self):
+        isFalse = True
+        with open(self.sdis_file, 'r') as fp:
+            for line in fp.readlines():
+                if '[Values]' not in line and isFalse:
+                    continue
+                elif '[Values]' in line:
+                    isFalse = False
+                    continue
+                else:
+                    sdis_id = line.split('|')[0]
+                    yield {'sdis_id' : sdis_id }
+
+    def __str__(self):
+        return 'SDIS_Parser'
+
+
 class SCHEMtoCHEBIParser(Parser):
 
     def __init__(self, url):
@@ -620,6 +644,26 @@ class SCHEMtoCHEBIParser(Parser):
 
     def __str__(self):
         return 'SCHEMtoCHEBI_Parser'
+
+
+class SDIStoDOParser(Parser):
+
+    def __init__(self, url):
+        super(SDIStoDOParser, self).__init__(url)
+        self.sdis_to_do = url
+
+    def parse(self):
+
+        column_headers = ['SDIS_term', 'DOID', 'DO_name']
+
+        with open(self.sdis_to_do, 'r') as fp:
+            rdr = csv.DictReader(fp, delimiter='\t', fieldnames=column_headers)
+
+            for row in rdr:
+                yield row
+
+    def __str__(self):
+        return 'SDIStoDO_Parser'
 
 
 class GOBPParser(Parser):
@@ -899,6 +943,24 @@ class MESHChangesParser(Parser):
         return 'MESHChanges_Parser'
 
 
+def is_deprecated(child_list):
+    dep = False
+    deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
+    for child in child_list:
+        if child.tag == deprecated and child.text == 'true':
+            dep = True
+    return dep
+
+
+# custom exception to break out of the loop when an deprecated
+# term has been seen.
+class DeprecatedTermException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+# excludes deprecated terms which are not included in the namespace
 class DOParser(Parser):
 
     def __init__(self, url):
@@ -919,21 +981,69 @@ class DOParser(Parser):
                 dbxrefs = []
                 name = ''
                 id = ''
+                try:
+                    if len(elem.values()) != 0:
+                        children = elem.getchildren()
+                        if is_deprecated(children):
+                            raise DeprecatedTermException(children)
+                        else:
+                            for child in children:
+        #                        ipdb.set_trace()
+                                if child.tag == self.dbxref:
+                                    dbxrefs.append(child.text)
+                                elif child.tag == self.id:
+                                    id = child.text.split(':')[1]
+                                elif child.tag == self.label:
+                                    name = child.text
+                            do_dict['name'] = name
+                            do_dict['id'] = id
+                            do_dict['dbxrefs'] = dbxrefs
+                            yield do_dict
+                except DeprecatedTermException:
+                    continue
+
+    def __str__(self):
+        return 'DO_Parser'
+
+
+# includes deprecated terms (for change-log)
+class DODeprecatedParser(Parser):
+
+    def __init__(self, url):
+        super(DOParser, self).__init__(url)
+        self.do_file = url
+        self.classy = '{http://www.w3.org/2002/07/owl#}Class'
+        self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
+        self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
+        self.id = '{http://www.geneontology.org/formats/oboInOwl#}id'
+        self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
+
+    def parse(self):
+
+        with open(self.do_file, 'rb') as df:
+            tree = etree.iterparse(df, tag=self.classy)
+            for event, elem in tree:
+                do_dep_dict = {}
+                dbxrefs = []
+                name = ''
+                id = ''
+                dep = False
                 if len(elem.values()) != 0:
                     children = elem.getchildren()
                     for child in children:
-                        if child.tag == self.deprecated:
-                            continue
-                        elif child.tag == self.dbxref:
+                        if child.tag == self.dbxref:
                             dbxrefs.append(child.text)
                         elif child.tag == self.id:
                             id = child.text.split(':')[1]
                         elif child.tag == self.label:
                             name = child.text
-                    do_dict['name'] = name
-                    do_dict['id'] = id
-                    do_dict['dbxrefs'] = dbxrefs
-                    yield do_dict
+                        elif child.tag == self.deprecated:
+                            dep = True
+                do_dep_dict['name'] = name
+                do_dep_dict['id'] = id
+                do_dep_dict['dbxrefs'] = dbxrefs
+                do_dep_dict['deprecated'] = dep
+                yield do_dep_dict
 
     def __str__(self):
-        return 'DO_Parser'
+        return 'DODeprecated_Parser'

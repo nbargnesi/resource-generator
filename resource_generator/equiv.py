@@ -89,6 +89,9 @@ def equiv(d):
     elif str(d) == 'hgnc':
         with open('hgnc_eq.beleq', 'w') as fp:
             for approved_symbol in d.get_eq_values():
+                if '~withdrawn' in approved_symbol:
+#                    ipdb.set_trace()
+                    continue
                 new_id = to_entrez('HGNC:'+approved_symbol)
                 if new_id is None:
                     # keep track of which hgnc genes need new uuids (dont map to entrez)
@@ -291,7 +294,7 @@ def equiv(d):
                 if alt_id not in chebi_id_eq:
                     # get its primary equivalent and use its uuid
                     primary = d.alt_to_primary(alt_id)
-                    uid = chebi_id_eq.get(primary)
+                    uid = chebi_id_eq[primary]
                     fp.write(delim.join((alt_id, str(uid)))+'\n')
                     chebi_id_eq[alt_id] = uid
             for name in d.get_names():
@@ -339,10 +342,70 @@ def equiv(d):
         # assign DO a new uuid and use as the primary for diseases
         with open('disease-ontology.beleq', 'w') as dof:
             for vals in d.get_eq_values():
-                id = vals
+                name = vals
                 uid = uuid.uuid4()
-                dof.write(delim.join((id, str(uid)))+'\n')
-                do_eq_dict[id] = uid
+                dof.write(delim.join((name, str(uid)))+'\n')
+                do_eq_dict[name] = uid
+
+    # elif str(d) == 'sdis':
+    #     # try to resolve sdis terms to DO. If there is not one,
+    #     # assign a new uuid.
+    #     sdis_to_do = parsed.load_data('sdis_to_do')
+    #     count = 0
+    #     with open('selventa-legacy-diseases.beleq', 'w') as dof:
+    #         for vals in d.get_eq_values():
+    #             uid = None
+    #             sdis_term = vals
+    #             if sdis_to_do.has_equivalence(sdis_term):
+    #                 count = count + 1
+    #                 do_term = sdis_to_do.get_equivalence(sdis_term)
+    #                 uid = do_eq_dict[do_term]
+    #             else:
+    #                 uid = uuid.uuid4()
+    #             dof.write(delim.join((sdis_term, uid))+'\n')
+    #     print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
+
+    elif str(d) == 'sdis_to_do':
+        # try to resolve sdis terms to DO. If there is not one,
+        # assign a new uuid.
+        count = 0
+        sdis = parsed.load_data('sdis')
+        with open('selventa-legacy-diseases.beleq', 'w') as dof:
+            for vals in sdis.get_eq_values():
+                uid = None
+                sdis_term = vals
+                if d.has_equivalence(sdis_term):
+                    count = count + 1
+                    do_term = d.get_equivalence(sdis_term)
+                    if do_term in do_eq_dict:
+                        uid = do_eq_dict[do_term]
+                    else:
+                        uid = do_eq_dict[do_term.lower()]
+                else:
+                    uid = uuid.uuid4()
+                dof.write(delim.join((sdis_term, str(uid)))+'\n')
+        print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
+
+    elif str(d) == 'schem_to_chebi':
+        # try to resolve schem terms to CHEBI. If there is not one,
+        # assign a new uuid.
+        count = 0
+        schem = parsed.load_data('schem')
+        with open('selventa-legacy-chemical-names.beleq', 'w') as schemf:
+            for vals in schem.get_eq_values():
+                uid = None
+                schem_term = vals
+                if d.has_equivalence(schem_term):
+                    count = count + 1
+                    chebi_term = d.get_equivalence(schem_term)
+                    if chebi_term in chebi_name_eq:
+                        uid = chebi_name_eq[chebi_term]
+                    elif chebi_term.lower() in chebi_name_eq:
+                        uid = chebi_name_eq[chebi_term.lower()]
+                else:
+                    uid = uuid.uuid4()
+                schemf.write(delim.join((schem_term, str(uid)))+'\n')
+        print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')
 
     elif str(d) == 'mesh':
 

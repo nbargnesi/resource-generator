@@ -242,12 +242,12 @@ class CHEBIData(DataSet):
             altIds = mapping.get('alt_ids')
             if alt in altIds:
                 primary_id = mapping.get('primary_id')
-                yield primary_id
+                return primary_id
 
     def name_to_primary(self, name):
         mapping = self.chebi_dict.get(name)
         primary_id = mapping.get('primary_id')
-        yield primary_id
+        return primary_id
 
     def __str__(self):
         return 'chebi'
@@ -263,6 +263,10 @@ class SCHEMData(DataSet):
         return self.schem_dict
 
     def get_ns_values(self):
+        for entry in self.schem_dict:
+            yield entry
+
+    def get_eq_values(self):
         for entry in self.schem_dict:
             yield entry
 
@@ -288,13 +292,65 @@ class SCHEMtoCHEBIData(DataSet):
                 equiv = True
         return equiv
 
-    def get_equivalence(self, schem_id):
-        mapping = self.schem_to_chebi.get(schem_id)
+    def get_equivalence(self, schem_term):
+        mapping = self.schem_to_chebi.get(schem_term)
         chebi_name = mapping.get('CHEBI_name')
         return chebi_name
 
     def __str__(self):
         return 'schem_to_chebi'
+
+
+class SDISData(DataSet):
+
+    def __init__(self, dictionary):
+        super(SDISData, self).__init__(dictionary)
+        self.sdis_dict = dictionary
+
+    def get_dictionary(self):
+        return self.sdis_dict
+
+    def get_ns_values(self):
+        for entry in self.sdis_dict:
+            yield entry
+
+    def get_eq_values(self):
+        for entry in self.sdis_dict:
+            yield entry
+
+    def __str__(self):
+        return 'sdis'
+
+
+class SDIStoDOData(DataSet):
+
+    def __init__(self, dictionary):
+        super(SDIStoDOData, self).__init__(dictionary)
+        self.sdis_to_do = dictionary
+
+    def get_dictionary(self):
+        return self.sdis_to_do
+
+    def get_eq_values(self):
+        for entry in self.sdis_to_do:
+            yield entry
+
+    def has_equivalence(self, sdis_name):
+        equiv = False
+        for sdis_term in self.sdis_to_do:
+            mapping = self.sdis_to_do.get(sdis_term)
+            do_name = mapping.get('DO_name')
+            if sdis_name.lower() == do_name.lower():
+                equiv = True
+        return equiv
+
+    def get_equivalence(self, sdis_id):
+        mapping = self.sdis_to_do.get(sdis_id)
+        do_name = mapping.get('DO_name')
+        return do_name
+
+    def __str__(self):
+        return 'sdis_to_do'
 
 
 class PubNamespaceData(DataSet):
@@ -464,8 +520,6 @@ class SwissWithdrawnData(DataSet):
     def get_withdrawn_accessions(self):
         accessions = self.s_dict.get('accessions')
         return accessions
-        # for acc in accessions:
-        #     yield acc
 
     def __str__(self):
         return 'swiss-withdrawn'
@@ -485,8 +539,8 @@ class DOData(DataSet):
             yield name
 
     def get_eq_values(self):
-        for name, mapping in self.do_dict.items():
-            yield mapping.get('id')
+        for name in self.do_dict:
+            yield name
 
     def get_xrefs(self, ref):
         for name, mapping in self.do_dict.items():

@@ -1,9 +1,13 @@
 # coding: utf-8
-#
-# datasets.py
 
-# Represent each parsed dataset as an object. This is
-# really just a wrapper to the underlying dictionaries.
+'''
+ datasets.py
+
+ Represent each parsed dataset as an object. This is
+ really just a wrapper to the underlying dictionaries,
+ but it also provides some useful functions that assist
+ in the namespacing and equivalencing process.
+'''
 
 class DataSet():
     def __init__(self, dictionary):
@@ -158,23 +162,6 @@ class SwissProtData(DataSet):
 
     def __str__(self):
         return 'swiss'
-
-
-# class SwissProtAccData(DataSet):
-
-#     def __init__(self, dictionary):
-#         super(SwissProtAccData, self).__init__(dictionary)
-#         self.sp_acc_dict = dictionary
-
-#     def get_dictionary(self):
-#         return self.sp_acc_dict
-
-#     def get_ns_values(self):
-#         for acc_id in self.sp_acc_dict:
-#             yield acc_id
-
-#     def __str__(self):
-#         return 'swiss'
 
 
 class AffyData(DataSet):
@@ -544,7 +531,7 @@ class DOData(DataSet):
         for name, mapping in self.do_dict.items():
             dbxrefs = mapping.get('dbxrefs')
             if ref in dbxrefs:
-                return mapping.get('id')
+                return mapping.get('name')
 
     def __str__(self):
         return 'do'

@@ -1,6 +1,11 @@
 # coding: utf-8
-#
-# parsers.py
+
+'''
+ parsers.py
+
+ Contains parser objects constructed for various datasets that
+ will be used to build the .belns, .beleq, and .belanno files.
+'''
 
 from common import gzip_to_text
 from lxml import etree
@@ -298,9 +303,6 @@ class AffyParser(Parser):
         super(AffyParser, self).__init__(url)
         self.affy_file = url
 
-    # Here maybe take the downloading and exctracting the files out of
-    # parser() and call only once from __init__. As it is, the data
-    # is being re-downloaded and parsed every time.
     def parse(self):
 
         # the arrays we are concerned with
@@ -497,46 +499,6 @@ class CHEBIParser(Parser):
     def __str__(self):
         return 'CHEBI_Parser'
 
-# This version of the parser uses xpath, and has shown to be slower and
-# this less efficient then the iterparse version. It can probably be removed.
-# class CHEBIParser(Parser):
-
-#     def __init__(self, file_to_url):
-#         super(CHEBIParser, self).__init__(file_to_url)
-#         self.chebi_file = file_to_url.get('datasets/chebi.owl')
-
-#     def parse(self):
-
-#         namespace = {
-#             'base' : 'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
-#             'obo' : 'http://purl.obolibrary.org/obo/',
-#             'xsd' : 'http://www.w3.org/2001/XMLSchema#',
-#             'obo2' : 'http://purl.obolibrary.org/obo#',
-#             'dc' : 'http://purl.org/dc/elements/1.1/',
-#             'rdfs' : 'http://www.w3.org/2000/01/rdf-schema#',
-#             'rdf' : 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-#             'owl' : 'http://www.w3.org/2002/07/owl#' }
-
-#         tree = etree.parse(self.chebi_file)
-
-#         name_resources = tree.xpath('//owl:Class/*[local-name()="label"]', namespaces=namespace)
-#         id_resources = tree.xpath('//owl:Class/@rdf:about', namespaces=namespace)
-#         altId_resources = tree.xpath('//owl:Class/*[local-name()="altId"]', namespaces=namespace)
-
-#         names = [x.text for x in name_resources]
-#         ids = [x.split('CHEBI_')[1] for x in id_resources]
-#         alt_ids = [x.text.split(':')[1] for x in altId_resources]
-
-#         resource_dict = {
-#             'name' : names[0],
-#             'primary_id' : ids[0],
-#             'alt_ids' : alt_ids }
-
-#         yield resource_dict
-
-#     def __str__(self):
-#         return 'CHEBI_Parser'
-
 
 class PubNamespaceParser(Parser):
 
@@ -549,9 +511,9 @@ class PubNamespaceParser(Parser):
         pub_reader = csv.DictReader(gzip_to_text(self.pub_file), delimiter='\t',
                                     fieldnames=column_headers)
 
-        # with open(self.pub_file, 'r') as fp:
-        #     pub_reader = csv.DictReader(fp, delimiter='\t',
-        #                                 fieldnames=column_headers)
+        with open(self.pub_file, 'r') as fp:
+            pub_reader = csv.DictReader(fp, delimiter='\t',
+                                        fieldnames=column_headers)
 
         for row in pub_reader:
             yield row
@@ -679,7 +641,7 @@ class GOBPParser(Parser):
             root = etree.parse(go, parser)
             bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and not(is_obsolete)]")
 
-            # iterate the biological_process terms
+            # iterate the NON-OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text.split(':')[1]
                 bp_termname = t.find('name').text
@@ -698,7 +660,7 @@ class GOBPParser(Parser):
             root = etree.parse(go, parser)
             bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and is_obsolete]")
 
-            # iterate the biological_process terms
+            # iterate the OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text.split(':')[1]
                 bp_termname = t.find('name').text
@@ -731,7 +693,7 @@ class GOCCParser(Parser):
         root = etree.parse(self.go_file, parser)
         cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and not(is_obsolete)]")
 
-        # iterate the complex terms to build parent dictionary
+        # iterate the NON-OBSOLETE complex terms to build parent dictionary
         for t in cc_terms:
             cc_termid = t.find("id").text
             cc_parent_ids = [isa.text for isa in t.findall("is_a")]
@@ -776,7 +738,7 @@ class GOCCParser(Parser):
         root = etree.parse(self.go_file, parser)
         cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and is_obsolete]")
 
-        # iterate the complex terms to build parent dictionary
+        # iterate the OBSOLETE complex terms to build parent dictionary
         for t in cc_terms:
             cc_termid = t.find("id").text
             cc_parent_ids = [isa.text for isa in t.findall("is_a")]
@@ -987,7 +949,6 @@ class DOParser(Parser):
                             raise DeprecatedTermException(children)
                         else:
                             for child in children:
-        #                        ipdb.set_trace()
                                 if child.tag == self.dbxref:
                                     dbxrefs.append(child.text)
                                 elif child.tag == self.id:

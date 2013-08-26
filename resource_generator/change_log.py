@@ -735,7 +735,6 @@ for label, data_tuple in changelog_data_opt.items():
 
             # get the contents returned from the HTTPResponse object
             if cached:
-#                ipdb.set_trace()
                 content_list = content
             else:
                 content_list = [x.decode().strip() for x in content.readlines()]

@@ -1,10 +1,14 @@
 # coding utf-8
 #
-# annotate.py
-# Python module to build three .belanno files.
-# 1. mesh-cell-structure.belanno
-# 2. mesh-diseases.belanno
-# 3. mesh-anatomy.belanno
+
+'''
+ annotate.py
+
+ Python module to build three .belanno files.
+   1. mesh-cell-structure.belanno
+   2. mesh-diseases.belanno
+   3. mesh-anatomy.belanno
+'''
 
 already_seen = set()
 def make_annotations(d):

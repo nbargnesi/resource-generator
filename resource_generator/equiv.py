@@ -1,7 +1,15 @@
 # coding: utf-8
-#
-# equiv.py
-#
+
+'''
+ equiv.py
+
+ Construct each of the .beleq files, given a particular dataset.
+ This involves gathering all the terms and determining whether
+ or not there are existing terms that refer to the same thing.
+ Terms are either then equivalenced to something else, or given
+ a new uuid (but UUIDs should be preserved after the first run).
+
+'''
 import uuid
 import namespaces
 import csv
@@ -91,7 +99,6 @@ def equiv(d):
         with open('hgnc_eq.beleq', 'w') as fp:
             for approved_symbol in d.get_eq_values():
                 if '~withdrawn' in approved_symbol:
-#                    ipdb.set_trace()
                     continue
                 new_id = to_entrez('HGNC:'+approved_symbol)
                 if new_id is None:
@@ -348,24 +355,6 @@ def equiv(d):
                 dof.write(delim.join((name, str(uid)))+'\n')
                 do_eq_dict[name] = uid
 
-    # elif str(d) == 'sdis':
-    #     # try to resolve sdis terms to DO. If there is not one,
-    #     # assign a new uuid.
-    #     sdis_to_do = parsed.load_data('sdis_to_do')
-    #     count = 0
-    #     with open('selventa-legacy-diseases.beleq', 'w') as dof:
-    #         for vals in d.get_eq_values():
-    #             uid = None
-    #             sdis_term = vals
-    #             if sdis_to_do.has_equivalence(sdis_term):
-    #                 count = count + 1
-    #                 do_term = sdis_to_do.get_equivalence(sdis_term)
-    #                 uid = do_eq_dict[do_term]
-    #             else:
-    #                 uid = uuid.uuid4()
-    #             dof.write(delim.join((sdis_term, uid))+'\n')
-    #     print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
-
     elif str(d) == 'sdis_to_do':
         # try to resolve sdis terms to DO. If there is not one,
         # assign a new uuid.
@@ -447,7 +436,6 @@ def equiv(d):
                         # root 'G' branch in GOBP
                         for name in gobp_eq_dict:
                             if syn.lower() == name.lower():
-#                                ipdb.set_trace()
                                 uid = gobp_eq_dict.get(name)
                     if uid is None:
                         uid = uuid.uuid4()

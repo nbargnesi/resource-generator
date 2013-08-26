@@ -1,6 +1,13 @@
 # coding: utf-8
-#
-# parsed.py
+
+'''
+ parsed.py
+
+ Acts as a storage module for the data being parsed by each parser.
+ This data can get very large, and it has been shown that this module
+ alone is not sufficient to meet the memory needs of the program.
+ Consider replacing with DBM or another type of storage management.
+'''
 
 from datasets import *
 #import dbm.gnu

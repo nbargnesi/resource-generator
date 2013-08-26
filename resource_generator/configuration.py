@@ -6,24 +6,24 @@ import parsers
 
 
 baseline_data = OrderedDict()
-baseline_data['entrez_info.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/All_Mammalia.gene_info.gz',
-                                   parsers.EntrezGeneInfoParser)
-baseline_data['entrez_history.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz',
-                                      parsers.EntrezGeneHistoryParser)
-baseline_data['hgnc.tsv'] = ('http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag',
-                             parsers.HGNCParser)
-baseline_data['mgi.rpt'] = ('ftp://ftp.informatics.jax.org/pub/reports/MRK_List2.rpt',
-                            parsers.MGIParser)
-baseline_data['rgd.txt'] = ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt',
-                            parsers.RGDParser)
-baseline_data['swiss.xml.gz'] = ('ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz',
-                                 parsers.SwissProtParser)
-baseline_data['gene2acc.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz',
-                                parsers.Gene2AccParser)
-baseline_data['affy.xml'] = ('http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
-                             parsers.AffyParser)
-baseline_data['chebi.owl'] = ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
-                               parsers.CHEBIParser)
+# baseline_data['entrez_info.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/All_Mammalia.gene_info.gz',
+#                                    parsers.EntrezGeneInfoParser)
+# baseline_data['entrez_history.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz',
+#                                       parsers.EntrezGeneHistoryParser)
+# baseline_data['hgnc.tsv'] = ('http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag',
+#                              parsers.HGNCParser)
+# baseline_data['mgi.rpt'] = ('ftp://ftp.informatics.jax.org/pub/reports/MRK_List2.rpt',
+#                             parsers.MGIParser)
+# baseline_data['rgd.txt'] = ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt',
+#                             parsers.RGDParser)
+# baseline_data['swiss.xml.gz'] = ('ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz',
+#                                  parsers.SwissProtParser)
+# baseline_data['gene2acc.gz'] = ('ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz',
+#                                 parsers.Gene2AccParser)
+# baseline_data['affy.xml'] = ('http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
+#                              parsers.AffyParser)
+# baseline_data['chebi.owl'] = ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
+#                                parsers.CHEBIParser)
 # baseline_data['pubchem_namespace.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-Synonym-filtered.gz',
                                          # parsers.PubNamespaceParser)
 # baseline_data['pubchem_equiv.gz'] = ('ftp://ftp.ncbi.nlm.nih.gov/pubchem/Substance/Extras/SID-Map.gz',

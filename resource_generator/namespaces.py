@@ -1,6 +1,12 @@
 # coding: utf-8
-#
-# namespaces.py
+
+'''
+ namespace.py
+
+ Construct each of the .belns files, given a particular dataset.
+ This involves gathering all the terms and determining their
+ proper encoding.
+'''
 
 import parsed
 
@@ -67,7 +73,8 @@ rgd_map = {}
 # takes a dataset 'Object' and build namespace
 def make_namespace(d):
 
-    # build and write out the namespace values
+    # build and write out the namespace values for each dataset
+
     delim = '|'
     if str(d) == 'entrez_info':
         with open('entrez-gene-ids-hmr.belns', 'w') as fp:

@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 # coding: utf-8
-#
-# gp_baseline.py
-# inputs:
-#   -o    old namespace/equivalence dictionary file
-#         (built with build_equivalence.py)
-#   -n    the directory to store the equivalence data
-#   -v    enables verbose mode
 
+'''
+ gp_baseline.py
+
+ The entrance point to the program. gp_baseline calls out to
+ namespace.py, equiv.py, and annotate.py to construct various
+ .bel files.
+
+ inputs:
+   -o    old namespace/equivalence dictionary file
+         (built with build_equivalence.py)
+   -n    the directory to store the equivalence data
+   -v    enables verbose mode
+
+'''
 
 from configuration import baseline_data
 import argparse
@@ -16,7 +23,7 @@ import namespaces
 import parsed
 import time
 import equiv
-import pickle
+import shutil
 import annotate
 from common import download
 from constants import PARSER_TYPE, RES_LOCATION
@@ -48,6 +55,11 @@ os.chdir(resource_dir)
 if not os.path.exists('datasets'):
     os.mkdir('datasets')
 
+# bring in some dependancies
+shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
+shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
+shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
+
 start_time = time.time()
 print('\n======= Phase I, downloading data =======')
 for name, url_tuple in baseline_data.items():
@@ -59,6 +71,9 @@ for name, url_tuple in baseline_data.items():
 print('Phase 1 ran in ' +str(((time.time() - start_time) / 60)) +' minutes')
 
 print('\n======= Phase II, parsing data =======')
+# For now, download and store the data in the parsed.py module. This module
+# could be replaced or re-implemented using something like DBM to help with
+# memory usage.
 interval_time = time.time()
 working_dir = os.getcwd()
 for root, dirs, filenames in os.walk(working_dir):
@@ -94,41 +109,7 @@ gocc = parsed.load_data('gocc')
 mesh = parsed.load_data('mesh')
 do = parsed.load_data('do')
 
-####### This is a cache used in testing - not currently in use. #########
-
-# does not include pubchem currently
-# obj_list = [ei, eh, hg, mg, rg, sp, af, g2, chebi, schem, schem_to_chebi,
-#             gobp, gocc, mesh]
-# for obj in obj_list:
-#     with open(str(obj), 'wb') as fp:
-#         pickle.dump(obj, fp)
-
-# files = [f for f in os.listdir('.') if os.path.isfile(f)]
-# for f in files:
-#     if f == 'entrez_info':
-#         ei = pickle.load('entrez_info')
-#     if f == 'entrez_history':
-#         eh = pickle.load('entrez_history')
-#     if f == 'hgnc':
-#         hg = pickle.load('hgnc')
-#     if f == 'mgi':
-#         mg = pickle.load('mgi')
-#     if f == 'rgd':
-#         rg = pickle.load('rgd')
-#     if f == 'swiss':
-#         sp = pickle.load('swiss')
-#     if f == 'affy':
-#         af = pickle.load('affy')
-#     if f == 'gene2acc':
-#         g2 = pickle.load('gene2acc')
-#     if f == 'chebi':
-#         chebi = pickle.load('chebi')
-
-#pub_eq = pickle.load('puchem_equiv')
-#pub_ns = pickle.load('pubchem_ns')
-#########################################################################
-
-# does not include pubchem currently
+# does NOT include pubchem currently
 ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis]
 for d in ns_data:
     print('Generating namespace file for ' +str(d))
@@ -136,12 +117,13 @@ for d in ns_data:
 print('Phase III ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
 print('\n======= Phase IV, building annotations =======')
+# There are 3 .belanno files to generate from the MeSH dataset.
 interval_time = time.time()
 annotate.make_annotations(mesh)
 print('Phase IV ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
-# build some references to be used during equivalencing
 print('\n======= Phase V, building equivalences =======')
+# Any datasets producing a .beleq file should be added to equiv_data
 interval_time = time.time()
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
               schem_to_chebi]

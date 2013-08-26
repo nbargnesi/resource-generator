@@ -3,8 +3,8 @@
 # parsed.py
 
 from datasets import *
-import dbm.gnu
-import dbm
+#import dbm.gnu
+#import dbm
 from collections import defaultdict
 
 # Data needed for namespacing and equivalencing
@@ -177,35 +177,31 @@ def build_data(entry, parser):
             'alt_ids' : alt_ids,
             'synonyms' : synonyms }
 
-    elif parser == 'PubNamespace_Parser':
-        pub_id = entry.get('pubchem_id')
-        synonym = entry.get('synonym')
-        global count
-        count = count + 1
-        if count % 1000 == 0:
-            print('Entry number ' +str(count))
-            print('Pub ID: '+pub_id)
-        #delim = '|'
-        #with open('test.txt', 'w') as fp:
-        #    fp.write(delim.join((pub_id, 'A')))
-#        pub_db = dbm.open('pub-names', 'cf')
-        pub_db = dbm.gnu.open('pub-names', 'cfu')
-        pub_db[bytes(pub_id, 'utf-8')] = bytes(synonym, 'utf-8')
-        pub_db.close()
-#        pub_ns_dict[pub_id].append(synonym)
-#        ipdb.set_trace()
+    # elif parser == 'PubNamespace_Parser':
+    #     pub_id = entry.get('pubchem_id')
+    #     synonym = entry.get('synonym')
+    #     global count
+    #     count = count + 1
+    #     if count % 1000 == 0:
+    #         print('Entry number ' +str(count))
+    #         print('Pub ID: '+pub_id)
+    #     pub_db = dbm.open('pub-names', 'cf')
+    #     pub_db = dbm.gnu.open('pub-names', 'cfu')
+    #     pub_db[bytes(pub_id, 'utf-8')] = bytes(synonym, 'utf-8')
+    #     pub_db.close()
+    #     pub_ns_dict[pub_id].append(synonym)
 
-    elif parser == 'PubEquiv_Parser':
-        source = entry.get('Source')
-        cid = entry.get('PubChem CID')
-        sid = entry.get('PubChem SID')
-        global count
-        count = count + 1
-        if count % 50000 == 0:
-            print(str(count))
-        pub_equiv_dict[sid] = {
-            'Source' : source,
-            'PubChem CID' : cid }
+    # elif parser == 'PubEquiv_Parser':
+    #     source = entry.get('Source')
+    #     cid = entry.get('PubChem CID')
+    #     sid = entry.get('PubChem SID')
+    #     global count
+    #     count = count + 1
+    #     if count % 50000 == 0:
+    #         print(str(count))
+    #     pub_equiv_dict[sid] = {
+    #         'Source' : source,
+    #         'PubChem CID' : cid }
 
     elif parser == 'GOBP_Parser':
         termid = entry.get('termid')

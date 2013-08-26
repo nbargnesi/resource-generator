@@ -132,7 +132,6 @@ def make_namespace(d):
                     f.write(delim.join((acc, 'GRP'))+'\n')
                     sp_acc_ns.add(acc)
 
-    # are there duplicates being taken in here??
     elif str(d) == 'affy':
         with open('affy-probeset-ids.belns', 'w') as fp:
             for vals in d.get_ns_values():
@@ -152,7 +151,6 @@ def make_namespace(d):
                 chebi_id_ns.add(name)
                 if altIds:
                     for i in altIds:
-                        # this check should not be needed...(more pythonic way?)
                         if i not in chebi_id_ns:
                             f.write(delim.join((i, 'A'))+'\n')
                         chebi_id_ns.add(i)

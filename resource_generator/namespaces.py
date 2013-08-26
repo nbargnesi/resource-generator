@@ -223,7 +223,7 @@ def make_namespace(d):
 
     elif str(d) == 'mesh':
 
-        with open('mesh-cellular-locations.belns', 'w') as meshf, 
+        with open('mesh-cellular-locations.belns', 'w') as meshf, \
                 open('mesh-diseases.belns', 'w') as meshd, \
                 open('mesh-biological-processes.belns', 'w') as meshb:
             for vals in d.get_ns_values():

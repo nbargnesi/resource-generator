@@ -6,6 +6,7 @@ import uuid
 import namespaces
 import csv
 import parsed
+import os
 from collections import deque, defaultdict
 
 hgnc_list = []
@@ -40,7 +41,8 @@ ref_status = {'REVIEWED' : 0,
 delim = '|'
 
 # create a reference, used in MeSH equivalencing
-mesh_to_gocc = '/home/jhourani/openbel-contributions/resource_generator/lions/datasets/meshcs_to_gocc.csv'
+curdir = os.getcwd()
+mesh_to_gocc = curdir+'/datasets/meshcs_to_gocc.csv'
 mg_eq = {}
 with open(mesh_to_gocc, 'r') as meshf:
     mg_eq = dict([(rec[0], rec[2]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])

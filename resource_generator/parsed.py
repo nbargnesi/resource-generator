@@ -6,7 +6,6 @@ from datasets import *
 import dbm.gnu
 import dbm
 from collections import defaultdict
-import ipdb
 
 # Data needed for namespacing and equivalencing
 entrez_info = {}

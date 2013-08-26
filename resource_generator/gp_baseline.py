@@ -17,7 +17,6 @@ import parsed
 import time
 import equiv
 import pickle
-import ipdb
 import annotate
 from common import download
 from constants import PARSER_TYPE, RES_LOCATION
@@ -51,12 +50,12 @@ if not os.path.exists('datasets'):
 
 start_time = time.time()
 print('\n======= Phase I, downloading data =======')
-# for name, url_tuple in baseline_data.items():
-#     print('Downloading ' +str(name))
-#     path = os.path.join('datasets/', name)
-#     if url_tuple[RES_LOCATION].startswith('http') or \
-#             url_tuple[RES_LOCATION].startswith('ftp'):
-#         download(url_tuple[RES_LOCATION], path)
+for name, url_tuple in baseline_data.items():
+    print('Downloading ' +str(name))
+    path = os.path.join('datasets/', name)
+    if url_tuple[RES_LOCATION].startswith('http') or \
+            url_tuple[RES_LOCATION].startswith('ftp'):
+        download(url_tuple[RES_LOCATION], path)
 print('Phase 1 ran in ' +str(((time.time() - start_time) / 60)) +' minutes')
 
 print('\n======= Phase II, parsing data =======')

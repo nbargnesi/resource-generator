@@ -7,7 +7,6 @@ import namespaces
 import csv
 import parsed
 from collections import deque, defaultdict
-import ipdb
 
 hgnc_list = []
 mgi_list = []

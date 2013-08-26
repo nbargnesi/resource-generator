@@ -5,8 +5,6 @@
 # Represent each parsed dataset as an object. This is
 # really just a wrapper to the underlying dictionaries.
 
-import ipdb
-
 class DataSet():
     def __init__(self, dictionary):
         self.dict = dictionary

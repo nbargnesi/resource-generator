@@ -10,7 +10,6 @@ import gzip
 import urllib.request
 import zipfile
 import io
-import ipdb
 
 class Parser(object):
     def __init__(self, url):

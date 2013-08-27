@@ -1,0 +1,9 @@
+__pycache__/
+*.beleq
+tmp*
+base/
+cache/
+*.pyc
+*.json
+*~
+*#*

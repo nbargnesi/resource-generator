@@ -14,6 +14,9 @@ from datasets import *
 #import dbm
 from collections import defaultdict
 
+
+synonyms = {}
+
 # Data needed for namespacing and equivalencing
 entrez_info = {}
 entrez_history = {}

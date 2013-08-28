@@ -35,11 +35,6 @@ parser.add_argument("-v", required=False, action="store_true",
                     help="This enables verbose program output.")
 args = parser.parse_args()
 
-if args.o is None:
-    old_equivalence = None
-else:
-    old_equivalence = args.o[0]
-
 resource_dir = args.n[0]
 if not os.path.exists(resource_dir):
     os.mkdir(resource_dir)

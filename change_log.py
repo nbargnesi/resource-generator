@@ -20,7 +20,7 @@ import time
 from common import download
 from changelog_config import changelog_data
 from constants import RES_LOCATION, PARSER_TYPE
-
+import ipdb
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
@@ -539,16 +539,13 @@ change_log['schem'] = {}
 # change_log['do'] = {}
 
 # download the data needed for resolving lost values
-print('Downloading data needed for resolving changed/lost terms.')
-for name, data_tuple in changelog_data.items():
-    if verbose:
-        print('Downloading ' +str(data_tuple[RES_LOCATION]))
-    path = os.path.join('datasets/', name)
-    download(data_tuple[RES_LOCATION], path)
+# print('Downloading data needed for resolving changed/lost terms.')
+# for name, data_tuple in changelog_data.items():
+#     if verbose:
+#         print('Downloading ' +str(data_tuple[RES_LOCATION]))
+#     path = os.path.join('datasets/', name)
+#     download(data_tuple[RES_LOCATION], path)
 
-previous_symbols = []
-previous_names = []
-symbols_and_names = []
 sp_accession_ids = []
 for label, data_tuple in changelog_data.items():
     url = label
@@ -565,34 +562,36 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'HGNC_Parser':
         print('Gathering HGNC update info...')
-#        with open('unresolved-hgnc.txt', 'w') as fp:
         for row in parser.parse():
+            previous_symbols = []
+            previous_names = []
+            symbols_and_names = []
             val = row.get('Approved Symbol')
-            # ps = row.get('Previous Symbols')
-            # pn = row.get('Previous Names')
-            # if len(ps) > 0:
-            #     previous_symbols.extend(ps.split(', '))
-            # if len(pn) > 0:
-            #     previous_names.extend(pn.split(', '))
+            ps = row.get('Previous Symbols')
+            pn = row.get('Previous Names')
+            log = change_log.get('hgnc')
+            if len(ps) > 0:
+                previous_symbols.extend(ps.split(', '))
+            if len(pn) > 0:
+                previous_names.extend(pn.split(', '))
             if '~withdrawn' in val:
                 approved_name = row.get('Approved Name')
                 # no replacement
                 if 'entry withdrawn' in approved_name:
                     old_val = val.split('~')[0]
-                    log = change_log.get('hgnc')
                     log[old_val] = 'withdrawn'
                 # has a replacement
                 if 'symbol withdrawn' in approved_name:
                     old_val = val.split('~')[0]
                     new_val = approved_name.split('see ')[1]
-                    log = change_log.get('hgnc')
                     log[old_val] = new_val
-            # symbols_and_names = previous_symbols + previous_names
-            # unresolved = [x for x in hgnc_lost if x not in symbols_and_names \
-            #                   and x not in change_log.get('hgnc')]
-            # for u in unresolved:
-            #     fp.write(str(u) +'\n')
-            # print('Really unresolved: ' +str(len(unresolved)))
+            symbols_and_names = previous_symbols + previous_names
+            resolved = [x for x in hgnc_lost if x in symbols_and_names]
+            # if len(resolved) > 1:
+            #     ipdb.set_trace()
+            if resolved:
+                for symbol in resolved:
+                    log[symbol] = val
 
     elif str(parser) == 'MGI_Parser':
         print('Gathering MGI update info...')

@@ -20,7 +20,6 @@ import time
 from common import download
 from changelog_config import changelog_data
 from constants import RES_LOCATION, PARSER_TYPE
-
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
@@ -592,19 +591,17 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'MGI_Parser':
         print('Gathering MGI update info...')
-        with open('resolved-mgi.txt', 'w') as fp:
-            for row in parser.parse():
-                mgi_accession = row.get('MGI Accession ID')
-                if mgi_accession == 'NULL':
-                    old_val = row.get('Marker Symbol')
-                    name = row.get('Marker Name')
-                    fp.write(str(old_val)+'\n')
-                    if '=' in name:
-                        log = change_log.get('mgi')
-                        log[old_val] = name.split('= ')[1]
-                    elif 'withdrawn' in name:
-                        log = change_log.get('mgi')
-                        log[old_val] = 'withdrawn'
+        for row in parser.parse():
+            mgi_accession = row.get('MGI Accession ID')
+            if mgi_accession == 'NULL':
+                old_val = row.get('Marker Symbol')
+                name = row.get('Marker Name')
+                if '=' in name:
+                    log = change_log.get('mgi')
+                    log[old_val] = name.split('= ')[1]
+                elif 'withdrawn' in name:
+                    log = change_log.get('mgi')
+                    log[old_val] = 'withdrawn'
 
     elif str(parser) == 'RGD_Parser':
         # rgd changes (still dont know if withdrawn or replaced!!)

@@ -1,13 +1,7 @@
-resource-generator
-==================
-
+# Project Overview
 Python modules to generate BEL resource documents.
 
-
-# Project Overview
-----
-
-## Resource Generation
+### Resource Generation
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.
    This module uses [configuration.py](https://github.com/jhourani/openbel-contributions/blob/master/configuration.py) to determine which parsers to run
@@ -45,7 +39,7 @@ Python modules to generate BEL resource documents.
 9. **[constants.py](https://github.com/OpenBEL/resource-generator/blob/master/constants.py)** - any constants used throughout the program are defined
    in this module.
 
-## Change-Log
+### Change-Log
 
 1. **[change_log.py](https://github.com/OpenBEL/resource-generator/blob/master/change_log.py)** - a separate module from gp_baseline. This module will
    download and parse the old .belns, .belanno, and .beleq files and compare
@@ -62,7 +56,7 @@ Python modules to generate BEL resource documents.
 3. **[write_log.py](https://github.com/OpenBEL/resource-generator/blob/master/write_log.py)** - the only task for this module is to write the change-log
    data out to a file using a `json` format.
 
-## Dependencies
+### Dependencies
 
 1. To run these Python scripts, the following software must be installed:
   * [Python 3.x](http://www.python.org/getit/) - modules are written in Python 3.2.3

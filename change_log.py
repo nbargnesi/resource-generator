@@ -20,6 +20,7 @@ import time
 from common import download
 from changelog_config import changelog_data
 from constants import RES_LOCATION, PARSER_TYPE
+
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
@@ -697,8 +698,12 @@ for label, data_tuple in changelog_data.items():
                 log[lost_name] = 'withdrawn'
             else:
                 new_name = non_obsolete_terms.get(lost_id)
-                log = change_log.get('gobp-names')
-                log[lost_name] = new_name
+                if new_name is None:
+                    if verbose:
+                        print('No new equivalent term found for '+lost_id)
+                else:
+                    log = change_log.get('gobp-names')
+                    log[lost_name] = new_name
 
     elif str(parser) == 'GOCC_Parser':
         # GOBP name and id changes
@@ -730,8 +735,12 @@ for label, data_tuple in changelog_data.items():
                 log[lost_name] = 'withdrawn'
             else:
                 new_name = non_obsolete_terms.get(lost_id)
-                log = change_log.get('gocc-names')
-                log[lost_name] = new_name
+                if new_name is None:
+                    if verbose:
+                        print('No new equivalent term found for '+lost_id)
+                else:
+                    log = change_log.get('gocc-names')
+                    log[lost_name] = new_name
 
     elif str(parser) == 'CHEBI_Parser':
         print('Gathering CHEBI update info...')

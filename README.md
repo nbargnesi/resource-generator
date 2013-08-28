@@ -66,5 +66,5 @@ Python modules to generate BEL resource documents.
 
 1. To run these Python scripts, the following software must be installed:
 
-*[Python3.x](http://www.python.org/getit/) - modules are written in Python 3.2.3
-*[lxml](http://lxml.de/) - used to parse various XML documents.
+* [Python 3.x](http://www.python.org/getit/) - modules are written in Python 3.2.3
+* [lxml](http://lxml.de/) - used to parse various XML documents.

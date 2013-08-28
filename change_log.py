@@ -538,12 +538,12 @@ change_log['schem'] = {}
 # change_log['do'] = {}
 
 # download the data needed for resolving lost values
-# print('Downloading data needed for resolving changed/lost terms.')
-# for name, data_tuple in changelog_data.items():
-#     if verbose:
-#         print('Downloading ' +str(data_tuple[RES_LOCATION]))
-#     path = os.path.join('datasets/', name)
-#     download(data_tuple[RES_LOCATION], path)
+print('Downloading data needed for resolving changed/lost terms.')
+for name, data_tuple in changelog_data.items():
+    if verbose:
+        print('Downloading ' +str(data_tuple[RES_LOCATION]))
+    path = os.path.join('datasets/', name)
+    download(data_tuple[RES_LOCATION], path)
 
 sp_accession_ids = []
 for label, data_tuple in changelog_data.items():

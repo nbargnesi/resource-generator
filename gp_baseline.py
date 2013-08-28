@@ -9,8 +9,6 @@
  .bel files.
 
  inputs:
-   -o    old namespace/equivalence dictionary file
-         (built with build_equivalence.py)
    -n    the directory to store the equivalence data
    -v    enables verbose mode
 
@@ -30,8 +28,6 @@ from constants import PARSER_TYPE, RES_LOCATION
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
-parser.add_argument("-o", required=False, nargs=1, metavar="EQUIVALENCE FILE",
-                    help="The old namespace equivalence dictionary file.")
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
                     help="""The directory to store the new namespace
                             equivalence data.""")

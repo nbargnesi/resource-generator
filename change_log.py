@@ -20,7 +20,6 @@ import time
 from common import download
 from changelog_config import changelog_data
 from constants import RES_LOCATION, PARSER_TYPE
-import ipdb
 
 parser = argparse.ArgumentParser(description="""Generate namespace and
                                equivalence files for gene/protein datasets.""")
@@ -587,8 +586,6 @@ for label, data_tuple in changelog_data.items():
                     log[old_val] = new_val
             symbols_and_names = previous_symbols + previous_names
             resolved = [x for x in hgnc_lost if x in symbols_and_names]
-            # if len(resolved) > 1:
-            #     ipdb.set_trace()
             if resolved:
                 for symbol in resolved:
                     log[symbol] = val

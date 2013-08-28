@@ -18,7 +18,7 @@ Python modules to generate BEL resource documents.
    change log. Also included are parsers for the not-yet fully implemented
    PubChem names and IDs namespace.
 4. **[parsed.py](https://github.com/OpenBEL/resource-generator/blob/master/parsed.py)** - acts as a storage module. Takes the data handed to it by
-   the parser and stored it in a DataObject. Currently all of the data being
+   the parser and stores it in a DataObject. Currently all of the data being
    used in this module is being kept in memory. See bug tracker about a
    possible solution to this memory constraint.
 5. **[datasets.py](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py)** - each DataObject that holds a particular dataset is
@@ -45,7 +45,7 @@ Python modules to generate BEL resource documents.
    download and parse the old .belns, .belanno, and .beleq files and compare
    those results with the newly generated files that will be locally stored
    from [gp_baseline.py](https://github.com/jhourani/openbel-contributions/blob/master/gp_baseline.py). Currently, change_log.py must be run
-   with the flag `-n <res_files/>`. `res_files` being the directory in which the
+   with the flag `-n <res_files>`. `res_files` being the directory in which the
    newly generated resource files are located. The result of running change_log.py
    will be a dictionary mapping all the old terms to either their replacement
    terms or the string `withdrawn`. This dictionary can be consumed by an update

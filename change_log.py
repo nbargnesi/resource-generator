@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # coding: utf-8
-#
-# change_log.py
-# inputs:
-#   -n    new namespace/equivalence files generated after running
-#         gp_baseline.py (required)
 
+'''
+ change_log.py
+ inputs:
+   -n    new namespace/equivalence files generated after running
+         gp_baseline.py (required)
+   -v    run the change-log in verbose mode (optional)
+
+'''
 import parsers
 import urllib
 import os
@@ -281,7 +284,7 @@ new_mesh_cell_anno = set()
 new_mesh_anatomy_anno = set()
 # new_do_ns_names = set()
 
-# gather the new data for comparison (locally stored for now)
+# gather the new data for comparison (locally stored)
 indir = os.getcwd()
 for root, dirs, filenames in os.walk(indir):
     for f in filenames:
@@ -289,181 +292,91 @@ for root, dirs, filenames in os.walk(indir):
             with open(os.path.join(root, f), 'r') as fp:
                 if 'entrez' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_entrez.add(token)
                 elif 'hgnc' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_hgnc.add(token)
                 elif 'mgi' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mgi.add(token)
                 elif 'rgd' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_rgd.add(token)
                 elif 'swiss-acc' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_sp_ids.add(token)
                 elif 'swiss-entry' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_sp_names.add(token)
                 elif 'affy' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_affy.add(token)
                 elif 'chebi-names' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_chebi_names.add(token)
                 elif 'chebi-ids' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_chebi_ids.add(token)
                 elif 'go-biological-processes-acc' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gobp_ns_ids.add(token)
                 elif 'go-biological-processes-names' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gobp_ns_names.add(token)
                 elif 'go-cellular-component-acc' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gocc_ns_ids.add(token)
                 elif 'go-cellular-component-terms' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gocc_ns_names.add(token)
                 elif 'mesh-bio' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_bio.add(token)
                 elif 'mesh-cell' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_cell.add(token)
                 elif 'mesh-diseases' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_diseases.add(token)
                 elif 'selventa-legacy-chem' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_schem_ns.add(token)
                 # elif 'disease-ontology' in fp.name:
                 #     for line in fp:
-                #         # if '[Values]' in str(line):
-                #         #     marker = True
-                #         #     continue
-                #         # if marker is False:
-                #         #     continue
                 #         tokenized = str(line).split('|')
                 #         token = tokenized[0]
                 #         new_do_ns_names.add(token)
@@ -471,31 +384,16 @@ for root, dirs, filenames in os.walk(indir):
             with open(os.path.join(root, f), 'r') as fp:
                 if 'mesh-diseases' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_diseases_anno.add(token)
                 elif 'mesh-cell' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_cell_anno.add(token)
                 elif 'mesh-anatomy' in fp.name:
                     for line in fp:
-                        # if '[Values]' in str(line):
-                        #     marker = True
-                        #     continue
-                        # if marker is False:
-                        #     continue
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_mesh_diseases_anno.add(token)
@@ -641,6 +539,7 @@ change_log['schem'] = {}
 # change_log['do'] = {}
 
 # download the data needed for resolving lost values
+print('Downloading data needed for resolving changed/lost terms.')
 for name, data_tuple in changelog_data.items():
     if verbose:
         print('Downloading ' +str(data_tuple[RES_LOCATION]))
@@ -739,7 +638,7 @@ for label, data_tuple in changelog_data.items():
             url = 'http://www.uniprot.org/uniprot/?query=mnemonic%3a'+name+ \
                 '+active%3ayes&format=tab&columns=entry%20name'
             hashed_url = str(hash(url))
-            ################### For Testing Only - use cache ##################
+            ################# Use cache to limit http requests #################
             if hashed_url in files:
                 cached = True
                 cache_hits += 1
@@ -771,8 +670,9 @@ for label, data_tuple in changelog_data.items():
         for row in parser.parse():
             sp_accession_ids.append(row.get('accession'))
         change_log['swiss-ids'] = sp_accession_ids
-        print('Cache checks: ' +str(cache_hits))
-        print('Cache misses: ' +str(cache_misses))
+        if verbose:
+            print('Cache checks: ' +str(cache_hits))
+            print('Cache misses: ' +str(cache_misses))
 
     elif str(parser) == 'GOBP_Parser':
         # GOBP name and id changes
@@ -960,6 +860,7 @@ mesh_cell_unresolved = [x for x in mesh_cell_lost if x not in dataset]
 dataset = change_log.get('mesh-diseases')
 mesh_diseases_unresolved = [x for x in mesh_diseases_lost if x not in dataset]
 
+# add 'unresolved' terms to the change-log.
 change_log['unresolved'] = {
     'entrez' : e_unresolved,
     'hgnc' : hgnc_unresolved,

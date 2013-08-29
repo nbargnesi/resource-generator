@@ -92,7 +92,7 @@ def build_data(entry, parser):
             'Symbol_from_nomenclature_authority' : symbol }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('entrez')
+        mapping = synonyms_dict.get('entrez')
         syns = entry.get('Synonyms')
         mapping[gene_id] = syns
         #####################################

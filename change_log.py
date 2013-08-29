@@ -3,12 +3,24 @@
 
 '''
  change_log.py
+
+ Using a set of newly generated .belns and .beleq files, the
+ change-log will determine which, if any, values have been lost
+ between namespace versions. It will then parse additional data
+ in an attempt to resolve those values to their new value or log
+ them as being 'withdraw' completely. All of these values and
+ their new mappings, as well as the values the could not be
+ resolved, are the output of this module. This output is given
+ in the form of a dictionary, which is meant to be consumed by
+ an update script.
+
  inputs:
-   -n    new namespace/equivalence files generated after running
-         gp_baseline.py (required)
+   -n    directory of the new namespace/equivalence files generated
+         after running gp_baseline.py (required)
    -v    run the change-log in verbose mode (optional)
 
 '''
+
 import parsers
 import urllib
 import os

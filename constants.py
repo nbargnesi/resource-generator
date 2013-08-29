@@ -1,6 +1,13 @@
 # coding: utf-8
-#
-# constants.py
+
+'''
+ constants.py
+
+ Contains constants used throughout the modules. Any
+ constants introduced to the program should be stored
+ in this module.
+
+'''
 
 # used to reference tuples during namespacing
 

@@ -9,7 +9,7 @@
  .bel files.
 
  inputs:
-   -n    the directory to store the equivalence data
+   -n    the directory to store the new equivalence data
    -v    enables verbose mode
 
 '''

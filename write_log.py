@@ -1,6 +1,12 @@
 # coding: utf-8
-#
-# write_log.py
+
+'''
+ write_log.py
+
+ A simple module to write the contents of the change-log
+ to a human-readable file in json format.
+
+'''
 
 import json
 

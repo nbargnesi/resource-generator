@@ -1,5 +1,15 @@
 # coding: utf-8
 
+'''
+ common.py
+
+ Provides common functions used throughout the program.
+ Currently these functions relate to the downloading
+ and reading in of a file and is used in both gp_baseline
+ and change_log.
+
+'''
+
 from ftplib import FTP
 import gzip
 import os

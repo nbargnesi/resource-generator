@@ -1,8 +1,14 @@
 # coding: utf-8
-#
-# changelog_config.py
-#
-# Configuration for the change log script
+
+'''
+ changelog_config.py
+
+ Configuration for the change-log script. Provides a
+ mapping for each dataset to its proper parser. Each
+ dataset is independant, and can be commented/uncommented
+ as desired by the user.
+
+'''
 
 from collections import OrderedDict
 import parsers

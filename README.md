@@ -1,7 +1,7 @@
 # Project Overview
 Python modules to generate BEL resource documents.
 
-## Resource Generation
+## Resource Generator
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.
    This module uses [configuration.py](https://github.com/jhourani/openbel-contributions/blob/master/configuration.py) to determine which parsers to run

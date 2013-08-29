@@ -24,13 +24,17 @@ changelog_data['rgd.txt'] = \
     ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)
-changelog_data['gobp'] = \
+changelog_data['gobp.xml.gz'] = \
     ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
-changelog_data['gocc'] = \
+changelog_data['gocc.xml.gz'] = \
     ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
-changelog_data['chebi'] = \
+changelog_data['chebi.owl'] = \
     ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
-changelog_data['mesh'] = \
+changelog_data['replace2013.txt'] = \
     ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.newterms/replace2013.txt', parsers.MESHChangesParser)
+changelog_data['SCHEM_to_CHEBIID.txt'] = \
+    ('SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
+changelog_data['SDIS_to_DO.txt'] = \
+    ('SDIS_to_DO.txt', parsers.SDIStoDOParser)
 # changelog_data['do'] = \
 #     ('datasets/doid.owl', parsers.DODeprecatedParser)

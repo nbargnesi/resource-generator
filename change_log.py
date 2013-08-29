@@ -87,6 +87,7 @@ old_gobp_eq_names = dict()
 old_gocc_eq_ids = dict()
 old_gocc_eq_names = dict()
 # old_do_eq_names = dict()
+
 # iterate over the urls to the .belns files, collecting the entries
 # from the old data.
 for url in parser.parse():
@@ -567,7 +568,8 @@ for name, data_tuple in changelog_data.items():
     if verbose:
         print('Downloading ' +str(data_tuple[RES_LOCATION]))
     path = os.path.join('datasets/', name)
-    download(data_tuple[RES_LOCATION], path)
+    if 'ftp' in data_tuple[RES_LOCATION] or 'http' in data_tuple[RES_LOCATION]:
+        download(data_tuple[RES_LOCATION], path)
 
 sp_accession_ids = []
 for label, data_tuple in changelog_data.items():
@@ -832,7 +834,7 @@ for label, data_tuple in changelog_data.items():
         print('Gathering Selventa-legacy-diseases update info...')
         log = change_log.get('sdis')
         for row in parser.parse():
-            sdis_term = row.get('sdis_term')
+            sdis_term = row.get('SDIS_term')
             do_name = row.get('DO_name')
             if sdis_term in sdis_lost:
                 log[sdis_term] = do_name

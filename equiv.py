@@ -415,10 +415,10 @@ def equiv(d):
                     # It is possible this lookup will return None, in that
                     # case generate a new uuid.
                     if go_id is not None:
-                        uid = gocc_eq_dict.get(go_id.split(':')[1])
+                        uid = gocc_eq_dict.get(go_id)
                         # try to find out why lookups fail - maybe OBSOLETE?
                         if uid is None:
-                            print('Lookup failed for: '+str(go_id.split(':')[1]))
+                            print('Lookup failed for: '+str(go_id))
                             uid = uuid.uuid4()
                     else:
                         uid = uuid.uuid4()

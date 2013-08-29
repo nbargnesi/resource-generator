@@ -116,7 +116,7 @@ def build_data(entry, parser):
         ### added for synonyms generation ###
         mapping = synonyms_dict.get('hgnc')
         syns = entry.get('Synonyms').split(', ')
-        mapping[gene_id] = syns
+        mapping[app_symb] = syns
         #####################################
 
     elif parser == 'MGI_Parser':
@@ -133,7 +133,7 @@ def build_data(entry, parser):
         ### added for synonyms generation ###
         mapping = synonyms_dict.get('mgi')
         syns = entry.get('Marker Synonyms (pipe-separated)').split('|')
-        mapping[gene_id] = syns
+        mapping[m_symbol] = syns
         #####################################
 
     elif parser == 'RGD_Parser':

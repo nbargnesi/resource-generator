@@ -256,7 +256,9 @@ def make_namespace(d):
 
     elif str(d) == 'do':
 
-        with open('disease-ontology.belns', 'w') as df:
+        with open('disease-ontology-names.belns', 'w') as dn, \
+                open('disease-ontology-ids.belns', 'w') as di:
             for vals in d.get_ns_values():
-                name = vals
-                df.write(delim.join((name, 'O'))+'\n')
+                name, id = vals
+                dn.write(delim.join((name, 'O'))+'\n')
+                di.write(delim.join((id, 'O'))+'\n')

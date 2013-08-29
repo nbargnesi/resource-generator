@@ -36,5 +36,5 @@ changelog_data['SCHEM_to_CHEBIID.txt'] = \
     ('SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
 changelog_data['SDIS_to_DO.txt'] = \
     ('SDIS_to_DO.txt', parsers.SDIStoDOParser)
-# changelog_data['do'] = \
-#     ('datasets/doid.owl', parsers.DODeprecatedParser)
+changelog_data['doid.owl'] = \
+    ('http://purl.obolibrary.org/obo/doid.owl', parsers.DODeprecatedParser)

@@ -521,12 +521,12 @@ class DOData(DataSet):
         return self.do_dict
 
     def get_ns_values(self):
-        for name in self.do_dict:
-            yield name
+        for name, mapping in self.do_dict.items():
+            yield name, mapping.get('id')
 
     def get_eq_values(self):
-        for name in self.do_dict:
-            yield name
+        for name, mapping in self.do_dict.items():
+            yield name, mapping.get('id')
 
     def get_xrefs(self, ref):
         for name, mapping in self.do_dict.items():

@@ -351,11 +351,13 @@ def equiv(d):
 
     elif str(d) == 'do':
         # assign DO a new uuid and use as the primary for diseases
-        with open('disease-ontology.beleq', 'w') as dof:
+        with open('disease-ontology-names.beleq', 'w') as dn, \
+                open('disease-ontology-ids.beleq', 'w') as di:
             for vals in d.get_eq_values():
-                name = vals
+                name, id = vals
                 uid = uuid.uuid4()
-                dof.write(delim.join((name, str(uid)))+'\n')
+                dn.write(delim.join((name, str(uid)))+'\n')
+                di.write(delim.join((id, str(uid)))+'\n')
                 do_eq_dict[name] = uid
 
     elif str(d) == 'sdis_to_do':

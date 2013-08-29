@@ -5,6 +5,7 @@
 
  Contains parser objects constructed for various datasets that
  will be used to build the .belns, .beleq, and .belanno files.
+
 '''
 
 from common import gzip_to_text
@@ -643,7 +644,7 @@ class GOBPParser(Parser):
 
             # iterate the NON-OBSOLETE biological_process terms
             for t in bp_terms:
-                bp_termid = t.find('id').text.split(':')[1]
+                bp_termid = t.find('id').text
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
@@ -662,7 +663,7 @@ class GOBPParser(Parser):
 
             # iterate the OBSOLETE biological_process terms
             for t in bp_terms:
-                bp_termid = t.find('id').text.split(':')[1]
+                bp_termid = t.find('id').text
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
@@ -725,7 +726,7 @@ class GOCCParser(Parser):
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
 
-            yield { 'termid' : cc_termid.split(':')[1], 'termname' : cc_termname,
+            yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }
 
     def obsolete_parse(self):
@@ -770,7 +771,7 @@ class GOCCParser(Parser):
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
 
-            yield { 'termid' : cc_termid.split(':')[1], 'termname' : cc_termname,
+            yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }
 
     def __str__(self):

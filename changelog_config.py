@@ -1,8 +1,14 @@
 # coding: utf-8
-#
-# changelog_config.py
-#
-# Configuration for the change log script
+
+'''
+ changelog_config.py
+
+ Configuration for the change-log script. Provides a
+ mapping for each dataset to its proper parser. Each
+ dataset is independant, and can be commented/uncommented
+ as desired by the user.
+
+'''
 
 from collections import OrderedDict
 import parsers
@@ -14,7 +20,7 @@ changelog_data['hgnc.tsv'] = \
     ('http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag', parsers.HGNCParser)
 changelog_data['mgi.rpt'] = \
     ('ftp://ftp.informatics.jax.org/pub/reports/MRK_List1.rpt', parsers.MGIParser)
-changelog_data['rgd,txt'] = \
+changelog_data['rgd.txt'] = \
     ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)

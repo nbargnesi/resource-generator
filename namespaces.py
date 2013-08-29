@@ -6,6 +6,7 @@
  Construct each of the .belns files, given a particular dataset.
  This involves gathering all the terms and determining their
  proper encoding.
+
 '''
 
 import parsed

@@ -1,6 +1,16 @@
 # coding: utf-8
 
-import os
+'''
+ configuration.py
+
+ A mapping of each dataset to its proper parser. This dictionary
+ is consumed by gp_baseline to generate the .belns and .beleq
+ files. The datasets/parsers are themselves independant, and
+ can be commented/uncommented based on the users desire to
+ generate the files for a particular dataset.
+
+'''
+
 from collections import OrderedDict
 import parsers
 

@@ -10,6 +10,7 @@
  a new uuid (but UUIDs should be preserved after the first run).
 
 '''
+
 import uuid
 import namespaces
 import csv
@@ -326,7 +327,8 @@ def equiv(d):
                     fp.write(delim.join((sid, str(uid)))+'\n')
 
     elif str(d) == 'gobp':
-        with open('gobp-eq.beleq', 'w') as gobp, open('gobp_id-eq.beleq', 'w') as gobp_id:
+        with open('go-biological-processes-names.beleq', 'w') as gobp, \
+                open('go-biological-processes-ids.beleq', 'w') as gobp_id:
             for vals in d.get_eq_values():
                 termid, termname = vals
                 uid = uuid.uuid4()
@@ -337,7 +339,8 @@ def equiv(d):
     # GO is the baseline for processes, so new uuids the first time.
     elif str(d) == 'gocc':
 
-        with open('gocc-eq.beleq', 'w') as gocc, open('gocc_id-eq.beleq', 'w') as gocc_id:
+        with open('go-cellular-component-terms.beleq', 'w') as gocc, \
+                open('go-cellular-component-ids.beleq', 'w') as gocc_id:
 
             for vals in d.get_eq_values():
                 termid, termname = vals
@@ -413,10 +416,10 @@ def equiv(d):
                     # It is possible this lookup will return None, in that
                     # case generate a new uuid.
                     if go_id is not None:
-                        uid = gocc_eq_dict.get(go_id.split(':')[1])
+                        uid = gocc_eq_dict.get(go_id)
                         # try to find out why lookups fail - maybe OBSOLETE?
                         if uid is None:
-                            print('Lookup failed for: '+str(go_id.split(':')[1]))
+                            print('Lookup failed for: '+str(go_id))
                             uid = uuid.uuid4()
                     else:
                         uid = uuid.uuid4()

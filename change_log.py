@@ -3,12 +3,24 @@
 
 '''
  change_log.py
+
+ Using a set of newly generated .belns and .beleq files, the
+ change-log will determine which, if any, values have been lost
+ between namespace versions. It will then parse additional data
+ in an attempt to resolve those values to their new value or log
+ them as being 'withdraw' completely. All of these values and
+ their new mappings, as well as the values the could not be
+ resolved, are the output of this module. This output is given
+ in the form of a dictionary, which is meant to be consumed by
+ an update script.
+
  inputs:
-   -n    new namespace/equivalence files generated after running
-         gp_baseline.py (required)
+   -n    directory of the new namespace/equivalence files generated
+         after running gp_baseline.py (required)
    -v    run the change-log in verbose mode (optional)
 
 '''
+
 import parsers
 import urllib
 import os
@@ -592,19 +604,17 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'MGI_Parser':
         print('Gathering MGI update info...')
-        with open('resolved-mgi.txt', 'w') as fp:
-            for row in parser.parse():
-                mgi_accession = row.get('MGI Accession ID')
-                if mgi_accession == 'NULL':
-                    old_val = row.get('Marker Symbol')
-                    name = row.get('Marker Name')
-                    fp.write(str(old_val)+'\n')
-                    if '=' in name:
-                        log = change_log.get('mgi')
-                        log[old_val] = name.split('= ')[1]
-                    elif 'withdrawn' in name:
-                        log = change_log.get('mgi')
-                        log[old_val] = 'withdrawn'
+        for row in parser.parse():
+            mgi_accession = row.get('MGI Accession ID')
+            if mgi_accession == 'NULL':
+                old_val = row.get('Marker Symbol')
+                name = row.get('Marker Name')
+                if '=' in name:
+                    log = change_log.get('mgi')
+                    log[old_val] = name.split('= ')[1]
+                elif 'withdrawn' in name:
+                    log = change_log.get('mgi')
+                    log[old_val] = 'withdrawn'
 
     elif str(parser) == 'RGD_Parser':
         # rgd changes (still dont know if withdrawn or replaced!!)
@@ -700,8 +710,12 @@ for label, data_tuple in changelog_data.items():
                 log[lost_name] = 'withdrawn'
             else:
                 new_name = non_obsolete_terms.get(lost_id)
-                log = change_log.get('gobp-names')
-                log[lost_name] = new_name
+                if new_name is None:
+                    if verbose:
+                        print('No new equivalent term found for '+lost_id)
+                else:
+                    log = change_log.get('gobp-names')
+                    log[lost_name] = new_name
 
     elif str(parser) == 'GOCC_Parser':
         # GOBP name and id changes
@@ -733,8 +747,12 @@ for label, data_tuple in changelog_data.items():
                 log[lost_name] = 'withdrawn'
             else:
                 new_name = non_obsolete_terms.get(lost_id)
-                log = change_log.get('gocc-names')
-                log[lost_name] = new_name
+                if new_name is None:
+                    if verbose:
+                        print('No new equivalent term found for '+lost_id)
+                else:
+                    log = change_log.get('gocc-names')
+                    log[lost_name] = new_name
 
     elif str(parser) == 'CHEBI_Parser':
         print('Gathering CHEBI update info...')

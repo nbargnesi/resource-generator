@@ -114,7 +114,7 @@ def build_data(entry, parser):
             'HGNC ID' : hgnc_id }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('hgnc')
+        mapping = synonyms_dict.get('hgnc')
         syns = entry.get('Synonyms').split(', ')
         mapping[gene_id] = syns
         #####################################
@@ -131,7 +131,7 @@ def build_data(entry, parser):
             'MGI Accession ID' : acc_id }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('mgi')
+        mapping = synonyms_dict.get('mgi')
         syns = entry.get('Marker Synonyms (pipe-separated)').split('|')
         mapping[gene_id] = syns
         #####################################
@@ -159,7 +159,7 @@ def build_data(entry, parser):
             'dbreference' : dbref }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('swiss')
+        mapping = synonyms_dict.get('swiss')
         recFullname = [entry.get('recommendedFullName')]
         recShortname = [entry.get('recommendedShortName')]
         altFullnames = entry.get('alternativeFullNames')
@@ -225,7 +225,7 @@ def build_data(entry, parser):
             'synonyms' : synonyms }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('chebi')
+        mapping = synonyms_dict.get('chebi')
         mapping[name] = synonyms
         #####################################
 
@@ -289,7 +289,7 @@ def build_data(entry, parser):
             'synonyms' : synonyms }
 
         ### added for synonyms generation ###
-        mapping = synonyms.get('mesh')
+        mapping = synonyms_dict.get('mesh')
         mapping[mh] = synonyms
         #####################################
 

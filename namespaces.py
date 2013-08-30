@@ -78,7 +78,7 @@ def make_namespace(d):
 
     delim = '|'
     if str(d) == 'entrez_info':
-        with open('entrez-gene-ids-hmr.belns', 'w') as fp:
+        with open('entrez-gene-ids.belns', 'w') as fp:
             # tuple of (gene_id, gene_type, description)
             for vals in d.get_ns_values():
                 gene_id, gene_type, description = vals
@@ -130,8 +130,8 @@ def make_namespace(d):
                 rgd_map[rgd_id] = symbol
 
     elif str(d) == 'swiss':
-        with open('swiss-entry-names.belns', 'w') as fp, \
-                open('swiss-accession-numbers.belns', 'w') as f:
+        with open('swissprot-entry-names.belns', 'w') as fp, \
+                open('swissprot-accession-numbers.belns', 'w') as f:
             for vals in d.get_ns_values():
                 gene_name, accessions = vals
                 fp.write(delim.join((gene_name, 'GRP'))+'\n')

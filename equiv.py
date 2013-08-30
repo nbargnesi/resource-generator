@@ -97,7 +97,7 @@ def equiv(d):
         make_eq_dict(d)
 
     elif str(d) == 'hgnc':
-        with open('hgnc_eq.beleq', 'w') as fp:
+        with open('hgnc-approved-symbols.beleq', 'w') as fp:
             for approved_symbol in d.get_eq_values():
                 if '~withdrawn' in approved_symbol:
                     continue
@@ -116,7 +116,7 @@ def equiv(d):
                     hgnc_eq[approved_symbol] = uid
 
     elif str(d) == 'mgi':
-        with open('mgi_eq.beleq', 'w') as fp:
+        with open('mgi-approved-symbols.beleq', 'w') as fp:
             for marker_symbol in d.get_eq_values():
                 new_id = to_entrez('MGI:'+marker_symbol)
                 if new_id is None:
@@ -133,7 +133,7 @@ def equiv(d):
                     mgi_eq[marker_symbol] = uid
 
     elif str(d) == 'rgd':
-        with open('rgd_eq.beleq', 'w') as fp:
+        with open('rgd-approved-symbols.beleq', 'w') as fp:
             for symbol in d.get_eq_values():
                 new_id = to_entrez('RGD:'+symbol)
                 if new_id is None:
@@ -150,7 +150,7 @@ def equiv(d):
                     rgd_eq[symbol] = uid
 
     elif str(d) == 'swiss':
-        with open('swiss_eq.beleq', 'w') as fp:
+        with open('swissprot-entry-names.beleq', 'w') as fp:
             # dbrefs is a dict, i.e { reference_type : id_of_that_gene}
             for name, dbrefs, accessions in d.get_eq_values():
                 target_pool = ['HGNC', 'MGI', 'RGD']
@@ -226,10 +226,10 @@ def equiv(d):
                     sp_eq[name] = uid
                 # finally, generate .beleq for accession data also
                 build_acc_data(accessions, name)
-            finish()
+            swiss_accessions_eq()
 
     elif str(d) == 'affy':
-        with open('aff_eq.beleq', 'w') as fp:
+        with open('affy-probeset-ids.beleq', 'w') as fp:
             for probe_id, gene_id in d.get_eq_values():
 
                 if gene_id is not None and '---' not in gene_id:
@@ -293,7 +293,7 @@ def equiv(d):
     # equiv for alt ids and names relies on the equivalence for
     # primary ids being completely generated.
     elif str(d) == 'chebi':
-        with open('chebi-ids_eq.beleq', 'w') as fp, open('chebi-names_eq.beleq', 'w') as f:
+        with open('chebi-ids.beleq', 'w') as fp, open('chebi-names_eq.beleq', 'w') as f:
             # like Entrez, new uuid for primary ids only the FIRST time.
             for primary_id in d.get_primary_ids():
                 uid = uuid.uuid4()
@@ -449,7 +449,7 @@ def equiv(d):
 acc_helper_dict = defaultdict(list)
 sp_acc_eq = {}
 def build_acc_data(accessions, gene_name):
-    with open('sp-acc_eq.beleq', 'w') as fp:
+    with open('swissprot-accession-numbers.beleq', 'w') as fp:
         # turn list into a queue
         q = deque(accessions)
         # primary accession name is first one on the queue
@@ -462,8 +462,8 @@ def build_acc_data(accessions, gene_name):
         sp_acc_eq[primary] = uid
 
 # try to factor this out and merge into build_acc_data
-def finish():
-    with open('sp-acc_eq.beleq', 'a') as fp:
+def swiss_accessions_eq():
+    with open('swissprot-accession-numbers.beleq', 'a') as fp:
         for sec_acc_id, v in acc_helper_dict.items():
             # only maps to one primary accession, same uuid
             if len(v) == 1:

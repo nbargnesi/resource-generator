@@ -123,6 +123,6 @@ for d in equiv_data:
     equiv.equiv(d)
 print('Phase V ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
-parser.write_synonyms()
+parsed.write_synonyms()
 print('\n======= Phase VI, finished! =======')
 print('Total runtime: ' +str(((time.time() - start_time) / 60)) +' minutes')

@@ -976,4 +976,4 @@ if verbose:
 today = str(datetime.date.today())
 change_log['date'] = today
 write_log.write(change_log)
-print('total runtime is '+str(((end_time - start_time) / 60)) +' minutes.')
+print('\nTotal runtime is '+str(((end_time - start_time) / 60)) +' minutes.')

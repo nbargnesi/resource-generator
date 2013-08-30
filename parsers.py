@@ -971,7 +971,7 @@ class DOParser(Parser):
 class DODeprecatedParser(Parser):
 
     def __init__(self, url):
-        super(DOParser, self).__init__(url)
+        super(DODeprecatedParser, self).__init__(url)
         self.do_file = url
         self.classy = '{http://www.w3.org/2002/07/owl#}Class'
         self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'

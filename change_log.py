@@ -577,7 +577,7 @@ change_log['sdis'] = {}
 change_log['do-names'] = {}
 
 # download the data needed for resolving lost values
-print('Downloading data needed for resolving changed/lost terms.')
+print('\nDownloading data needed for resolving changed/lost terms...')
 for name, data_tuple in changelog_data.items():
     if verbose:
         print('Downloading ' +str(data_tuple[RES_LOCATION]))
@@ -585,13 +585,15 @@ for name, data_tuple in changelog_data.items():
     if 'ftp' in data_tuple[RES_LOCATION] or 'http' in data_tuple[RES_LOCATION]:
         download(data_tuple[RES_LOCATION], path)
 
+print('Resolving changed/lost terms...')
 sp_accession_ids = []
 for label, data_tuple in changelog_data.items():
     url = label
     parser = data_tuple[PARSER_TYPE]('datasets/'+url)
 
     if str(parser) == 'EntrezGeneHistory_Parser':
-        print('Gathering Entrez update info...')
+        if verbose:
+            print('\nGathering Entrez update info...')
         for row in parser.parse():
             discontinued_id  = row.get('Discontinued_GeneID')
             gid = row.get('GeneID')
@@ -600,7 +602,8 @@ for label, data_tuple in changelog_data.items():
             log[discontinued_id] = replacement_id
 
     elif str(parser) == 'HGNC_Parser':
-        print('Gathering HGNC update info...')
+        if verbose:
+            print('Gathering HGNC update info...')
         for row in parser.parse():
             previous_symbols = []
             previous_names = []
@@ -631,7 +634,8 @@ for label, data_tuple in changelog_data.items():
                     log[symbol] = val
 
     elif str(parser) == 'MGI_Parser':
-        print('Gathering MGI update info...')
+        if verbose:
+            print('Gathering MGI update info...')
         for row in parser.parse():
             mgi_accession = row.get('MGI Accession ID')
             if mgi_accession == 'NULL':
@@ -646,7 +650,8 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'RGD_Parser':
         # rgd changes (still dont know if withdrawn or replaced!!)
-        print('Gathering RGD update info...')
+        if verbose:
+            print('Gathering RGD update info...')
         for row in parser.parse():
             new_val = row.get('SYMBOL')
             lost_vals = row.get('OLD_SYMBOL').split(';')
@@ -657,7 +662,8 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'SwissWithdrawn_Parser':
         # swissprot name changes
-        print('Gathering SwissProt update info...')
+        if verbose:
+            print('Gathering SwissProt update info...')
         cache_hits = 0
         cache_misses = 0
         files = set()
@@ -710,7 +716,8 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'GOBP_Parser':
         # GOBP name and id changes
-        print('Gathering GOBP update info...')
+        if verbose:
+            print('Gathering GOBP update info...')
         # treat every id as obsolete
         for lost_id in gobp_lost_ns_ids:
             log = change_log.get('gobp-ids')
@@ -744,7 +751,8 @@ for label, data_tuple in changelog_data.items():
 
     elif str(parser) == 'GOCC_Parser':
         # GOBP name and id changes
-        print('Gathering GOCC update info...')
+        if verbose:
+            print('Gathering GOCC update info...')
         # treat every id as obsolete
         for lost_id in gocc_lost_ns_ids:
             log = change_log.get('gocc-ids')
@@ -777,7 +785,8 @@ for label, data_tuple in changelog_data.items():
                     log[lost_name] = new_name
 
     elif str(parser) == 'CHEBI_Parser':
-        print('Gathering CHEBI update info...')
+        if verbose:
+            print('Gathering CHEBI update info...')
         # first take care of chebi, all ids are withdrawn
         log = change_log.get('chebi-ids')
         for id in chebi_lost_ids:
@@ -805,7 +814,8 @@ for label, data_tuple in changelog_data.items():
                 log[name] = 'withdrawn'
 
     elif str(parser) == 'MESHChanges_Parser':
-        print('Gathering MESH update info...')
+        if verbose:
+            print('Gathering MESH update info...')
         old_to_new = {}
         for row in parser.parse():
             mh_old = row.get('mh_old')
@@ -826,7 +836,8 @@ for label, data_tuple in changelog_data.items():
                 diseases_log[val] = old_to_new[val]
 
     elif str(parser) == 'SCHEMtoCHEBI_Parser':
-        print('Gathering Selventa-legacy-chemicals update info...')
+        if verbose:
+            print('Gathering Selventa-legacy-chemicals update info...')
         log = change_log.get('schem')
         for row in parser.parse():
             schem_term = row.get('SCHEM_term')
@@ -839,7 +850,8 @@ for label, data_tuple in changelog_data.items():
                 log[schem_term] = 'withdrawn'
 
     elif str(parser) == 'SDIStoDO_Parser':
-        print('Gathering Selventa-legacy-diseases update info...')
+        if verbose:
+            print('Gathering Selventa-legacy-diseases update info...')
         log = change_log.get('sdis')
         for row in parser.parse():
             sdis_term = row.get('SDIS_term')
@@ -852,7 +864,8 @@ for label, data_tuple in changelog_data.items():
                 log[sdis_term] = 'withdrawn'
 
     elif str(parser) == 'DODeprecated_Parser':
-        print('Gathering disease-ontology update info...')
+        if verbose:
+            print('Gathering disease-ontology update info...')
         new_do_ids_to_names = {}
         dep_names = []
 

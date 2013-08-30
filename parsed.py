@@ -5,7 +5,8 @@
 
  Acts as a storage module for the data being parsed by each parser.
  This data can get very large, and it has been shown that this module
- alone is not sufficient to meet the memory needs of the program.
+ alone is not sufficient to meet the memory needs of the program,
+ specifically of the PubChem dataset, which is currently commented out.
  Consider replacing with DBM or another type of storage management.
 
 '''

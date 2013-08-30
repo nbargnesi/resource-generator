@@ -21,7 +21,6 @@ synonyms_dict = {}
 synonyms_dict['entrez'] = dict()
 synonyms_dict['hgnc'] = dict()
 synonyms_dict['mgi'] = dict()
-synonyms_dict['affy'] = dict()
 synonyms_dict['swiss'] = dict()
 synonyms_dict['chebi'] = dict()
 synonyms_dict['mesh'] = dict()
@@ -226,7 +225,7 @@ def build_data(entry, parser):
 
         ### added for synonyms generation ###
         mapping = synonyms_dict.get('chebi')
-        mapping[name] = synonyms
+        mapping[name] = list(synonyms)
         #####################################
 
     # elif parser == 'PubNamespace_Parser':
@@ -290,7 +289,7 @@ def build_data(entry, parser):
 
         ### added for synonyms generation ###
         mapping = synonyms_dict.get('mesh')
-        mapping[mh] = synonyms
+        mapping[mh] = list(synonyms)
         #####################################
 
     elif parser == 'SwissWithdrawn_Parser':

@@ -13,18 +13,8 @@
 from datasets import *
 #import dbm.gnu
 #import dbm
-import json
 from collections import defaultdict
 
-
-synonyms_dict = {}
-synonyms_dict['entrez'] = dict()
-synonyms_dict['hgnc'] = dict()
-synonyms_dict['mgi'] = dict()
-synonyms_dict['affy'] = dict()
-synonyms_dict['swiss'] = dict()
-synonyms_dict['chebi'] = dict()
-synonyms_dict['mesh'] = dict()
 
 # Data needed for namespacing and equivalencing
 entrez_info = {}
@@ -91,12 +81,6 @@ def build_data(entry, parser):
             'tax_id' : tax_id,
             'Symbol_from_nomenclature_authority' : symbol }
 
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('entrez')
-        syns = entry.get('Synonyms')
-        mapping[gene_id] = syns
-        #####################################
-
     elif parser == 'EntrezGeneHistory_Parser':
         gene_id = entry.get('GeneID')
         discontinued_id = entry.get('Discontinued_GeneID')
@@ -113,12 +97,6 @@ def build_data(entry, parser):
             'Locus Type' : loc_type,
             'HGNC ID' : hgnc_id }
 
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('hgnc')
-        syns = entry.get('Synonyms').split(', ')
-        mapping[app_symb] = syns
-        #####################################
-
     elif parser == 'MGI_Parser':
         m_symbol = entry.get('Marker Symbol')
         feature_type = entry.get('Feature Type')
@@ -129,12 +107,6 @@ def build_data(entry, parser):
             'Feature Type' : feature_type,
             'Marker Type' : m_type,
             'MGI Accession ID' : acc_id }
-
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('mgi')
-        syns = entry.get('Marker Synonyms (pipe-separated)').split('|')
-        mapping[m_symbol] = syns
-        #####################################
 
     elif parser == 'RGD_Parser':
         gene_type = entry.get('GENE_TYPE')
@@ -157,16 +129,6 @@ def build_data(entry, parser):
             'type' : gene_type,
             'accessions' : acc,
             'dbreference' : dbref }
-
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('swiss')
-        recFullname = [entry.get('recommendedFullName')]
-        recShortname = [entry.get('recommendedShortName')]
-        altFullnames = entry.get('alternativeFullNames')
-        altShortnames = entry.get('alternativeShortNames')
-        syns = recFullname + recShortname + altFullnames + altShortnames
-        mapping[name] = syns
-        #####################################
 
     elif parser == 'Affy_Parser':
         probe_id = entry.get('Probe Set ID')
@@ -223,11 +185,6 @@ def build_data(entry, parser):
             'primary_id' : primary_id,
             'alt_ids' : alt_ids,
             'synonyms' : synonyms }
-
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('chebi')
-        mapping[name] = synonyms
-        #####################################
 
     # elif parser == 'PubNamespace_Parser':
     #     pub_id = entry.get('pubchem_id')
@@ -288,11 +245,6 @@ def build_data(entry, parser):
             'mns' : mns,
             'synonyms' : synonyms }
 
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('mesh')
-        mapping[mh] = synonyms
-        #####################################
-
     elif parser == 'SwissWithdrawn_Parser':
         acc = entry.get('accession')
 
@@ -318,8 +270,3 @@ def load_data(label):
     for d in datasets:
         if str(d) == label:
             return d
-
-def write_synonyms():
-
-    with open('synonyms.json', 'w') as fp:
-        json.dump(synonyms_dict, fp, sort_keys=True, indent=4, separators=(', ', ':'))

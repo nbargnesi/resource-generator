@@ -77,6 +77,7 @@ for root, dirs, filenames in os.walk(working_dir):
             data_tuple = baseline_data.get(f)
             parser = data_tuple[PARSER_TYPE]('datasets/'+f)
             if verbose:
+                parser.is_verbose()
                 print('Running ' +str(parser))
             for x in parser.parse():
                 parsed.build_data(x, str(parser))

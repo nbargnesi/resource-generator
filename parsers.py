@@ -20,6 +20,10 @@ import io
 class Parser(object):
     def __init__(self, url):
         self.url = url
+        self.verbose = False
+
+    def is_verbose(self):
+        self.verbose = True
 
     def parse():
         pass
@@ -347,7 +351,8 @@ class AffyParser(Parser):
             # only want the .csv from the archive (also contains a .txt)
             for name in z.namelist():
                 if '.csv' in name:
-                    print('\tExtracting - ' +name)
+                    if self.verbose:
+                        print('\tExtracting - ' +name)
                     # wrap in a TextIOWrapper. otherwise it returns bytes.
                     affy_reader = csv.DictReader(filter(lambda x:
                                                         not x.startswith('#'),

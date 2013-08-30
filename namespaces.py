@@ -72,7 +72,7 @@ hgnc_map = {}
 mgi_map = {}
 rgd_map = {}
 # takes a dataset 'Object' and build namespace
-def make_namespace(d):
+def make_namespace(d, verbose):
 
     # build and write out the namespace values for each dataset
 
@@ -213,7 +213,8 @@ def make_namespace(d):
                     continue
                 else:
                     f.write(delim.join((entry, 'A'))+'\n')
-        print('Able to resolve ' +str(count)+ ' SCHEM names to CHEBI.')
+        if verbose:
+            print('Able to resolve ' +str(count)+ ' SCHEM names to CHEBI.')
 
     elif str(d) == 'sdis':
         sdis_to_do = parsed.load_data('sdis_to_do')
@@ -227,7 +228,8 @@ def make_namespace(d):
                     continue
                 else:
                     f.write(delim.join((entry, 'O'))+'\n')
-        print('Able to resolve ' +str(count)+ ' SDIS names to DO.')
+        if verbose:
+            print('Able to resolve ' +str(count)+ ' SDIS names to DO.')
 
     elif str(d) == 'mesh':
 

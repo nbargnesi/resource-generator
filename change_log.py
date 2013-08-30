@@ -44,7 +44,7 @@ resource_dir = args.n[0]
 verbose = args.v
 
 if verbose:
-    print('Producing change-log in verbose mode.')
+    print('\nProducing change-log in verbose mode.')
 
 if not os.path.exists(resource_dir):
     os.mkdir(resource_dir)
@@ -56,7 +56,7 @@ os.chdir(resource_dir)
 # currently published on resource.belframework.org
 start_time = time.time()
 parser = parsers.BELNamespaceParser()
-print('Running BELNamespace_Parser')
+print('\nRunning BELNamespace_Parser')
 old_entrez = set()
 old_hgnc = set()
 old_mgi = set()

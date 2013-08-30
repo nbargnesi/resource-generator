@@ -87,7 +87,7 @@ def make_eq_dict(d):
 # 'd' is a DataObject, which wraps a nested dictionary. Currently, a copy
 # of each .beleq file is stored in a dictionary as well, (like entrez_eq).
 # This may not be needed in final implementation.
-def equiv(d):
+def equiv(d, verbose):
     if str(d) == 'entrez_info':
         with open('entrez-gene-ids.beleq', 'w') as fp:
             for gene_id in d.get_eq_values():
@@ -379,7 +379,8 @@ def equiv(d):
                 else:
                     uid = uuid.uuid4()
                 dof.write(delim.join((sdis_term, str(uid)))+'\n')
-        print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
+        if verbose:
+            print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
 
     elif str(d) == 'schem_to_chebi':
         # try to resolve schem terms to CHEBI. If there is not one,
@@ -400,7 +401,8 @@ def equiv(d):
                 else:
                     uid = uuid.uuid4()
                 schemf.write(delim.join((schem_term, str(uid)))+'\n')
-        print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')
+        if verbose:
+            print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')
 
     elif str(d) == 'mesh':
 
@@ -421,7 +423,8 @@ def equiv(d):
                         uid = gocc_eq_dict.get(go_id)
                         # try to find out why lookups fail - maybe OBSOLETE?
                         if uid is None:
-                            print('Lookup failed for: '+str(go_id))
+                            if verbose:
+                                print('Lookup failed for: '+str(go_id))
                             uid = uuid.uuid4()
                     else:
                         uid = uuid.uuid4()

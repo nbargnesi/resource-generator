@@ -89,7 +89,7 @@ def make_eq_dict(d):
 # This may not be needed in final implementation.
 def equiv(d):
     if str(d) == 'entrez_info':
-        with open('entrez_eq.beleq', 'w') as fp:
+        with open('entrez-gene-ids.beleq', 'w') as fp:
             for gene_id in d.get_eq_values():
                 uid = uuid.uuid4()
                 fp.write(delim.join((gene_id, str(uid)))+'\n')

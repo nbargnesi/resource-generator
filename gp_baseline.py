@@ -34,6 +34,7 @@ parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
 parser.add_argument("-v", required=False, action="store_true",
                     help="This enables verbose program output.")
 args = parser.parse_args()
+verbose = args.v
 
 resource_dir = args.n[0]
 if not os.path.exists(resource_dir):
@@ -52,9 +53,12 @@ shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
 shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
 
 start_time = time.time()
+if verbose:
+    print('\nRunning gp_baseline in verbose mode.')
 print('\n======= Phase I, downloading data =======')
 for name, url_tuple in baseline_data.items():
-    print('Downloading ' +str(name))
+    if verbose:
+        print('Downloading ' +str(name))
     path = os.path.join('datasets/', name)
     if url_tuple[RES_LOCATION].startswith('http') or \
             url_tuple[RES_LOCATION].startswith('ftp'):
@@ -72,7 +76,9 @@ for root, dirs, filenames in os.walk(working_dir):
         if f in baseline_data:
             data_tuple = baseline_data.get(f)
             parser = data_tuple[PARSER_TYPE]('datasets/'+f)
-            print('Running ' +str(parser))
+            if verbose:
+                parser.is_verbose()
+                print('Running ' +str(parser))
             for x in parser.parse():
                 parsed.build_data(x, str(parser))
 print('Phase II ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
@@ -103,8 +109,9 @@ do = parsed.load_data('do')
 # does NOT include pubchem currently
 ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis]
 for d in ns_data:
-    print('Generating namespace file for ' +str(d))
-    namespaces.make_namespace(d)
+    if verbose:
+        print('Generating namespace file for ' +str(d))
+    namespaces.make_namespace(d, verbose)
 print('Phase III ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
 print('\n======= Phase IV, building annotations =======')
@@ -119,10 +126,10 @@ interval_time = time.time()
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
               schem_to_chebi]
 for d in equiv_data:
-    print('Generating equivalence file for ' +str(d))
-    equiv.equiv(d)
+    if verbose:
+        print('Generating equivalence file for ' +str(d))
+    equiv.equiv(d, verbose)
 print('Phase V ran in ' +str(((time.time() - interval_time) / 60)) +' minutes')
 
-parsed.write_synonyms()
 print('\n======= Phase VI, finished! =======')
 print('Total runtime: ' +str(((time.time() - start_time) / 60)) +' minutes')

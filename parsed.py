@@ -5,7 +5,8 @@
 
  Acts as a storage module for the data being parsed by each parser.
  This data can get very large, and it has been shown that this module
- alone is not sufficient to meet the memory needs of the program.
+ alone is not sufficient to meet the memory needs of the program,
+ specifically of the PubChem dataset, which is currently commented out.
  Consider replacing with DBM or another type of storage management.
 
 '''
@@ -13,7 +14,6 @@
 from datasets import *
 #import dbm.gnu
 #import dbm
-import json
 from collections import defaultdict
 
 
@@ -90,12 +90,6 @@ def build_data(entry, parser):
             'tax_id' : tax_id,
             'Symbol_from_nomenclature_authority' : symbol }
 
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('entrez')
-        syns = entry.get('Synonyms')
-        mapping[gene_id] = syns
-        #####################################
-
     elif parser == 'EntrezGeneHistory_Parser':
         gene_id = entry.get('GeneID')
         discontinued_id = entry.get('Discontinued_GeneID')
@@ -112,12 +106,6 @@ def build_data(entry, parser):
             'Locus Type' : loc_type,
             'HGNC ID' : hgnc_id }
 
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('hgnc')
-        syns = entry.get('Synonyms').split(', ')
-        mapping[app_symb] = syns
-        #####################################
-
     elif parser == 'MGI_Parser':
         m_symbol = entry.get('Marker Symbol')
         feature_type = entry.get('Feature Type')
@@ -128,12 +116,6 @@ def build_data(entry, parser):
             'Feature Type' : feature_type,
             'Marker Type' : m_type,
             'MGI Accession ID' : acc_id }
-
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('mgi')
-        syns = entry.get('Marker Synonyms (pipe-separated)').split('|')
-        mapping[m_symbol] = syns
-        #####################################
 
     elif parser == 'RGD_Parser':
         gene_type = entry.get('GENE_TYPE')
@@ -156,16 +138,6 @@ def build_data(entry, parser):
             'type' : gene_type,
             'accessions' : acc,
             'dbreference' : dbref }
-
-        ### added for synonyms generation ###
-        mapping = synonyms_dict.get('swiss')
-        recFullname = [entry.get('recommendedFullName')]
-        recShortname = [entry.get('recommendedShortName')]
-        altFullnames = entry.get('alternativeFullNames')
-        altShortnames = entry.get('alternativeShortNames')
-        syns = recFullname + recShortname + altFullnames + altShortnames
-        mapping[name] = syns
-        #####################################
 
     elif parser == 'Affy_Parser':
         probe_id = entry.get('Probe Set ID')
@@ -317,8 +289,3 @@ def load_data(label):
     for d in datasets:
         if str(d) == label:
             return d
-
-def write_synonyms():
-
-    with open('synonyms.json', 'w') as fp:
-        json.dump(synonyms_dict, fp, sort_keys=True, indent=4, separators=(', ', ':'))

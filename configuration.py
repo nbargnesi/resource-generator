@@ -42,6 +42,7 @@ baseline_data['SCHEM_to_CHEBIID.txt'] = ('datasets/SCHEM_to_CHEBIID.txt', parser
 baseline_data['schem'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-chemical-names.belns', parsers.SCHEMParser)
 baseline_data['SDIS_to_DO.txt'] = ('datasets/SDIS_to_DOID.txt', parsers.SDIStoDOParser)
 baseline_data['sdis'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-diseases.belns', parsers.SDISParser)
+# need to change links to GO - date in filename will change with each update
 baseline_data['gobp.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',
                                 parsers.GOBPParser)
 baseline_data['gocc.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz',

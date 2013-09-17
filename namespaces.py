@@ -90,8 +90,13 @@ def make_namespace(d, verbose):
                         fp.write(delim.join((gene_id, 'GR'))+'\n')
                         entrez_ns.add(gene_id)
                 else:
-                    fp.write(delim.join((gene_id, entrez_encoding[gene_type]))+'\n')
+                    if gene_type in entrez_encoding:
+                        encoding = entrez_encoding[gene_type]
+                    else:
+                        encoding = 'G'
+                        print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
                     entrez_ns.add(gene_id)
+                    fp.write(delim.join((gene_id, encoding))+'\n')
 
     elif str(d) == 'hgnc':
         with open('hgnc-approved-symbols.belns', 'w') as fp:
@@ -99,7 +104,12 @@ def make_namespace(d, verbose):
                 approved_symb, locus_type, hgnc_id = vals
                 # withdrawn genes NOT included in this namespace
                 if locus_type is not 'withdrawn' and 'withdrawn' not in approved_symb:
-                    fp.write(delim.join((approved_symb, hgnc_encoding[locus_type]))+'\n')
+                    if locus_type in hgnc_encoding:
+                        encoding = hgnc_encoding[locus_type]
+                    else:
+                        encoding = 'G'
+                        print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
+                    fp.write(delim.join((approved_symb, encoding))+'\n')
                     hgnc_ns.add(approved_symb)
                 hgnc_map[hgnc_id] = approved_symb
 
@@ -108,7 +118,12 @@ def make_namespace(d, verbose):
             for vals in d.get_ns_values():
                 marker_symbol, feature_type, acc_id, marker_type = vals
                 if marker_type == 'Gene' or marker_type == 'Pseudogene':
-                    fp.write(delim.join((marker_symbol, mgi_encoding[feature_type]))+'\n')
+                    if feature_type in mgi_encoding:
+                        encoding = mgi_encoding[feature_type]
+                    else:
+                        encoding = 'G'
+                        print('WARNING ' + feature_type + ' not defined for MGI. G assigned as defaut encoding.')
+                    fp.write(delim.join((marker_symbol, encoding))+'\n')
                     mgi_ns.add(marker_symbol)
                 mgi_map[acc_id] = marker_symbol
 
@@ -125,7 +140,12 @@ def make_namespace(d, verbose):
                     rgd_ns.add(symbol)
                 else:
                     if gene_type is not '':
-                        fp.write(delim.join((symbol, rgd_encoding[gene_type]))+'\n')
+                        if gene_type in rgd_encoding:
+                            encoding = rgd_encoding.get(gene_type, 'G')
+                        else:
+                            encoding = 'G'
+                            print('WARNING ' + gene_type + ' not defined for RGD. G assigned as default encoding.')
+                        fp.write(delim.join((symbol, encoding))+'\n')
                         rgd_ns.add(symbol)
                 rgd_map[rgd_id] = symbol
 
@@ -242,10 +262,10 @@ def make_namespace(d, verbose):
                 if any('A11.284' in branch for branch in mns):
                     meshf.write(delim.join((mh, 'A'))+'\n')
                 # all entries from the C branch (pathology)
-                elif any('C' in branch for branch in mns):
+                if any('C' in branch for branch in mns):
                     meshd.write(delim.join((mh, 'O'))+'\n')
                 # G branch (bio process) - exclude G01 G02 G15 G17 branches
-                elif any('G' in branch for branch in mns):
+                if any('G' in branch for branch in mns):
                     excluded = False
                     for branch in mns:
                         if branch.startswith('MN = G01') \

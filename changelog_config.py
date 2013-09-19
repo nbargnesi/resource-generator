@@ -25,9 +25,9 @@ changelog_data['rgd.txt'] = \
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)
 changelog_data['gobp.xml.gz'] = \
-    ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz', parsers.GOBPParser)
+    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOBPParser)
 changelog_data['gocc.xml.gz'] = \
-    ('http://archive.geneontology.org/latest-full/go_201307-termdb.obo-xml.gz', parsers.GOCCParser)
+    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOCCParser)
 changelog_data['chebi.owl'] = \
     ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
 changelog_data['replace2013.txt'] = \

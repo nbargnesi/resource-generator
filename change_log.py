@@ -153,7 +153,7 @@ for url in parser.parse():
     open_url = urllib.request.urlopen(url)
     for eq in equivalences:
         if eq in open_url.url:
-            equivalences[ns] = (True, equivalences[eq][1])
+            equivalences[eq] = (True, equivalences[eq][1])
     marker = False
     for u in open_url:
         if '[Values]' in str(u):

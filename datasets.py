@@ -532,7 +532,7 @@ class DOData(DataSet):
         for name, mapping in self.do_dict.items():
             dbxrefs = mapping.get('dbxrefs')
             if ref in dbxrefs:
-                return mapping.get('name')
+                return name
 
     def __str__(self):
         return 'do'

@@ -429,7 +429,7 @@ def equiv(d, verbose):
                     else:
                         uid = uuid.uuid4()
                     mesha.write(delim.join((mh, str(uid)))+'\n')
-                elif any('C' in branch for branch in mns):
+                if any('C' in branch for branch in mns):
                     # does UI exist as a Xref in DO?
                     xref = do_data.get_xrefs('MSH:'+ui)
                     if xref:
@@ -437,13 +437,13 @@ def equiv(d, verbose):
                     else:
                         uid = uuid.uuid4()
                     meshc.write(delim.join((mh, str(uid)))+'\n')
-                elif any('G' in branch for branch in mns):
+                if any('G' in branch for branch in mns):
                     # synonyms for MeSH
                     uid = None
                     for syn in synonyms:
                         # root 'G' branch in GOBP
                         for name in gobp_eq_dict:
-                            if syn.lower() == name.lower():
+                            if syn.casefold() == name.casefold() or mh.casefold() == name.casefold():
                                 uid = gobp_eq_dict.get(name)
                     if uid is None:
                         uid = uuid.uuid4()

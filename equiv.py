@@ -93,7 +93,7 @@ def equiv(d, verbose):
             for gene_id in d.get_eq_values():
                 uid = uuid.uuid4()
                 fp.write(delim.join((gene_id, str(uid)))+'\n')
-                entrez_eq[gene_id] = uuid.uuid4()
+                entrez_eq[gene_id] = uid
         make_eq_dict(d)
 
     elif str(d) == 'hgnc':

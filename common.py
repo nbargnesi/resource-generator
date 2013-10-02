@@ -11,8 +11,10 @@
 '''
 
 from ftplib import FTP
+from sys import stderr
 import gzip
 import os
+import re
 import shutil
 import time
 import urllib.parse
@@ -58,3 +60,28 @@ def gzip_to_text(gzip_file, encoding="ascii"):
     with gzip.open(gzip_file) as gzf:
         for line in gzf:
             yield str(line, encoding)
+
+#
+#   Funciton to fetch latest GO archive resource file
+#   * used by class GOBPParser and GOCCParser
+#
+def get_latest_GO_filename(go_file):
+	""" Get the name of the current GO termdb.obo-xml.gz file. """
+	url = go_file
+	if url[-3:] == '.gz':
+		url = url[:url.rfind('/')]
+	# read the index info of latest-full
+	try:
+		src = urllib.request.urlopen(url).read().decode("utf-8")
+	except:
+		sys.stderr.write('WARNINIG! [function get_latest_GO_filename] Unable to fetch URL: %s\n' % (url))
+		return go_file
+	# file matching pattern for resoure filename
+	p_fn = re.compile('go_\d+-termdb.obo-xml.gz', re.M|re.S)
+	try:
+		fn = p_fn.findall(src)[0]
+		go_file = '/'.join([url, fn])
+	except:
+		# unable to locate resoure filename
+		pass
+	return go_file

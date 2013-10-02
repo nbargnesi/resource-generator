@@ -9,6 +9,7 @@
 '''
 
 from common import gzip_to_text
+from common import get_latest_GO_filename
 from lxml import etree
 import os
 import csv
@@ -16,6 +17,7 @@ import gzip
 import urllib.request
 import zipfile
 import io
+
 
 class Parser(object):
     def __init__(self, url):
@@ -637,7 +639,12 @@ class GOBPParser(Parser):
 
     def __init__(self, url):
         super(GOBPParser, self).__init__(url)
-        self.go_file = url
+        #self.go_file = url
+        # correct url for the latest filename
+        try:
+			self.go_file = get_latest_GO_filename(url)
+		except:
+			self.go_file = url
 
     def parse(self):
 
@@ -686,7 +693,12 @@ class GOCCParser(Parser):
 
     def __init__(self, url):
         super(GOCCParser, self).__init__(url)
-        self.go_file = url
+        #self.go_file = url
+        # correct url for the latest filename
+        try:
+			self.go_file = get_latest_GO_filename(url)
+		except:
+			self.go_file = url
         self.mesh_file = 'meshcs_to_gocc.csv'
 
     def parse(self):

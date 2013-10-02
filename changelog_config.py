@@ -11,6 +11,7 @@
 '''
 
 from collections import OrderedDict
+from common import get_latest_GO_filename
 import parsers
 
 changelog_data = OrderedDict()
@@ -24,10 +25,14 @@ changelog_data['rgd.txt'] = \
     ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)
-changelog_data['gobp.xml.gz'] = \
-    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOBPParser)
-changelog_data['gocc.xml.gz'] = \
-    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOCCParser)
+# get the latest GO archive file name and URL
+go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
+changelog_data['gobp.xml.gz'] = (go_file, parsers.GOBPParser)
+changelog_data['gocc.xml.gz'] = (go_file, parsers.GOCCParser)
+#changelog_data['gobp.xml.gz'] = \
+#    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOBPParser)
+#changelog_data['gocc.xml.gz'] = \
+#    ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOCCParser)
 changelog_data['chebi.owl'] = \
     ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
 changelog_data['replace2013.txt'] = \

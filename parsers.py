@@ -642,9 +642,9 @@ class GOBPParser(Parser):
         #self.go_file = url
         # correct url for the latest filename
         try:
-			self.go_file = get_latest_GO_filename(url)
-		except:
-			self.go_file = url
+            self.go_file = get_latest_GO_filename(url)
+        except:
+            self.go_file = url
 
     def parse(self):
 
@@ -696,9 +696,9 @@ class GOCCParser(Parser):
         #self.go_file = url
         # correct url for the latest filename
         try:
-			self.go_file = get_latest_GO_filename(url)
-		except:
-			self.go_file = url
+            self.go_file = get_latest_GO_filename(url)
+        except:
+            self.go_file = url
         self.mesh_file = 'meshcs_to_gocc.csv'
 
     def parse(self):

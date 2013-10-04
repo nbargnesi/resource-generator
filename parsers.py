@@ -11,6 +11,7 @@
 from common import gzip_to_text
 from common import get_latest_GO_filename
 from lxml import etree
+from collections import defaultdict
 import os
 import csv
 import gzip
@@ -199,7 +200,7 @@ class SwissProtParser(Parser):
 
             for ev, e in ctx:
                 temp_dict = {}
-                n_dict = {}
+                n_dict = defaultdict(list)
 
                 # stop evaluating if this entry is not in the Swiss-Prot dataset
                 if e.get('dataset') != 'Swiss-Prot':
@@ -229,7 +230,7 @@ class SwissProtParser(Parser):
                 # get entry name, add it to the dict
                 entry_name = e.find(self.name).text
                 temp_dict['name'] = entry_name
-
+ 
                 # get protein data, add recommended full and short names to dict
                 protein = e.find(self.pro)
 
@@ -271,17 +272,13 @@ class SwissProtParser(Parser):
                 for dbr in e.findall(self.db_ref):
                     if dbr.get('type') in type_set:
                         gene_id = dbr.get('id')
-                        if dbr.get('type') not in n_dict:
-                            n_dict[dbr.get('type')] = [gene_id]
-                        else:
-                            n_dict[dbr.get('type')].append(gene_id)
-                temp_dict['dbReference'] = n_dict
+                        n_dict[dbr.get('type')].append(gene_id)
+                temp_dict['dbreference'] = n_dict
 
                 # clear the tree before next iteration
                 e.clear()
                 while e.getprevious() is not None:
                     del e.getparent()[0]
-
                 yield temp_dict
 
     def __str__(self):

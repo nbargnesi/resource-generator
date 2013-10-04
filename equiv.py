@@ -107,13 +107,11 @@ def equiv(d, verbose):
                     hgnc_list.append(approved_symbol)
                     # generate new uuid
                     uid = uuid.uuid4()
-                    fp.write(delim.join((approved_symbol, str(uid)))+'\n')
-                    hgnc_eq[approved_symbol] = uid
                 else:
                     # use the entrez uuid
                     uid = entrez_eq.get(new_id)
-                    fp.write(delim.join((approved_symbol, str(uid)))+'\n')
-                    hgnc_eq[approved_symbol] = uid
+                fp.write(delim.join((approved_symbol, str(uid)))+'\n')
+                hgnc_eq[approved_symbol] = uid
 
     elif str(d) == 'mgi':
         with open('mgi-approved-symbols.beleq', 'w') as fp:
@@ -124,13 +122,11 @@ def equiv(d, verbose):
                     mgi_list.append(marker_symbol)
                     # generate new uuid
                     uid = uuid.uuid4()
-                    fp.write(delim.join((marker_symbol, str(uid)))+'\n')
-                    mgi_eq[marker_symbol] = uid
                 else:
                     # use the entrez uuid
                     uid = entrez_eq.get(new_id)
-                    fp.write(delim.join((marker_symbol, str(uid)))+'\n')
-                    mgi_eq[marker_symbol] = uid
+                fp.write(delim.join((marker_symbol, str(uid)))+'\n')
+                mgi_eq[marker_symbol] = uid
 
     elif str(d) == 'rgd':
         with open('rgd-approved-symbols.beleq', 'w') as fp:
@@ -141,13 +137,11 @@ def equiv(d, verbose):
                     rgd_list.append(symbol)
                     # generate new uuid
                     uid = uuid.uuid4()
-                    fp.write(delim.join((symbol, str(uid)))+'\n')
-                    rgd_eq[symbol] = uid
                 else:
                     # use the entrez uuid
                     uid = entrez_eq.get(new_id)
-                    fp.write(delim.join((symbol, str(uid)))+'\n')
-                    rgd_eq[symbol] = uid
+                fp.write(delim.join((symbol, str(uid)))+'\n')
+                rgd_eq[symbol] = uid
 
     elif str(d) == 'swiss':
         with open('swissprot-entry-names.beleq', 'w') as fp:
@@ -165,67 +159,37 @@ def equiv(d, verbose):
                             # could be MGI or RGD or HGNC ids
                             alt_ids.extend(v)
                 if len(gene_ids) == 1:
-                    temp_id = entrez_eq.get(gene_ids[0])
-                    if temp_id is None:
-                        uid = uuid.uuid4()
-                        fp.write(delim.join((name, str(uid)))+'\n')
-                        sp_eq[name] = uid
-                    else:
-                        uid = entrez_eq.get(gene_ids[0])
-                        fp.write(delim.join((name, str(uid)))+'\n')
-                        sp_eq[name] = uid
+                    uid = entrez_eq.get(gene_ids[0])
                 elif len(gene_ids) == 0:
                     # are there hgnc, mgi or rgd refs?
                     if len(alt_ids) == 0:
                         uid = uuid.uuid4()
-                        fp.write(delim.join((name, str(uid)))+'\n')
-                        sp_eq[name] = uid
                         sp_list.append(name)
                     elif len(alt_ids) == 1:
                         a_id = alt_ids[0]
                         if 'HGNC' in a_id:
                             hgnc_key = namespaces.hgnc_map.get(a_id)
                             uid = hgnc_eq.get(hgnc_key)
-                            # SwissProt may be referring to a since-removed gene.
-                            if uid is None:
-                                uid = uuid.uuid4()
-                                fp.write(delim.join((name, str(uid)))+'\n')
-                                sp_eq[name] = uid
-                            else:
-                                sp_eq[name] = uid
                         elif 'MGI' in a_id:
                             mgi_key = namespaces.mgi_map.get(a_id)
                             uid = mgi_eq.get(mgi_key)
-                            # SwissProt may be referring to a since-removed gene.
-                            if uid is None:
-                                uid = uuid.uuid4()
-                                fp.write(delim.join((name, str(uid)))+'\n')
-                                sp_eq[name] = uid
-                            else:
-                                sp_eq[name] = uid
                         else:
+                            # note 'RGD' not in id string for RGD dbrefs
                             rgd_key = namespaces.rgd_map.get(a_id)
                             uid = rgd_eq.get(rgd_key)
-                            # SwissProt may be referring to a since-removed gene.
-                            if uid is None:
-                                uid = uuid.uuid4()
-                                fp.write(delim.join((name, str(uid)))+'\n')
-                                sp_eq[name] = uid
-                            else:
-                                fp.write(delim.join((name, str(uid)))+'\n')
-                                sp_eq[name] = uid
-                    # > 1 alt_id then generate a new uuid
-                    else:
+                    elif len(alt_ids) >1:
                         uid = uuid.uuid4()
-                        fp.write(delim.join((name, str(uid)))+'\n')
-                        sp_eq[name] = uid
                 # > 1 entrez id than generate a new uuid
-                else:
+                elif len(gene_ids) >1:
                     uid = uuid.uuid4()
-                    fp.write(delim.join((name, str(uid)))+'\n')
-                    sp_eq[name] = uid
+                if uid is None:
+                    uid = uuid.uuid4()
+                fp.write(delim.join((name, str(uid)))+'\n')
+                sp_eq[name] = uid
                 # finally, generate .beleq for accession data also
+		# primary accessions
                 build_acc_data(accessions, name)
+	    #secondary accessions
             swiss_accessions_eq()
 
     elif str(d) == 'affy':
@@ -239,15 +203,10 @@ def equiv(d, verbose):
 
                     # for 1 entrez mapping, use the entez uuid
                     if len(entrez_ids) == 1:
-                        status = entrez_eq.get(entrez_ids[0])
-                        if status is None:
+                        uid = entrez_eq.get(entrez_ids[0])
+                        if uid is None:
                             uid = uuid.uuid4()
-                            fp.write(delim.join((probe_id, str(uid)))+'\n')
-                            affy_eq[probe_id] = uid
-                        else:
-                            uid = status
-                            fp.write(delim.join((probe_id, str(uid)))+'\n')
-                            affy_eq[probe_id] = uid
+
                     # we have > 1 entrez mapping, resolve to one.
                     else:
                         adjacent_list = []
@@ -265,8 +224,6 @@ def equiv(d, verbose):
                         # no mapping, generate new uuid
                         if len(list_of_tuples) == 0:
                             uid = uuid.uuid4()
-                            fp.write(delim.join((probe_id, str(uid)))+'\n')
-                            affy_eq[probe_id] = uid
 
                         # multiple entrez, resolve by refseq status
                         else:
@@ -282,13 +239,11 @@ def equiv(d, verbose):
                             # if mutiple genes with same refseq, resolve by lowest gene #
                             target_tuple = min(lowest_tuples)
                             uid = entrez_eq.get(target_tuple[0])
-                            fp.write(delim.join((probe_id, str(uid)))+'\n')
-                            affy_eq[probe_id] = uid
                 # no entrez mapping, create a new uuid
                 else:
                     uid = uuid.uuid4()
-                    fp.write(delim.join((probe_id, str(uid)))+'\n')
-                    affy_eq[probe_id] = uid
+                fp.write(delim.join((probe_id, str(uid)))+'\n')
+                affy_eq[probe_id] = uid
 
     # equiv for alt ids and names relies on the equivalence for
     # primary ids being completely generated.
@@ -452,7 +407,7 @@ def equiv(d, verbose):
 acc_helper_dict = defaultdict(list)
 sp_acc_eq = {}
 def build_acc_data(accessions, gene_name):
-    with open('swissprot-accession-numbers.beleq', 'w') as fp:
+    with open('swissprot-accession-numbers.beleq', 'a') as fp:
         # turn list into a queue
         q = deque(accessions)
         # primary accession name is first one on the queue

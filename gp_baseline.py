@@ -20,17 +20,36 @@ import os
 import namespaces
 import parsed
 import time
-import equiv
+#import equiv
 import shutil
 import annotate
 from common import download
 from constants import PARSER_TYPE, RES_LOCATION
 
-parser = argparse.ArgumentParser(description="""Generate namespace and
-                               equivalence files for gene/protein datasets.""")
+# collect paths needed for proper resource file location
+import sys
+# script source path
+if sys.argv[0].find('/') < 0:
+    src_dir = '.'
+else:
+    src_dir = sys.argv[0][:sys.argv[0].rfind('/')]
+# script execution path
+cwd = os.getcwd()
+# allow for successful import of equiv module
+# - equiv.py attempts to load data from [cwd]/datasets/meshcs_to_gocc.csv
+#   using os.getcwd() for value of [cwd]
+# - if gp_baseline is not launched from its source directory, the import fails
+os.chdir(src_dir)
+# assure full path is saved
+src_dir = os.getcwd()
+#print('* src_dir =', src_dir)
+import equiv
+os.chdir(cwd)
+
+parser = argparse.ArgumentParser(description="""Generate namespace and equivalence files
+for gene/protein datasets.""")
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
-                    help="""The directory to store the new namespace
-                            equivalence data.""")
+                    help="The directory to store the new namespace equivalence data.")
 parser.add_argument("-v", required=False, action="store_true",
                     help="This enables verbose program output.")
 args = parser.parse_args()
@@ -48,9 +67,12 @@ if not os.path.exists('datasets'):
     os.mkdir('datasets')
 
 # bring in some dependancies
-shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
-shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
-shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
+shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
+shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
+shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
+#shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
+#shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
+#shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
 
 start_time = time.time()
 if verbose:

@@ -193,6 +193,7 @@ def equiv(d, verbose):
             swiss_accessions_eq()
 
     elif str(d) == 'affy':
+        build_refseq(parsed.load_data('gene2acc'))
         with open('affy-probeset-ids.beleq', 'w') as fp:
             for probe_id, gene_id in d.get_eq_values():
 
@@ -217,10 +218,8 @@ def equiv(d, verbose):
                         # zipping yields a list of tuples like [('5307',0), ('104',2), ('3043',None)]
                         # i.e. [(entrez_id, refseq_status)]
                         list_of_tuples = list(zip(entrez_ids, adjacent_list))
-
                         # get rid of all 'None' tuples (No entrez mapping)
                         list_of_tuples = [tup for tup in list_of_tuples if tup[1] is not None]
-
                         # no mapping, generate new uuid
                         if len(list_of_tuples) == 0:
                             uid = uuid.uuid4()

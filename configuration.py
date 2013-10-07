@@ -12,6 +12,7 @@
 '''
 
 from collections import OrderedDict
+from common import get_latest_GO_filename
 import parsers
 
 
@@ -44,15 +45,15 @@ baseline_data['SDIS_to_DO.txt'] = ('datasets/SDIS_to_DOID.txt', parsers.SDIStoDO
 baseline_data['sdis'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-diseases.belns', parsers.SDISParser)
 # need to change links to GO - date in filename will change with each update
 # 2013-10-01 changes to GO resource file parser:
+# get the latest GO archive file name and URL
+go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 # - modified parsers.py uses archive URL to locate latest resource file
 #baseline_data['gobp.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz',
 #                                parsers.GOBPParser)
 #baseline_data['gocc.xml.gz'] = ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz',
 #                                parsers.GOCCParser)
-baseline_data['gobp.xml.gz'] = ('http://archive.geneontology.org/latest-full',
-                                parsers.GOBPParser)
-baseline_data['gocc.xml.gz'] = ('http://archive.geneontology.org/latest-full',
-                                parsers.GOCCParser)                        
+baseline_data['gobp.xml.gz'] = (go_file, parsers.GOBPParser)
+baseline_data['gocc.xml.gz'] = (go_file, parsers.GOCCParser)                        
 baseline_data['doid.owl'] = ('http://purl.obolibrary.org/obo/doid.owl',
                              parsers.DOParser)
 baseline_data['mesh.bin'] = ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/d2013.bin',

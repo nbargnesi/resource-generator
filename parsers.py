@@ -660,7 +660,7 @@ class GOBPParser(Parser):
                 else:
                     bp_altids = False
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
-                        'alt_ids' : bp_altids }
+                        'altids' : bp_altids }
 
     def obsolete_parse(self):
 
@@ -679,7 +679,7 @@ class GOBPParser(Parser):
                 else:
                     bp_altids = False
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
-                        'alt_ids' : bp_altids }
+                        'altids' : bp_altids }
 
 
     def __str__(self):

@@ -79,11 +79,13 @@ class HGNCData(DataSet):
             mapping = self.hgnc_dict.get(symbol)
             loc_type = mapping.get('Locus Type')
             hgnc_id = mapping.get('HGNC ID')
-            yield symbol, loc_type, hgnc_id
+            if '~withdrawn' not in symbol:
+                yield symbol, loc_type, hgnc_id
 
     def get_eq_values(self):
-        for approved_symbol in self.hgnc_dict:
-            yield approved_symbol
+        for symbol in self.hgnc_dict:
+            if '~withdrawn' not in symbol:
+                yield symbol
 
     def __str__(self):
         return 'hgnc'
@@ -104,11 +106,15 @@ class MGIData(DataSet):
             feature_type = mapping.get('Feature Type')
             acc_id = mapping.get('MGI Accession ID')
             marker_type = mapping.get('Marker Type')
-            yield marker_symbol, feature_type, acc_id, marker_type
+            if marker_type == 'Gene' or marker_type == 'Pseudogene':
+                yield marker_symbol, feature_type, acc_id
 
     def get_eq_values(self):
         for marker_symbol in self.mgi_dict:
-            yield marker_symbol
+            mapping = self.mgi_dict.get(marker_symbol)
+            marker_type = mapping.get('Marker Type')
+            if marker_type == 'Gene' or marker_type == 'Pseudogene':
+                yield marker_symbol
 
     def __str__(self):
         return 'mgi'
@@ -418,8 +424,9 @@ class GOBPData(DataSet):
         for termid in self.gobp_dict:
             mapping = self.gobp_dict.get(termid)
             termname = mapping.get('termname')
+            altids = mapping.get('altids')
 
-            yield termid, termname
+            yield termid, termname, altids
 
     def __str__(self):
         return 'gobp'
@@ -447,8 +454,9 @@ class GOCCData(DataSet):
         for termid in self.gocc_dict:
             mapping = self.gocc_dict.get(termid)
             termname = mapping.get('termname')
+            altids = mapping.get('altids')
 
-            yield termid, termname
+            yield termid, termname, altids
 
     def __str__(self):
         return 'gocc'

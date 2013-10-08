@@ -11,21 +11,10 @@
 
 import parsed
 
-# namespace dictionaries
-entrez_ns = set()
-hgnc_ns = set()
-mgi_ns  = set()
-rgd_ns = set()
-sp_ns = set()
-sp_acc_ns = set()
-affy_ns = set()
-chebi_name_ns = set()
-chebi_id_ns = set()
-pub_ns = set()
-do_ns = set()
+# Encoding dictionaries
+# For Entrez and RGD, miscRNA (RNA, small misc) is evaluated together with other
+# information to determine 'M' (microRNA) encodings
 
-# miscRNA should not be used here, as it will be handled in a special case.
-# For completion sake it is included.
 entrez_encoding = {'protein-coding' : 'GRP', 'miscRNA' : 'GR', 'ncRNA' : 'GR',
                    'snoRNA' : 'GR', 'snRNA' : 'GR', 'tRNA' : 'GR',
                    'scRNA' : 'GR', 'other' : 'G', 'pseudo' : 'GR',
@@ -68,219 +57,165 @@ rgd_encoding = {'gene' : 'GRP', 'miscrna' : 'GR', 'predicted-high' : 'GRP',
                 'protein-coding' : 'GRP', 'pseudo' : 'GR', 'snrna' : 'GR',
                 'trna' : 'GR', 'rrna' : 'GR'}
 
-hgnc_map = {}
-mgi_map = {}
-rgd_map = {}
 # takes a dataset 'Object' and build namespace
 def make_namespace(d, verbose):
 
     # build and write out the namespace values for each dataset
-
-    delim = '|'
+    ns_dict = {}
+    ns_id_dict = {}
     if str(d) == 'entrez_info':
-        with open('entrez-gene-ids.belns', 'w') as fp:
-            # tuple of (gene_id, gene_type, description)
-            for vals in d.get_ns_values():
-                gene_id, gene_type, description = vals
-                if gene_type == 'miscRNA':
-                    if 'microRNA' in description:
-                        fp.write(delim.join((gene_id, 'GRM'))+'\n')
-                        entrez_ns.add(gene_id)
-                    else:
-                        fp.write(delim.join((gene_id, 'GR'))+'\n')
-                        entrez_ns.add(gene_id)
-                else:
-                    if gene_type in entrez_encoding:
-                        encoding = entrez_encoding[gene_type]
-                    else:
-                        encoding = 'G'
-                        print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
-                    entrez_ns.add(gene_id)
-                    fp.write(delim.join((gene_id, encoding))+'\n')
+        ns = 'entrez-gene-ids'
+        for gene_id, gene_type, description in d.get_ns_values():
+            encoding = entrez_encoding.get(gene_type, 'G')
+            if gene_type == 'miscRNA' and 'microRNA' in description:
+                encoding = 'GRM'
+            if gene_type not in entrez_encoding:
+                print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
+            ns_dict[gene_id] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'hgnc':
-        with open('hgnc-approved-symbols.belns', 'w') as fp:
-            for vals in d.get_ns_values():
-                approved_symb, locus_type, hgnc_id = vals
-                # withdrawn genes NOT included in this namespace
-                if locus_type is not 'withdrawn' and 'withdrawn' not in approved_symb:
-                    if locus_type in hgnc_encoding:
-                        encoding = hgnc_encoding[locus_type]
-                    else:
-                        encoding = 'G'
-                        print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
-                    fp.write(delim.join((approved_symb, encoding))+'\n')
-                    hgnc_ns.add(approved_symb)
-                hgnc_map[hgnc_id] = approved_symb
+        ns = 'hgnc-approved-symbols'
+        for symbol, locus_type, hgnc_id in d.get_ns_values():
+            encoding = hgnc_encoding.get(locus_type, 'G')
+            if locus_type not in hgnc_encoding:
+                print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
+            ns_dict[symbol] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'mgi':
-        with open('mgi-approved-symbols.belns', 'w') as fp:
-            for vals in d.get_ns_values():
-                marker_symbol, feature_type, acc_id, marker_type = vals
-                if marker_type == 'Gene' or marker_type == 'Pseudogene':
-                    if feature_type in mgi_encoding:
-                        encoding = mgi_encoding[feature_type]
-                    else:
-                        encoding = 'G'
-                        print('WARNING ' + feature_type + ' not defined for MGI. G assigned as defaut encoding.')
-                    fp.write(delim.join((marker_symbol, encoding))+'\n')
-                    mgi_ns.add(marker_symbol)
-                mgi_map[acc_id] = marker_symbol
+        ns = 'mgi-approved-symbols'
+        for marker_symbol, feature_type, acc_id in d.get_ns_values():
+            encoding = mgi_encoding.get(feature_type, 'G')
+            if feature_type not in mgi_encoding:
+                print('WARNING ' + feature_type + ' not defined for MGI. G assigned as default encoding.')
+            ns_dict[marker_symbol] = encoding
+        write_belns(ns_dict, ns)
 
-    # withdrawn genes are NOT included in this namespace
     elif str(d) == 'rgd':
-        with open('rgd-approved-symbols.belns', 'w') as fp:
-            for vals in d.get_ns_values():
-                symbol, gene_type, name, rgd_id = vals
-                if gene_type == 'miscrna' and 'microRNA' in name:
-                    fp.write(delim.join((symbol, 'GRM'))+'\n')
-                    rgd_ns.add(symbol)
-                elif gene_type == 'miscrna' and 'microRNA' not in name:
-                    fp.write(delim.join((symbol, 'GR'))+'\n')
-                    rgd_ns.add(symbol)
-                else:
-                    if gene_type is not '':
-                        if gene_type in rgd_encoding:
-                            encoding = rgd_encoding.get(gene_type, 'G')
-                        else:
-                            encoding = 'G'
-                            print('WARNING ' + gene_type + ' not defined for RGD. G assigned as default encoding.')
-                        fp.write(delim.join((symbol, encoding))+'\n')
-                        rgd_ns.add(symbol)
-                rgd_map[rgd_id] = symbol
+        ns = 'rgd-approved-symbols'
+        for symbol, gene_type, name, rgd_id in d.get_ns_values():
+            encoding = rgd_encoding.get(gene_type, 'G')
+            if gene_type == 'miscrna' and 'microRNA' in name:
+                encoding = 'GRM'
+            if gene_type not in rgd_encoding:
+                print('WARNING ' + gene_type + ' not defined for RGD. G assigned as default encoding.')
+            ns_dict[symbol] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'swiss':
-        with open('swissprot-entry-names.belns', 'w') as fp, \
-                open('swissprot-accession-numbers.belns', 'w') as f:
-            for vals in d.get_ns_values():
-                gene_name, accessions = vals
-                fp.write(delim.join((gene_name, 'GRP'))+'\n')
-                sp_ns.add(gene_name)
-                for acc in accessions:
-                    f.write(delim.join((acc, 'GRP'))+'\n')
-                    sp_acc_ns.add(acc)
+        ns = 'swissprot-entry-names'
+        ns_id = 'swissprot-accession-numbers'
+        encoding = 'GRP'
+        for gene_name, accessions in d.get_ns_values():
+            ns_dict[gene_name] = encoding
+            for acc in accessions:
+                ns_id_dict[acc] = encoding
+        write_belns(ns_dict, ns)
+        write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'affy':
-        with open('affy-probeset-ids.belns', 'w') as fp:
-            for vals in d.get_ns_values():
-                pid = vals
-                fp.write(delim.join((pid, 'R'))+'\n')
-#                    if pid not in affy_ns_dict:
-#                        affy_ns_dict[pid] = 'R'
+        ns = 'affy-probeset-ids'
+        encoding = 'R'
+        for pid in d.get_ns_values():
+            ns_dict[pid] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'chebi':
-        with open('chebi-names.belns', 'w') as fp, \
-                open('chebi-ids.belns', 'w') as f:
-            for vals in d.get_ns_values():
-                name, primary_id, altIds = vals
-                fp.write(delim.join((name, 'A'))+'\n')
-                chebi_name_ns.add(name)
-                f.write(delim.join((primary_id, 'A'))+'\n')
-                chebi_id_ns.add(name)
-                if altIds:
-                    for i in altIds:
-                        if i not in chebi_id_ns:
-                            f.write(delim.join((i, 'A'))+'\n')
-                        chebi_id_ns.add(i)
+        ns = 'chebi-names'
+        ns_id = 'chebi-ids'
+        encoding = 'A'
+        for name, primary_id, altids in d.get_ns_values():
+            ns_dict[name] = encoding
+            ns_id_dict[primary_id] = encoding
+            for i in altids:
+                ns_id_dict[i] = encoding
+        write_belns(ns_dict, ns)
+        write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'pubchem_namespace':
-        with open('pubchem-ids.belns', 'w') as fp:
-            for vals in d.get_ns_values():
-                pid = vals
-                fp.write(delim.join((pid, 'A'))+'\n')
-                pub_ns.add(pid)
+        ns_id = 'pubchem'
+        encoding = 'A'
+        for pid in d.get_ns_values():
+            ns_id_dict[pid] = encoding
+        write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'gobp':
-        with open('go-biological-processes-names.belns', 'w') as gobp, \
-                open('go-biological-processes-accession-numbers.belns', 'w') \
-                as gobp_id:
-            for vals in d.get_ns_values():
-                termid, termname, altids = vals
-                gobp.write(delim.join((termname, 'B'))+'\n')
-                gobp_id.write(delim.join((termid, 'B'))+'\n')
-                if altids is not None:
-                    for alt in altids:
-                        gobp_id.write(delim.join((alt, 'B'))+'\n')
+        ns = 'go-biological-processes-names'
+        ns_id = 'go-biological-processes-ids'
+        encoding = 'B'
+        for termid, termname, altids in d.get_ns_values():
+            ns_dict[termname] = encoding
+            ns_id_dict[termid] = encoding
+            if altids is not None:
+                for i in altids:
+                    ns_id_dict[i] = encoding
+        write_belns(ns_dict, ns)
+        write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'gocc':
-
-        with open('go-cellular-component-terms.belns', 'w') as gocc, \
-                open('go-cellular-component-accession-numbers.belns', 'w') \
-                as gocc_id:
-            for vals in d.get_ns_values():
-                termid, termname, altids, complex = vals
-                if complex:
-                    gocc.write(delim.join((termname, 'C'))+'\n')
-                    gocc_id.write(delim.join((termid, 'C'))+'\n')
-                    for alt in altids:
-                        gocc_id.write(delim.join((alt, 'C'))+'\n')
-                else:
-                    gocc.write(delim.join((termname, 'A'))+'\n')
-                    gocc_id.write(delim.join((termid, 'A'))+'\n')
-                    if altids is not None:
-                        for alt in altids:
-                            gocc_id.write(delim.join((alt, 'A'))+'\n')
+        ns = 'go-cellular-component-terms'
+        ns_id = 'go-cellular-component-accession-numbers'
+        for termid, termname, altids, complex in d.get_ns_values():
+            if complex:
+                encoding = 'C'
+            else:
+                encoding = 'A'
+            ns_dict[termname] = encoding
+            ns_id_dict[termid] = encoding
+            if altids is not None:
+                for i in altids:
+                    ns_id_dict[i] = encoding
+        write_belns(ns_dict, ns)
+        write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'schem':
-        schem_to_chebi = parsed.load_data('schem_to_chebi')
-        count = 0
-        with open('selventa-legacy-chemical-names.belns', 'w') as f:
-            for entry in d.get_ns_values():
-                # try to get a chebi equivalent, if there is one do not
-                # write this value to the new namespace
-                if schem_to_chebi.has_equivalence(entry):
-                    count = count + 1
-                    continue
-                else:
-                    f.write(delim.join((entry, 'A'))+'\n')
-        if verbose:
-            print('Able to resolve ' +str(count)+ ' SCHEM names to CHEBI.')
+        ns = 'selventa-legacy-chemical-names'
+        encoding = 'A'
+        for entry in d.get_ns_values():
+            ns_dict[entry] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'sdis':
-        sdis_to_do = parsed.load_data('sdis_to_do')
-        count = 0
-        with open('selventa-legacy-diseases.belns', 'w') as f:
-            for entry in d.get_ns_values():
-                # try to get a do equivalent, if there is one do not
-                # write this value to the new namespace
-                if sdis_to_do.has_equivalence(entry):
-                    count = count + 1
-                    continue
-                else:
-                    f.write(delim.join((entry, 'O'))+'\n')
-        if verbose:
-            print('Able to resolve ' +str(count)+ ' SDIS names to DO.')
+        ns = 'selventa-legacy-diseases'
+        encoding = 'O'
+        for entry in d.get_ns_values():
+            ns_dict[entry] = encoding
+        write_belns(ns_dict, ns)
 
     elif str(d) == 'mesh':
-
-        with open('mesh-cellular-locations.belns', 'w') as meshf, \
-                open('mesh-diseases.belns', 'w') as meshd, \
-                open('mesh-biological-processes.belns', 'w') as meshb:
-            for vals in d.get_ns_values():
-                ui, mh, mns, sts = vals
-                # all entries from A11.284 branch (abundances)
-                if any('A11.284' in branch for branch in mns):
-                    meshf.write(delim.join((mh, 'A'))+'\n')
-                # all entries from the C branch (pathology)
-                if any('C' in branch for branch in mns):
-                    meshd.write(delim.join((mh, 'O'))+'\n')
-                # G branch (bio process) - exclude G01 G02 G15 G17 branches
-                if any('G' in branch for branch in mns):
-                    excluded = False
-                    for branch in mns:
-                        if branch.startswith('MN = G01') \
-                                or branch.startswith('MN = G02') \
-                                or branch.startswith('MN = G15') \
-                                or branch.startswith('MN = G17'):
-                            excluded = True
-                    if not excluded:
-                        meshb.write(delim.join((mh, 'B'))+'\n')
+        ns = 'mesh-cellular-locations'
+        ns2 = 'mesh-diseases'
+        ns2_dict = {}
+        ns3 = 'mesh-biological-processes'
+        ns3_dict = {}
+        for ui, mh, mns, sts in d.get_ns_values():
+            if any(branch.startswith('A11.284') for branch in mns):
+                # MeSH Cellular Locations; encoding = 'A'
+                ns_dict[mh] = 'A'
+            if any(branch.startswith('C') for branch in mns):
+                # MeSH Diseases; encoding = 'O'
+                ns2_dict[mh] = 'O'
+            if any(branch.startswith('G') for branch in mns):
+                # MeSH Phenomena and Processes; encoding = 'B'
+                excluded = ('G01', 'G02', 'G15', 'G17')
+                if not all(branch.startswith(excluded) for branch in mns):
+                    ns3_dict[mh] = 'B'
+        write_belns(ns_dict, ns)
+        write_belns(ns2_dict, ns2)
+        write_belns(ns3_dict, ns3)
 
     elif str(d) == 'do':
+        ns = 'disease-ontology-names'
+        ns_id = 'disease-ontology-ids'
+        encoding = 'O'
+        for name, id in d.get_ns_values():
+            ns_dict[name] = encoding
+            ns_id_dict[id] = encoding
 
-        with open('disease-ontology-names.belns', 'w') as dn, \
-                open('disease-ontology-ids.belns', 'w') as di:
-            for vals in d.get_ns_values():
-                name, id = vals
-                dn.write(delim.join((name, 'O'))+'\n')
-                di.write(delim.join((id, 'O'))+'\n')
+def write_belns(ns_dict, filename):
+    """ Writes values and encodings from namespace dict to .belns file. """
+    fullname = '.'.join((filename, 'belns'))
+    with open(fullname, 'w') as f:
+        for name, encoding in sorted(ns_dict.items()):
+            f.write('|'.join((name, encoding)) + '\n')

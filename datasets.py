@@ -87,6 +87,14 @@ class HGNCData(DataSet):
             if '~withdrawn' not in symbol:
                 yield symbol
 
+    def get_map(self):
+        id_map = {}
+        for symbol in self.hgnc_dict:
+            mapping = self.hgnc_dict.get(symbol)
+            hgnc_id = mapping.get('HGNC ID')
+            map[hgnc_id] = symbol
+        return id_map
+
     def __str__(self):
         return 'hgnc'
 
@@ -115,6 +123,14 @@ class MGIData(DataSet):
             marker_type = mapping.get('Marker Type')
             if marker_type == 'Gene' or marker_type == 'Pseudogene':
                 yield marker_symbol
+    
+    def get_map(self):
+        id_map = {}
+        for marker_symbol in self.mgi_dict:
+            mapping = self.mgi_dict.get(marker_symbol)
+            acc_id = mapping.get('MGI Accession ID')
+            id_map[acc_id] = marker_symbol
+        return id_map
 
     def __str__(self):
         return 'mgi'
@@ -140,6 +156,14 @@ class RGDData(DataSet):
     def get_eq_values(self):
         for symbol in self.rgd_dict:
             yield symbol
+  
+    def get_map(self):
+        id_map = {}
+        for symbol in self.rgd_dict:
+            mapping = self.rgd_dict.get(symbol)
+            rgd_id = mapping.get('GENE_RGD_ID')
+            id_map[rgd_id] = symbol
+        return id_map
 
     def __str__(self):
         return 'rgd'

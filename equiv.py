@@ -12,7 +12,7 @@
 '''
 
 import uuid
-import namespaces
+#import namespaces
 import csv
 import parsed
 import os
@@ -46,6 +46,10 @@ sdis_eq = {}
 mesh_cs_eq = {}
 mesh_d_eq = {}
 mesh_pp_eq = {}
+# testing - 
+hgnc_map = parsed.load_data('hgnc').get_map()
+mgi_map = parsed.load_data('mgi').get_map()
+rgd_map = parsed.load_data('rgd').get_map()
 
 ref_status = {'REVIEWED' : 0,
               'VALIDATED' : 1,
@@ -171,14 +175,14 @@ def equiv(d, verbose):
                 elif len(alt_ids) == 1:
                     a_id = alt_ids[0]
                     if 'HGNC' in a_id:
-                        hgnc_key = namespaces.hgnc_map.get(a_id)
+                        hgnc_key = hgnc_map.get(a_id)
                         uid = hgnc_eq.get(hgnc_key)
                     elif 'MGI' in a_id:
-                        mgi_key = namespaces.mgi_map.get(a_id)
+                        mgi_key = mgi_map.get(a_id)
                         uid = mgi_eq.get(mgi_key)
                     else:
                         # note 'RGD' not in id string for RGD dbrefs
-                        rgd_key = namespaces.rgd_map.get(a_id)
+                        rgd_key = rgd_map.get(a_id)
                         uid = rgd_eq.get(rgd_key)
                 elif len(alt_ids) >1:
                     uid = uuid.uuid4()
@@ -391,8 +395,10 @@ def equiv(d, verbose):
                     uid = uuid.uuid4()
                 mesh_d_eq[mh] = uid
             # MeSH Phenomena and Processes
-            # TODO - Exclude G01, G02, G15, G17 subbranches
             if any('G' in branch for branch in mns):
+                excluded = ('G01', 'G02', 'G15', 'G17')
+                if all(branch.startswith(excluded) for branch in mns):
+                     continue
                 # synonyms for MeSH
                 uid = None
                 for syn in synonyms:

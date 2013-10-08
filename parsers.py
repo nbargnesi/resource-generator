@@ -390,7 +390,8 @@ class Gene2AccParser(Parser):
                                     fieldnames=column_headers)
 
         for row in g2a_reader:
-            yield row
+            if row['tax_id'] in ('9606', '10090', '10116'):
+                yield row
 
     def __str__(self):
         return 'Gene2Acc_Parser'

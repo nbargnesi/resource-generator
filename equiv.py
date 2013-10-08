@@ -38,7 +38,7 @@ pub_eq_dict = {}
 gobp_eq_dict = {}
 gobp_id_eq = {}
 gocc_eq_dict = {}
-gocc_id_eq = {}
+gocc_names_eq = {}
 do_eq_dict = {}
 do_id_eq = {}
 schem_eq = {}
@@ -284,24 +284,27 @@ def equiv(d, verbose):
                     fp.write(delim.join((sid, str(uid)))+'\n')
 
     elif str(d) == 'gobp':
-        for vals in d.get_eq_values():
-            termid, termname = vals
+        for termid, termname, altids in d.get_eq_values():
             uid = uuid.uuid4()
             gobp_eq_dict[termname] = uid
             gobp_id_eq[termid] = uid
+            if altids:
+                for i in altids:
+                    gobp_id_eq[i] = uid
         write_beleq(gobp_eq_dict, 'go-biological-processes-names')
         write_beleq(gobp_id_eq, 'go-biological-processes-ids')
     # GO is the baseline for processes, so new uuids.
 
     elif str(d) == 'gocc':
-        for vals in d.get_eq_values():
-            termid, termname = vals
+        for termid, termname, altids in d.get_eq_values():
             uid = uuid.uuid4()
             gocc_eq_dict[termid] = uid 
-            # TODO - check what this dict is used for and rename as needed
-            gocc_id_eq[termname] = uid
+            gocc_names_eq[termname] = uid
+            if altids:
+                for i in altids:
+                    gocc_eq_dict[i] = uid
         write_beleq(gocc_eq_dict, 'go-cellular-component-ids')
-        write_beleq(gocc_id_eq, 'go-cellular-component-names')
+        write_beleq(gocc_names_eq, 'go-cellular-component-names')
 
     elif str(d) == 'do':
         # assign DO a new uuid and use as the primary for diseases
@@ -339,7 +342,6 @@ def equiv(d, verbose):
         # assign a new uuid.
         count = 0
         schem = parsed.load_data('schem')
-        #with open('selventa-legacy-chemical-names.beleq', 'w') as schemf:
         for vals in schem.get_eq_values():
             uid = None
             schem_term = vals
@@ -352,7 +354,6 @@ def equiv(d, verbose):
                     uid = chebi_name_eq[chebi_term.lower()]
             else:
                 uid = uuid.uuid4()
-            #schemf.write(delim.join((schem_term, str(uid)))+'\n')
             schem_eq[schem_term] = uid
         write_beleq(schem_eq, 'selventa-legacy-chemical-names')
         if verbose:

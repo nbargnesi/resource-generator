@@ -299,19 +299,13 @@ class SCHEMtoCHEBIData(DataSet):
     def get_dictionary(self):
         return self.schem_to_chebi
 
-    def has_equivalence(self, schem_name):
-        equiv = False
-        for schem_term in self.schem_to_chebi:
-            mapping = self.schem_to_chebi.get(schem_term)
-            chebi_name = mapping.get('CHEBI_name')
-            if schem_name.lower() == chebi_name.lower():
-                equiv = True
-        return equiv
-
     def get_equivalence(self, schem_term):
         mapping = self.schem_to_chebi.get(schem_term)
-        chebi_name = mapping.get('CHEBI_name')
-        return chebi_name
+        if mapping:
+            chebi_id = mapping.get('CHEBIID')
+            return chebi_id
+        else:
+            return None
 
     def __str__(self):
         return 'schem_to_chebi'
@@ -347,23 +341,13 @@ class SDIStoDOData(DataSet):
     def get_dictionary(self):
         return self.sdis_to_do
 
-    def get_eq_values(self):
-        for entry in self.sdis_to_do:
-            yield entry
-
-    def has_equivalence(self, sdis_name):
-        equiv = False
-        for sdis_term in self.sdis_to_do:
-            mapping = self.sdis_to_do.get(sdis_term)
-            do_name = mapping.get('DO_name')
-            if sdis_name.lower() == do_name.lower():
-                equiv = True
-        return equiv
-
-    def get_equivalence(self, sdis_id):
-        mapping = self.sdis_to_do.get(sdis_id)
-        do_name = mapping.get('DO_name')
-        return do_name
+    def get_equivalence(self, sdis_term):
+        mapping = self.sdis_to_do.get(sdis_term)
+        if mapping:
+            do_id = mapping.get('DOID').replace('DOID_', '')
+            return do_id
+        else:
+            return None
 
     def __str__(self):
         return 'sdis_to_do'

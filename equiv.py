@@ -12,7 +12,6 @@
 '''
 
 import uuid
-#import namespaces
 import csv
 import parsed
 import os
@@ -31,7 +30,6 @@ sp_eq = {}
 entrez_converter = {}
 affy_eq = {}
 refseq = {}
-#sd = {}
 chebi_id_eq = {}
 chebi_name_eq = {}
 pub_eq_dict = {}
@@ -46,7 +44,8 @@ sdis_eq = {}
 mesh_cs_eq = {}
 mesh_d_eq = {}
 mesh_pp_eq = {}
-# testing - 
+
+# ID to symbol mapping data used for SwissProt equivalences
 hgnc_map = parsed.load_data('hgnc').get_map()
 mgi_map = parsed.load_data('mgi').get_map()
 rgd_map = parsed.load_data('rgd').get_map()
@@ -325,18 +324,23 @@ def equiv(d, verbose):
         # assign a new uuid.
         count = 0
         sdis = parsed.load_data('sdis')
-        for vals in sdis.get_eq_values():
-            uid = None
-            sdis_term = vals
-            if d.has_equivalence(sdis_term):
+        for entry in sdis.get_eq_values():
+            #uid = None
+            do_id = d.get_equivalence(entry)
+            #sdis_term = vals
+            #if d.has_equivalence(sdis_term):
+            if do_id:
                 count = count + 1
-                do_term = d.get_equivalence(sdis_term)
-                if do_term in do_eq_dict:
-                    uid = do_eq_dict[do_term]
-                else:
-                    uid = do_eq_dict[do_term.lower()]
+                uid = do_id_eq.get(do_id)
+               
+               # do_term = d.get_equivalence(sdis_term)
+               # if do_term in do_eq_dict:
+               #     uid = do_eq_dict[do_term]
+               # else:
+               #     uid = do_eq_dict[do_term.lower()]
             else:
                 uid = uuid.uuid4()
+            sdis_eq[entry] = uid
         write_beleq(sdis_eq, 'selventa-legacy-diseases')
         if verbose:
             print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
@@ -346,16 +350,21 @@ def equiv(d, verbose):
         # assign a new uuid.
         count = 0
         schem = parsed.load_data('schem')
-        for vals in schem.get_eq_values():
-            uid = None
-            schem_term = vals
-            if d.has_equivalence(schem_term):
+        for schem_term in schem.get_eq_values():
+            #uid = None
+            #schem_term = vals
+            #if d.has_equivalence(schem_term):
+            #    count = count + 1
+            chebi_id = d.get_equivalence(schem_term)
+            if chebi_id:
                 count = count + 1
-                chebi_term = d.get_equivalence(schem_term)
-                if chebi_term in chebi_name_eq:
-                    uid = chebi_name_eq[chebi_term]
-                elif chebi_term.lower() in chebi_name_eq:
-                    uid = chebi_name_eq[chebi_term.lower()]
+                uid = chebi_id_eq.get(chebi_id)
+                if uid is None:
+                    uid = uuid.uuid4()
+               #if chebi_term in chebi_name_eq:
+                    #uid = chebi_name_eq[chebi_term]
+                #elif chebi_term.lower() in chebi_name_eq:
+                 #   uid = chebi_name_eq[chebi_term.lower()]
             else:
                 uid = uuid.uuid4()
             schem_eq[schem_term] = uid
@@ -461,9 +470,12 @@ def to_entrez(gene_id):
     return converted_id
 
 def write_beleq(eq_dict, filename):
-    """ Writes values and uuids from equiavlence dictionary to .beleq file. """
+    """ Writes values and uuids from equivalence dictionary to .beleq file. """
     fullname = '.'.join((filename, 'beleq'))
-    with open(fullname, 'w') as f:
-        for name, uid in sorted(eq_dict.items()):
-            f.write('|'.join((name,str(uid))) + '\n')
+    if len(eq_dict) == 0:
+        print('    WARNING: skipping writing ' + fullname + '; no equivalence data found.')
+    else:
+        with open(fullname, 'w') as f:
+            for name, uid in sorted(eq_dict.items()):
+                f.write('|'.join((name,str(uid))) + '\n')
 

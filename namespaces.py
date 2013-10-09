@@ -218,6 +218,9 @@ def make_namespace(d, verbose):
 def write_belns(ns_dict, filename):
     """ Writes values and encodings from namespace dict to .belns file. """
     fullname = '.'.join((filename, 'belns'))
-    with open(fullname, 'w') as f:
-        for name, encoding in sorted(ns_dict.items()):
-            f.write('|'.join((name, encoding)) + '\n')
+    if len(ns_dict) == 0:
+        print('    WARNING: skipping writing ' + fullname + '; no namespace data found.')
+    else:
+        with open(fullname, 'w') as f:
+            for name, encoding in sorted(ns_dict.items()):
+                f.write('|'.join((name, encoding)) + '\n')

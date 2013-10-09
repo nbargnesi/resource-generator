@@ -154,8 +154,8 @@ def make_namespace(d, verbose):
         write_belns(ns_id_dict, ns_id)
 
     elif str(d) == 'gocc':
-        ns = 'go-cellular-component-terms'
-        ns_id = 'go-cellular-component-accession-numbers'
+        ns = 'go-cellular-component-names'
+        ns_id = 'go-cellular-component-ids'
         for termid, termname, altids, complex in d.get_ns_values():
             if complex:
                 encoding = 'C'
@@ -212,6 +212,8 @@ def make_namespace(d, verbose):
         for name, id in d.get_ns_values():
             ns_dict[name] = encoding
             ns_id_dict[id] = encoding
+        write_belns(ns_dict, ns)
+        write_belns(ns_id_dict(ns_id)
 
 def write_belns(ns_dict, filename):
     """ Writes values and encodings from namespace dict to .belns file. """

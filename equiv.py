@@ -373,6 +373,8 @@ def equiv(d, verbose):
                 # get GO equiv if there is one in meshcs_to_gocc.csv
                 uid = None
                 go_id = mg_eq.get(mh)
+                if go_id:
+                    go_id = go_id.replace('GO:','')
                 # meshcs_to_gocc contains OBSOLETE GO terms at the moment.
                 # It is possible this lookup will return None, in that
                 # case generate a new uuid.

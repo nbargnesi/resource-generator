@@ -655,11 +655,15 @@ class GOBPParser(Parser):
             # iterate the NON-OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text
+                bp_termid = bp_termid.replace('GO:','')
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
+                    bp_altids = [altid.replace('GO:','') for altid in bp_altids]
                 else:
                     bp_altids = False
+                
+                
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
                         'altids' : bp_altids }
 
@@ -674,9 +678,11 @@ class GOBPParser(Parser):
             # iterate the OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text
+                bp_termid = bp_termid.replace('GO:','')
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
+                    bp_altids = [altid.replace('GO:','') for altid in bp_altids]
                 else:
                     bp_altids = False
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
@@ -740,7 +746,10 @@ class GOCCParser(Parser):
 
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
-
+            
+            cc_termid = cc_termid.replace('GO:','')
+            cc_altids = [altid.replace('GO:','') for altid in cc_altids]
+ 
             yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }
 
@@ -785,6 +794,9 @@ class GOCCParser(Parser):
 
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
+
+            cc_termid = cc_termid.replace('GO:','')
+            cc_altids = [altid.replace('GO:','') for altid in cc_altids]
 
             yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }

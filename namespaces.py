@@ -213,7 +213,7 @@ def make_namespace(d, verbose):
             ns_dict[name] = encoding
             ns_id_dict[id] = encoding
         write_belns(ns_dict, ns)
-        write_belns(ns_id_dict(ns_id)
+        write_belns(ns_id_dict, ns_id)
 
 def write_belns(ns_dict, filename):
     """ Writes values and encodings from namespace dict to .belns file. """

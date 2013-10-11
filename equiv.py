@@ -60,26 +60,19 @@ ref_status = {'REVIEWED' : 0,
 
 delim = '|'
 
-# create a reference, used in MeSH equivalencing
-curdir = os.getcwd()
-mesh_to_gocc = curdir+'/datasets/meshcs_to_gocc.csv'
-mg_eq = {}
-with open(mesh_to_gocc, 'r') as meshf:
-    mg_eq = dict([(rec[0], rec[2]) for rec in csv.reader(meshf, delimiter=',', quotechar='"')])
-
 # this method is called once, to build an equivalence dict used by SwissProt
-def build_equivs():
-
-    ns_dicts = [namespaces.hgnc_ns_dict, namespaces.mgi_ns_dict, \
-                 namespaces.rgd_ns_dict]
-    for d in ns_dicts:
-        for k, v in d.items():
-            if d is namespaces.hgnc_ns_dict:
-                equiv(k, 'hgnc')
-            if d is namespaces.mgi_ns_dict:
-                equiv(k, 'mgi')
-            if d is namespaces.rgd_ns_dict:
-                equiv(k, 'rgd')
+#def build_equivs():
+#
+#    ns_dicts = [namespaces.hgnc_ns_dict, namespaces.mgi_ns_dict, \
+#                 namespaces.rgd_ns_dict]
+#    for d in ns_dicts:
+#        for k, v in d.items():
+#            if d is namespaces.hgnc_ns_dict:
+#                equiv(k, 'hgnc')
+#            if d is namespaces.mgi_ns_dict:
+#                equiv(k, 'mgi')
+#            if d is namespaces.rgd_ns_dict:
+#                equiv(k, 'rgd')
 
 def make_eq_dict(d):
     temp_dict = d.get_dictionary()
@@ -325,19 +318,11 @@ def equiv(d, verbose):
         count = 0
         sdis = parsed.load_data('sdis')
         for entry in sdis.get_eq_values():
-            #uid = None
             do_id = d.get_equivalence(entry)
-            #sdis_term = vals
-            #if d.has_equivalence(sdis_term):
             if do_id:
                 count = count + 1
                 uid = do_id_eq.get(do_id)
                
-               # do_term = d.get_equivalence(sdis_term)
-               # if do_term in do_eq_dict:
-               #     uid = do_eq_dict[do_term]
-               # else:
-               #     uid = do_eq_dict[do_term.lower()]
             else:
                 uid = uuid.uuid4()
             sdis_eq[entry] = uid
@@ -351,20 +336,12 @@ def equiv(d, verbose):
         count = 0
         schem = parsed.load_data('schem')
         for schem_term in schem.get_eq_values():
-            #uid = None
-            #schem_term = vals
-            #if d.has_equivalence(schem_term):
-            #    count = count + 1
             chebi_id = d.get_equivalence(schem_term)
             if chebi_id:
                 count = count + 1
                 uid = chebi_id_eq.get(chebi_id)
                 if uid is None:
                     uid = uuid.uuid4()
-               #if chebi_term in chebi_name_eq:
-                    #uid = chebi_name_eq[chebi_term]
-                #elif chebi_term.lower() in chebi_name_eq:
-                 #   uid = chebi_name_eq[chebi_term.lower()]
             else:
                 uid = uuid.uuid4()
             schem_eq[schem_term] = uid
@@ -374,26 +351,20 @@ def equiv(d, verbose):
 
     elif str(d) == 'mesh':
 
+        gobp_eq_cf = {k.casefold():v for k, v in gobp_eq_dict.items()}
+        gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
         do_data = parsed.load_data('do')
+
         for vals in d.get_eq_values():
             ui, mh, mns, synonyms = vals
             # MeSH Cellular Structures equivalences to GO Cellular Components
             if any('A11.284' in branch for branch in mns):
-                # get GO equiv if there is one in meshcs_to_gocc.csv
                 uid = None
-                go_id = mg_eq.get(mh)
-                if go_id:
-                    go_id = go_id.replace('GO:','')
-                # meshcs_to_gocc contains OBSOLETE GO terms at the moment.
-                # It is possible this lookup will return None, in that
-                # case generate a new uuid.
-                if go_id is not None:
-                    uid = gocc_eq_dict.get(go_id)
-                    if uid is None:
-                        if verbose:
-                            print('Lookup failed for: '+str(go_id))
-                        uid = uuid.uuid4()
-                else:
+                synonyms.add(mh)
+                for syn in synonyms:
+                   if syn.casefold() in gocc_eq_cf:
+                       uid = gocc_eq_cf.get(syn.casefold())
+                if uid is  None:
                     uid = uuid.uuid4()
                 mesh_cs_eq[mh] = uid
             # MeSH Diseases equivalences to Disease Ontology (DO) 
@@ -408,16 +379,16 @@ def equiv(d, verbose):
             # MeSH Phenomena and Processes
             if any('G' in branch for branch in mns):
                 excluded = ('G01', 'G02', 'G15', 'G17')
+                uid = None
                 if all(branch.startswith(excluded) for branch in mns):
                      continue
-                # synonyms for MeSH
-                uid = None
+                # check MeSH synonyms for matches to GO
+                synonyms.add(mh)
                 for syn in synonyms:
-                    # root 'G' branch in GOBP
-                    for name in gobp_eq_dict:
-                        if syn.casefold() == name.casefold() or mh.casefold() == name.casefold():
-                            uid = gobp_eq_dict.get(name)
-                if uid is None:
+                   if syn.casefold() in gobp_eq_cf:
+                       uid = gobp_eq_cf.get(syn.casefold())
+                
+                if uid is  None:
                     uid = uuid.uuid4()
                 mesh_pp_eq[mh] = uid
         write_beleq(mesh_cs_eq, 'mesh-cellular-locations')

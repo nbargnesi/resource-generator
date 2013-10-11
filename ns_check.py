@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -99,15 +99,24 @@ def compare_namespace_equivalences(ns1, ns2):
     eq_name2 = ns2 + '.beleq'
     ns1_uids = []
     ns2_uids = set()
-    with open(eq_name1, 'r') as eq1:
-        for line in iter(eq1):
-            (value, uid) = line.split('|')
-            ns1_uids.append(uid)
+    ns1_length = 0
+    try:
+        with open(eq_name1, 'r') as eq1:
+            for line in iter(eq1):
+                (value, uid) = line.split('|')
+                ns1_uids.append(uid)
+    except IOError:
+        print('{0}.beleq does not appear to exist.'.format(ns1))
+        
     ns1_length = len(ns1_uids)
-    with open(eq_name2, 'r') as eq2:
-        for line in iter(eq2):
-            (value, uid) = line.split('|')
-            ns2_uids.add(uid)
+    try:
+        with open(eq_name2, 'r') as eq2:
+            for line in iter(eq2):
+                (value, uid) = line.split('|')
+                ns2_uids.add(uid)
+    except IOError:
+        print('{0}.beleq does not appear to exist.'.format(ns2))
+
     matches = 0
     for uid in ns1_uids:
         if uid in ns2_uids:
@@ -118,10 +127,14 @@ def test_namespace_equivalences(ns):
     """checks number of uuids vs number of values"""
     eq_name = ns + '.beleq'
     ns_uids = []
-    with open(eq_name, 'r') as eq:
-        for line in iter(eq):
-            (value, uid) = line.split('|')
-            ns_uids.append(uid)
+    try:
+        with open(eq_name, 'r') as eq:
+            for line in iter(eq):
+                (value, uid) = line.split('|')
+                ns_uids.append(uid)
+    except IOError:
+        print('{0}.beleq does not appear to exist.'.format(ns))
+
     ns_length = len(ns_uids)
     ns_unique = len(set(ns_uids))
     return ns_length, ns_unique

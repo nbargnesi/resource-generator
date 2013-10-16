@@ -198,7 +198,7 @@ def make_namespace(d, verbose):
                 ns2_dict[mh] = 'O'
             if any(branch.startswith('G') for branch in mns):
                 # MeSH Phenomena and Processes; encoding = 'B'
-                excluded = ('G01', 'G02', 'G15', 'G17')
+                excluded = ('G01', 'G15', 'G17')
                 if not all(branch.startswith(excluded) for branch in mns):
                     ns3_dict[mh] = 'B'
         write_belns(ns_dict, ns)

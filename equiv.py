@@ -378,7 +378,7 @@ def equiv(d, verbose):
                 mesh_d_eq[mh] = uid
             # MeSH Phenomena and Processes
             if any('G' in branch for branch in mns):
-                excluded = ('G01', 'G02', 'G15', 'G17')
+                excluded = ('G01', 'G15', 'G17')
                 uid = None
                 if all(branch.startswith(excluded) for branch in mns):
                      continue

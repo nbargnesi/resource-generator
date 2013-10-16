@@ -37,9 +37,5 @@ changelog_data['chebi.owl'] = \
     ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
 changelog_data['replace2013.txt'] = \
     ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.newterms/replace2013.txt', parsers.MESHChangesParser)
-changelog_data['SCHEM_to_CHEBIID.txt'] = \
-    ('SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
-changelog_data['SDIS_to_DO.txt'] = \
-    ('SDIS_to_DO.txt', parsers.SDIStoDOParser)
 changelog_data['doid.owl'] = \
     ('http://purl.obolibrary.org/obo/doid.owl', parsers.DODeprecatedParser)

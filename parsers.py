@@ -313,7 +313,7 @@ class AffyParser(Parser):
         array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
                        'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
                        'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
-                       'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 'HT_Rat230_PM']
+                       'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
 
         urls = []
         with open(self.affy_file, 'rb') as affyf:

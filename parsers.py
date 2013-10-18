@@ -1035,3 +1035,24 @@ class DODeprecatedParser(Parser):
 
     def __str__(self):
         return 'DODeprecated_Parser'
+
+class RGDObsoleteParser(Parser):
+
+    def __init__(self, url):
+        super(RGDObsoleteParser, self).__init__(url)
+        self.rgd_file = url
+
+    def parse(self):
+
+        with open(self.rgd_file, 'r') as rgdo:
+            # skip comment lines
+            rgd_csvr = csv.DictReader(filter(lambda row:
+                                                not row[0].startswith('#'), rgdo), 
+                                     delimiter='\t')
+            for row in rgd_csvr:
+                if row['SPECIES'] == 'rat':
+                    yield row
+
+    def __str__(self):
+        return "RGD_Obsolete_Parser"
+

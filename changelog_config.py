@@ -23,6 +23,8 @@ changelog_data['mgi.rpt'] = \
     ('ftp://ftp.informatics.jax.org/pub/reports/MRK_List1.rpt', parsers.MGIParser)
 changelog_data['rgd.txt'] = \
     ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)
+changelog_data['rgd_obsolete.txt'] = \
+    ('ftp://rgd.mcw.edu/pub/data_release/GENES_OBSOLETE_IDS.txt', parsers.RGDObsoleteParser)
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)
 # get the latest GO archive file name and URL

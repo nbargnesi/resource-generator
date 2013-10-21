@@ -592,6 +592,44 @@ class SDISParser(Parser):
     def __str__(self):
         return 'SDIS_Parser'
 
+class ComplexParser(Parser):
+
+    def __init__(self, url):
+        super(ComplexParser, self).__init__(url)
+        self.ns_file = url
+
+    def parse(self):
+        isFalse = True
+        with open(self.ns_file, 'r') as fp:
+            for line in fp.readlines():
+                if '[Values]' not in line and isFalse:
+                    continue
+                elif '[Values]' in line:
+                    isFalse = False
+                    continue
+                else:
+                    term = line.split('|')[0]
+                    yield {'term' : term }
+
+    def __str__(self):
+        return 'Complex_Parser'
+
+class ComplexToGOParser(Parser):
+
+    def __init__(self, url):
+        super(ComplexToGOParser, self).__init__(url)
+        self.map_file = url
+
+    def parse(self):
+        
+        with open(self.map_file, 'r') as ctg:
+            ctg_csvr = csv.DictReader(ctg, delimiter = ',')
+            for row in ctg_csvr:
+                yield row
+    
+    def __str__(self):
+        return 'Complex_To_GO_Parser'
+
 
 class SCHEMtoCHEBIParser(Parser):
 

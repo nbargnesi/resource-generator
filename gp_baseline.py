@@ -70,6 +70,7 @@ if not os.path.exists('datasets'):
 shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
 shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
 shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
+shutil.copy(src_dir+'/datasets/named_complexes_to_GOCC.csv', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
@@ -121,6 +122,8 @@ schem = parsed.load_data('schem')
 schem_to_chebi = parsed.load_data('schem_to_chebi')
 sdis = parsed.load_data('sdis')
 sdis_to_do = parsed.load_data('sdis_to_do')
+nch = parsed.load_data('nch')
+ctg = parsed.load_data('ctg')
 gobp = parsed.load_data('gobp')
 gocc = parsed.load_data('gocc')
 # pub_eq = parsed.load_data('pubchem_equiv')
@@ -129,7 +132,7 @@ mesh = parsed.load_data('mesh')
 do = parsed.load_data('do')
 
 # does NOT include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis]
+ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis, nch]
 for d in ns_data:
     if verbose:
         print('Generating namespace file for ' +str(d))
@@ -146,7 +149,7 @@ print('\n======= Phase V, building equivalences =======')
 # Any datasets producing a .beleq file should be added to equiv_data
 interval_time = time.time()
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
-              schem_to_chebi]
+              schem_to_chebi, nch]
 for d in equiv_data:
     if verbose:
         print('Generating equivalence file for ' +str(d))

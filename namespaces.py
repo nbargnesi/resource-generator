@@ -183,6 +183,13 @@ def make_namespace(d, verbose):
             ns_dict[entry] = encoding
         write_belns(ns_dict, ns)
 
+    elif str(d) == 'nch':
+        ns = 'selventa-named-complexes'
+        encoding = 'C'
+        for entry in d.get_ns_values():
+            ns_dict[entry] = encoding
+        write_belns(ns_dict, ns)
+
     elif str(d) == 'mesh':
         ns = 'mesh-cellular-locations'
         ns2 = 'mesh-diseases'

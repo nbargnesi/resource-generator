@@ -330,6 +330,24 @@ def equiv(d, verbose):
         if verbose:
             print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
 
+    elif str(d) == 'nch':
+        # Selventa named complexes (human) - equivalence to GOCC using manually generated .csv mapping file
+        ctg = parsed.load_data('ctg')
+        count = 0
+        nch_eq = {}
+        for entry in d.get_eq_values():
+            go_id = ctg.get_equivalence(entry)
+            #print(go_id)
+            if go_id:
+                count += 1
+                uid = gocc_eq_dict.get(go_id)
+            else:
+                uid = uuid.uuid4()
+            nch_eq[entry] = uid
+        write_beleq(nch_eq, 'selventa-named-complexes')
+        if verbose:
+            print('Able to resolve {0} Selventa named complexes to GOCC'.format(str(count)))
+ 
     elif str(d) == 'schem_to_chebi':
         # try to resolve schem terms to CHEBI. If there is not one,
         # assign a new uuid.

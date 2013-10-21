@@ -310,6 +310,45 @@ class SCHEMtoCHEBIData(DataSet):
     def __str__(self):
         return 'schem_to_chebi'
 
+class NCHData(DataSet):
+
+    def __init__(self, dictionary):
+        super(NCHData, self).__init__(dictionary)
+        self.nch_dict = dictionary
+
+    def get_dictionary(self):
+        return self.nch_dict
+
+    def get_ns_values(self):
+        for entry in self.nch_dict:
+            yield entry
+
+    def get_eq_values(self):
+        for entry in self.nch_dict:
+            yield entry
+
+    def __str__(self):
+        return 'nch'
+
+class CTGData(DataSet):
+
+    def __init__(self, dictionary):
+        super(CTGData, self).__init__(dictionary)
+        self.ctg = dictionary
+
+    def get_dictionary(self):
+        return self.ctg
+
+    def get_equivalence(self, term):
+        mapping = self.ctg.get(term)
+        if mapping:
+            go_id = mapping.get('go_id')
+            return go_id
+        else:
+            return None
+
+    def __str__(self):
+        return 'ctg'
 
 class SDISData(DataSet):
 

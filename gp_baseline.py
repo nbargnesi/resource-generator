@@ -110,9 +110,9 @@ if args.begin_phase <= 1:
 		if verbose:
 			print('Downloading ' +str(name))
 		path = os.path.join('datasets/', name)
-#		if url_tuple[RES_LOCATION].startswith('http') or \
-#				url_tuple[RES_LOCATION].startswith('ftp'):
-#			download(url_tuple[RES_LOCATION], path)
+		if url_tuple[RES_LOCATION].startswith('http') or \
+				url_tuple[RES_LOCATION].startswith('ftp'):
+			download(url_tuple[RES_LOCATION], path)
 	print('Phase 1 ran in %.3f minutes' % ((time.time() - start_time) / 60))
 else:
 	print('\nSkipping phase 1.')

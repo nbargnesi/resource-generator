@@ -74,7 +74,7 @@ def get_latest_GO_filename(go_file):
 	try:
 		src = urllib.request.urlopen(url).read().decode("utf-8")
 	except:
-		sys.stderr.write('WARNINIG! [function get_latest_GO_filename] Unable to fetch URL: %s\n' % (url))
+		print('WARNINIG! [function get_latest_GO_filename] Unable to fetch URL: %s\n' % (url))
 		return go_file
 	# file matching pattern for resoure filename
 	p_fn = re.compile('go_\d+-termdb.obo-xml.gz', re.M|re.S)
@@ -83,5 +83,6 @@ def get_latest_GO_filename(go_file):
 		go_file = '/'.join([url, fn])
 	except:
 		# unable to locate resoure filename
+		print('WARNINIG! [function get_latest_GO_filename] Unable to identify data file in %s\n' % (url))
 		pass
 	return go_file

@@ -63,7 +63,7 @@ args = parser.parse_args()
 
 verbose = args.verbose
 if verbose:
-	print('\nRunning gp_baseline in verbose mode.')
+	print('\nRunning gp_baseline in verbose mode.\n')
 	
 if args.begin_phase > args.end_phase:
 	args.end_phase = args.begin_phase
@@ -86,21 +86,19 @@ dep_files.append('meshcs_to_gocc.csv')
 dep_files.append('SDIS_to_DO.txt')
 dep_files.append('SCHEM_to_CHEBIID.txt')
 dep_files.append('named_complexes_to_GOCC.csv')
+dep_files.append('test')
 for df in dep_files:
 	if not os.path.exists(src_dir+'/datasets/'+df):
-		print('Dependency file %s not found in %s/datasets/' % (df, src_dir))
+		print('WARNING !!! Dependency file %s not found in %s/datasets/' % (df, src_dir))
 	else:
 		shutil.copy(src_dir+'/datasets/'+df, os.getcwd()+'/datasets')
 		if verbose:
-			print('Dependency file %s copied to %s/datasets/' % (df, os.getcwd()))
+			print('Copying dependency file %s to %s/datasets/' % (df, os.getcwd()))
 
 #shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
 #shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
 #shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
 #shutil.copy(src_dir+'/datasets/named_complexes_to_GOCC.csv', os.getcwd()+'/datasets')
-#shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
-#shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
-#shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
 
 start_time = time.time()
 

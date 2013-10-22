@@ -4,7 +4,7 @@ SCHEM_term	CHEBIID	CHEBI_name
 (R)-3-Hydroxybutyric acid	17066	(R)-3-hydroxybutyric acid
 (R)-5-Diphosphomevalonate	15899	(R)-5-diphosphomevalonic acid
 (R)-5-Phosphomevalonate	17436	(R)-5-phosphomevalonic acid
-"(S)-2,3-Epoxysqualene"	15441	"(S)-2,3-epoxysqualene"
+(S)-2,3-Epoxysqualene	15441	(S)-2,3-epoxysqualene
 (S)-3-Hydroxy-3-methylglutaryl-CoA	15467	(3S)-3-hydroxy-3-methylglutaryl-CoA
 (S)-3-Hydroxybutanoyl-CoA	15453	(S)-3-hydroxybutanoyl-CoA
 (S)-3-Hydroxydodecanoyl-CoA	27668	(S)-3-hydroxylauroyl-CoA
@@ -14,51 +14,51 @@ SCHEM_term	CHEBIID	CHEBI_name
 (S)-Hydroxyhexanoyl-CoA	28276	(S)-3-hydroxyhexanoyl-CoA
 (S)-Hydroxyoctanoyl-CoA	28632	(S)-3-hydroxyoctanoyl-CoA
 (S)-Malate	15589	(S)-malate(2-)
-"1,10-Phenanthroline"	44975	"1,10-phenanthroline"
-"1,2-Bis(2-aminophenoxy)ethane-N,N,N',N'-tetraacetic acid"	60888	BAPTA
-"1,2-Dipalmitoylphosphatidylcholine"	18899	"1,2-dipalmitoylphosphatidylcholine"
-"1,2-Dithiol-3-thione"	50866	"3H-1,2-dithiole-3-thione"
-"1,3-Bisphospho-D-glycerate"	16001	3-phospho-D-glyceroyl dihydrogen phosphate
-"1,4-Benzodiazepine"	38431	"1,4-benzodiazepine"
-"1,5-Dihydro-fad"	17877	FADH2
-"1,7-Dimethylxanthine"	25858	"1,7-dimethylxanthine"
-"1,7-Phenanthroline"	36418	"1,7-phenanthroline"
+1,10-Phenanthroline	44975	1,10-phenanthroline
+1,2-Bis(2-aminophenoxy)ethane-N,N,N',N'-tetraacetic acid	60888	BAPTA
+1,2-Dipalmitoylphosphatidylcholine	72999	1,2-dihexadecanoyl-sn-glycero-3-phosphocholine
+1,2-Dithiol-3-thione	50866	3H-1,2-dithiole-3-thione
+1,3-Bisphospho-D-glycerate	16001	3-phospho-D-glyceroyl dihydrogen phosphate
+1,4-Benzodiazepine	38431	1,4-benzodiazepine
+1,5-Dihydro-fad	17877	FADH2
+1,7-Dimethylxanthine	25858	1,7-dimethylxanthine
+1,7-Phenanthroline	36418	1,7-phenanthroline
 1-(5-Isoquinolinesulfonyl)-2-methylpiperazine	43385	5-(2-methylpiperazine-1-sulfonyl)isoquinoline
 1-Acyl-2-oleoyl-sn-glycero-3-phosphocholine	58293	1-acyl-2-oleoyl-sn-glycero-3-phosphocholine betaine
 1-Alkyl-2-acetyl-sn-glycero-3-phosphocholine	63915	2-acetyl-1-alkyl-sn-glycero-3-phosphocholine betaine
 1-Aminomethylphosphonic acid	28812	(aminomethyl)phosphonic acid
 1-Butanol	28885	butan-1-ol
-1-Deoxynojirimycin	44369	"(2R,3R,4R,5S)-2-(hydroxymethyl)piperidine-3,4,5-triol"
+1-Deoxynojirimycin	44369	(2R,3R,4R,5S)-2-(hydroxymethyl)piperidine-3,4,5-triol
 1-Methyl-3-isobutylxanthine	34795	3-isobutyl-1-methyl-7H-xanthine
-"1-Methyl-4-phenyl-1,2,3,6-tetrahydropyridine"	17963	"1-methyl-4-phenyl-1,2,3,6-tetrahydropyridine"
+1-Methyl-4-phenyl-1,2,3,6-tetrahydropyridine	17963	1-methyl-4-phenyl-1,2,3,6-tetrahydropyridine
 1-Methyl-4-phenylpyridinium	641	N-methyl-4-phenylpyridinium
 1-Methyl-delta(1)-pyrrolinium	27435	1-methylpyrrolinium
 1-Organyl-2-lyso-sn-glycero-3-phosphocholine	30909	1-alkyl-sn-glycero-3-phosphocholine
-"1-Phosphatidyl-1D-myo-inositol 3,4-bisphosphate"	57658	"1-phosphatidyl-1D-myo-inositol 3,4-bisphosphate(5-)"
+1-Phosphatidyl-1D-myo-inositol 3,4-bisphosphate	16152	1-phosphatidyl-1D-myo-inositol 3,4-bisphosphate
 1-Phosphatidyl-D-myo-inositol	16749	1-phosphatidyl-1D-myo-inositol
-"1-Phosphatidyl-D-myo-inositol 4,5-bisphosphate"	18348	"1-phosphatidyl-1D-myo-inositol 4,5-bisphosphate"
+1-Phosphatidyl-D-myo-inositol 4,5-bisphosphate	18348	1-phosphatidyl-1D-myo-inositol 4,5-bisphosphate
 10-Formyltetrahydrofolylpolyglutamate	28010	10-formyltetrahydrofolyl polyglutamate macromolecule
 11-deoxycorticosterone	16973	11-deoxycorticosterone
 11-deoxycortisol	28324	11-deoxycortisol
 12-Hpete	15626	12(S)-HPETE
-"12-Hydroxy-5,8,10,14-eicosatetraenoic acid"	19138	12-HETE
+12-Hydroxy-5,8,10,14-eicosatetraenoic acid	19138	12-HETE
 17alpha-hydroxypregnenolone	28750	17alpha-hydroxypregnenolone
 17alpha-hydroxyprogesterone	17252	17alpha-hydroxyprogesterone
 18-Hydroxycorticosterone	16485	18-hydroxycorticosterone
-"1D-myo-Inositol 1,3,4,5-tetrakisphosphate"	16783	"1D-myo-inositol 1,3,4,5-tetrakisphosphate"
+1D-myo-Inositol 1,3,4,5-tetrakisphosphate	16783	1D-myo-inositol 1,3,4,5-tetrakisphosphate
 1H-Imidazole-4-acetaldehyde	27398	imidazole-4-acetaldehyde
 2'-Deoxy-5'-adenosine monophosphate	17713	dAMP
 2'-Deoxyadenosine	17256	2'-deoxyadenosine
-2'-Deoxycytidine 5'-triphosphate	61481	dCTP(4-)
+2'-Deoxycytidine 5'-triphosphate	16311	dCTP
 2'-Deoxyguanosine 5'-phosphate	16192	dGMP
-"2,2'-Dipyridyl"	30351	"2,2'-bipyridine"
-"2,3-Dimethoxy-1,4-naphthoquinone"	64215	"2,3-dimethoxynaphthalene-1,4-dione"
+2,2'-Dipyridyl	30351	2,2'-bipyridine
+2,3-Dimethoxy-1,4-naphthoquinone	64215	2,3-dimethoxynaphthalene-1,4-dione
 2-(alpha-Hydroxyethyl)thiamine diphosphate	978	2-(1-hydroxyethyl)thiamine diphosphate
 2-Acylglycerol	17389	2-monoglyceride
 2-Aminoisobutyric acid	27971	2-aminoisobutyric acid
 2-Arachidonoylglycerol	52392	2-arachidonoylglycerol
-2-Benzoquinone	17253	"1,2-benzoquinone"
-2-Deoxy-D-ribose 1-phosphate	58576	2-deoxy-D-ribofuranose 1-phosphate(2-)
+2-Benzoquinone	17253	1,2-benzoquinone
+2-Deoxy-D-ribose 1-phosphate	28542	2-deoxy-D-ribofuranose 1-phosphate
 2-Formyl-5-(hydroxymethyl)pyrrole-1-norleucine	59973	1-(L-norleucin-6-yl)pyrraline
 2-Hydroxybutyric acid	1148	2-hydroxybutyric acid
 2-Methoxyestradiol	28955	2-methoxy-17beta-estradiol
@@ -66,29 +66,29 @@ SCHEM_term	CHEBIID	CHEBI_name
 2-Nitrotoluene	33098	2-nitrotoluene
 2-Oxoglutarate	16810	2-oxoglutarate(2-)
 2-Phospho-D-glycerate	17835	2-phospho-D-glyceric acid
-2-Phosphoglycolate	17150	2-phosphoglycolic acid
+2-Phosphoglycolate	19763	2-phosphoglycolate
 2-trans-Dodecenoyl-CoA	15471	trans-dodec-2-enoyl-CoA
 20-Hydroxycholesterol	1296	20-hydroxycholesterol
 22beta-Hydroxycholesterol	67237	(22R)-22-hydroxycholesterol
 24-Hydroxycholesterol	50515	24-hydroxycholesterol
 25-Hydroxycholesterol	42977	25-hydroxycholesterol
 27-Hydroxycholesterol	17703	26-hydroxycholesterol
-"3',5'-Cyclic dAMP"	28074	"3',5'-cyclic dAMP"
-"3,3'-Diindolylmethane"	50182	"3,3'-diindolylmethane"
-"3,3-Dimethylallyl pyrophosphate"	16057	prenyl diphosphate
-"3,4,3',4'-Tetrachlorobiphenyl"	1367	"3,3',4,4'-tetrachlorobiphenyl"
-"3,4-Dihydroxymandelaldehyde"	27852	"3,4-dihydroxymandelaldehyde"
-"3,4-Dihydroxymandelic acid"	27637	"3,4-dihydroxymandelic acid"
-"3,4-Dihydroxyphenylacetaldehyde"	27978	"3,4-dihydroxyphenylacetaldehyde"
-"3,4-Dihydroxyphenylacetic acid"	41941	"(3,4-dihydroxyphenyl)acetic acid"
-"3,6-diaziridinyl-1,4-benzoquinone"	19363	"2,5-bis(aziridin-1-yl)-1,4-benzoquinone"
+3',5'-Cyclic dAMP	28074	3',5'-cyclic dAMP
+3,3'-Diindolylmethane	50182	3,3'-diindolylmethane
+3,3-Dimethylallyl pyrophosphate	16057	prenyl diphosphate
+3,4,3',4'-Tetrachlorobiphenyl	1367	3,3',4,4'-tetrachlorobiphenyl
+3,4-Dihydroxymandelaldehyde	27852	3,4-dihydroxymandelaldehyde
+3,4-Dihydroxymandelic acid	27637	3,4-dihydroxymandelic acid
+3,4-Dihydroxyphenylacetaldehyde	27978	3,4-dihydroxyphenylacetaldehyde
+3,4-Dihydroxyphenylacetic acid	41941	(3,4-dihydroxyphenyl)acetic acid
+3,6-diaziridinyl-1,4-benzoquinone	19363	2,5-bis(aziridin-1-yl)-1,4-benzoquinone
 3-Aminobenzamide	64042	3-aminobenzamide
 3-Aminobenzoic acid	42682	3-aminobenzoic acid
 3-Aminopropionaldehyde	18090	3-aminopropanal
 3-Carboxy-1-hydroxypropyl-ThPP	1463	3-carboxy-1-hydroxypropylthiamine diphosphate
 3-Chlorotyrosine	53678	3-chloro-L-tyrosine
 3-Deoxyglucosone	60777	3-deoxyglucosone
-"3-Hydroxy-N6,N6,N6-trimethyl-L-lysine"	15786	"3-hydroxy-N(6),N(6),N(6)-trimethyl-L-lysine"
+3-Hydroxy-N6,N6,N6-trimethyl-L-lysine	15786	3-hydroxy-N(6),N(6),N(6)-trimethyl-L-lysine
 3-Hydroxyacyl-CoA	65260	3-hydroxyacyl-CoA
 3-Hydroxybutyric acid	20067	3-hydroxybutyric acid
 3-Hydroxydecanoyl-coenzyme A	28325	(S)-3-hydroxydecanoyl-CoA
@@ -108,22 +108,22 @@ SCHEM_term	CHEBIID	CHEBI_name
 3-Nitropropionic acid	16348	3-nitropropanoic acid
 3-Nitrotyrosine	44454	3-nitro-L-tyrosine
 3-Oxocholan-24-oic acid	17639	3-oxo-5beta-cholanic acid
-3-Oxodecanoyl-CoA	28528	3-oxodecanoyl-CoA
+3-Oxodecanoyl-CoA	62548	3-oxodecanoyl-CoA(4-)
 3-Oxododecanoyl-CoA	27868	3-oxolauroyl-CoA
-3-Oxooctanoyl-CoA	62619	3-oxooctanoyl-CoA(4-)
+3-Oxooctanoyl-CoA	28264	3-oxooctanoyl-CoA
 3-Oxopalmitoyl-CoA	15491	3-oxopalmitoyl-CoA
-3-Oxotetradecanoyl-CoA	28726	3-oxotetradecanoyl-CoA
+3-Oxotetradecanoyl-CoA	62543	3-oxotetradecanoyl-CoA(4-)
 3-Phospho-D-glycerate	58272	3-phosphonato-D-glycerate(3-)
 3-Phospho-D-glyceroyl phosphate	16001	3-phospho-D-glyceroyl dihydrogen phosphate
 3-Phosphoglycerate	17050	3-phosphoglyceric acid
 3-trans-decenoyl-CoA	29126	trans-dec-3-enoyl-CoA
-3-Ureidoisobutyrate	1670	3-ureidoisobutyric acid
-"4,4-dimethylcholesta-8(9),14,24-trien-3beta-ol"	17813	"4,4-dimethyl-5alpha-cholesta-8,14,24-trien-3beta-ol"
-"4,4-dimethylcholesta-8(9),24-dien-3beta-ol"	18364	14-demethyllanosterol
-"4,6-Dihydroxyquinoline"	28799	"quinoline-4,6-diol"
-"4,8-Dihydroxyquinoline"	28883	"quinoline-4,8-diol"
+3-Ureidoisobutyrate	74414	3-ureidoisobutyrate(1-)
+4,4-dimethylcholesta-8(9),14,24-trien-3beta-ol	17813	4,4-dimethyl-5alpha-cholesta-8,14,24-trien-3beta-ol
+4,4-dimethylcholesta-8(9),24-dien-3beta-ol	18364	14-demethyllanosterol
+4,6-Dihydroxyquinoline	28799	quinoline-4,6-diol
+4,8-Dihydroxyquinoline	28883	quinoline-4,8-diol
 4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanone	32692	4-(N-nitrosomethylamino)-1-(3-pyridyl)butan-1-one
-"4-Amino-1,8-naphthalimide"	40071	"4-amino-1,8-naphthalimide"
+4-Amino-1,8-naphthalimide	40071	4-amino-1,8-naphthalimide
 4-Aminobiphenyl	1784	biphenyl-4-amine
 4-Aminobutyraldehyde	17769	4-aminobutanal
 4-Biphenylamine	1784	biphenyl-4-amine
@@ -141,37 +141,38 @@ SCHEM_term	CHEBIID	CHEBI_name
 4-Trimethylammoniobutanoate	1941	4-(trimethylammonio)butanoic acid
 5'-Guanylic acid	17345	GMP
 5'-Methylthioadenosine	17509	5'-S-methyl-5'-thioadenosine
-"5,10-methenyltetrahydrofolate polyglutamate"	65050	"5,10-methenyltetrahydrofolate polyglutamate polymer"
-"5,10-Methylenetetrahydrofolate"	1989	"(6R)-5,10-methylenetetrahydrofolic acid"
-"5,10-Methylenetetrahydrofolate polyglutamate"	61443	"5,10-methylenetetrahydrofolate polyglutamate polymer"
-"5,6,7,8-Tetrahydrobiopterin"	15372	"5,6,7,8-tetrahydrobiopterin"
-"5,6-Dihydrothymine"	27468	"5,6-dihydrothymine"
+5,10-methenyltetrahydrofolate polyglutamate	65050	5,10-methenyltetrahydrofolate polyglutamate polymer
+5,10-Methylenetetrahydrofolate	12071	5,10-methylenetetrahydrofolate(2-)
+5,10-Methylenetetrahydrofolate polyglutamate	61443	5,10-methylenetetrahydrofolate polyglutamate polymer
+5,6,7,8-Tetrahydrobiopterin	15372	5,6,7,8-tetrahydrobiopterin
+5,6-Dihydrothymine	27468	5,6-dihydrothymine
 5-Azacytosine	72474	5-azacytosine
 5-Carboxamidotryptamine	48292	5-carboxamidotryptamine
 5-fluorouracil	46345	5-fluorouracil
 5-HETE	60943	5-HETE
 5-Hydroxyindoleacetaldehyde	50157	(5-hydroxyindol-3-yl)acetaldehyde
-5-Methyltetrahydrofolate	15641	5-methyltetrahydrofolic acid
-6-Hydroxydopa	20725	6-hydroxydopa
+5-Methyltetrahydrofolate	20612	5-methyltetrahydrofolate
+6-Aminonicotinamide	74514	6-aminonicotinamide
+6-Hydroxydopa	72753	6-hydroxy-L-dopa
 6-hydroxypaclitaxel	63859	6-hydroxypaclitaxel
 6-Ketoprostaglandin F1alpha	28158	6-oxo-prostaglandin F1alpha
 6-Mercaptopurine	50667	mercaptopurine
-6-Phosphonoglucono-delta-lactone	16938	"6-O-phosphono-D-glucono-1,5-lactone"
+6-Phosphonoglucono-delta-lactone	16938	6-O-phosphono-D-glucono-1,5-lactone
 6beta-Hydroxytestosterone	34477	6beta-hydroxytestosterone
-7-Dehydrocholesterol	17759	"cholesta-5,7-dien-3beta-ol"
+7-Dehydrocholesterol	17759	cholesta-5,7-dien-3beta-ol
 7-Ketocholesterol	64294	7-ketocholesterol
-8-Bromo cyclic adenosine monophosphate	64211	"8-bromo-3',5'-cyclic AMP"
-8-Bromocyclic GMP	64108	"8-bromo-3',5'-cyclic GMP"
+8-Bromo cyclic adenosine monophosphate	64211	8-bromo-3',5'-cyclic AMP
+8-Bromocyclic GMP	64108	8-bromo-3',5'-cyclic GMP
 8-Hydroxy-2-(di-n-propylamino)tetralin	73364	8-OH-DPAT
 8-Hydroxydeoxyguanosine 5'-monophosphate	63223	8-oxo-dGMP
-8-Hydroxyguanine	52617	"7,8-dihydro-8-oxoguanine"
+8-Hydroxyguanine	52617	7,8-dihydro-8-oxoguanine
 8-Isoprostane	34505	8-epi-prostaglandin F2alpha
-"8-oxo-7,8-dihydro-2'-deoxyguanosine"	40304	8-hydroxy-2'-deoxyguanosine
+8-oxo-7,8-dihydro-2'-deoxyguanosine	40304	8-hydroxy-2'-deoxyguanosine
 8-Oxo-7-hydrodeoxyguanosine	40304	8-hydroxy-2'-deoxyguanosine
 8-Oxodeoxyguanosine triphosphate	63220	8-oxo-dGTP
-"9,10-Dimethyl-1,2-benzanthracene"	254496	"7,12-dimethyltetraphene"
-"9-cis,11-trans-Octadecadienoate"	17539	"9-cis,11-trans-octadecadienoate"
-"9-Deoxy-9,10-didehydro-12,13-didehydro-13,14-dihydroprostaglandin D2"	28130	"13,14-dihydro-Delta(12)-prostaglandin J2"
+9,10-Dimethyl-1,2-benzanthracene	254496	7,12-dimethyltetraphene
+9-cis,11-trans-Octadecadienoate	17539	9-cis,11-trans-octadecadienoate
+9-Deoxy-9,10-didehydro-12,13-didehydro-13,14-dihydroprostaglandin D2	28130	13,14-dihydro-Delta(12)-prostaglandin J2
 9-Deoxy-delta-9-prostaglandin D2	27485	prostaglandin J2
 Ac-DEVD-CHO	59385	Ac-Asp-Glu-Val-Asp-H
 Acarbose	2376	acarbose
@@ -181,7 +182,7 @@ Acetaminophen	46195	paracetamol
 Acetanilide	28884	N-phenylacetamide
 Acetazolamide	27690	acetazolamide
 Acetic acid	15366	acetic acid
-"Acetic acid, ion(1-)"	30089	acetate
+Acetic acid, ion(1-)	30089	acetate
 acetoacetate	13705	acetoacetate
 Acetoacetic acid	15344	acetoacetic acid
 acetoacetyl-CoA	15345	acetoacetyl-CoA
@@ -189,29 +190,30 @@ Acetovanillone	2781	apocynin
 Acetyl coenzyme A	15351	acetyl-CoA
 Acetyl-CoA	15351	acetyl-CoA
 Acetylcholine	15355	acetylcholine
-Acetylcysteine	28939	N-acetyl-L-cysteine
+Acetylcysteine	22198	acetylcysteine
 Acetylglucosamine	28009	N-acetyl-beta-D-glucosamine
 Acetylhydrazine	2422	acetohydrazide
 Acetylleucyl-leucyl-norleucinal	2423	acetylleucyl-leucyl-norleucinal
 Acetylmuramyl-alanyl-isoglutamine	59414	muramyl dipeptide
+Acivicin	74545	acivicin
 Acrolein	15368	acrolein
 Actinomycin	15369	actinomycin
 Acyclovir	2453	acyclovir
-Acyl-CoA	58342	acyl-CoA(4-)
+Acyl-CoA	17984	acyl-CoA
 Adenine	16708	adenine
 Adenosine	16335	adenosine
 Adenosine 5'-O-(3-thiotriphosphate)	27575	adenosine 5'-[gamma-thio]triphosphate
-Adenosine diphosphate ribose	16960	ADP-D-ribose
-Adenosine phosphate	16027	AMP
+Adenosine diphosphate ribose	37463	ADP-D-ribose 2'-phosphate
+Adenosine phosphate	22256	adenosine phosphate
 Adenosine triphosphate	15422	ATP
 Adenosine-5'-(N-ethylcarboxamide)	73284	N-ethyl-5'-carboxamidoadenosine
-ADP	456216	ADP(3-)
+ADP	73342	Ala-Asp-Pro
 Aflatoxin B1	2504	aflatoxin B1
 Agmatine	17431	agmatine
-Alanine	16449	alanine
+Alanine	16977	L-alanine
 Albuterol	2549	albuterol
-Alcohol	16236	ethanol
-Aldosterone	27584	aldosterone
+Alcohol	30879	alcohol
+Aldosterone	30834	aldosterone hemiacetal
 Alendronate sodium	2566	alendronate sodium
 Aliskiren	601027	aliskiren
 Alitretinoin	50648	9-cis-retinoic acid
@@ -225,12 +227,13 @@ alpha-Estradiol	17160	17alpha-estradiol
 alpha-Ketobutyric acid	30831	2-oxobutanoic acid
 alpha-Ketoglutaric acid	30915	2-oxoglutaric acid
 Alprostadil	15544	prostaglandin E1
+Alum	74768	aluminium sulfate (anhydrous)
 Aluminum	28984	aluminium atom
-Am 580	64210	"4-\{[(5,5,8,8-tetramethyl-5,6,7,8-tetrahydronaphthalen-2-yl)carbonyl]amino\}benzoic acid"
+Am 580	64210	4-\{[(5,5,8,8-tetramethyl-5,6,7,8-tetrahydronaphthalen-2-yl)carbonyl]amino\}benzoic acid
 Amantadine	2618	amantadine
 Amide	29337	azanide
 Amiloride	2639	amiloride
-amino acid	33709	amino acid
+amino acid	33704	alpha-amino acid
 Aminoacetone	17906	aminoacetone
 Aminoglutethimide	2654	aminoglutethimide
 Aminohippuric acid	104011	p-aminohippuric acid
@@ -244,11 +247,11 @@ Amygdalin	27613	amygdalin
 Anandamide	2700	anandamide
 Anastrozole	2704	anastrozole
 Androgen	50113	androgen
-Androstenedione	16422	"androst-4-ene-3,17-dione"
+Androstenedione	16422	androst-4-ene-3,17-dione
 Androstenol	40933	5alpha-androst-16-en-3alpha-ol
 Androsterone	16032	androsterone
 Angiotensin	48433	angiotensin
-Angiotensin ii	48432	angiotensin II
+Angiotensin ii	2719	Ile(5)-angiotensin II
 Angiotensin II (1-7)	55438	Ile(5)-angiotensin II (1-7)
 Anisomycin	338412	(-)-anisomycin
 Anthracycline	48120	anthracycline
@@ -263,8 +266,9 @@ APPC	61718	p-aminophenylphosphocholine
 Arachidic acid	28822	arachidic acid
 Arachidonic acid	15843	arachidonic acid
 Arachidonyl-coenzyme A	15514	arachidonoyl-CoA
+Arecoline	2814	arecoline
 Argatroban	48720	argatroban
-Arginine	32696	argininium(1+)
+Arginine	16467	L-arginine
 Arsenic	27563	arsenic atom
 Arsenic oxide	50527	arsenic oxide
 Arsenic trioxide	30621	diarsenic trioxide
@@ -277,11 +281,12 @@ Aspartic acid D-form	17364	D-aspartic acid
 Aspirin	15365	acetylsalicylic acid
 Astaxanthine	40968	astaxanthin
 Atazanavir	37924	atazanavir
-Atenolol	2904	atenolol
+Atenolol	55352	(R)-atenolol
 Atorvastatin	39548	atorvastatin
 ATP	15422	ATP
 Atropine	16684	atropine
 Azacitidine	2038	5-azacytidine
+Azaserine	74846	azaserine
 Azathioprine	2948	azathioprine
 Azetidine	30968	azetidine
 Azetidyl-2-carboxylic acid	6198	(S)-azetidine-2-carboxylic acid
@@ -292,7 +297,7 @@ Bacitracin	28669	bacitracin
 Bafilomycin A1	22689	bafilomycin A1
 Baicalein	2979	baicalein
 Baicalin	61283	baicalin(1-)
-Barium	37136	barium(2+)
+Barium	32594	barium atom
 Beclomethasone	3001	beclomethasone
 Benfotiamine	41039	benfotiamine
 Benomyl	3015	benomyl
@@ -300,13 +305,14 @@ Benzbromarone	3023	benzbromarone
 Benzene	16716	benzene
 Benzo(a)pyrene	29865	benzo[a]pyrene
 Benzo(a)pyrene diolepoxide I	30614	benzo[a]pyrene diol epoxide I
-Benzoquinone	16509	"1,4-benzoquinone"
+Benzoquinone	16509	1,4-benzoquinone
+Benzyloxycarbonylleucyl-leucyl-leucine aldehyde	75142	N-benzyloxycarbonyl-L-leucyl-L-leucyl-L-leucinal
 Berberine	16118	berberine
 beta-Alanine	16958	beta-alanine
 beta-Aminopropion aldehyde	27608	beta-Aminopropion aldehyde
 beta-D-Galactose	27667	beta-D-galactose
 beta-D-Galactoside	28034	beta-D-galactoside
-beta-Elemene	62854	beta-elemene
+beta-Elemene	62855	(-)-beta-elemene
 Betaine	17750	glycine betaine
 Betamethasone	3077	betamethasone
 Betamethasone valerate	31277	betamethasone valerate
@@ -318,7 +324,7 @@ Bicuculline	3092	bicuculline
 Bile salt	3098	bile acid
 Bilirubin	16990	bilirubin
 Biliverdine	17033	biliverdin
-Biotin	15956	biotin
+Biotin	57586	biotinate
 Bisphenol A	33216	bisphenol A
 Bivalirudin	59173	bivalirudin
 Bleomycin	3139	bleomycin A2
@@ -332,14 +338,15 @@ Bucladesine	50095	bucladesine
 Budesonide	3207	budesonide
 Bumetanide	3213	bumetanide
 Bupivacaine	3215	bupivacaine
-"Butanedioic acid, ion(2-)"	30031	succinate(2-)
-Butanoyl-CoA	22954	butanoyl-CoA
-Buthionine sulfoximine	28714	"S-butyl-DL-homocysteine (S,R)-sulfoximine"
-Butylated hydroxytoluene	34247	"2,6-di-tert-butyl-4-methylphenol"
+Butanedioic acid, ion(2-)	30031	succinate(2-)
+Butanoyl-CoA	57371	butyryl-CoA(4-)
+Buthionine sulfoximine	28714	S-butyl-DL-homocysteine (S,R)-sulfoximine
+Butylated hydroxytoluene	34247	2,6-di-tert-butyl-4-methylphenol
 Butyric acid	30772	butyric acid
 Cadaverine	58384	cadaverine(2+)
 Cadmium	22977	cadmium atom
 Cadmium chloride	35456	cadmium dichloride
+Caffeic acid phenethyl ester	8062	phenethyl caffeate
 Caffeine	27732	caffeine
 Calcidiol	17933	calcidiol
 Calcifediol anhydrous	17933	calcidiol
@@ -359,24 +366,25 @@ Capsaicin	3374	capsaicin
 Captopril	3380	captopril
 Carbachol	3385	carbachol
 Carbamazepine	3387	carbamazepine
-"Carbamic acid, ion(1-)"	13941	carbamate
+Carbamic acid, ion(1-)	13941	carbamate
 Carbofuran	34611	carbofuran
 Carbon Dioxide	16526	carbon dioxide
 Carbon monoxide	17245	carbon monoxide
 Carbon tetrachloride	27385	tetrachloromethane
 Carbonyl cyanide m-chlorophenyl hydrazone	3259	CCCP
+Carbonyl cyanide p-trifluoromethoxyphenylhydrazone	75458	carbonyl cyanide p-trifluoromethoxyphenylhydrazone
 Carboplatin	31355	carboplatin
 Cardenolide	71620	cardenolide
 Cardiolipin	28494	cardiolipin
 Carmustine	3423	carmustine
-Carnitine	3424	carnitinium
+Carnitine	16347	(R)-carnitine
 Carrageenan	3435	carrageenan
 Castanospermine	27860	castanospermine
 Catechol	18135	catechol
 catecholamine	33567	catecholamine
 Celecoxib	41423	celecoxib
 Cephaloridine	3537	cefaloridine
-Ceramide	52639	N-acylsphingosine
+Ceramide	17761	ceramide
 Ceramide 1-phosphate	16197	ceramide 1-phosphate
 Cerium chloride	35458	cerium trichloride
 Cerivastatin	3558	cerivastatin
@@ -398,8 +406,8 @@ Chlorpheniramine	52010	chlorphenamine
 Chlorpromazine	3647	chlorpromazine
 Chlorpyrifos	34631	chlorpyrifos
 Cholecalciferol	28940	calciol
-"Cholesta-5,7,24-trien-3beta-ol"	27910	7-dehydrodesmosterol
-"Cholesta-7,24-dien-3-ol"	16290	"5alpha-cholesta-7,24-dien-3beta-ol"
+Cholesta-5,7,24-trien-3beta-ol	27910	7-dehydrodesmosterol
+Cholesta-7,24-dien-3-ol	16290	5alpha-cholesta-7,24-dien-3beta-ol
 Cholesterol	16113	cholesterol
 Cholesterol ester	17002	cholesterol ester
 cholesterol sulfate	41321	cholesterol sulfate
@@ -413,15 +421,16 @@ Chondroitin sulfates	37397	chondroitin sulfate
 Chromium	28073	chromium atom
 Chromium hexavalent ion	33007	chromium(6+)
 Chrysarobin	3686	chrysophanol-9-anthrone
+Chrysin	75095	chrysin
 Ciglitazone	64227	ciglitazone
 Cilostazol	31401	cilostazol
 Cimetidine	3699	cimetidine
 Cinnamaldehyde	16731	cinnamaldehyde
 Ciprofibrate	50867	ciprofibrate
 Ciprofloxacin	100241	ciprofloxacin
-"cis,cis-3,6-Dodecadienoyl-CoA"	28002	"cis,cis-dodeca-3,6-dienoyl-CoA"
+cis,cis-3,6-Dodecadienoyl-CoA	28002	cis,cis-dodeca-3,6-dienoyl-CoA
 Cisplatin	27899	cisplatin
-Citrate	16947	citrate(3-)
+Citrate	50744	citrate salt
 Citric acid	30769	citric acid
 Citrulline	16349	L-citrulline
 Cl-	17996	chloride
@@ -433,7 +442,7 @@ Clomipramine	47780	clomipramine
 Clonidine	46631	clonidine
 Clorgiline	3763	clorgyline
 Clozapine	3766	clozapine
-CO2	18245	carboxylato group
+CO2	16526	carbon dioxide
 CoA-SH	15346	coenzyme A
 Cobalt	27638	cobalt atom
 Cobalt chloride	35696	cobalt dichloride
@@ -441,9 +450,9 @@ Cobaltous chloride	35696	cobalt dichloride
 Cocaine	27958	cocaine
 Cocarboxylase	18290	thiamine(1+) diphosphate chloride
 Coenzyme A	15346	coenzyme A
-Colchicine	23359	colchicine
+Colchicine	27882	(S)-colchicine
 Colforsin	42471	forskolin
-Copper	30052	copper(0)
+Copper	28694	copper atom
 Corticosteroids	50858	corticosteroid
 Corticosterone	16827	corticosterone
 Corticotropin	3892	corticotropin
@@ -456,21 +465,21 @@ Coumarin	28794	coumarin
 Coumestrol	3908	coumestrol
 Creatine	16919	creatine
 Creatinine	16737	creatinine
-Cromolyn	128458	disodium cromoglycate
-Crotonoyl-CoA	15473	crotonoyl-CoA
+Cromolyn	59773	cromoglycic acid
+Crotonoyl-CoA	57332	crotonoyl-CoA(4-)
 Cupric chloride anhydrous	49553	copper(II) chloride
 Curcumin	3962	curcumin
 Cyanide	17514	cyanide
 Cyanoginosin LR	6925	microcystin-LR
 Cyclic ADP-ribose	31445	cyclic ADP-ribose
-cyclic AMP	17489	"3',5'-cyclic AMP"
-Cyclic GMP	16356	"3',5'-cyclic GMP"
+cyclic AMP	17489	3',5'-cyclic AMP
+Cyclic GMP	16356	3',5'-cyclic GMP
 Cyclodextrin	23456	cyclodextrin
 Cycloheximide	27641	cycloheximide
 Cyclohexylamine	15773	cyclohexylamine
 Cyclophosphamide	4026	cyclophosphamide hydrate
-Cyclopiazonic acid	22450	"(6aR,11aS,11bR)-10-acetyl-11-hydroxy-7,7-dimethyl-2,6,6a,7,11a,11b-hexahydro-9H-pyrrolo[1',2':2,3]isoindolo[4,5,6-cd]indol-9-one"
-Cycloserine	40009	cycloserine
+Cyclopiazonic acid	22450	(6aR,11aS,11bR)-10-acetyl-11-hydroxy-7,7-dimethyl-2,6,6a,7,11a,11b-hexahydro-9H-pyrrolo[1',2':2,3]isoindolo[4,5,6-cd]indol-9-one
+Cycloserine	40009	D-cycloserine
 Cyclosporine	4031	cyclosporin A
 Cyclothiazide	31448	cyclothiazide
 Cyfluthrin	4034	cyfluthrin
@@ -485,21 +494,21 @@ Cytochrome b	38551	cytochrome b
 Cytochrome C	18070	cytochrome c
 Cytochrome P-450	38559	cytochrome P450
 Cytosine	16040	cytosine
-D-Fructose	15824	D-fructose
-"D-Fructose 1,6-bisphosphate"	16905	"D-fructose 1,6-bisphosphate"
-"D-Fructose 2,6-bisphosphate"	28602	"beta-D-fructofuranose 2,6-bisphosphate"
-D-Fructose 6-phosphate	61553	D-fructofuranose 6-phosphate
-D-Galactose	4139	D-galactopyranose
+D-Fructose	48095	keto-D-fructose
+D-Fructose 1,6-bisphosphate	16905	D-fructose 1,6-bisphosphate
+D-Fructose 2,6-bisphosphate	28602	beta-D-fructofuranose 2,6-bisphosphate
+D-Fructose 6-phosphate	15946	D-fructose 6-phosphate
+D-Galactose	12936	D-galactose
 D-Glyceraldehyde 3-phosphate	59776	D-glyceraldehyde 3-phosphate(2-)
 D-Lactic acid	42111	(R)-lactic acid
 D-Ribose 1-phosphate	35425	D-ribose 1-phosphate
-D-Tagatose	4249	D-tagatopyranose
+D-Tagatose	16443	D-tagatose
 D-Xylulose 5-phosphate	57737	D-xylulose 5-phosphate(2-)
 Dactinomycin	27666	actinomycin D
 Daidzein	28197	daidzein
 Dantrolene	4317	dantrolene
-DAPM	32506	"4,4'-diaminodiphenylmethane"
-Daunorubicin	41977	daunorubicin
+DAPM	32506	4,4'-diaminodiphenylmethane
+Daunorubicin	64677	daunorubicin(1+)
 DDT	16130	DDT
 Debrisoquine	34665	debrisoquin
 Decanoyl-coenzyme A	28493	decanoyl-CoA
@@ -507,13 +516,13 @@ Decitabine	50131	5-aza-2'-deoxycytidine
 Deferoxamine	4356	desferrioxamine B
 Deferoxamine mesylate	31460	desferrioxamine B mesylate
 Dehydroepiandrosterone	28689	dehydroepiandrosterone
-Dehydroepiandrosterone sulfate	16814	dehydroepiandrosterone sulfate
+Dehydroepiandrosterone sulfate	57905	3beta-hydroxyandrost-5-en-17-one 3-sulfate(1-)
 delta-Aminolevulinic acid	17549	5-aminolevulinic acid
 Deltamethrin	4388	deltamethrin
 Deoxycholic acid	28834	deoxycholic acid
 Deoxycytidine	15698	2'-deoxycytidine
 Deoxycytidine monophosphate	15918	dCMP
-Deoxyglucose	15866	2-deoxy-D-glucose
+Deoxyglucose	23623	deoxyglucose
 Deoxyguanosine	17172	2'-deoxyguanosine
 Deoxyguanosine triphosphate	16497	dGTP
 Deoxyinosine	28997	2'-deoxyinosine
@@ -532,13 +541,14 @@ Dextrorphan	29133	dextrorphan
 Dextrose	17634	D-glucose
 Diacylglycerol	18035	diglyceride
 diacylglycerols	18035	diglyceride
-Diamide	48958	"1,1'-azobis(N,N-dimethylformamide)"
+Diamide	48958	1,1'-azobis(N,N-dimethylformamide)
 Diazepam	49575	diazepam
 Diazinon	34682	diazinon
 Diazoxide	4495	diazoxide
+Dibenzoylmethane	75417	dibenzoylmethane
 Diclofenac	47381	diclofenac
 Dicumarol	4513	dicoumarol
-DIDS	4286	"4,4'-diisothiocyano-trans-stilbene-2,2'-disulfonic acid"
+DIDS	4286	4,4'-diisothiocyano-trans-stilbene-2,2'-disulfonic acid
 Diethyl maleate	68508	diethyl maleate
 Diethyl pyrocarbonate	59051	diethyl pyrocarbonate
 Diethyl sulfide	27710	diethyl sulfide
@@ -549,52 +559,53 @@ Diethylstilbestrol	41922	diethylstilbestrol
 Digoxin	4551	digoxin
 Dihydrocapsaicin	46932	dihydrocapsaicin
 dihydroceramide	31488	dihydroceramide
-Dihydrofolate	23743	dihydrofolic acids
+Dihydrofolate	15633	dihydrofolic acid
 Dihydrolipoamide	17694	dihydrolipoamide
 Dihydrosphingosine 1-phosphate	16893	sphinganine 1-phosphate
-Dihydrouracil	15901	"5,6-dihydrouracil"
+Dihydrouracil	15901	5,6-dihydrouracil
 Dihydroxyacetone phosphate	16108	glycerone phosphate
-Dihydroxyphenylethylene glycol	1387	"3,4-dihydroxyphenylethyleneglycol"
+Dihydroxyphenylethylene glycol	1387	3,4-dihydroxyphenylethyleneglycol
 Dimethyl sulfide	17437	dimethyl sulfide
 Dimethyl sulfoxide	28262	dimethyl sulfoxide
-Dimethylformamide	17741	"N,N-dimethylformamide"
-Dimethylglycine	17724	"N,N-dimethylglycine"
+Dimethylformamide	17741	N,N-dimethylformamide
+Dimethylglycine	17724	N,N-dimethylglycine
 Dimethylnitrosamine	35807	N-nitrosodimethylamine
 Dimethyltelluride	4613	dimethyl telluride
-Dinitrochlorobenzene	34718	"1-chloro-2,4-dinitrobenzene"
+Dinitrochlorobenzene	34718	1-chloro-2,4-dinitrobenzene
 Dinoprost	15553	prostaglandin F2alpha
 Dinoprostone	15551	prostaglandin E2
-Diosgenin	4629	Diosgenin
+Diosgenin	4629	diosgenin
 Diphenhydramine	4636	diphenhydramine
 Diphosphate	18361	diphosphate(4-)
 Dipyridamole	4653	dipyridamole
 Diquat	64163	diquat
 Disulfiram	4659	disulfiram
-Dithiothreitol	18320	"1,4-dithiothreitol"
+Dithiothreitol	18320	1,4-dithiothreitol
 DMPPO	63412	dimethoxyphenylpenicilloyl group
 Dobutamine	4670	dobutamine
 Docebenone	2340	docebenone
 Docetaxel	4672	docetaxel anhydrous
 Docosahexaenoic acid	36005	docosahexaenoic acid
 Dolichol	16091	dolichol
-Dopamine	18243	dopamine
+Dopamine	59905	dopaminium(1+)
 Dorzolamide	4702	dorzolamide
 Doxazosin	4708	doxazosin
 Doxorubicin	28748	doxorubicin
-Doxycycline	60648	doxycycline monohydrate
+Doxycycline	50845	doxycycline
 Dronabinol	66964	Delta(9)-tetrahydrocannabinol
 Dutasteride	521033	dutasteride
 E 64	30270	E64
 Eckol	65819	eckol
 Edetic acid	42191	ethylenediaminetetraacetic acid
 Eflornithine	41948	2-(difluoromethyl)ornithine
+EGFR inhibitor	74440	epidermal growth factor receptor antagonist
 Eicosanoid	23899	icosanoid
 Eicosapentaenoic acid	36006	icosapentaenoic acid
-Eicosatrienoic Acid	53460	"all-cis-icosa-11,14,17-trienoic acid"
+Eicosatrienoic Acid	53460	all-cis-icosa-11,14,17-trienoic acid
 Emetine	4781	emetine
 Emodin	42223	emodin
 Enalapril	4784	enalapril
-Enalaprilat	59877	enalaprilat dihydrate
+Enalaprilat	4786	enalaprilat (anhydrous)
 Entacapone	4798	entacapone
 Epinephrine	28918	(R)-adrenaline
 Epirubicin	47898	4'-epidoxorubicin
@@ -604,8 +615,8 @@ Eptifibatide	291902	eptifibatide
 Ergocalciferol	28934	vitamin D2
 Ergosterol	16933	ergosterol
 Erlotinib	114785	erlotinib
-Erythromycin	42355	erythromycin A
-Estradiol	23965	estradiol
+Erythromycin	48923	erythromycin
+Estradiol	16469	17beta-estradiol
 Estradiol-17beta	16469	17beta-estradiol
 Estradiol-17beta-glucuronide	791	17beta-estradiol 17-glucosiduronic acid
 Estriol	27974	estriol
@@ -613,7 +624,7 @@ Estrogens	50114	estrogen
 Estrone	17263	estrone
 Estrone 3-sulfate	17474	estrone 3-sulfate
 Ethacrynic acid	4876	ethacrynic acid
-Ethane	42266	ethane
+Ethane	6015	isoflurane
 Ethanol	16236	ethanol
 Ethinyl estradiol	4903	17alpha-ethynylestradiol
 Ethylene	18153	ethene
@@ -630,8 +641,8 @@ Exemestane	4953	exemestane
 Exendin-4	64073	exendin-4
 Exisulind	64212	sulindac sulfone
 Famotidine	4975	famotidine
-Farnesol	42680	"(2-cis,6-cis)-farnesol"
-Farnesyl pyrophosphate	17407	"2-trans,6-trans-farnesyl diphosphate"
+Farnesol	28600	farnesol
+Farnesyl pyrophosphate	17407	2-trans,6-trans-farnesyl diphosphate
 Fatty acids	35366	fatty acid
 Fatty acyl CoA	37554	fatty acyl-CoA
 Fenfluramine	5000	fenfluramine
@@ -642,7 +653,7 @@ Ferric ammonium citrate	31604	ferric ammonium citrate
 Ferric sulfate	53438	iron(3+) sulfate
 Finasteride	5062	finasteride
 Fisetin	42567	fisetin
-Flavonoid	47916	flavonoid
+Flavonoid	72544	flavonoids
 Flavoprotein	5086	flavoprotein
 Floxuridine	60761	5-fluoro-2'-deoxyuridine
 Fluconazole	46081	fluconazole
@@ -651,40 +662,43 @@ Fluorouracil	46345	5-fluorouracil
 Fluoxetine	5118	fluoxetine
 Flurbiprofen	5130	flurbiprofen
 Flutamide	5132	flutamide
+Fluticasone	5134	fluticasone
 Fluticasone propionate	31441	fluticasone propionate
-Fluvastatin	5136	"(3S,5R)-fluvastatin"
+Fluvastatin	38562	fluvastatin
 FMLP	53490	N-formyl-L-methionyl-L-leucyl-L-phenylalanine
-FMN	17621	FMN
+FMN	58210	FMN(3-)
 Folic acid	27470	folic acid
 Formaldehyde	16842	formaldehyde
 Formate	15740	formate
-"Formic acid, ion(1-)"	15740	formate
+Formestane	75172	formestane
+Formic acid, ion(1-)	15740	formate
 Formoterol	5147	formoterol
 Formycin B	42654	formycin B
 Formyl-coenzyme A	15522	formyl-CoA
 free radical	26519	radical
 Fructosamine	24103	fructosamine
-Fructose	28757	fructose
+Fructose	28645	beta-D-fructofuranose
 Fructose-6-phosphate	15946	D-fructose 6-phosphate
 Fucose	33984	fucose
 Fulvestrant	31638	fulvestrant
-Fumagillin	48635	fumagillin
-Fumonisin B1	62554	fumonisin B1(3-)
+Fumagillin	42601	fumagillin-2-yl group
+Fumonisin B1	38221	fumonisin B1
 Furosemide	47426	furosemide
 Gabapentin	42797	gabapentin
 Gadolinium	33375	gadolinium atom
 Galactosamine	60312	2-amino-2-deoxy-D-galactopyranose
 Galactose	28260	galactose
 Galactose-1-phosphate	17973	alpha-D-galactose 1-phosphate
-Galactosylceramide	36498	galactosylceramide
+Galactosylceramide	18390	D-galactosyl-N-acylsphingosine
 Galacturonic acid	33830	galacturonic acid
 Galangin	5262	galangin
 Gamma-aminobutyric acid	16865	gamma-aminobutyric acid
-gamma-Glutamylcysteine	24195	gamma-glutamylcysteine
+gamma-Glutamylcysteine	17515	L-gamma-glutamyl-L-cysteine
 gamma-Tocopherol	18185	gamma-tocopherol
 Gamolenic acid	28661	gamma-linolenic acid
 Ganciclovir	465284	ganciclovir
 Ganglioside	28892	ganglioside
+Gastrin	75436	gastrin
 GDP	58189	GDP(3-)
 GDPmannose	15820	GDP-alpha-D-mannose
 Gefitinib	49668	gefitinib
@@ -696,26 +710,27 @@ Gentamicin	17833	gentamycin
 Geraniol	17447	geraniol
 Geranyl diphosphate	17211	geranyl diphosphate
 Geranylgeraniol	24229	geranylgeraniol
-Geranylgeranyl pyrophosphate	48861	"2-trans,6-trans,10-trans-geranylgeranyl diphosphate"
+Geranylgeranyl pyrophosphate	48861	2-trans,6-trans,10-trans-geranylgeranyl diphosphate
+Ginsenoside	74978	ginsenoside
 Gliotoxin	5385	gliotoxin
 Glucagon	5391	glucagon
 Glucan	37163	glucan
 Glucocorticoid	24261	glucocorticoid
 Glucosamine	5417	glucosamine
 Glucosamine 6-phosphate	15873	alpha-D-glucosamine 6-phosphate
-Glucuronic acid	4178	D-glucuronic acid
+Glucuronic acid	24298	glucuronic acid
 Glutamine	28300	glutamine
 Glutaric acid	17859	glutaric acid
-Glutathione	16856	glutathione
+Glutathione	57925	glutathionate(1-)
 Glyburide	5441	glyburide
-Glyceraldehyde	5445	glyceraldehyde
+Glyceraldehyde	17378	D-glyceraldehyde
 Glyceraldehyde 3-phosphate	17138	glyceraldehyde 3-phosphate
 Glyceride	47778	glyceride
 Glycerin	17754	glycerol
 Glycerol	17754	glycerol
 Glycerol-3-phosphate	15978	sn-glycerol 3-phosphate
-Glycerophosphoric acid	16890	glycerol monophosphate
-Glycine	29947	glycine residue
+Glycerophosphoric acid	15978	sn-glycerol 3-phosphate
+Glycine	15428	glycine
 Glycochenodeoxycholic acid	36274	glycochenodeoxycholic acid
 Glycocholic acid	17687	glycocholic acid
 Glycocyamine	16344	guanidinoacetic acid
@@ -726,23 +741,22 @@ Glycosaminoglycan	18085	glycosaminoglycan
 Glycyrrhizin	15939	glycyrrhizinic acid
 GM3	15681	alpha-N-acetylneuraminosyl-(2->3)-beta-D-galactosyl-(1->4)-beta-D-glucosylceramide
 Go 6976	51913	Goe 6976
-Gold	29287	gold atom
+Gold	30050	gold(0)
 GTP	15996	GTP
 Guanidine	42820	guanidine
 Guanine	16235	guanine
 Guanosine	16750	guanosine
-"Guanosine 3',5'-bis(diphosphate)"	17633	"guanosine 3',5'-bis(diphosphate)"
+Guanosine 3',5'-bis(diphosphate)	58215	guanosine 3',5'-bis(diphosphate)(6-)
 Guanosine diphosphate	17552	GDP
 Guanosine triphosphate	15996	GTP
 Gulonic acid	16154	L-gulonic acid
 GW501516	73726	GW 501516
-H+	15378	hydron
 H2O	29375	diprotium oxide
 Halide	16042	halide anion
 Haloperidol	5613	haloperidol
 Halothane	5615	halothane
 Hematin	36161	hematin
-Heme	26355	heme b
+Heme	17627	ferroheme b
 Hemin	50385	hemin
 Hemoglobin	35143	hemoglobin
 heparan sulfate proteoglycan	24499	heparan sulfate proteoglycan
@@ -751,7 +765,7 @@ Heparitin sulfate	28815	heparan sulfate
 Herbimycin	5674	herbimycin
 Hesperetin	28230	hesperetin
 Hexadecanal	17600	hexadecanal
-Hexanoyl-coenzyme A	62620	hexanoyl-CoA(4-)
+Hexanoyl-coenzyme A	27540	hexanoyl-CoA
 Hg2+	16793	mercury(2+)
 Higenamine	18418	(RS)-norcoclaurine
 Hippuric acid	18089	N-benzoylglycine
@@ -768,10 +782,10 @@ Hydralazine	5775	hydralazine
 Hydrazine	15571	hydrazine
 Hydrochloric acid	17883	hydrogen chloride
 Hydrocortisone	17650	cortisol
-Hydrogen	18276	dihydrogen
+Hydrogen	49637	hydrogen atom
 Hydrogen bromide	47266	hydrogen bromide
 Hydrogen peroxide	16240	hydrogen peroxide
-Hydrogen sulfide	29919	hydrosulfide
+Hydrogen sulfide	16136	hydrogen sulfide
 Hydroquinone	17594	hydroquinone
 Hydroxide ion	16234	hydroxide
 Hydroxocobalamin	27786	hydroxocobalamin
@@ -779,14 +793,14 @@ Hydroxycoumarin	37912	hydroxycoumarin
 Hydroxyl radical	29191	hydroxyl
 Hydroxymethylbilane	16645	preuroporphyrinogen
 Hydroxyprogesterone	17252	17alpha-hydroxyprogesterone
-Hydroxyproline	24741	hydroxyproline
+Hydroxyproline	18095	trans-4-hydroxy-L-proline
 Hydroxyurea	44423	hydroxyurea
 Hyperforin	5834	hyperforin
 Hypochlorous acid	24757	hypochlorous acid
 Hypoxanthine	17368	hypoxanthine
 Icatibant	68556	icatibant
 Ici 118551	73289	ICI 118551
-Icosapent	28364	"all-cis-5,8,11,14,17-icosapentaenoic acid"
+Icosapent	28364	all-cis-5,8,11,14,17-icosapentaenoic acid
 Iloprost	63916	iloprost
 Imatinib	45783	imatinib
 Imatinib mesylate	31690	imatinib methanesulfonate
@@ -795,14 +809,14 @@ Imiquimod	36704	imiquimod
 Immucillin-H	43362	immucillin H
 Indinavir	44032	indinavir
 Indole-3-carbinol	24814	indole-3-methanol
-Indoleacetaldehyde	18086	indol-3-ylacetaldehyde
+Indoleacetaldehyde	24823	indoleacetaldehyde
 Indomethacin	49662	indomethacin
 Inosine	17596	inosine
 Inosine monophosphate	17202	IMP
-Inositol	17268	myo-inositol
-"Inositol 1,4,5-trisphosphate"	16595	"1D-myo-inositol 1,4,5-trisphosphate"
+Inositol	24848	inositol
+Inositol 1,4,5-trisphosphate	16595	1D-myo-inositol 1,4,5-trisphosphate
 Inositol 2-monophosphate	62383	1D-myo-inositol 2-phosphate
-"Inositol 3,4-bisphosphate"	28858	"1D-myo-inositol 3,4-bisphosphate"
+Inositol 3,4-bisphosphate	28858	1D-myo-inositol 3,4-bisphosphate
 Insulin	5931	insulin (human)
 Iodine	24859	iodine atom
 Iodocyanopindolol	73370	iodocyanopindolol
@@ -816,7 +830,7 @@ Isoflavone	18220	isoflavone
 Isoflurane	6015	isoflurane
 Isoflurophate	17941	diisopropyl fluorophosphate
 Isoleucine	24898	isoleucine
-Isopentenyl pyrophosphate	16584	isopentenyl diphosphate
+Isopentenyl pyrophosphate	128769	isopentenyl diphosphate(3-)
 Isopropyl alcohol	17824	propan-2-ol
 Isoproterenol	64317	isoprenaline
 Isosorbide dinitrate	6061	isosorbide dinitrate
@@ -830,28 +844,29 @@ Ketone Body	73693	ketone body
 Kojic acid	43572	kojic acid
 Kynurenine	28683	kynurenine
 L-3-Amino-isobutanoate	18188	(S)-3-aminoisobutyrate
-L-Arabinose	30849	L-arabinose
-L-Arginine	29952	L-arginine residue
+L-Arabinose	17535	L-arabinopyranose
+L-Arginine	16467	L-arginine
 L-Asparagine	50347	L-asparagine residue
 L-Aspartate	29991	L-aspartate(1-)
-L-Aspartic acid	29958	L-aspartic acid residue
+L-Aspartic acid	17053	L-aspartic acid
 L-Citrulline	16349	L-citrulline
-L-Cysteine	29950	L-cysteine residue
+L-Cysteine	17561	L-cysteine
 L-Glutamate	29985	L-glutamate(1-)
 L-Glutamic acid	29972	L-glutamic acid residue
-"L-Glutamic acid, ion(1-)"	29985	L-glutamate(1-)
+L-Glutamic acid, ion(1-)	29985	L-glutamate(1-)
 L-Glutamine	30011	L-glutamine residue
 L-Lactic acid	422	(S)-lactic acid
 L-serine	29999	L-serine residue
 L-Sulforaphane	47808	(R)-sulforaphane
 Lactacystin	52722	lactacystin
-Lactic acid	42111	(R)-lactic acid
-Lactose	17716	lactose
+Lactic acid	28358	lactic acid
+Lactose	36218	beta-lactose
 Lanosterol	16521	lanosterol
 Lapatinib	49603	lapatinib
+Latrunculin B	49703	latrunculin B
 Lauric acid	30805	lauric acid
 Lauroyl-coenzyme A	15521	lauroyl-CoA
-Lead	27889	lead(0)
+Lead	25016	lead atom
 Lecithin	73001	1-hexadecanoyl-2-(9Z-octadecenoyl)-sn-glycero-3-phosphocholine
 Leflunomide	6402	leflunomide
 Leptomycin B	52646	leptomycin B
@@ -861,8 +876,8 @@ Leucovorin	15640	5-formyltetrahydrofolic acid
 Leukotriene	25029	leukotriene
 Leukotriene A4	15651	leukotriene A4
 Leukotriene B4	15647	leukotriene B4
-Leukotriene C4	57973	leukotriene C4(2-)
-Leukotriene D4	28666	leukotriene D4
+Leukotriene C4	16978	leukotriene C4
+Leukotriene D4	63166	leukotriene D4(1-)
 Leukotriene E4	15650	leukotriene E4
 Leuprolide	6427	leuprolide
 Levetiracetam	6437	levetiracetam
@@ -872,8 +887,8 @@ Levodopa	15765	L-dopa
 Levothyroxine	18332	L-thyroxine
 Licoisoflavone A	28620	licoisoflavone A
 Linoleic acid	17351	linoleic acid
-Linolenic acid	25048	linolenic acid
-Liothyronine	18258	"3,3',5-triiodo-L-thyronine"
+Linolenic acid	27432	alpha-linolenic acid
+Liothyronine	18258	3,3',5-triiodo-L-thyronine
 lipid	18059	lipid
 Lipid hydroperoxide	61051	lipid hydroperoxide
 Lipids	18059	lipid
@@ -882,7 +897,7 @@ Lipopolysaccharide	16412	lipopolysaccharide
 lipoprotein	6495	lipoprotein
 Lipoteichoic acid	28640	lipoteichoic acid
 Lipoxin	6497	lipoxin
-Lipoxin A4	6498	lipoxin A4
+Lipoxin A4	67026	lipoxin A4(1-)
 Liraglutide	71193	liraglutide
 Lithium	30145	lithium atom
 Lithium chloride	48607	lithium chloride
@@ -897,7 +912,7 @@ Luteolin	15864	luteolin
 LY 294002	65329	LY294002
 Lycopene	15948	lycopene
 Lysine	25094	lysine
-lysophosphatidic acid	52288	lysophosphatidic acid
+lysophosphatidic acid	16975	1-acyl-sn-glycerol 3-phosphate
 Lysophosphatidylcholines	60479	lysophosphatidylcholine
 Lysophosphatidylserine	68510	lysophosphatidylserine
 Lysophospholipid	16961	monoacylglycerol phosphate
@@ -906,9 +921,9 @@ Malathion	6651	malathion
 Malic acid	6650	malic acid
 Malondialdehyde	566274	malonaldehyde
 Malonyl coenzyme A	15531	malonyl-CoA
-Maltose	17306	maltose
-Manganese	35154	manganese(0)
-Mannitol	16899	D-mannitol
+Maltose	18167	alpha-maltose
+Manganese	18291	manganese atom
+Mannitol	29864	mannitol
 Mannose	37684	mannose
 Marimastat	50662	marimastat
 Medium-chain fatty acid	59554	medium-chain fatty acid
@@ -921,11 +936,11 @@ Memantine	64312	memantine
 Menadione	28869	menadione
 Mercaptoethanol	41218	mercaptoethanol
 Mercuric chloride	31823	mercury dichloride
-Mercury	16170	mercury(0)
+Mercury	25195	mercury atom
 Metformin	6801	metformin
 Methamphetamine	6809	methamphetamine
 Methanesulfonate	25224	methanesulfonate
-Methionine	64558	methionine zwitterion
+Methionine	16643	L-methionine
 Methionine sulfoxide	49033	methionine S-oxide
 Methionine sulfoximine	47833	methionine sulfoximine
 Methotrexate	44185	methotrexate
@@ -944,11 +959,11 @@ Methylphenidate	6887	methylphenidate
 Methylprednisolone	6888	6alpha-methylprednisolone
 Methyltestosterone	27436	methyltestosterone
 Methylthioethanol	63861	2-methylthioethanol
-Metribolone	379896	"17beta-hydroxy-17-methylestra-4,9,11-trien-3-one"
+Metribolone	379896	17beta-hydroxy-17-methylestra-4,9,11-trien-3-one
 Metronidazole	6909	metronidazole
 Metyrapone	44241	metyrapone
 Mevalonate	25350	mevalonate
-Mevalonic acid	17710	(R)-mevalonic acid
+Mevalonic acid	25351	mevalonic acid
 Miconazole	6923	miconazole
 Mifepristone	50692	mifepristone
 Milrinone	50693	milrinone
@@ -966,6 +981,7 @@ Monoacylglycerol	17408	monoglyceride
 Monocrotaline	6980	monocrotaline
 Monorden	556075	radicicol
 Montelukast	50730	montelukast
+Morin	75092	morin
 Morphine	17303	morphine
 Motexafin gadolinium	50161	motexafin gadolinium
 mTOR inhibitor	68481	mTOR inhibitor
@@ -975,11 +991,11 @@ myo-Inositol polyphosphate	18087	myo-inositol polyphosphate
 Myricetin	18152	myricetin
 Myristic acid	28875	myristic acid
 Myxothiazol	25461	myxothiazol
-"N,N'-Dimethylarginine"	25682	"N(omega),N'(omega)-dimethyl-L-arginine"
-"N,N-Dimethylarginine"	17929	"N(omega),N(omega)-dimethyl-L-arginine"
+N,N'-Dimethylarginine	25682	N(omega),N'(omega)-dimethyl-L-arginine
+N,N-Dimethylarginine	17929	N(omega),N(omega)-dimethyl-L-arginine
 N-acetyl-d-galactosamine	28037	N-acetyl-D-galactosamine
-N-Acetyl-D-glucosamine 6-phosphate	57513	N-acetyl-D-glucosamine 6-phosphate(2-)
-N-Acetylmannosamine	62164	N-acetylmannosamine
+N-Acetyl-D-glucosamine 6-phosphate	15784	N-acetyl-D-glucosamine 6-phosphate
+N-Acetylmannosamine	63153	N-acetyl-D-mannosamine
 N-Acetylputrescine	17768	N-acetylputrescine
 N-acetylsphingosine	46979	N-acetylsphingosine
 N-Carbamoyl-beta-alanine	18261	N-carbamoyl-beta-alanine
@@ -992,16 +1008,16 @@ N-Methylputrescine	17166	N-methylputrescine
 N1-Acetylspermidine	17927	N(1)-acetylspermidine
 N1-Acetylspermine	17312	N(1)-acetylspermine
 N4-Acetylaminobutanal	7386	4-acetamidobutanal
-"N6,N6,N6-Trimethyl-L-lysine"	17311	"N(6),N(6),N(6)-trimethyl-L-lysine"
-NAD	15846	NAD(+)
+N6,N6,N6-Trimethyl-L-lysine	17311	N(6),N(6),N(6)-trimethyl-L-lysine
+NAD	13389	NAD
 NAD+	15846	NAD(+)
-NADH	16908	NADH
+NADH	57945	NADH(2-)
 Nadide	15846	NAD(+)
 NADP	25523	NADP
 NADP+	18009	NADP(+)
-NADPH	16474	NADPH
+NADPH	57783	NADPH(4-)
 Naphthalene	16482	naphthalene
-Naringenin	50202	naringenin
+Naringenin	17846	(S)-naringenin
 Nedaplatin	31898	nedaplatin
 Neomycin	7507	neomycin
 Neurotensin	7542	neurotensin
@@ -1009,7 +1025,7 @@ NH4+	28938	ammonium
 Niacin	15940	nicotinic acid
 Niacinamide	17154	nicotinamide
 Nickel	28112	nickel atom
-Nicotine	18723	nicotine
+Nicotine	17688	(S)-nicotine
 Nifedipine	7565	nifedipine
 Nigericin	7569	nigericin
 Nimesulide	44445	nimesulide
@@ -1027,10 +1043,10 @@ NNK (carcinogen)	32692	4-(N-nitrosomethylamino)-1-(3-pyridyl)butan-1-one
 Nocodazole	34892	nocodazole
 Nonivamide	46936	nonivamide
 Nordihydroguaiaretic acid	7625	nordihydroguaiaretic acid
-Norepinephrine	33569	noradrenaline
+Norepinephrine	18357	(R)-noradrenaline
 Norethindrone	7627	norethisterone
 Nornicotine	28313	nornicotine
-Novobiocin	28368	novobiocin
+Novobiocin	71339	novobiocin(1-)
 NS 398	73458	NS-398
 Nucleotide	36976	nucleotide
 Nutlin 3	46742	Nutlin-3
@@ -1038,8 +1054,8 @@ O-Acylcarnitine	17387	O-acylcarnitine
 o-Phthalaldehyde	70851	phthalaldehyde
 Ochratoxin A	7719	ochratoxin A
 Octadecadienoic acid	25627	octadecadienoic acid
-"Octadecanoic acid, ion(1-)"	25629	stearate
-"Octanoic acid, ion(1-)"	25646	caprylate
+Octadecanoic acid, ion(1-)	25629	stearate
+Octanoic acid, ion(1-)	25646	caprylate
 Octanoyl-coenzyme A	15533	octanoyl-CoA
 Octreotide	7726	octreotide
 Okadaic acid	44658	okadaic acid
@@ -1051,9 +1067,8 @@ Oligomycin	25675	oligomycin
 Oligosaccharide	50699	oligosaccharide
 omega-N-Methylarginine	28229	N(omega)-methyl-L-arginine
 Omeprazole	7772	omeprazole
-OP	33124	oxidophosphorus(1+)
 Organic anion	25696	organic anion
-Ornithine	44667	L-ornithinium(2+)
+Ornithine	18257	ornithine
 Oroxylin A	61668	oroxylin A
 ortho-Vanadate	46442	vanadate(3-)
 Orthocresol	28054	o-cresol
@@ -1102,6 +1117,7 @@ Peroxynitrite	25941	peroxynitrite
 Phenacetin	8050	phenacetin
 Phenethyl isothiocyanate	351346	phenethyl isothiocyanate
 Phenethylamine	18397	2-phenylethylamine
+Phenformin	8064	phenformin
 Phenobarbital	8069	phenobarbital
 Phenol	15882	phenol
 Phenolphthalein	34914	phenolphthalein
@@ -1115,21 +1131,22 @@ Phenylmethylsulfonyl fluoride	8102	phenylmethanesulfonyl fluoride
 Phenytoin	8107	phenytoin
 Phlorhizin	8113	phlorizin
 Phorbol	8116	phorbol
-"Phorbol 12,13-dibutyrate"	17598	"phorbol 12,13-dibutanoate"
+Phorbol 12,13-dibutyrate	17598	phorbol 12,13-dibutanoate
 Phorone	35572	phorone
-Phosphate	43474	hydrogenphosphate
+Phosphate	18367	phosphate(3-)
 Phosphatidate	57739	phosphatidate(2-)
 Phosphatidic acid	16337	phosphatidic acid
-Phosphatidylethanolamine	16038	phosphatidylethanolamine
+Phosphatidylethanolamine	44887	(S)-1,2-distearoylphosphatidylethanolaminium
 phosphatidylinositol	28874	phosphatidylinositol
 Phosphatidylinositol 3-phosphate	26034	phosphatidylinositol 3-phosphate
-"Phosphatidylinositol-3,4,5-trisphosphate"	16618	"1-phosphatidyl-1D-myo-inositol 3,4,5-trisphosphate"
+Phosphatidylinositol-3,4,5-trisphosphate	16618	1-phosphatidyl-1D-myo-inositol 3,4,5-trisphosphate
+phosphatidylserine	18303	phosphatidyl-L-serine
 Phosphocreatine	17287	N-phosphocreatine
-Phosphoenolpyruvate	18021	phosphoenolpyruvate
-phosphoethanolamine	36711	phosphoethanolamine
+Phosphoenolpyruvate	58702	phosphonatoenolpyruvate
+phosphoethanolamine	17553	O-phosphoethanolamine
 Phospholipid	16247	phospholipid
 Phosphoramidon	8164	phosphoramidon
-Phosphoserine	15811	O-phospho-L-serine
+Phosphoserine	37712	O-phosphoserine
 Phthalic acid	29069	phthalic acid
 Phytanic acid	16285	phytanic acid
 Phytic acid	17401	myo-inositol hexakisphosphate
@@ -1147,7 +1164,7 @@ Pirinixic acid	32509	pirinixic acid
 Piroxicam	8249	piroxicam
 Plicamycin	31856	mithramycin
 Plumbagin	8273	plumbagin
-Polyamine	51349	polyamine macromolecule
+Polyamine	60143	polyamine polymer
 Polycyclic Aromatic Hydrocarbons	33848	polycyclic arene
 Polyethylene glycol	46793	poly(ethylene glycol)
 Polymyxin	59062	polymyxin
@@ -1165,8 +1182,8 @@ Pravastatin	63618	pravastatin
 Prazosin	8364	prazosin
 Prednisolone	8378	prednisolone
 Pregabalin	64356	pregabalin
-"Pregn-5-ene-3,20-dione"	63837	"pregn-5-ene-3,20-dione"
-"pregn-5-ene-3,20-dione-17-ol"	63843	"17alpha-hydroxypregn-5-ene-3,20-dione"
+Pregn-5-ene-3,20-dione	63837	pregn-5-ene-3,20-dione
+pregn-5-ene-3,20-dione-17-ol	63843	17alpha-hydroxypregn-5-ene-3,20-dione
 Pregnenolone	16581	pregnenolone
 Pregnenolone carbonitrile	35591	pregnenolone 16alpha-carbonitrile
 primary monoamine	32877	primary amine
@@ -1174,10 +1191,11 @@ pristanal	49189	pristanal
 Pristanic acid	51340	pristanic acid
 Pristanoyl-CoA	51341	pristanoyl-CoA
 Probenecid	8426	probenecid
+Probucol	8427	probucol
 Procainamide	8428	procainamide
 Progesterone	17026	progesterone
 Progestins	59826	progestin
-Proline	26271	proline
+Proline	17203	L-proline
 Promegestone	73390	promegestone
 Propionic acid	30768	propionic acid
 Propionyl-coenzyme A	15539	propionyl-CoA
@@ -1196,12 +1214,12 @@ Prostaglandins	26333	prostaglandin
 Prostratin	69818	prostratin
 Proteasome inhibitor	52726	proteasome inhibitor
 Proteoglycan	37396	proteoglycan
-Protocatechuic acid	36062	"3,4-dihydroxybenzoic acid"
+Protocatechuic acid	36062	3,4-dihydroxybenzoic acid
 Proton	24636	proton
-Pseudoisocyanine	37994	"1,1'-diethyl-2,2'-cyanine"
+Pseudoisocyanine	37994	1,1'-diethyl-2,2'-cyanine
 Psychosine	16874	psychosine
 Puromycin	17939	puromycin
-Puromycin aminonucleoside	42839	"3'-amino-3'-deoxy-N(6),N(6)-dimethyladenosine"
+Puromycin aminonucleoside	42839	3'-amino-3'-deoxy-N(6),N(6)-dimethyladenosine
 Putrescine	17148	putrescine
 Pyocyanine	62220	pyocyanin
 Pyrazole	14973	pyrazole
@@ -1217,44 +1235,47 @@ Pyruvate	15361	pyruvate
 Pyruvic acid	32816	pyruvic acid
 Quartz	46727	quartz
 Quercetagetin	8695	quercetagetin
-Quercetin	57694	quercetin-3-olate
-Quinacrine	49845	(R)-quinacrine
+Quercetin	16243	quercetin
+Quinacrine	8711	quinacrine
 Quinidine	28593	quinidine
 Quinolinic acid	16675	quinolinic acid
+Quinpirole	75401	quinpirole
 Raffinose	16634	raffinose
 Raloxifene	8772	raloxifene
 Ramipril	8774	ramipril
 Ranitidine	8776	ranitidine
 Reactive Nitrogen Species	62764	reactive nitrogen species
 Reactive Oxygen Species	26523	reactive oxygen species
-Resveratrol	45713	trans-resveratrol
+Resveratrol	27881	resveratrol
 Retinaldehyde	17898	all-trans-retinal
 Retinol acetate	32095	retinyl acetate
-Riboflavin	17015	riboflavin
+Riboflavin	57986	riboflavin(1-)
 Riboprine	62881	N(6)-(Delta(2)-isopentenyl)adenosine
 Ribulose 5-phosphate	37455	ribulose 5-phosphate
 Riddelline	63924	riddelliine
 Rifampin	28077	rifampicin
 Rifamycin	26580	rifamycin
 Ritonavir	45409	ritonavir
-"RNA, Transfer"	17843	transfer RNA
+RNA, Transfer	17843	transfer RNA
+Ro 13-7410	75261	arotinoid acid
 Ro 31-8220	38912	Ro 31-8220
 Roflumilast	47657	roflumilast
-Rolipram	40133	(-)-rolipram
+Rolipram	104872	rolipram
 Ropivacaine	60802	ropivacaine
 Rosiglitazone	50122	rosiglitazone
 Rosuvastatin	38545	rosuvastatin
 Rotenone	28201	rotenone
-Roxithromycin	48844	roxithromycin
+Rottlerin	8899	rottlerin
+Roxithromycin	48935	(E)-roxithromycin
 Ruthenium red	34956	ruthenium red
 Ryanodine	8925	ryanodine
-"S-(2,4-Dinitrophenyl)glutathione"	8927	"S-(2,4-dinitrophenyl)glutathione"
+S-(2,4-Dinitrophenyl)glutathione	8927	S-(2,4-dinitrophenyl)glutathione
 S-2-Hydroxybutanedioic acid	30797	(S)-malic acid
 S-Acetyldihydrolipoamide	16807	S(6)-acetyldihydrolipoamide
 S-Adenosylhomocysteine	16680	S-adenosyl-L-homocysteine
 S-Adenosylmethioninamine	15625	S-adenosylmethioninamine
-S-Adenosylmethionine	33442	(S)-S-adenosyl-L-methionine
-S-Farnesylcysteine	62197	"S-(2E,6E)-farnesyl-L-cysteine"
+S-Adenosylmethionine	15414	S-adenosyl-L-methionine
+S-Farnesylcysteine	62197	S-(2E,6E)-farnesyl-L-cysteine
 S-Nitrosoglutathione	50091	S-nitrosoglutathione
 S-Succinyldihydrolipoamide	17432	S(8)-succinyldihydrolipoamide
 S-Tetradecanoyl-coenzyme A	15532	myristoyl-CoA
@@ -1263,21 +1284,21 @@ Salbutamol	2549	albuterol
 Salmeterol	9011	salmeterol
 Sapropterin	59560	sapropterin
 Saquinavir	63621	saquinavir
-Sarcosine	15611	sarcosine
+Sarcosine	57433	sarcosine zwitterion
 Saturated fatty acid	26607	saturated fatty acid
-Secalciferol	28818	"(24R)-24,25-dihydroxycalciol"
-Selegiline	50217	selegiline
+Secalciferol	28818	(24R)-24,25-dihydroxycalciol
+Selegiline	9086	(-)-selegiline
 Selenite	18212	selenite(2-)
 Selenium	27568	selenium atom
-Selenocysteine	9093	selenocysteine
+Selenocysteine	16633	L-selenocysteine
 Sepiapterin	16095	sepiapterin
-Serine	17115	L-serine
+Serine	17822	serine
 Serotonin	28790	serotonin
 Sertraline	9123	sertraline
 Short-chain fatty acid	26666	short-chain fatty acid
 Sildenafil	9139	sildenafil
 Silibinin	9144	silibinin
-Silver	9141	silver(0)
+Silver	30512	silver atom
 Silymarin	9144	silibinin
 Simvastatin	9150	simvastatin
 Sirolimus	9168	sirolimus
@@ -1293,6 +1314,7 @@ Sodium glutamate	64220	monosodium glutamate
 Sodium Hydroxide	32145	sodium hydroxide
 Sodium Lauryl Sulfate	8984	sodium dodecyl sulfate
 Sodium nitroprusside	29321	sodium nitroprusside
+Sodium phenylbutyrate	75316	sodium phenylbutyrate
 Sodium selenite	48843	disodium selenite
 Somatostatin	64628	somatostatin
 Sorafenib Tosylate	50928	sorafenib tosylate
@@ -1305,12 +1327,14 @@ sphinganine	57817	sphinganine(1+)
 sphinganine 1-phosphate	16893	sphinganine 1-phosphate
 sphingomyelin	17636	sphingomyelin d18:1
 Sphingomyelins	17636	sphingomyelin d18:1
-Sphingosine	45719	"(2R,3S,4Z)-2-aminooctadec-4-ene-1,3-diol"
-Sphingosine 1-phosphate	37550	sphingosine 1-phosphate
+Sphingosine	16393	sphingosine
+Sphingosine 1-phosphate	60119	sphingosine 1-phosphate(1-)
 Sphingosine-1-phosphate	37550	sphingosine 1-phosphate
 Sphingosyl-phosphocholine	52897	sphingosylphosphocholine acid
 Spironolactone	9241	spironolactone
+Splitomicin	75272	splitomicin
 Squalene	15440	squalene
+Squalestatin 1	75170	zaragozic acid A
 Stanolone	16330	17beta-hydroxy-5alpha-androstan-3-one
 statin	35664	hydroxymethylglutaryl-CoA reductase inhibitor
 Staurosporine	15738	staurosporine
@@ -1324,7 +1348,8 @@ Stigmasterol	28824	phytosterol
 Straight-chain fatty acid	59202	straight-chain fatty acid
 Streptomycin	17076	streptomycin
 Streptozocin	9288	streptozocin
-Strontium	35104	strontium(2+)
+Strontium	33324	strontium atom
+Suberoylanilide hydroxamic acid	45716	vorinostat
 Succinic acid	15741	succinic acid
 Succinyl-CoA	15380	succinyl-CoA
 Succinyl-coenzyme A	15380	succinyl-CoA
@@ -1333,9 +1358,10 @@ Sufentanil	9316	sufentanil
 Sugar phosphate	33447	phospho sugar
 Sulfamethazine	102265	sulfamethazine
 Sulfasalazine	9334	sulfasalazine
-sulfatide	45644	1-(3-O-sulfo-beta-D-galactosyl)-N-stearoylsphingosine
+sulfatide	18318	galactosylceramide sulfate
 Sulforafan	47807	sulforaphane
 Sulindac	9352	sulindac
+Sulindac sulfide	75408	sulindac sulfide
 Sulindac sulfone	64212	sulindac sulfone
 Sulpiride	32168	sulpiride
 Sumatriptan	10650	sumatriptan
@@ -1343,9 +1369,10 @@ Sunitinib	38940	sunitinib
 Suramin	45906	suramin
 Swainsonine	9367	swainsonine
 Tacrine	45980	tacrine
-Tacrolimus	61057	tacrolimus hydrate
+Tacrolimus	61049	tacrolimus (anhydrous)
 Tadalafil	71940	tadalafil
 Tamoxifen	41774	tamoxifen
+Tannic acid	75211	tannic acid
 Taurine	15891	taurine
 Taurochenodeoxycholic acid	16525	taurochenodeoxycholic acid
 Taurocholic acid	28865	taurocholic acid
@@ -1359,12 +1386,12 @@ tert-Butylhydroperoxide	64090	tert-butyl hydroperoxide
 TES	44356	N-tris(hydroxymethyl)methyl-2-aminoethanesulfonic acid
 Testosterone	17347	testosterone
 Tetracaine	9468	tetracaine
-Tetrachlorodibenzodioxin	28119	"2,3,7,8-tetrachlorodibenzodioxine"
+Tetrachlorodibenzodioxin	28119	2,3,7,8-tetrachlorodibenzodioxine
 Tetracycline	27902	tetracycline
 Tetradecanoylphorbol acetate	37537	phorbol 13-acetate 12-myristate
 Tetraethylammonium	44296	tetraethylammonium
 Tetrahydrocortisol	28320	tetrahydrocortisol
-Tetrahydrofolic acid	26907	tetrahydrofolic acid
+Tetrahydrofolic acid	20506	5,6,7,8-tetrahydrofolic acid
 Tetrahydrofolyl-[Glu](n)	28624	tetrahydrofolyl-poly(glutamic acid) macromolecule
 Tetrodotoxin	9506	tetrodotoxin
 Thalidomide	9513	thalidomide
@@ -1373,10 +1400,11 @@ Theobromine	28946	theobromine
 Theophylline	28177	theophylline
 Thiabendazole	45979	thiabendazole
 Thiamine	18385	thiamine(1+)
-Thiazolidine	50120	"1,3-thiazolidine"
+Thiazolidine	38333	thiazolidine
 Thioacetamide	32497	thioacetamide
 Thioctic acid	30314	(R)-lipoic acid
 Thiocyanate	18022	thiocyanate
+Thiodiglycol	75184	thiodiglycol
 Thioguanine	9555	tioguanine
 Thiomalic acid	38705	thiomalic acid
 Thiophane	48458	tetrahydrothiophene
@@ -1397,16 +1425,16 @@ Toluene	17578	toluene
 Topotecan	63632	topotecan
 Toremifene	9635	toremifene
 Tosylphenylalanyl chloromethyl ketone	9642	N-tosyl-L-phenylalanyl chloromethyl ketone
-"trans,cis-Lauro-2,6-dienoyl-CoA"	28387	"(2-trans,6-cis)-dodeca-2,6-dienoyl-CoA"
-trans-Dec-2-enoyl-CoA	61406	trans-dec-2-enoyl-CoA(4-)
+trans,cis-Lauro-2,6-dienoyl-CoA	28387	(2-trans,6-cis)-dodeca-2,6-dienoyl-CoA
+trans-Dec-2-enoyl-CoA	10723	trans-dec-2-enoyl-CoA
 trans-Hex-2-enoyl-CoA	28706	trans-hex-2-enoyl-CoA
 trans-Hexadec-2-enoyl-CoA	28935	(E)-hexadec-2-enoyl-CoA
 trans-Oct-2-enoyl-CoA	27537	trans-oct-2-enoyl-CoA
 Trans-resveratrol	45713	trans-resveratrol
-trans-Tetradec-2-enoyl-CoA	61405	trans-tetradec-2-enoyl-CoA(4-)
+trans-Tetradec-2-enoyl-CoA	27721	trans-tetradec-2-enoyl-CoA
 Tranylcypromine	9652	tranylcypromine
 Trazodone	9654	trazodone
-Trehalose	16551	"alpha,alpha-trehalose"
+Trehalose	16551	alpha,alpha-trehalose
 Tretinoin	15367	all-trans-retinoic acid
 Triacylglycerol	17855	triglyceride
 Triamcinolone	9667	triamcinolone
@@ -1419,26 +1447,28 @@ Trilostane	32260	trilostane
 Trimethylenediamine	15725	trimethylenediamine
 Trimethyloxamine	15724	trimethylamine N-oxide
 Trimethylsulfonium	17434	trimethylsulfonium
-Trinitrobenzenesulfonic acid	53506	"2,4,5-trinitrobenzenesulfonic acid"
+Trinitrobenzenesulfonic acid	53506	2,4,5-trinitrobenzenesulfonic acid
 Triolein	53753	triolein
 Tripterine	63959	celastrol
 Triptorelin	63633	triptorelin
 Triterpenoid	36615	triterpenoid
 Troglitazone	9753	troglitazone
 Tryptamine	16765	tryptamine
-Tryptophan	27897	tryptophan
+Tryptophan	16828	L-tryptophan
 Tubocurarine	9774	tubocurarine
 Tungsten	27998	tungsten atom
 Tunicamycin	29699	tunicamycin
-Tyramine	327995	tyraminium
+Tyramine	15760	tyramine
 Tyrosine	18186	tyrosine
 Tyrosine kinase inhibitor	38637	tyrosine kinase inhibitor
-U0126	64208	"(2Z,3Z)-bis\{amino[(2-aminophenyl)sulfanyl]methylidene\}butanedinitrile"
+Tyrphostin AG 1478	75404	tyrphostin AG 1478
+Tyrphostin AG 825	75405	tyrphostin AG 825
+U0126	64208	(2Z,3Z)-bis\{amino[(2-aminophenyl)sulfanyl]methylidene\}butanedinitrile
 Ubidecarenone	46245	coenzyme Q10
 Ubiquinol-10	64183	ubiquinol-10
-Ubiquinone	16389	ubiquinones
-UDP-D-galactose	58439	UDP-D-galactose(2-)
-UDP-N-acetyl-D-galactosamine	16650	UDP-N-acetyl-D-galactosamine
+Ubiquinone	46245	coenzyme Q10
+UDP-D-galactose	18307	UDP-D-galactose
+UDP-N-acetyl-D-galactosamine	57847	UDP-N-acetyl-D-galactosamine(2-)
 UDPglucose	18066	UDP-D-glucose
 UDPglucuronate	17200	UDP-alpha-D-glucuronic acid
 unsaturated Fatty acid	27208	unsaturated fatty acid
@@ -1456,12 +1486,12 @@ Ursodiol	9907	ursodeoxycholic acid
 Ursolic acid	9908	ursolic acid
 Usnic acid	38319	usnic acid
 Valdecoxib	63634	valdecoxib
-Valine	27266	valine
+Valine	16414	L-valine
 Valproate Sodium	9925	sodium valproate
 Valproic acid	39867	valproic acid
 Valsartan	9927	valsartan
-Vanadate	30528	vanadium oxoanion
-Vanadium	35170	vanadium(0)
+Vanadate	46442	vanadate(3-)
+Vanadium	27698	vanadium atom
 Vanadyl sulfate	33146	vanadyl sulfate
 Vasopressin	9937	vasopressin
 Vasopressin (arginine form)	34543	argipressin
@@ -1473,10 +1503,10 @@ Vincristine	28445	vincristine
 Vinorelbine	480999	vinorelbine
 Vinyl carbamate	27292	vinyl carbamate
 Vinyl chloride	28509	chloroethene
-Vitamin A	17336	all-trans-retinol
+Vitamin A	12777	vitamin A
 Vitamin D	27300	vitamin D
 Vitamin D3	28940	calciol
-Vitamin E	46430	(-)-alpha-tocopherol
+Vitamin E	18145	(+)-alpha-tocopherol
 Vitamin K	28384	vitamin K
 Vitamin K2	16374	menaquinone
 Voriconazole	10023	voriconazole
@@ -1486,7 +1516,7 @@ Wax ester	10036	wax ester
 Wogonin	10043	wogonin
 Wortmannin	52289	wortmannin
 WR 1065	72583	WR-1065
-Xanthine	15318	xanthine
+Xanthine	17712	9H-xanthine
 Xanthophyll	28838	lutein
 Xanthosine	18107	xanthosine
 xenobiotic	35703	xenobiotic
@@ -1494,16 +1524,18 @@ Ximelagatran	65172	ximelagatran
 Xylene	27338	xylene
 Xylitol	17151	xylitol
 Xylulose	27353	xylulose
+Y 27632	75393	Y-27632
+Y-27632	75393	Y-27632
 Zalcitabine	10101	zalcitabine
 Zardaverine	46548	zardaverine
 ZD6474	49960	vandetanib
-Zebularine	46938	zebularine
+Zebularine	46563	2'-deoxyzebularine 5'-phosphate
 Zidovudine	10110	zidovudine
 Zinc	30185	zinc(0)
 Zinc chloride	49976	zinc dichloride
 Zinc protoporphyrin	28783	zinc protoporphyrin
 Zinc sulfate	35176	zinc sulfate
-"Zinc, ion (Zn2+)"	29105	zinc(2+)
+Zinc, ion (Zn2+)	29105	zinc(2+)
 Zymosan	37671	(1->3)-beta-D-glucan
 Zymostenol	16608	5alpha-cholest-8-en-3beta-ol
 Zymosterol	18252	zymosterol

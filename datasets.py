@@ -79,11 +79,21 @@ class HGNCData(DataSet):
             mapping = self.hgnc_dict.get(symbol)
             loc_type = mapping.get('Locus Type')
             hgnc_id = mapping.get('HGNC ID')
-            yield symbol, loc_type, hgnc_id
+            if '~withdrawn' not in symbol:
+                yield symbol, loc_type, hgnc_id
 
     def get_eq_values(self):
-        for approved_symbol in self.hgnc_dict:
-            yield approved_symbol
+        for symbol in self.hgnc_dict:
+            if '~withdrawn' not in symbol:
+                yield symbol
+
+    def get_map(self):
+        id_map = {}
+        for symbol in self.hgnc_dict:
+            mapping = self.hgnc_dict.get(symbol)
+            hgnc_id = mapping.get('HGNC ID')
+            map[hgnc_id] = symbol
+        return id_map
 
     def __str__(self):
         return 'hgnc'
@@ -104,11 +114,23 @@ class MGIData(DataSet):
             feature_type = mapping.get('Feature Type')
             acc_id = mapping.get('MGI Accession ID')
             marker_type = mapping.get('Marker Type')
-            yield marker_symbol, feature_type, acc_id, marker_type
+            if marker_type == 'Gene' or marker_type == 'Pseudogene':
+                yield marker_symbol, feature_type, acc_id
 
     def get_eq_values(self):
         for marker_symbol in self.mgi_dict:
-            yield marker_symbol
+            mapping = self.mgi_dict.get(marker_symbol)
+            marker_type = mapping.get('Marker Type')
+            if marker_type == 'Gene' or marker_type == 'Pseudogene':
+                yield marker_symbol
+    
+    def get_map(self):
+        id_map = {}
+        for marker_symbol in self.mgi_dict:
+            mapping = self.mgi_dict.get(marker_symbol)
+            acc_id = mapping.get('MGI Accession ID')
+            id_map[acc_id] = marker_symbol
+        return id_map
 
     def __str__(self):
         return 'mgi'
@@ -134,6 +156,14 @@ class RGDData(DataSet):
     def get_eq_values(self):
         for symbol in self.rgd_dict:
             yield symbol
+  
+    def get_map(self):
+        id_map = {}
+        for symbol in self.rgd_dict:
+            mapping = self.rgd_dict.get(symbol)
+            rgd_id = mapping.get('GENE_RGD_ID')
+            id_map[rgd_id] = symbol
+        return id_map
 
     def __str__(self):
         return 'rgd'
@@ -269,23 +299,56 @@ class SCHEMtoCHEBIData(DataSet):
     def get_dictionary(self):
         return self.schem_to_chebi
 
-    def has_equivalence(self, schem_name):
-        equiv = False
-        for schem_term in self.schem_to_chebi:
-            mapping = self.schem_to_chebi.get(schem_term)
-            chebi_name = mapping.get('CHEBI_name')
-            if schem_name.lower() == chebi_name.lower():
-                equiv = True
-        return equiv
-
     def get_equivalence(self, schem_term):
         mapping = self.schem_to_chebi.get(schem_term)
-        chebi_name = mapping.get('CHEBI_name')
-        return chebi_name
+        if mapping:
+            chebi_id = mapping.get('CHEBIID')
+            return chebi_id
+        else:
+            return None
 
     def __str__(self):
         return 'schem_to_chebi'
 
+class NCHData(DataSet):
+
+    def __init__(self, dictionary):
+        super(NCHData, self).__init__(dictionary)
+        self.nch_dict = dictionary
+
+    def get_dictionary(self):
+        return self.nch_dict
+
+    def get_ns_values(self):
+        for entry in self.nch_dict:
+            yield entry
+
+    def get_eq_values(self):
+        for entry in self.nch_dict:
+            yield entry
+
+    def __str__(self):
+        return 'nch'
+
+class CTGData(DataSet):
+
+    def __init__(self, dictionary):
+        super(CTGData, self).__init__(dictionary)
+        self.ctg = dictionary
+
+    def get_dictionary(self):
+        return self.ctg
+
+    def get_equivalence(self, term):
+        mapping = self.ctg.get(term)
+        if mapping:
+            go_id = mapping.get('go_id')
+            return go_id
+        else:
+            return None
+
+    def __str__(self):
+        return 'ctg'
 
 class SDISData(DataSet):
 
@@ -317,23 +380,13 @@ class SDIStoDOData(DataSet):
     def get_dictionary(self):
         return self.sdis_to_do
 
-    def get_eq_values(self):
-        for entry in self.sdis_to_do:
-            yield entry
-
-    def has_equivalence(self, sdis_name):
-        equiv = False
-        for sdis_term in self.sdis_to_do:
-            mapping = self.sdis_to_do.get(sdis_term)
-            do_name = mapping.get('DO_name')
-            if sdis_name.lower() == do_name.lower():
-                equiv = True
-        return equiv
-
-    def get_equivalence(self, sdis_id):
-        mapping = self.sdis_to_do.get(sdis_id)
-        do_name = mapping.get('DO_name')
-        return do_name
+    def get_equivalence(self, sdis_term):
+        mapping = self.sdis_to_do.get(sdis_term)
+        if mapping:
+            do_id = mapping.get('DOID').replace('DOID_', '')
+            return do_id
+        else:
+            return None
 
     def __str__(self):
         return 'sdis_to_do'
@@ -418,8 +471,9 @@ class GOBPData(DataSet):
         for termid in self.gobp_dict:
             mapping = self.gobp_dict.get(termid)
             termname = mapping.get('termname')
+            altids = mapping.get('altids')
 
-            yield termid, termname
+            yield termid, termname, altids
 
     def __str__(self):
         return 'gobp'
@@ -447,8 +501,9 @@ class GOCCData(DataSet):
         for termid in self.gocc_dict:
             mapping = self.gocc_dict.get(termid)
             termname = mapping.get('termname')
+            altids = mapping.get('altids')
 
-            yield termid, termname
+            yield termid, termname, altids
 
     def __str__(self):
         return 'gocc'

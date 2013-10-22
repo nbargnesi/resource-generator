@@ -131,10 +131,11 @@ for url in parser.parse():
         t = u.decode('utf-8')
         tokenized = t.split('|')
         token = tokenized[0]
+        # strip 'GO:' for compatibility with v1.0
+        token = token.replace('GO:','')
         for k, v in namespaces.items():
             if v[0]:
                 v[1].add(token)
-
 # parse the old .beleq files needed for resolving lost values
 parser = parsers.BELEquivalenceParser()
 print('Running BELEquivalence_Parser')
@@ -168,6 +169,8 @@ for url in parser.parse():
         uid = tokenized[1]
         for k, v in equivalences.items():
             if v[0]:
+                # strip 'GO:' for GO namespaces to match v1.0
+                value = value.replace('GO:','')
                 v[1][value] = uid
 
 # parse the old .belanno files needed for resolving lost values
@@ -302,6 +305,7 @@ new_do_ns_names = set()
 new_do_ns_ids = set()
 
 # gather the new data for comparison (locally stored)
+# TODO will need to update once headers auto-added to new .belns files
 indir = os.getcwd()
 for root, dirs, filenames in os.walk(indir):
     for f in filenames:
@@ -352,7 +356,8 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_chebi_ids.add(token)
-                elif 'go-biological-processes-acc' in fp.name:
+                elif 'go-biological-processes-ids' in fp.name:
+                    # note name mismatch for 1.0
                     for line in fp:
                         tokenized = str(line).split('|')
                         token = tokenized[0]
@@ -362,12 +367,14 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gobp_ns_names.add(token)
-                elif 'go-cellular-component-acc' in fp.name:
+                elif 'go-cellular-component-ids' in fp.name:
+                    # note name mismatch for 1.0
                     for line in fp:
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_gocc_ns_ids.add(token)
-                elif 'go-cellular-component-terms' in fp.name:
+                elif 'go-cellular-component-names' in fp.name:
+                    # note name mismatch for 1.0
                     for line in fp:
                         tokenized = str(line).split('|')
                         token = tokenized[0]
@@ -407,23 +414,23 @@ for root, dirs, filenames in os.walk(indir):
                         tokenized = str(line).split('|')
                         token = tokenized[0]
                         new_do_ns_ids.add(token)
-        elif '.belanno' in f:
-            with open(os.path.join(root, f), 'r') as fp:
-                if 'mesh-disease' in fp.name:
-                    for line in fp:
-                        tokenized = str(line).split('|')
-                        token = tokenized[0]
-                        new_mesh_disease_anno.add(token)
-                elif 'mesh-cell-structure' in fp.name:
-                    for line in fp:
-                        tokenized = str(line).split('|')
-                        token = tokenized[0]
-                        new_mesh_cell_struct_anno.add(token)
-                elif 'mesh-anatomy' in fp.name:
-                    for line in fp:
-                        tokenized = str(line).split('|')
-                        token = tokenized[0]
-                        new_mesh_anatomy_anno.add(token)
+        #elif '.belanno' in f:
+            #with open(os.path.join(root, f), 'r') as fp:
+                #if 'mesh-disease' in fp.name:
+                    #for line in fp:
+                        #tokenized = str(line).split('|')
+                        #token = tokenized[0]
+                        #new_mesh_disease_anno.add(token)
+                #elif 'mesh-cell-structure' in fp.name:
+                    #for line in fp:
+                        #tokenized = str(line).split('|')
+                        #token = tokenized[0]
+                        #new_mesh_cell_struct_anno.add(token)
+                #elif 'mesh-anatomy' in fp.name:
+                    #for line in fp:
+                        #tokenized = str(line).split('|')
+                        #token = tokenized[0]
+                        #new_mesh_anatomy_anno.add(token)
 
 
 if verbose:
@@ -452,29 +459,29 @@ if verbose:
     print('len of new diseases-ontology-ids is ' +str(len(new_do_ns_ids)))
 
 # values in the old data that are not in the new (either withdrawn or replaced)
-entrez_lost = [x for x in old_entrez if x not in new_entrez]
-hgnc_lost = [x for x in old_hgnc if x not in new_hgnc]
-mgi_lost = [x for x in old_mgi if x not in new_mgi]
-rgd_lost = [x for x in old_rgd if x not in new_rgd]
-sp_lost_names = [x for x in old_sp_names if x not in new_sp_names]
-sp_lost_ids = [x for x in old_sp_ids if x not in new_sp_ids]
-affy_lost = [x for x in old_affy if x not in new_affy]
-chebi_lost_names = [x for x in old_chebi_names if x not in new_chebi_names]
-chebi_lost_ids = [x for x in old_chebi_ids if x not in new_chebi_ids]
-gobp_lost_ns_names = [x for x in old_gobp_ns_names if x not in new_gobp_ns_names]
-gobp_lost_ns_ids = [x for x in old_gobp_ns_ids if x not in new_gobp_ns_ids]
-gocc_lost_ns_names = [x for x in old_gocc_ns_names if x not in new_gocc_ns_names]
-gocc_lost_ns_ids = [x for x in old_gocc_ns_ids if x not in new_gocc_ns_ids]
-mesh_bio_lost = [x for x in old_mesh_bio if x not in new_mesh_bio]
-mesh_cell_lost = [x for x in old_mesh_cell if x not in new_mesh_cell]
-mesh_disease_lost = [x for x in old_mesh_disease if x not in new_mesh_disease]
-mesh_disease_anno_lost = [x for x in old_mesh_disease_anno if x not in new_mesh_disease_anno]
-mesh_cell_struct_anno_lost = [x for x in old_mesh_cell_struct_anno if x not in new_mesh_cell_struct_anno]
-mesh_anatomy_anno_lost = [x for x in old_mesh_anatomy_anno if x not in new_mesh_anatomy_anno]
-schem_lost = [x for x in old_schem_ns if x not in new_schem_ns]
-sdis_lost = [x for x in old_sdis_ns if x not in new_sdis_ns]
-do_lost_names = [x for x in old_do_ns_names if x not in new_do_ns_names]
-do_lost_ids = [x for x in old_do_ns_ids if x not in new_do_ns_ids]
+entrez_lost = old_entrez.difference(new_entrez)
+hgnc_lost = old_hgnc.difference(new_hgnc)
+mgi_lost = old_mgi.difference(new_mgi)
+rgd_lost = old_rgd.difference(new_rgd)
+sp_lost_names = old_sp_names.difference(new_sp_names)
+sp_lost_ids = old_sp_ids.difference(new_sp_ids)
+affy_lost = old_affy.difference(new_affy)
+chebi_lost_names = old_chebi_names.difference(new_chebi_names)
+chebi_lost_ids = old_chebi_ids.difference(new_chebi_ids)
+gobp_lost_ns_names = old_gobp_ns_names.difference(new_gobp_ns_names)
+gocc_lost_ns_names = old_gocc_ns_names.difference(new_gocc_ns_names)
+gobp_lost_ns_ids = old_gobp_ns_ids.difference(new_gobp_ns_ids)
+gocc_lost_ns_ids = old_gocc_ns_ids.difference(new_gocc_ns_ids)
+mesh_bio_lost = old_mesh_bio.difference(new_mesh_bio)
+mesh_cell_lost = old_mesh_cell.difference(new_mesh_cell)
+mesh_disease_lost = old_mesh_disease.difference(new_mesh_disease)
+#mesh_disease_anno_lost = [x for x in old_mesh_disease_anno if x not in new_mesh_disease_anno]
+#mesh_cell_struct_anno_lost = [x for x in old_mesh_cell_struct_anno if x not in new_mesh_cell_struct_anno]
+#mesh_anatomy_anno_lost = [x for x in old_mesh_anatomy_anno if x not in new_mesh_anatomy_anno]
+schem_lost = old_schem_ns.difference(new_schem_ns)
+sdis_lost = old_sdis_ns.difference(new_sdis_ns)
+do_lost_names = old_do_ns_names.difference(new_do_ns_names)
+do_lost_ids = old_do_ns_ids.difference(new_do_ns_ids)
 
 if verbose:
     print('===========================================')
@@ -494,38 +501,38 @@ if verbose:
     print('lost mesh-bio ' +str(len(mesh_bio_lost)))
     print('lost mesh-cell ' +str(len(mesh_cell_lost)))
     print('lost mesh-diseases ' +str(len(mesh_disease_lost)))
-    print('lost mesh-diseases-anno ' +str(len(mesh_disease_anno_lost)))
-    print('lost mesh-cell-anno ' +str(len(mesh_cell_struct_anno_lost)))
-    print('lost mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_lost)))
+    #print('lost mesh-diseases-anno ' +str(len(mesh_disease_anno_lost)))
+    #print('lost mesh-cell-anno ' +str(len(mesh_cell_struct_anno_lost)))
+    #print('lost mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_lost)))
     print('lost selventa-legacy-chemicals ' +str(len(schem_lost)))
     print('lost selventa-legacy-diseases ' +str(len(sdis_lost)))
     print('lost diseases-ontology-names ' +str(len(do_lost_names)))
     print('lost diseases-ontology-ids ' +str(len(do_lost_ids)))
 
-# values in the new data that are not in the old (either new or a replacement)
-entrez_gained = [x for x in new_entrez if x not in old_entrez]
-hgnc_gained = [x for x in new_hgnc if x not in old_hgnc]
-mgi_gained = [x for x in new_mgi if x not in old_mgi]
-rgd_gained = [x for x in new_rgd if x not in old_rgd]
-sp_gained_names = [x for x in new_sp_names if x not in old_sp_names]
-sp_gained_ids = [x for x in new_sp_ids if x not in old_sp_ids]
-affy_gained = [x for x in new_affy if x not in old_affy]
-chebi_gained_names = [x for x in new_chebi_names if x not in old_chebi_names]
-chebi_gained_ids = [x for x in new_chebi_ids if x not in old_chebi_ids]
-gobp_gained_ns_names = [x for x in new_gobp_ns_names if x not in old_gobp_ns_names]
-gobp_gained_ns_ids = [x for x in new_gobp_ns_ids if x not in old_gobp_ns_ids]
-gocc_gained_ns_names = [x for x in new_gocc_ns_names if x not in old_gocc_ns_names]
-gocc_gained_ns_ids = [x for x in new_gocc_ns_ids if x not in old_gocc_ns_ids]
-mesh_gained_bio = [x for x in new_mesh_bio if x not in old_mesh_bio]
-mesh_gained_cell = [x for x in new_mesh_cell if x not in old_mesh_cell]
-mesh_gained_disease = [x for x in new_mesh_disease if x not in old_mesh_disease]
-mesh_disease_anno_gained = [x for x in new_mesh_disease_anno if x not in old_mesh_disease_anno]
-mesh_cell_struct_anno_gained = [x for x in new_mesh_cell_struct_anno if x not in old_mesh_cell_struct_anno]
-mesh_anatomy_anno_gained = [x for x in new_mesh_anatomy_anno if x not in old_mesh_anatomy_anno]
-schem_gained_ns_names = [x for x in new_schem_ns if x not in old_schem_ns]
-sdis_gained_ns_names = [x for x in new_sdis_ns if x not in old_sdis_ns]
-do_gained_ns_names = [x for x in new_do_ns_names if x not in old_do_ns_names]
-do_gained_ns_ids = [x for x in new_do_ns_ids if x not in old_do_ns_ids]
+# values in the new .belns files that are not in the old (may be either new or a replacement)
+entrez_gained = new_entrez.difference(old_entrez)
+hgnc_gained = new_hgnc.difference(old_hgnc)
+mgi_gained = new_mgi.difference(old_mgi)
+rgd_gained = new_rgd.difference(old_rgd)
+sp_gained_names = new_sp_names.difference(old_sp_names)
+sp_gained_ids = new_sp_ids.difference(old_sp_ids)
+affy_gained = new_affy.difference(old_affy)
+chebi_gained_names = new_chebi_names.difference(old_chebi_names)
+chebi_gained_ids = new_chebi_ids.difference(old_chebi_ids)
+gobp_gained_ns_names = new_gobp_ns_names.difference(old_gobp_ns_names)
+gobp_gained_ns_ids = new_gobp_ns_ids.difference(old_gobp_ns_ids)
+gocc_gained_ns_names = new_gocc_ns_names.difference(old_gocc_ns_names)
+gocc_gained_ns_ids = new_gocc_ns_ids.difference(old_gocc_ns_ids)
+mesh_gained_bio = new_mesh_bio.difference(old_mesh_bio)
+mesh_gained_cell = new_mesh_cell.difference(old_mesh_cell)
+mesh_gained_disease = new_mesh_disease.difference(old_mesh_disease)
+#mesh_disease_anno_gained = [x for x in new_mesh_disease_anno if x not in old_mesh_disease_anno]
+#mesh_cell_struct_anno_gained = [x for x in new_mesh_cell_struct_anno if x not in old_mesh_cell_struct_anno]
+#mesh_anatomy_anno_gained = [x for x in new_mesh_anatomy_anno if x not in old_mesh_anatomy_anno]
+schem_gained_ns_names = new_schem_ns.difference(old_schem_ns)
+sdis_gained_ns_names = new_sdis_ns.difference(old_sdis_ns)
+do_gained_ns_names = new_do_ns_names.difference(old_do_ns_names)
+do_gained_ns_ids = new_do_ns_ids.difference(old_do_ns_ids)
 
 if verbose:
     print('===========================================')
@@ -545,9 +552,9 @@ if verbose:
     print('gained mesh_bio ' +str(len(mesh_gained_bio)))
     print('gained mesh_cell ' +str(len(mesh_gained_cell)))
     print('gained mesh_disease ' +str(len(mesh_gained_disease)))
-    print('gained mesh-disease-anno ' +str(len(mesh_disease_anno_gained)))
-    print('gained mesh-cell-anno ' +str(len(mesh_cell_struct_anno_gained)))
-    print('gained mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_gained)))
+    #print('gained mesh-disease-anno ' +str(len(mesh_disease_anno_gained)))
+    #print('gained mesh-cell-anno ' +str(len(mesh_cell_struct_anno_gained)))
+    #print('gained mesh-anatomy-anno ' +str(len(mesh_anatomy_anno_gained)))
     print('gained selventa-legacy-chemicals ' +str(len(schem_gained_ns_names)))
     print('gained selventa-legacy-diseases ' +str(len(sdis_gained_ns_names)))
     print('gained diseases-ontology-names ' +str(len(do_gained_ns_names)))
@@ -575,7 +582,7 @@ change_log['mesh-diseases'] = {}
 change_log['schem'] = {}
 change_log['sdis'] = {}
 change_log['do-names'] = {}
-
+change_log['do-ids'] = {}
 # download the data needed for resolving lost values
 print('\nDownloading data needed for resolving changed/lost terms...')
 for name, data_tuple in changelog_data.items():
@@ -592,73 +599,84 @@ for label, data_tuple in changelog_data.items():
     parser = data_tuple[PARSER_TYPE]('datasets/'+url)
 
     if str(parser) == 'EntrezGeneHistory_Parser':
+        log = change_log.get('entrez')
         if verbose:
             print('\nGathering Entrez update info...')
         for row in parser.parse():
             discontinued_id  = row.get('Discontinued_GeneID')
             gid = row.get('GeneID')
             replacement_id = gid if gid != '-' else 'withdrawn'
-            log = change_log.get('entrez')
-            log[discontinued_id] = replacement_id
+            if discontinued_id in entrez_lost:
+                log[discontinued_id] = replacement_id
 
     elif str(parser) == 'HGNC_Parser':
         if verbose:
             print('Gathering HGNC update info...')
         for row in parser.parse():
-            previous_symbols = []
-            previous_names = []
-            symbols_and_names = []
-            val = row.get('Approved Symbol')
+            symbol = row.get('Approved Symbol')
             ps = row.get('Previous Symbols')
-            pn = row.get('Previous Names')
             log = change_log.get('hgnc')
-            if len(ps) > 0:
-                previous_symbols.extend(ps.split(', '))
-            if len(pn) > 0:
-                previous_names.extend(pn.split(', '))
-            if '~withdrawn' in val:
+            previous_symbols = set(ps.split(', '))
+            match = previous_symbols.intersection(hgnc_lost)
+            for m in match:
+                log[m] = symbol 
+            if '~withdrawn' in symbol:
+                old_symbol = symbol.split('~')[0]
                 approved_name = row.get('Approved Name')
-                # no replacement
-                if 'entry withdrawn' in approved_name:
-                    old_val = val.split('~')[0]
-                    log[old_val] = 'withdrawn'
-                # has a replacement
-                if 'symbol withdrawn' in approved_name:
-                    old_val = val.split('~')[0]
-                    new_val = approved_name.split('see ')[1]
-                    log[old_val] = new_val
-            symbols_and_names = previous_symbols + previous_names
-            resolved = [x for x in hgnc_lost if x in symbols_and_names]
-            if resolved:
-                for symbol in resolved:
-                    log[symbol] = val
+                if old_symbol in hgnc_lost:
+                    # no replacement
+                    if 'entry withdrawn' in approved_name:
+                        log[old_symbol] = 'withdrawn'
+                    # has a replacement
+                    if 'symbol withdrawn' in approved_name:
+                        new_symbol = approved_name.split('see ')[1]
+                        log[old_symbol] = new_symbol
 
     elif str(parser) == 'MGI_Parser':
         if verbose:
             print('Gathering MGI update info...')
         for row in parser.parse():
             mgi_accession = row.get('MGI Accession ID')
+            log = change_log.get('mgi')
             if mgi_accession == 'NULL':
-                old_val = row.get('Marker Symbol')
+                old_symbol = row.get('Marker Symbol')
                 name = row.get('Marker Name')
-                if '=' in name:
-                    log = change_log.get('mgi')
-                    log[old_val] = name.split('= ')[1]
-                elif 'withdrawn' in name:
-                    log = change_log.get('mgi')
-                    log[old_val] = 'withdrawn'
+                if old_symbol in mgi_lost:
+                    if '=' in name:
+                        log[old_symbol] = name.split('= ')[1]
+                    elif 'withdrawn' in name:
+                        log[old_symbol] = 'withdrawn'
 
     elif str(parser) == 'RGD_Parser':
-        # rgd changes (still dont know if withdrawn or replaced!!)
+        # two possible cases - 
+        # (1) ID retired/obsoleted (symbol is withdrawn or replaces)
+        # (2) ID retained, symbol replaced
         if verbose:
             print('Gathering RGD update info...')
         for row in parser.parse():
-            new_val = row.get('SYMBOL')
-            lost_vals = row.get('OLD_SYMBOL').split(';')
-            if len(lost_vals) != 0:
-                for symbol in lost_vals:
-                    log = change_log.get('rgd')
-                    log[symbol] = new_val
+            new_symbol = row.get('SYMBOL')
+            old_symbols = set(row.get('OLD_SYMBOL').split(';'))
+            log = change_log.get('rgd')
+            # find lost rgd values matching old symbols
+            match = rgd_lost.intersection(old_symbols)
+            for m in match:
+                log[m] = new_symbol
+
+    elif str(parser) == 'RGD_Obsolete_Parser':
+        # RGD file tracking retired/withdrawn RGD IDs
+        if verbose:
+            print('Gathering RGD obsolete ID info...')
+        log = change_log.get('rgd')
+        for row in parser.parse():
+            old_symbol = row.get('OLD_GENE_SYMBOL')
+            status = row.get('OLD_GENE_STATUS')
+            new_symbol = row.get('NEW_GENE_SYMBOL')
+            new_symbol_status = row.get('NEW_GENE_STATUS')
+            if old_symbol in rgd_lost:
+                if status == 'WITHDRAWN':
+                    log[old_symbol] = 'withdrawn'
+                if status == 'RETIRED' and new_symbol_status == 'ACTIVE':
+                    log[old_symbol] = new_symbol  
 
     elif str(parser) == 'SwissWithdrawn_Parser':
         # swissprot name changes
@@ -667,6 +685,7 @@ for label, data_tuple in changelog_data.items():
         cache_hits = 0
         cache_misses = 0
         files = set()
+        log = change_log.get('swiss-names')
         if not os.path.exists('cache/'):
             os.mkdir('cache/')
         for f in os.listdir('cache/'):
@@ -699,17 +718,18 @@ for label, data_tuple in changelog_data.items():
 
             # no replacement
             if len(content_list) is 0:
-                log = change_log.get('swiss-names')
                 log[name] = 'withdrawn'
             # get the new name
             else:
                 new_name = content_list[1]
-                log = change_log.get('swiss-names')
                 log[name] = new_name
         # swissprot accession numbers (ids)
+        # list of deleted ids provided as file - 'delac_sp.txt' 
+        log = change_log.get('swiss-ids')
         for row in parser.parse():
-            sp_accession_ids.append(row.get('accession'))
-        change_log['swiss-ids'] = sp_accession_ids
+            withdrawn_id = row.get('accession')
+            if withdrawn_id in sp_lost_ids:
+                log[withdrawn_id] = 'withdrawn'
         if verbose:
             print('Cache checks: ' +str(cache_hits))
             print('Cache misses: ' +str(cache_misses))
@@ -718,68 +738,81 @@ for label, data_tuple in changelog_data.items():
         # GOBP name and id changes
         if verbose:
             print('Gathering GOBP update info...')
-        # treat every id as obsolete
-        for lost_id in gobp_lost_ns_ids:
-            log = change_log.get('gobp-ids')
-            log[lost_id] = 'withdrawn'
 
-        non_obsolete_terms = {}
-        obsolete_terms = set()
-        # this parser only returns the obsolete terms
+        # get obsolete term ids, includng altids
+        obsolete_ids = set()
         for row in parser.obsolete_parse():
             termname = row.get('termname')
             termid = row.get('termid')
-            obsolete_terms.add(termid)
+            altids = row.get('altids')
+            obsolete_ids.update(altids)
+            obsolete_ids.add(termid)
 
-        # this parser only returns the NON-obsolete terms
+        # if id is obsolete, log as 'withdrawn'
+        for lost_id in gobp_lost_ns_ids:
+            log = change_log.get('gobp-ids')
+            if lost_id in obsolete_ids:
+                log[lost_id] = 'withdrawn'
+
+        # make dictionary of ids, altids to names for non-obsolete terms
+        non_obsolete_ids = {}
         for row in parser.parse():
             termname = row.get('termname')
             termid = row.get('termid')
-            non_obsolete_terms[termid] = termname
+            altids = row.get('altids')
+            for altid in altids:
+                non_obsolete_ids[altid] = termname
+            non_obsolete_ids[termid] = termname
 
         # try to resolve the name
         for lost_name in gobp_lost_ns_names:
             lost_id = name_to_id(lost_name)
-            if lost_id in obsolete_terms:
+            if lost_id in obsolete_ids:
                 log = change_log.get('gobp-names')
                 log[lost_name] = 'withdrawn'
             else:
-                new_name = non_obsolete_terms.get(lost_id)
+                new_name = non_obsolete_ids.get(lost_id)
                 if new_name is not None:
                     log = change_log.get('gobp-names')
                     log[lost_name] = new_name
 
     elif str(parser) == 'GOCC_Parser':
-        # GOBP name and id changes
+        # GOCC name and id changes
         if verbose:
             print('Gathering GOCC update info...')
-        # treat every id as obsolete
-        for lost_id in gocc_lost_ns_ids:
-            log = change_log.get('gocc-ids')
-            log[lost_id] = 'withdrawn'
 
-        non_obsolete_terms = {}
-        obsolete_terms = set()
+        non_obsolete_ids = {}
+        obsolete_ids = set()
         # this parser only returns the obsolete terms
         for row in parser.obsolete_parse():
             termname = row.get('termname')
             termid = row.get('termid')
-            obsolete_terms.add(termid)
+            altids = row.get('altids')
+            obsolete_ids.add(termid)
+            obsolete_ids.update(altids)
 
-        # this parser only returns the NON-obsolete terms and
+        #if id is obsolete, log as 'withdrawn'
+        for lost_id in gocc_lost_ns_ids:
+            if lost_id in obsolete_ids:
+                log = change_log.get('gocc-ids')
+                log[lost_id] = 'withdrawn'
+        # this parser returns the NON-obsolete terms and
         # and maps them to the corresponding term-name
         for row in parser.parse():
             termname = row.get('termname')
             termid = row.get('termid')
-            non_obsolete_terms[termid] = termname
+            altids = row.get('altids')
+            for altid in altids:
+                non_obsolete_ids[altid] = termname
+            non_obsolete_ids[termid] = termname
 
         for lost_name in gocc_lost_ns_names:
             lost_id = name_to_id(lost_name)
-            if lost_id in obsolete_terms:
+            if lost_id in obsolete_ids:
                 log = change_log.get('gocc-names')
                 log[lost_name] = 'withdrawn'
             else:
-                new_name = non_obsolete_terms.get(lost_id)
+                new_name = non_obsolete_ids.get(lost_id)
                 if new_name is not None:
                     log = change_log.get('gocc-names')
                     log[lost_name] = new_name
@@ -787,10 +820,7 @@ for label, data_tuple in changelog_data.items():
     elif str(parser) == 'CHEBI_Parser':
         if verbose:
             print('Gathering CHEBI update info...')
-        # first take care of chebi, all ids are withdrawn
-        log = change_log.get('chebi-ids')
-        for id in chebi_lost_ids:
-            log[id] = 'withdrawn'
+        # withdrawn ids not included in chebi.owl file; flag all as 'unresolved'
 
         # some names can be resolved by using the ID
         chebi_new_ids_to_names = {}
@@ -810,8 +840,6 @@ for label, data_tuple in changelog_data.items():
             if lost_id in new_chebi_ids:
                 new_name = chebi_new_ids_to_names[lost_id]
                 log[name] = new_name
-            else:
-                log[name] = 'withdrawn'
 
     elif str(parser) == 'MESHChanges_Parser':
         if verbose:
@@ -835,33 +863,6 @@ for label, data_tuple in changelog_data.items():
             if val in old_to_new:
                 diseases_log[val] = old_to_new[val]
 
-    elif str(parser) == 'SCHEMtoCHEBI_Parser':
-        if verbose:
-            print('Gathering Selventa-legacy-chemicals update info...')
-        log = change_log.get('schem')
-        for row in parser.parse():
-            schem_term = row.get('SCHEM_term')
-            chebi_name = row.get('CHEBI_name')
-            if schem_term in schem_lost:
-                log[schem_term] = chebi_name
-            # this else shouldnt happen. All schem names returned from the
-            # parser should be in schem_lost.
-            else:
-                log[schem_term] = 'withdrawn'
-
-    elif str(parser) == 'SDIStoDO_Parser':
-        if verbose:
-            print('Gathering Selventa-legacy-diseases update info...')
-        log = change_log.get('sdis')
-        for row in parser.parse():
-            sdis_term = row.get('SDIS_term')
-            do_name = row.get('DO_name')
-            if sdis_term in sdis_lost:
-                log[sdis_term] = do_name
-            # this 'else' should never happen. All sdis names returned from the
-            # parser SHOULD be in sdis_lost.
-            else:
-                log[sdis_term] = 'withdrawn'
 
     elif str(parser) == 'DODeprecated_Parser':
         if verbose:
@@ -893,44 +894,45 @@ end_time = time.time()
 
 # verification and error checking
 dataset = change_log.get('entrez')
-e_unresolved = [x for x in entrez_lost if x not in dataset]
+e_unresolved = list(entrez_lost.difference(dataset))
 dataset = change_log.get('hgnc')
-hgnc_unresolved = [x for x in hgnc_lost if x not in dataset]
+hgnc_unresolved = list(hgnc_lost.difference(dataset))
 dataset = change_log.get('mgi')
-mgi_unresolved = [x for x in mgi_lost if x not in dataset]
+mgi_unresolved = list(mgi_lost.difference(dataset))
 dataset = change_log.get('rgd')
-rgd_unresolved = [x for x in rgd_lost if x not in dataset]
+rgd_unresolved = list(rgd_lost.difference(dataset))
 dataset = change_log.get('swiss-names')
-sp_unresolved_names = [x for x in sp_lost_names if x not in dataset]
-# values that were "lost" but NOT in the file provided by SwissProt
+sp_unresolved_names = list(sp_lost_names.difference(dataset))
 dataset = change_log.get('swiss-ids')
-sp_unresolved_ids = [x for x in sp_lost_ids if x not in dataset]
+sp_unresolved_ids = list(sp_lost_ids.difference(dataset))
 dataset = change_log.get('gobp-ids')
-gobp_unresolved_ids = [x for x in gobp_lost_ns_ids if x not in dataset]
+gobp_unresolved_ids = list(gobp_lost_ns_ids.difference(dataset))
 dataset = change_log.get('gobp-names')
-gobp_unresolved_names = [x for x in gobp_lost_ns_names if x not in dataset]
+gobp_unresolved_names = list(gobp_lost_ns_names.difference(dataset))
 dataset = change_log.get('gocc-ids')
-gocc_unresolved_ids = [x for x in gocc_lost_ns_ids if x not in dataset]
+gocc_unresolved_ids = list(gocc_lost_ns_ids.difference(dataset))
 dataset = change_log.get('gocc-names')
-gocc_unresolved_names = [x for x in gocc_lost_ns_names if x not in dataset]
+gocc_unresolved_names = list(gocc_lost_ns_names.difference(dataset))
 dataset = change_log.get('chebi-names')
-chebi_unresolved_names = [x for x in chebi_lost_names if x not in dataset]
+chebi_unresolved_names = list(chebi_lost_names.difference(dataset))
 dataset = change_log.get('chebi-ids')
-chebi_unresolved_ids = [x for x in chebi_lost_ids if x not in dataset]
+chebi_unresolved_ids = list(chebi_lost_ids.difference(dataset))
 dataset = change_log.get('mesh-bio')
-mesh_bio_unresolved = [x for x in mesh_bio_lost if x not in dataset]
+mesh_bio_unresolved = list(mesh_bio_lost.difference(dataset))
 dataset = change_log.get('mesh-cell')
-mesh_cell_unresolved = [x for x in mesh_cell_lost if x not in dataset]
+mesh_cell_unresolved = list(mesh_cell_lost.difference(dataset))
 dataset = change_log.get('mesh-diseases')
-mesh_disease_unresolved = [x for x in mesh_disease_lost if x not in dataset]
+mesh_disease_unresolved = list(mesh_disease_lost.difference(dataset))
 dataset = change_log.get('schem')
-schem_unresolved = [x for x in schem_lost if x not in dataset]
+schem_unresolved = list(schem_lost.difference(dataset))
 dataset = change_log.get('sdis')
-sdis_unresolved = [x for x in sdis_lost if x not in dataset]
+sdis_unresolved = list(sdis_lost.difference(dataset))
 dataset = change_log.get('do-names')
-do_unresolved = [x for x in do_lost_names if x not in dataset]
+do_unresolved = list(do_lost_names.difference(dataset))
 
 # add 'unresolved' terms to the change-log.
+# known reasons for failure to resolve terms -
+#    GO BP - term moved to different domain (e.g., from Biological Process to Molecular Function)
 change_log['unresolved'] = {
     'entrez' : e_unresolved,
     'hgnc' : hgnc_unresolved,
@@ -939,7 +941,7 @@ change_log['unresolved'] = {
     'sp_names' : sp_unresolved_names,
     'sp_ids' : sp_unresolved_ids,
     'gobp_names' : gobp_unresolved_names,
-    'gobp_ids' : gobp_unresolved_names,
+    'gobp_ids' : gobp_unresolved_ids,
     'gocc_names' : gocc_unresolved_names,
     'gocc_ids' : gocc_unresolved_ids,
     'chebi_names' : chebi_unresolved_names,

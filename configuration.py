@@ -43,6 +43,8 @@ baseline_data['SCHEM_to_CHEBIID.txt'] = ('datasets/SCHEM_to_CHEBIID.txt', parser
 baseline_data['schem'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-chemical-names.belns', parsers.SCHEMParser)
 baseline_data['SDIS_to_DO.txt'] = ('datasets/SDIS_to_DOID.txt', parsers.SDIStoDOParser)
 baseline_data['sdis'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-diseases.belns', parsers.SDISParser)
+baseline_data['named_complex'] = ('http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns', parsers.ComplexParser)
+baseline_data['named_complexes_to_GOCC.csv'] = ('datasets/named_complexes_to_GOCC.csv', parsers.ComplexToGOParser)
 # need to change links to GO - date in filename will change with each update
 # 2013-10-01 changes to GO resource file parser:
 # get the latest GO archive file name and URL

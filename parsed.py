@@ -31,6 +31,8 @@ schem = {}
 sdis = {}
 schem_to_chebi = {}
 sdis_to_do = {}
+nch = {}
+ctg = {}
 pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 gobp_dict = {}
@@ -57,6 +59,8 @@ gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
 mesh_data = MESHData(mesh_dict)
 do_data = DOData(do_dict)
+nch_data = NCHData(nch)
+ctg_data = CTGData(ctg)
 
 count = 0
 
@@ -175,6 +179,19 @@ def build_data(entry, parser):
         sdis_to_do[sdis_term] = {
             'DOID' : do_id,
             'DO_name' : do_name }
+ 
+    elif parser == 'Complex_Parser':
+        complex_term = entry.get('term')
+
+        nch[complex_term] = 'C'
+  
+    elif parser == 'Complex_To_GO_Parser':
+        term = entry.get('NCH_Value')
+        go_id = entry.get('GO_Id')
+        go_id = go_id.replace('GO:', '')
+        ctg[term] = {
+            'go_id' : go_id }
+            
 
     elif parser == 'CHEBI_Parser':
         name = entry.get('name')
@@ -266,7 +283,7 @@ def load_data(label):
                 gene2acc_data, entrez_history_data, pub_equiv_data,
                 schem_data, schem_to_chebi_data, gobp_data,
                 gocc_data, mesh_data, swiss_withdrawn_acc_data,
-                do_data, sdis_data, sdis_to_do_data]
+                do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data]
 
     for d in datasets:
         if str(d) == label:

@@ -23,6 +23,8 @@ changelog_data['mgi.rpt'] = \
     ('ftp://ftp.informatics.jax.org/pub/reports/MRK_List1.rpt', parsers.MGIParser)
 changelog_data['rgd.txt'] = \
     ('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)
+changelog_data['rgd_obsolete.txt'] = \
+    ('ftp://rgd.mcw.edu/pub/data_release/GENES_OBSOLETE_IDS.txt', parsers.RGDObsoleteParser)
 changelog_data['delac_sp.txt'] = \
     ('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser)
 # get the latest GO archive file name and URL
@@ -37,9 +39,5 @@ changelog_data['chebi.owl'] = \
     ('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
 changelog_data['replace2013.txt'] = \
     ('ftp://nlmpubs.nlm.nih.gov/online/mesh/.newterms/replace2013.txt', parsers.MESHChangesParser)
-changelog_data['SCHEM_to_CHEBIID.txt'] = \
-    ('SCHEM_to_CHEBIID.txt', parsers.SCHEMtoCHEBIParser)
-changelog_data['SDIS_to_DO.txt'] = \
-    ('SDIS_to_DO.txt', parsers.SDIStoDOParser)
 changelog_data['doid.owl'] = \
     ('http://purl.obolibrary.org/obo/doid.owl', parsers.DODeprecatedParser)

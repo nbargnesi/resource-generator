@@ -313,7 +313,7 @@ class AffyParser(Parser):
         array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
                        'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
                        'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
-                       'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 'HT_Rat230_PM']
+                       'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
 
         urls = []
         with open(self.affy_file, 'rb') as affyf:
@@ -390,7 +390,8 @@ class Gene2AccParser(Parser):
                                     fieldnames=column_headers)
 
         for row in g2a_reader:
-            yield row
+            if row['tax_id'] in ('9606', '10090', '10116'):
+                yield row
 
     def __str__(self):
         return 'Gene2Acc_Parser'
@@ -591,6 +592,44 @@ class SDISParser(Parser):
     def __str__(self):
         return 'SDIS_Parser'
 
+class ComplexParser(Parser):
+
+    def __init__(self, url):
+        super(ComplexParser, self).__init__(url)
+        self.ns_file = url
+
+    def parse(self):
+        isFalse = True
+        with open(self.ns_file, 'r') as fp:
+            for line in fp.readlines():
+                if '[Values]' not in line and isFalse:
+                    continue
+                elif '[Values]' in line:
+                    isFalse = False
+                    continue
+                else:
+                    term = line.split('|')[0]
+                    yield {'term' : term }
+
+    def __str__(self):
+        return 'Complex_Parser'
+
+class ComplexToGOParser(Parser):
+
+    def __init__(self, url):
+        super(ComplexToGOParser, self).__init__(url)
+        self.map_file = url
+
+    def parse(self):
+        
+        with open(self.map_file, 'r') as ctg:
+            ctg_csvr = csv.DictReader(ctg, delimiter = ',')
+            for row in ctg_csvr:
+                yield row
+    
+    def __str__(self):
+        return 'Complex_To_GO_Parser'
+
 
 class SCHEMtoCHEBIParser(Parser):
 
@@ -654,13 +693,17 @@ class GOBPParser(Parser):
             # iterate the NON-OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text
+                bp_termid = bp_termid.replace('GO:','')
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
+                    bp_altids = [altid.replace('GO:','') for altid in bp_altids]
                 else:
                     bp_altids = False
+                
+                
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
-                        'alt_ids' : bp_altids }
+                        'altids' : bp_altids }
 
     def obsolete_parse(self):
 
@@ -673,13 +716,15 @@ class GOBPParser(Parser):
             # iterate the OBSOLETE biological_process terms
             for t in bp_terms:
                 bp_termid = t.find('id').text
+                bp_termid = bp_termid.replace('GO:','')
                 bp_termname = t.find('name').text
                 if t.findall('alt_id') is not None:
                     bp_altids = [x.text for x in t.findall('alt_id')]
+                    bp_altids = [altid.replace('GO:','') for altid in bp_altids]
                 else:
                     bp_altids = False
                 yield { 'termid' : bp_termid, 'termname' : bp_termname,
-                        'alt_ids' : bp_altids }
+                        'altids' : bp_altids }
 
 
     def __str__(self):
@@ -739,7 +784,10 @@ class GOCCParser(Parser):
 
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
-
+            
+            cc_termid = cc_termid.replace('GO:','')
+            cc_altids = [altid.replace('GO:','') for altid in cc_altids]
+ 
             yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }
 
@@ -784,6 +832,9 @@ class GOCCParser(Parser):
 
                     if cc_parent_id in cc_parents:
                         cc_parent_stack.extend(cc_parents[cc_parent_id])
+
+            cc_termid = cc_termid.replace('GO:','')
+            cc_altids = [altid.replace('GO:','') for altid in cc_altids]
 
             yield { 'termid' : cc_termid, 'termname' : cc_termname,
                     'altids' : cc_altids, 'complex' : complex }
@@ -1022,3 +1073,24 @@ class DODeprecatedParser(Parser):
 
     def __str__(self):
         return 'DODeprecated_Parser'
+
+class RGDObsoleteParser(Parser):
+
+    def __init__(self, url):
+        super(RGDObsoleteParser, self).__init__(url)
+        self.rgd_file = url
+
+    def parse(self):
+
+        with open(self.rgd_file, 'r') as rgdo:
+            # skip comment lines
+            rgd_csvr = csv.DictReader(filter(lambda row:
+                                                not row[0].startswith('#'), rgdo), 
+                                     delimiter='\t')
+            for row in rgd_csvr:
+                if row['SPECIES'] == 'rat':
+                    yield row
+
+    def __str__(self):
+        return "RGD_Obsolete_Parser"
+

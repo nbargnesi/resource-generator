@@ -94,10 +94,10 @@ for df in dep_files:
 		if verbose:
 			print('Dependency file %s copied to %s/datasets/' % (df, os.getcwd()))
 
-shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
-shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
-shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
-shutil.copy(src_dir+'/datasets/named_complexes_to_GOCC.csv', os.getcwd()+'/datasets')
+#shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
+#shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
+#shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
+#shutil.copy(src_dir+'/datasets/named_complexes_to_GOCC.csv', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
 #shutil.copy('../datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')

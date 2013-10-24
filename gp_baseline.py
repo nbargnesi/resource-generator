@@ -9,10 +9,18 @@
  .bel files.
 
  inputs:
-   -b    resource-generator phase to begin at
-   -e    resource-generator phase to end at
+   -b    resource-generator phase to begin at [1,2,3,4,5]
+   -e    resource-generator phase to end at [1,2,3,4,5] (>= begin phase)
    -n	 the directory to store the new equivalence data
+   -p    pickle file name suffix for parsed data
    -v	 enables verbose mode
+
+ phases:
+   1.    data download
+   2.    data parser with pickler
+   3.    namespace builder
+   4.    annotation builder
+   5.    equivalence builder
 
 '''
 
@@ -21,6 +29,7 @@ import argparse
 import os
 import namespaces
 import parsed
+import pickle
 import time
 #import equiv
 import shutil
@@ -59,6 +68,8 @@ parser.add_argument("-b", "--begin_phase", type=int, choices=[1, 2, 3, 4, 5], de
 					help="resource-generator phase to begin at")
 parser.add_argument("-e", "--end_phase", type=int, choices=[1, 2, 3, 4, 5], default = 5,
 					help="resource-generator phase to end at")
+parser.add_argument("-p", "--parsed_pickle", type=str, default = 'parsed_data.pickle',
+					help="pickle file name suffix for parsed data")
 args = parser.parse_args()
 
 verbose = args.verbose
@@ -86,7 +97,7 @@ dep_files.append('meshcs_to_gocc.csv')
 dep_files.append('SDIS_to_DO.txt')
 dep_files.append('SCHEM_to_CHEBIID.txt')
 dep_files.append('named_complexes_to_GOCC.csv')
-dep_files.append('test')
+#dep_files.append('test')
 for df in dep_files:
 	if not os.path.exists(src_dir+'/datasets/'+df):
 		print('WARNING !!! Dependency file %s not found in %s/datasets/' % (df, src_dir))
@@ -94,11 +105,6 @@ for df in dep_files:
 		shutil.copy(src_dir+'/datasets/'+df, os.getcwd()+'/datasets')
 		if verbose:
 			print('Copying dependency file %s to %s/datasets/' % (df, os.getcwd()))
-
-#shutil.copy(src_dir+'/datasets/meshcs_to_gocc.csv', os.getcwd()+'/datasets')
-#shutil.copy(src_dir+'/datasets/SDIS_to_DO.txt', os.getcwd()+'/datasets')
-#shutil.copy(src_dir+'/datasets/SCHEM_to_CHEBIID.txt', os.getcwd()+'/datasets')
-#shutil.copy(src_dir+'/datasets/named_complexes_to_GOCC.csv', os.getcwd()+'/datasets')
 
 start_time = time.time()
 
@@ -112,71 +118,258 @@ if args.begin_phase <= 1:
 				url_tuple[RES_LOCATION].startswith('ftp'):
 			download(url_tuple[RES_LOCATION], path)
 	print('Phase 1 ran in %.3f minutes' % ((time.time() - start_time) / 60))
+	
+	if args.end_phase == 1:
+		print('\nTerminating process after phase 1 as specified by user.')
+		print('Total runtime: %.3f minutes' % ((time.time() - start_time) / 60))
+		sys.exit()
 else:
 	print('\nSkipping phase 1.')
 
 #sys.exit()
 
-print('\n======= Phase II, parsing data =======')
-# For now, download and store the data in the parsed.py module. This module
-# could be replaced or re-implemented using something like DBM to help with
-# memory usage.
-interval_time = time.time()
-working_dir = os.getcwd()
-for root, dirs, filenames in os.walk(working_dir):
-	for f in filenames:
-		if f in baseline_data:
-			data_tuple = baseline_data.get(f)
-			parser = data_tuple[PARSER_TYPE]('datasets/'+f)
-			if verbose:
-				parser.is_verbose()
-				print('Running ' +str(parser))
-			for x in parser.parse():
-				parsed.build_data(x, str(parser))
-print('Phase II ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+if args.begin_phase <= 2:
+	print('\n======= Phase II, parsing data =======')
+	# For now, download and store the data in the parsed.py module. This module
+	# could be replaced or re-implemented using something like DBM to help with
+	# memory usage.
+	interval_time = time.time()
+	working_dir = os.getcwd()
+#	used_parsers = set()
+	for root, dirs, filenames in os.walk(working_dir):
+		for f in filenames:
+			if f in baseline_data:
+				data_tuple = baseline_data.get(f)
+				parser = data_tuple[PARSER_TYPE]('datasets/'+f)
+#				used_parsers.add(parser) #str(parser))
+				if verbose:
+					parser.is_verbose()
+					print('Running ' +str(parser))
+				for x in parser.parse():
+					parsed.build_data(x, str(parser))
+	# pickle parsed data
+#	for used_parser in used_parsers:
+#		print('...parser', str(used_parser), '-->', used_parser.__class__)	
+	# just do it.... pickle each dataset by name :-(
+	with open('ei.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('entrez_info'), f, pickle.HIGHEST_PROTOCOL)
+	with open('eh.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('entrez_history'), f, pickle.HIGHEST_PROTOCOL)
+	with open('hg.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('hgnc'), f, pickle.HIGHEST_PROTOCOL)
+	with open('mg.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('mgi'), f, pickle.HIGHEST_PROTOCOL)
+	with open('rg.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('rgd'), f, pickle.HIGHEST_PROTOCOL)
+	with open('sp.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('swiss'), f, pickle.HIGHEST_PROTOCOL)
+	with open('af.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('affy'), f, pickle.HIGHEST_PROTOCOL)
+	with open('g2.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('gene2acc'), f, pickle.HIGHEST_PROTOCOL)
+	with open('chebi.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('chebi'), f, pickle.HIGHEST_PROTOCOL)
+	with open('schem.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('schem'), f, pickle.HIGHEST_PROTOCOL)
+	with open('schem_to_chebi.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('schem_to_chebi'), f, pickle.HIGHEST_PROTOCOL)
+	with open('sdis.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('sdis'), f, pickle.HIGHEST_PROTOCOL)
+	with open('sdis_to_do.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('sdis_to_do'), f, pickle.HIGHEST_PROTOCOL)
+	with open('nch.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('nch'), f, pickle.HIGHEST_PROTOCOL)
+	with open('ctg.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('ctg'), f, pickle.HIGHEST_PROTOCOL)
+	with open('gobp.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('gobp'), f, pickle.HIGHEST_PROTOCOL)
+	with open('gocc.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('gocc'), f, pickle.HIGHEST_PROTOCOL)
+	# with open('pub_eq.'+args.parsed_pickle, 'wb') as f:
+	#	pickle.dump(parsed.load_data('pubchem_equiv'), f, pickle.HIGHEST_PROTOCOL)
+	# with open('pub_ns.'+args.parsed_pickle, 'wb') as f:
+	#	pickle.dump( parsed.load_data('pubchem_namespace'), f, pickle.HIGHEST_PROTOCOL)
+	with open('mesh.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('mesh'), f, pickle.HIGHEST_PROTOCOL)
+	with open('do.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('do'), f, pickle.HIGHEST_PROTOCOL)
+	
+	print('Phase II ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+	
+	if args.end_phase == 2:
+		print('\nTerminating process after phase 2 as specified by user.')
+		print('Total runtime: %.3f minutes' % ((time.time() - start_time) / 60))
+		sys.exit()
+else:
+	print('\nSkipping phase 2.')
 
-print('\n======= Phase III, building namespaces =======')
-interval_time = time.time()
-# load parsed data to build namespaces
-ei = parsed.load_data('entrez_info')
-eh = parsed.load_data('entrez_history')
-hg = parsed.load_data('hgnc')
-mg = parsed.load_data('mgi')
-rg = parsed.load_data('rgd')
-sp = parsed.load_data('swiss')
-af = parsed.load_data('affy')
-g2 = parsed.load_data('gene2acc')
-chebi = parsed.load_data('chebi')
-schem = parsed.load_data('schem')
-schem_to_chebi = parsed.load_data('schem_to_chebi')
-sdis = parsed.load_data('sdis')
-sdis_to_do = parsed.load_data('sdis_to_do')
-nch = parsed.load_data('nch')
-ctg = parsed.load_data('ctg')
-gobp = parsed.load_data('gobp')
-gocc = parsed.load_data('gocc')
-# pub_eq = parsed.load_data('pubchem_equiv')
-# pub_ns = parsed.load_data('pubchem_namespace')
-mesh = parsed.load_data('mesh')
-do = parsed.load_data('do')
+if args.begin_phase <= 3:
+	print('\n======= Phase III, building namespaces =======')
+	interval_time = time.time()
+	
+	# load parsed data to build namespaces
+	
+	#   check if this is the starting point and pickled data needs to be loaded
+	#   or if data exists in memory already
+	if args.begin_phase == 3:
+		# starting at this phase, so need pickled data files
+		with open('ei.'+args.parsed_pickle, 'rb') as f:
+			ei = pickle.load(f)
+		with open('eh.'+args.parsed_pickle, 'rb') as f:
+			eh = pickle.load(f)
+		with open('hg.'+args.parsed_pickle, 'rb') as f:
+			hg = pickle.load(f)
+		with open('mg.'+args.parsed_pickle, 'rb') as f:
+			mg = pickle.load(f)
+		with open('rg.'+args.parsed_pickle, 'rb') as f:
+			rg = pickle.load(f)
+		with open('sp.'+args.parsed_pickle, 'rb') as f:
+			sp = pickle.load(f)
+		with open('af.'+args.parsed_pickle, 'rb') as f:
+			af = pickle.load(f)
+		with open('g2.'+args.parsed_pickle, 'rb') as f:
+			g2 = pickle.load(f)
+		with open('chebi.'+args.parsed_pickle, 'rb') as f:
+			chebi = pickle.load(f)
+		with open('schem.'+args.parsed_pickle, 'rb') as f:
+			schem = pickle.load(f)
+		with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
+			schem_to_chebi = pickle.load(f)
+		with open('sdis.'+args.parsed_pickle, 'rb') as f:
+			sdis = pickle.load(f)
+		with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
+			sdis_to_do = pickle.load(f)
+		with open('nch.'+args.parsed_pickle, 'rb') as f:
+			nch = pickle.load(f)
+		with open('ctg.'+args.parsed_pickle, 'rb') as f:
+			ctg = pickle.load(f)
+		with open('gobp.'+args.parsed_pickle, 'rb') as f:
+			gobp = pickle.load(f)
+		with open('gocc.'+args.parsed_pickle, 'rb') as f:
+			gocc = pickle.load(f)
+		# with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
+		#	pub_eq = pickle.load(f)
+		# with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
+		#	pub_ns = pickle.load(f)
+		with open('mesh.'+args.parsed_pickle, 'rb') as f:
+			mesh = pickle.load(f)
+		with open('do.'+args.parsed_pickle, 'rb') as f:
+			do = pickle.load(f)
+	else:
+		# data already in memory	
+		ei = parsed.load_data('entrez_info')
+		eh = parsed.load_data('entrez_history')
+		hg = parsed.load_data('hgnc')
+		mg = parsed.load_data('mgi')
+		rg = parsed.load_data('rgd')
+		sp = parsed.load_data('swiss')
+		af = parsed.load_data('affy')
+		g2 = parsed.load_data('gene2acc')
+		chebi = parsed.load_data('chebi')
+		schem = parsed.load_data('schem')
+		schem_to_chebi = parsed.load_data('schem_to_chebi')
+		sdis = parsed.load_data('sdis')
+		sdis_to_do = parsed.load_data('sdis_to_do')
+		nch = parsed.load_data('nch')
+		ctg = parsed.load_data('ctg')
+		gobp = parsed.load_data('gobp')
+		gocc = parsed.load_data('gocc')
+		# pub_eq = parsed.load_data('pubchem_equiv')
+		# pub_ns = parsed.load_data('pubchem_namespace')
+		mesh = parsed.load_data('mesh')
+		do = parsed.load_data('do')
 
-# does NOT include pubchem currently
-ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis, nch]
-for d in ns_data:
-	if verbose:
-		print('Generating namespace file for ' +str(d))
-	namespaces.make_namespace(d, verbose)
-print('Phase III ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+	# does NOT include pubchem currently
+	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis, nch]
+	for d in ns_data:
+		if verbose:
+			print('Generating namespace file for ' +str(d))
+		namespaces.make_namespace(d, verbose)
 
-print('\n======= Phase IV, building annotations =======')
-# There are 3 .belanno files to generate from the MeSH dataset.
-interval_time = time.time()
-annotate.make_annotations(mesh)
-print('Phase IV ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+	print('Phase III ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+	
+	if args.end_phase == 3:
+		print('\nTerminating process after phase 3 as specified by user.')
+		print('Total runtime: %.3f minutes' % ((time.time() - start_time) / 60))
+		sys.exit()
+else:
+	print('\nSkipping phase 3.')
+
+if args.begin_phase <= 4:
+	print('\n======= Phase IV, building annotations =======')
+	# There are 3 .belanno files to generate from the MeSH dataset.
+	interval_time = time.time()
+	
+	#   check if this is the starting point and pickled data needs to be loaded
+	#   or if data exists in memory already
+	if args.begin_phase == 4:
+		with open('mesh.'+args.parsed_pickle, 'rb') as f:
+			mesh = pickle.load(f)
+	
+	annotate.make_annotations(mesh)
+	
+	print('Phase IV ran in %.3f minutes' % ((time.time() - interval_time) / 60))
+	
+	if args.end_phase == 4:
+		print('\nTerminating process after phase 4 as specified by user.')
+		print('Total runtime: %.3f minutes' % ((time.time() - start_time) / 60))
+		sys.exit()
+else:
+	print('\nSkipping phase 4.')
 
 print('\n======= Phase V, building equivalences =======')
 # Any datasets producing a .beleq file should be added to equiv_data
 interval_time = time.time()
+
+#   check if this is the starting point and pickled data needs to be loaded
+#   or if data exists in memory already
+#   - check for phase start >= 4 since phase 4 only loads selected data
+if args.begin_phase >= 4:
+	# starting at this phase, so need pickled data files
+	with open('ei.'+args.parsed_pickle, 'rb') as f:
+		ei = pickle.load(f)
+	#with open('eh.'+args.parsed_pickle, 'rb') as f:
+	#	eh = pickle.load(f)
+	with open('hg.'+args.parsed_pickle, 'rb') as f:
+		hg = pickle.load(f)
+	with open('mg.'+args.parsed_pickle, 'rb') as f:
+		mg = pickle.load(f)
+	with open('rg.'+args.parsed_pickle, 'rb') as f:
+		rg = pickle.load(f)
+	with open('sp.'+args.parsed_pickle, 'rb') as f:
+		sp = pickle.load(f)
+	with open('af.'+args.parsed_pickle, 'rb') as f:
+		af = pickle.load(f)
+	#with open('g2.'+args.parsed_pickle, 'rb') as f:
+	#	g2 = pickle.load(f)
+	with open('chebi.'+args.parsed_pickle, 'rb') as f:
+		chebi = pickle.load(f)
+	#with open('schem.'+args.parsed_pickle, 'rb') as f:
+	#	schem = pickle.load(f)
+	with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
+		schem_to_chebi = pickle.load(f)
+	#with open('sdis.'+args.parsed_pickle, 'rb') as f:
+	#	sdis = pickle.load(f)
+	with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
+		sdis_to_do = pickle.load(f)
+	with open('nch.'+args.parsed_pickle, 'rb') as f:
+		nch = pickle.load(f)
+	#with open('ctg.'+args.parsed_pickle, 'rb') as f:
+	#	ctg = pickle.load(f)
+	with open('gobp.'+args.parsed_pickle, 'rb') as f:
+		gobp = pickle.load(f)
+	with open('gocc.'+args.parsed_pickle, 'rb') as f:
+		gocc = pickle.load(f)
+	# with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
+	#	pub_eq = pickle.load(f)
+	# with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
+	#	pub_ns = pickle.load(f)
+	if args.begin_phase > 4:
+		with open('mesh.'+args.parsed_pickle, 'rb') as f:
+			mesh = pickle.load(f)
+	with open('do.'+args.parsed_pickle, 'rb') as f:
+		do = pickle.load(f)
+
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
               schem_to_chebi, nch]
 for d in equiv_data:

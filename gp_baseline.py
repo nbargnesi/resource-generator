@@ -31,7 +31,6 @@ import namespaces
 import parsed
 import pickle
 import time
-#import equiv
 import shutil
 import annotate
 from common import download
@@ -53,7 +52,6 @@ cwd = os.getcwd()
 os.chdir(src_dir)
 # assure full path is saved
 src_dir = os.getcwd()
-#print('* src_dir =', src_dir)
 import equiv
 os.chdir(cwd)
 
@@ -126,8 +124,6 @@ if args.begin_phase <= 1:
 else:
 	print('\nSkipping phase 1.')
 
-#sys.exit()
-
 if args.begin_phase <= 2:
 	print('\n======= Phase II, parsing data =======')
 	# For now, download and store the data in the parsed.py module. This module
@@ -135,22 +131,18 @@ if args.begin_phase <= 2:
 	# memory usage.
 	interval_time = time.time()
 	working_dir = os.getcwd()
-#	used_parsers = set()
 	for root, dirs, filenames in os.walk(working_dir):
 		for f in filenames:
 			if f in baseline_data:
 				data_tuple = baseline_data.get(f)
 				parser = data_tuple[PARSER_TYPE]('datasets/'+f)
-#				used_parsers.add(parser) #str(parser))
 				if verbose:
 					parser.is_verbose()
 					print('Running ' +str(parser))
 				for x in parser.parse():
 					parsed.build_data(x, str(parser))
 	# pickle parsed data
-#	for used_parser in used_parsers:
-#		print('...parser', str(used_parser), '-->', used_parser.__class__)	
-	# just do it.... pickle each dataset by name :-(
+	# - just do it.... pickle each dataset by name :-(
 	with open('ei.'+args.parsed_pickle, 'wb') as f:
 		pickle.dump(parsed.load_data('entrez_info'), f, pickle.HIGHEST_PROTOCOL)
 	with open('eh.'+args.parsed_pickle, 'wb') as f:

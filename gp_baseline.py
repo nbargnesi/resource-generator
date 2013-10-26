@@ -111,6 +111,7 @@ if args.begin_phase <= 1:
 	for name, url_tuple in baseline_data.items():
 		if verbose:
 			print('Downloading ' +str(name))
+			sys.stdout.flush()
 		path = os.path.join('datasets/', name)
 		if url_tuple[RES_LOCATION].startswith('http') or \
 				url_tuple[RES_LOCATION].startswith('ftp'):
@@ -123,6 +124,8 @@ if args.begin_phase <= 1:
 		sys.exit()
 else:
 	print('\nSkipping phase 1.')
+
+sys.stdout.flush()
 
 if args.begin_phase <= 2:
 	print('\n======= Phase II, parsing data =======')
@@ -195,6 +198,8 @@ if args.begin_phase <= 2:
 else:
 	print('\nSkipping phase 2.')
 
+sys.stdout.flush()
+
 if args.begin_phase <= 3:
 	print('\n======= Phase III, building namespaces =======')
 	interval_time = time.time()
@@ -204,49 +209,138 @@ if args.begin_phase <= 3:
 	#   check if this is the starting point and pickled data needs to be loaded
 	#   or if data exists in memory already
 	if args.begin_phase == 3:
-		# starting at this phase, so need pickled data files
-		with open('ei.'+args.parsed_pickle, 'rb') as f:
-			ei = pickle.load(f)
-		with open('eh.'+args.parsed_pickle, 'rb') as f:
-			eh = pickle.load(f)
-		with open('hg.'+args.parsed_pickle, 'rb') as f:
-			hg = pickle.load(f)
-		with open('mg.'+args.parsed_pickle, 'rb') as f:
-			mg = pickle.load(f)
-		with open('rg.'+args.parsed_pickle, 'rb') as f:
-			rg = pickle.load(f)
-		with open('sp.'+args.parsed_pickle, 'rb') as f:
-			sp = pickle.load(f)
-		with open('af.'+args.parsed_pickle, 'rb') as f:
-			af = pickle.load(f)
-		with open('g2.'+args.parsed_pickle, 'rb') as f:
-			g2 = pickle.load(f)
-		with open('chebi.'+args.parsed_pickle, 'rb') as f:
-			chebi = pickle.load(f)
-		with open('schem.'+args.parsed_pickle, 'rb') as f:
-			schem = pickle.load(f)
-		with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
-			schem_to_chebi = pickle.load(f)
-		with open('sdis.'+args.parsed_pickle, 'rb') as f:
-			sdis = pickle.load(f)
-		with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
-			sdis_to_do = pickle.load(f)
-		with open('nch.'+args.parsed_pickle, 'rb') as f:
-			nch = pickle.load(f)
-		with open('ctg.'+args.parsed_pickle, 'rb') as f:
-			ctg = pickle.load(f)
-		with open('gobp.'+args.parsed_pickle, 'rb') as f:
-			gobp = pickle.load(f)
-		with open('gocc.'+args.parsed_pickle, 'rb') as f:
-			gocc = pickle.load(f)
-		# with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
-		#	pub_eq = pickle.load(f)
-		# with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
-		#	pub_ns = pickle.load(f)
-		with open('mesh.'+args.parsed_pickle, 'rb') as f:
-			mesh = pickle.load(f)
-		with open('do.'+args.parsed_pickle, 'rb') as f:
-			do = pickle.load(f)
+		# starting at this phase, so need pickled data files for:
+		# [ei, hg, mg, rg, sp, af, chebi, schem, sdis, gobp, gocc, mesh, do, nch]
+		if not os.path.exists('ei.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('ei.'+args.parsed_pickle))
+			ei = None
+		else:
+			with open('ei.'+args.parsed_pickle, 'rb') as f:
+				ei = pickle.load(f)
+		if not os.path.exists('hg.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('hg.'+args.parsed_pickle))
+			hg = None
+		else:
+			with open('hg.'+args.parsed_pickle, 'rb') as f:
+				hg = pickle.load(f)
+		if not os.path.exists('mg.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('mg.'+args.parsed_pickle))
+			mg = None
+		else:
+			with open('mg.'+args.parsed_pickle, 'rb') as f:
+				mg = pickle.load(f)
+		if not os.path.exists('rg.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('rg.'+args.parsed_pickle))
+			rg = None
+		else:
+			with open('rg.'+args.parsed_pickle, 'rb') as f:
+				rg = pickle.load(f)
+		if not os.path.exists('sp.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('sp.'+args.parsed_pickle))
+			sp = None
+		else:
+			with open('sp.'+args.parsed_pickle, 'rb') as f:
+				sp = pickle.load(f)
+		if not os.path.exists('af.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('af.'+args.parsed_pickle))
+			af = None
+		else:
+			with open('af.'+args.parsed_pickle, 'rb') as f:
+				af = pickle.load(f)
+		if not os.path.exists('chebi.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('chebi.'+args.parsed_pickle))
+			chebi = None
+		else:
+			with open('chebi.'+args.parsed_pickle, 'rb') as f:
+				chebi = pickle.load(f)
+		if not os.path.exists('schem.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('schem.'+args.parsed_pickle))
+			schem = None
+		else:
+			with open('schem.'+args.parsed_pickle, 'rb') as f:
+				schem = pickle.load(f)
+		if not os.path.exists('sdis.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('sdis.'+args.parsed_pickle))
+			sdis = None
+		else:
+			with open('sdis.'+args.parsed_pickle, 'rb') as f:
+				sdis = pickle.load(f)
+		if not os.path.exists('gobp.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('gobp.'+args.parsed_pickle))
+			gobp = None
+		else:
+			with open('gobp.'+args.parsed_pickle, 'rb') as f:
+				gobp = pickle.load(f)
+		if not os.path.exists('gocc.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('gocc.'+args.parsed_pickle))
+			gocc = None
+		else:
+			with open('gocc.'+args.parsed_pickle, 'rb') as f:
+				gocc = pickle.load(f)
+		if not os.path.exists('mesh.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
+			mesh = None
+		else:
+			with open('mesh.'+args.parsed_pickle, 'rb') as f:
+				mesh = pickle.load(f)
+		if not os.path.exists('do.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('do.'+args.parsed_pickle))
+			do = None
+		else:
+			with open('do.'+args.parsed_pickle, 'rb') as f:
+				do = pickle.load(f)
+		if not os.path.exists('nch.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('nch.'+args.parsed_pickle))
+			nch = None
+		else:
+			with open('nch.'+args.parsed_pickle, 'rb') as f:
+				nch = pickle.load(f)
+
+		# Additional data
+		#if not os.path.exists('eh.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('eh.'+args.parsed_pickle))
+		#	eh = None
+		#else:
+		#	with open('eh.'+args.parsed_pickle, 'rb') as f:
+		#		eh = pickle.load(f)
+		#if not os.path.exists('g2.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('g2.'+args.parsed_pickle))
+		#	g2 = None
+		#else:
+		#	with open('g2.'+args.parsed_pickle, 'rb') as f:
+		#		g2 = pickle.load(f)		
+		#if not os.path.exists('schem_to_chebi.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('schem_to_chebi.'+args.parsed_pickle))
+		#	schem_to_chebi = None
+		#else:
+		#	with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
+		#		schem_to_chebi = pickle.load(f)
+		#if not os.path.exists('sdis_to_do.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('sdis_to_do.'+args.parsed_pickle))
+		#	sdis_to_do = None
+		#else:
+		#	with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
+		#		sdis_to_do = pickle.load(f)
+		#if not os.path.exists('ctg.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('ctg.'+args.parsed_pickle))
+		#	ctg = None
+		#else:
+		#	with open('ctg.'+args.parsed_pickle, 'rb') as f:
+		#		ctg = pickle.load(f)
+
+		#if not os.path.exists('pub_eq.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_eq.'+args.parsed_pickle))
+		#	pub_eq = None
+		#else:
+		#	with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
+		#		pub_eq = pickle.load(f)
+		#if not os.path.exists('pub_ns.'+args.parsed_pickle):
+		#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_ns.'+args.parsed_pickle))
+		#	pub_ns = None
+		#else:
+		#	with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
+		#		pub_ns = pickle.load(f)
+		
 	else:
 		# data already in memory	
 		ei = parsed.load_data('entrez_info')
@@ -287,18 +381,25 @@ if args.begin_phase <= 3:
 else:
 	print('\nSkipping phase 3.')
 
+sys.stdout.flush()
+
 if args.begin_phase <= 4:
 	print('\n======= Phase IV, building annotations =======')
 	# There are 3 .belanno files to generate from the MeSH dataset.
 	interval_time = time.time()
 	
 	#   check if this is the starting point and pickled data needs to be loaded
-	#   or if data exists in memory already
+	#   or if data exists in memory already -> mesh loaded in phase 3
 	if args.begin_phase == 4:
-		with open('mesh.'+args.parsed_pickle, 'rb') as f:
-			mesh = pickle.load(f)
+		if not os.path.exists('mesh.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
+			mesh = None
+		else:
+			with open('mesh.'+args.parsed_pickle, 'rb') as f:
+				mesh = pickle.load(f)
 	
-	annotate.make_annotations(mesh)
+	if mesh:
+		annotate.make_annotations(mesh)
 	
 	print('Phase IV ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	
@@ -309,6 +410,8 @@ if args.begin_phase <= 4:
 else:
 	print('\nSkipping phase 4.')
 
+sys.stdout.flush()
+
 print('\n======= Phase V, building equivalences =======')
 # Any datasets producing a .beleq file should be added to equiv_data
 interval_time = time.time()
@@ -316,58 +419,164 @@ interval_time = time.time()
 #   check if this is the starting point and pickled data needs to be loaded
 #   or if data exists in memory already
 #   - check for phase start >= 4 since phase 4 only loads selected data
+
+if args.begin_phase >= 3:
+	# Always need these in phase 5 since they were not used in previous phases:
+	# [sdis_to_do, schem_to_chebi]
+	if not os.path.exists('schem_to_chebi.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('schem_to_chebi.'+args.parsed_pickle))
+		schem_to_chebi = None
+	else:
+		with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
+			schem_to_chebi = pickle.load(f)
+	if not os.path.exists('sdis_to_do.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('sdis_to_do.'+args.parsed_pickle))
+		sdis_to_do = None
+	else:
+		with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
+			sdis_to_do = pickle.load(f)
+	if not os.path.exists('ctg.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('ctg.'+args.parsed_pickle))
+		ctg = None
+	else:
+		with open('ctg.'+args.parsed_pickle, 'rb') as f:
+			ctg = pickle.load(f)
+
 if args.begin_phase >= 4:
-	# starting at this phase, so need pickled data files
-	with open('ei.'+args.parsed_pickle, 'rb') as f:
-		ei = pickle.load(f)
-	#with open('eh.'+args.parsed_pickle, 'rb') as f:
-	#	eh = pickle.load(f)
-	with open('hg.'+args.parsed_pickle, 'rb') as f:
-		hg = pickle.load(f)
-	with open('mg.'+args.parsed_pickle, 'rb') as f:
-		mg = pickle.load(f)
-	with open('rg.'+args.parsed_pickle, 'rb') as f:
-		rg = pickle.load(f)
-	with open('sp.'+args.parsed_pickle, 'rb') as f:
-		sp = pickle.load(f)
-	with open('af.'+args.parsed_pickle, 'rb') as f:
-		af = pickle.load(f)
-	#with open('g2.'+args.parsed_pickle, 'rb') as f:
-	#	g2 = pickle.load(f)
-	with open('chebi.'+args.parsed_pickle, 'rb') as f:
-		chebi = pickle.load(f)
-	#with open('schem.'+args.parsed_pickle, 'rb') as f:
-	#	schem = pickle.load(f)
-	with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
-		schem_to_chebi = pickle.load(f)
-	#with open('sdis.'+args.parsed_pickle, 'rb') as f:
-	#	sdis = pickle.load(f)
-	with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
-		sdis_to_do = pickle.load(f)
-	with open('nch.'+args.parsed_pickle, 'rb') as f:
-		nch = pickle.load(f)
-	#with open('ctg.'+args.parsed_pickle, 'rb') as f:
-	#	ctg = pickle.load(f)
-	with open('gobp.'+args.parsed_pickle, 'rb') as f:
-		gobp = pickle.load(f)
-	with open('gocc.'+args.parsed_pickle, 'rb') as f:
-		gocc = pickle.load(f)
-	# with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
-	#	pub_eq = pickle.load(f)
-	# with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
-	#	pub_ns = pickle.load(f)
-	if args.begin_phase > 4:
+	# started with phase 4 r 5, so still need pickled data files for:
+	# [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, nch, schem, sdis]
+	if not os.path.exists('ei.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('ei.'+args.parsed_pickle))
+		ei = None
+	else:
+		with open('ei.'+args.parsed_pickle, 'rb') as f:
+			ei = pickle.load(f)
+	if not os.path.exists('hg.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('hg.'+args.parsed_pickle))
+		hg = None
+	else:
+		with open('hg.'+args.parsed_pickle, 'rb') as f:
+			hg = pickle.load(f)
+	if not os.path.exists('mg.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('mg.'+args.parsed_pickle))
+		mg = None
+	else:
+		with open('mg.'+args.parsed_pickle, 'rb') as f:
+			mg = pickle.load(f)
+	if not os.path.exists('rg.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('rg.'+args.parsed_pickle))
+		rg = None
+	else:
+		with open('rg.'+args.parsed_pickle, 'rb') as f:
+			rg = pickle.load(f)
+	if not os.path.exists('sp.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('sp.'+args.parsed_pickle))
+		sp = None
+	else:
+		with open('sp.'+args.parsed_pickle, 'rb') as f:
+			sp = pickle.load(f)
+	if not os.path.exists('af.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('af.'+args.parsed_pickle))
+		af = None
+	else:
+		with open('af.'+args.parsed_pickle, 'rb') as f:
+			af = pickle.load(f)
+	if not os.path.exists('chebi.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('chebi.'+args.parsed_pickle))
+		chebi = None
+	else:
+		with open('chebi.'+args.parsed_pickle, 'rb') as f:
+			chebi = pickle.load(f)
+	if not os.path.exists('nch.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('nch.'+args.parsed_pickle))
+		nch = None
+	else:
+		with open('nch.'+args.parsed_pickle, 'rb') as f:
+			nch = pickle.load(f)
+	if not os.path.exists('gobp.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('gobp.'+args.parsed_pickle))
+		gobp = None
+	else:
+		with open('gobp.'+args.parsed_pickle, 'rb') as f:
+			gobp = pickle.load(f)
+	if not os.path.exists('gocc.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('gocc.'+args.parsed_pickle))
+		gocc = None
+	else:
+		with open('gocc.'+args.parsed_pickle, 'rb') as f:
+			gocc = pickle.load(f)
+	if not os.path.exists('do.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('do.'+args.parsed_pickle))
+		do = None
+	else:
+		with open('do.'+args.parsed_pickle, 'rb') as f:
+			do = pickle.load(f)
+	if not os.path.exists('schem.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('schem.'+args.parsed_pickle))
+		schem = None
+	else:
+		with open('schem.'+args.parsed_pickle, 'rb') as f:
+			schem = pickle.load(f)
+	if not os.path.exists('sdis.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('sdis.'+args.parsed_pickle))
+		sdis = None
+	else:
+		with open('sdis.'+args.parsed_pickle, 'rb') as f:
+			sdis = pickle.load(f)
+	
+	#if not os.path.exists('eh.'+args.parsed_pickle):
+	#	print('WARNING !!! Required pickled data file %s not found.' % ('eh.'+args.parsed_pickle))
+	#	eh = None
+	#else:
+	#	with open('eh.'+args.parsed_pickle, 'rb') as f:
+	#		eh = pickle.load(f)
+	#if not os.path.exists('g2.'+args.parsed_pickle):
+	#	print('WARNING !!! Required pickled data file %s not found.' % ('g2.'+args.parsed_pickle))
+	#	g2 = None
+	#else:
+	#	with open('g2.'+args.parsed_pickle, 'rb') as f:
+	#		g2 = pickle.load(f)
+	#if not os.path.exists('pub_eq.'+args.parsed_pickle):
+	#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_eq.'+args.parsed_pickle))
+	#	pub_eq = None
+	#else:
+	#	with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
+	#		pub_eq = pickle.load(f)
+	#if not os.path.exists('pub_ns.'+args.parsed_pickle):
+	#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_ns.'+args.parsed_pickle))
+	#	pub_ns = None
+	#else:
+	#	with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
+	#		pub_ns = pickle.load(f)
+
+if args.begin_phase == 5:
+	# Already loaded: [ei, hg, mg, rg, sp, af, chebi, schem, sdis, gobp, gocc, do, nch, 
+	#                  sdis_to_do, schem_to_chebi, ctg]
+	# still need data files for: [mesh]
+	if not os.path.exists('mesh.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
+		mesh = None
+	else:
 		with open('mesh.'+args.parsed_pickle, 'rb') as f:
 			mesh = pickle.load(f)
-	with open('do.'+args.parsed_pickle, 'rb') as f:
-		do = pickle.load(f)
+
+if args.begin_phase > 2:
+	# need to reload some data into parsed objects since they are needed by eqiv:
+	#  - sdis_to_do     ...needs... sdis
+	#  - schem_to_chebi ...needs... schem
+	#  - nch            ...needs... ctg
+	parsed.sdis_data = sdis
+	parsed.schem_data = schem
+	parsed.ctg_data = ctg
 
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
-              schem_to_chebi, nch]
+               schem_to_chebi, nch]
 for d in equiv_data:
-	if verbose:
-		print('Generating equivalence file for ' +str(d))
-	equiv.equiv(d, verbose)
+	if d:
+		if verbose:
+			print('Generating equivalence file for ' +str(d))
+		equiv.equiv(d, verbose)
+
 print('Phase V ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 
 print('\n======= Phase VI, finished! =======')

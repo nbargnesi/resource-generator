@@ -1,0 +1,26 @@
+[Equivalence]
+NameString=Entrez Gene Identifier Equivalences
+DescriptionString=Entrez Gene identifier equivalences. Gene and Gene Product namespace equivalences are rooted to Entrez Gene, such that each Entrez Gene identifier is assigned a unique UUID.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=Entrez Gene Identifiers
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=NCBI Entrez Gene
+DescriptionString=NCBI gene_info file.
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.ncbi.nlm.nih.gov/gene
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes

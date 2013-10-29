@@ -24,3 +24,5 @@ ReferenceURL=http://www.ncbi.nlm.nih.gov/gene
 CaseSensistiveFlag=yes
 DelimiterString=|
 CacheableFlag=yes
+
+[Values]

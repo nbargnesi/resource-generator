@@ -422,7 +422,7 @@ interval_time = time.time()
 
 if args.begin_phase >= 3:
 	# Always need these in phase 5 since they were not used in previous phases:
-	# [sdis_to_do, schem_to_chebi]
+	# [sdis_to_do, schem_to_chebi, ctg, g2]
 	if not os.path.exists('schem_to_chebi.'+args.parsed_pickle):
 		print('WARNING !!! Required pickled data file %s not found.' % ('schem_to_chebi.'+args.parsed_pickle))
 		schem_to_chebi = None
@@ -441,6 +441,12 @@ if args.begin_phase >= 3:
 	else:
 		with open('ctg.'+args.parsed_pickle, 'rb') as f:
 			ctg = pickle.load(f)
+	if not os.path.exists('g2.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('g2.'+args.parsed_pickle))
+		g2 = None
+	else:
+		with open('g2.'+args.parsed_pickle, 'rb') as f:
+			g2 = pickle.load(f)
 
 if args.begin_phase >= 4:
 	# started with phase 4 r 5, so still need pickled data files for:
@@ -530,12 +536,6 @@ if args.begin_phase >= 4:
 	#else:
 	#	with open('eh.'+args.parsed_pickle, 'rb') as f:
 	#		eh = pickle.load(f)
-	#if not os.path.exists('g2.'+args.parsed_pickle):
-	#	print('WARNING !!! Required pickled data file %s not found.' % ('g2.'+args.parsed_pickle))
-	#	g2 = None
-	#else:
-	#	with open('g2.'+args.parsed_pickle, 'rb') as f:
-	#		g2 = pickle.load(f)
 	#if not os.path.exists('pub_eq.'+args.parsed_pickle):
 	#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_eq.'+args.parsed_pickle))
 	#	pub_eq = None
@@ -568,6 +568,14 @@ if args.begin_phase > 2:
 	parsed.sdis_data = sdis
 	parsed.schem_data = schem
 	parsed.ctg_data = ctg
+	#  - swiss          ...needs... hgnc, mgi, rgd
+	parsed.hgnc_data = hg
+	parsed.mgi_data = mg
+	parsed.rgd_data = rg
+	#  - mesh           ...needs... do
+	parsed.do_data = do
+	#  - affy           ...needs... g2
+	parsed.gene2acc_data = g2
 
 equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
                schem_to_chebi, nch]

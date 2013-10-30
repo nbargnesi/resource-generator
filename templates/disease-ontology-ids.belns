@@ -1,0 +1,27 @@
+[Namespace]
+NameString=Disease Ontology Identifiers
+Keyword=DO
+DomainString=Biological Process
+SpeciesString=all
+DescriptionString=Disease names from the Disease Ontology (DO). These names may be used to specify pathologies. 
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=Disease Ontology (DO)
+DescriptionString=The Disease Ontology has been developed as a standardized ontology for human disease with the purpose of providing the biomedical community with consistent, reusable and sustainable descriptions of human disease terms, phenotype characteristics and related medical vocabulary disease concepts through collaborative efforts of researchers at Northwestern University, Center for Genetic Medicine and the University of Maryland School of Medicine, Institute for Genome Sciences.
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://disease-ontology.org/
+
+[Processing]
+CaseSensitiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

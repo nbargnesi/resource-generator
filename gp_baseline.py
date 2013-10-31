@@ -27,7 +27,6 @@
 from configuration import baseline_data
 import argparse
 import os
-import namespaces
 import parsed
 import pickle
 import time
@@ -375,10 +374,10 @@ if args.begin_phase <= 3:
 
 	# does NOT include pubchem currently
 	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis, nch]
-	for d in ns_data:
+	for dataset in ns_data:
 		if verbose:
-			print('Generating namespace file for ' +str(d))
-		namespaces.make_namespace(d, verbose)
+			print('Generating namespace file for ' +str(dataset))
+	dataset.write_ns_values(cwd)
 
 	print('Phase III ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	

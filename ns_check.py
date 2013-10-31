@@ -10,6 +10,7 @@ path = args.p
 
 namespaces = ['selventa-legacy-chemical-names', 
 		'selventa-legacy-diseases',
+                'selventa-named-complexes',
 		'disease-ontology-ids',
 		'disease-ontology-names',
 		'mesh-biological-processes',
@@ -51,7 +52,8 @@ chemical_namespaces = ['selventa-legacy-chemical-names', 'chebi-ids']
 bp_namespaces = ['mesh-biological-processes', 'go-biological-processes-ids']
 
 cc_namespaces = ['mesh-cellular-locations',
-		'go-cellular-component-ids']
+		'go-cellular-component-ids',
+                'selventa-named-complexes']
 
 def test_namespace_values(ns):
     """Outputsand compares number of values in .belns and .beleq files;

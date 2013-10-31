@@ -79,12 +79,22 @@ def build_data(entry, parser):
         type_of_gene = entry.get('type_of_gene')
         description = entry.get('description')
         tax_id = entry.get('tax_id')
-        symbol = entry.get('Symbol_from_nomenclature_authority')
+        official_symbol = entry.get('Symbol_from_nomenclature_authority')
+        synonyms = entry.get('Synonyms')
+        alternative_names = entry.get('Other_designations')
+        name = entry.get('Full_name_from_nomenclature_authority')
+        symbol = entry.get('Symbol')
+        description = entry.get('description')
         entrez_info[gene_id] = {
             'type_of_gene' : type_of_gene,
             'description' : description,
             'tax_id' : tax_id,
-            'Symbol_from_nomenclature_authority' : symbol }
+            'Symbol_from_nomenclature_authority' : official_symbol,
+            'Symbol' : symbol,
+            'Synonyms': synonyms,
+            'Other_designations': alternative_names,
+            'Full_name_from_nomenclature_authority': name,
+            'description': description }
 
     elif parser == 'EntrezGeneHistory_Parser':
         gene_id = entry.get('GeneID')

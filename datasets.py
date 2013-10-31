@@ -70,6 +70,32 @@ class EntrezInfoData(DataSet):
         for gene_id in self.entrez_info_dict:
             yield gene_id
 
+    def get_synonym_symbols(self):
+        synonym_dict = {}
+        for gene_id in self.entrez_info_dict:
+            synonyms = set()
+            mapping = self.entrez_info_dict.get(gene_id)
+            if mapping.get('Synonyms') is not '-':
+                 synonyms.update(mapping.get('Synonyms').split('|'))
+            synonyms.add(mapping.get('Symbol'))
+            synonym_dict[gene_id] = synonyms
+        return synonym_dict
+   
+    def get_synonym_names(self):
+        synonym_dict = {}
+        for gene_id in self.entrez_info_dict:
+            synonyms = set()
+            mapping = self.entrez_info_dict.get(gene_id)
+            if mapping.get('Other_designations') is not '-':
+                synonyms.update(mapping.get('Other_designations').split('|'))
+            if mapping.get('Full_name_from_nomenclature_authority') != '-':
+                synonyms.add(mapping.get('Full_name_from_nomenclature_authority'))
+            if mapping.get('description') != '-':
+                synonyms.add(mapping.get('description'))
+            synonym_dict[gene_id] = synonyms
+        return synonym_dict
+
+  
     def __str__(self):
         return 'entrez_info'
 
@@ -785,7 +811,20 @@ class MESHData(DataSet):
             synonyms = mapping.get('synonyms')
 
             yield ui, mh, mns, synonyms
+  
+    def get_synonym_names(self):
+        synonym_dict = {}
+        for ui in self.mesh_dict:
+            mapping = self.mesh_dict.get(ui)
+            mh  = mapping.get('mesh_header')
+            synonyms = set(mapping.get('synonyms'))
+            synonyms.add(mh)
+            synonym_dict[ui] = synonyms
+        return synonym_dict
 
+    def get_synonym_symbols(self):
+        return None
+  
     def __str__(self):
         return 'mesh'
 

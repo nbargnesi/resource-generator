@@ -300,9 +300,9 @@ class SwissProtData(DataSet):
         ns_acc = SwissProtData.NS_ACCESSION
         encoding = 'GRP'
         for gene_name, accessions in self.get_ns_values():
-            ns_name[gene_name] = encoding
+            data_name[gene_name] = encoding
             for acc in accessions:
-                ns_acc[acc] = encoding
+                data_acc[acc] = encoding
         super(SwissProtData, self).write_data(data_name, dir, ns_name)
         super(SwissProtData, self).write_data(data_acc, dir, ns_acc)
 

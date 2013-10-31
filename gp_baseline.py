@@ -88,7 +88,7 @@ os.chdir(resource_dir)
 # make dataset directory
 if not os.path.exists('datasets'):
 	os.mkdir('datasets')
-
+	
 # bring in some dependancies
 dep_files = []
 dep_files.append('meshcs_to_gocc.csv')
@@ -103,6 +103,14 @@ for df in dep_files:
 		shutil.copy(src_dir+'/datasets/'+df, os.getcwd()+'/datasets')
 		if verbose:
 			print('Copying dependency file %s to %s/datasets/' % (df, os.getcwd()))
+
+# make templates directory
+if not os.path.exists('templates'):
+	os.mkdir('templates')
+for df in os.listdir(src_dir+'/templates'):
+	shutil.copy(src_dir+'/templates/'+df, os.getcwd()+'/templates')
+	if verbose:
+		print('Copying dependency file %s to %s/templates/' % (df, os.getcwd()))
 
 start_time = time.time()
 

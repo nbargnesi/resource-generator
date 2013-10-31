@@ -80,14 +80,19 @@ if args.begin_phase > args.end_phase:
 resource_dir = args.n[0]
 if not os.path.exists(resource_dir):
 	os.mkdir(resource_dir)
+	if verbose:
+		print('Created resource destination directory:', resource_dir)
 
 # change to resource directory
 os.chdir(resource_dir)
+if verbose:
+	print('Changing to directory:', resource_dir)
 
 # make dataset directory
 if not os.path.exists('datasets'):
 	os.mkdir('datasets')
-	
+	if verbose:
+		print('Created datasets directory')
 # bring in some dependancies
 dep_files = []
 dep_files.append('meshcs_to_gocc.csv')
@@ -106,10 +111,14 @@ for df in dep_files:
 # make templates directory
 if not os.path.exists('templates'):
 	os.mkdir('templates')
+	if verbose:
+		print('Created templates directory')
 for df in os.listdir(src_dir+'/templates'):
 	shutil.copy(src_dir+'/templates/'+df, os.getcwd()+'/templates')
 	if verbose:
-		print('Copying dependency file %s to %s/templates/' % (df, os.getcwd()))
+		print('Copying template file %s to %s/templates/' % (df, os.getcwd()))
+
+cwd = os.getcwd()
 
 start_time = time.time()
 
@@ -377,8 +386,11 @@ if args.begin_phase <= 3:
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
-	dataset.write_ns_values(cwd)
-
+		try:
+			dataset.write_ns_values(cwd)
+		except:
+			print("Unexpected error:", sys.exc_info()[0])
+			
 	print('Phase III ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	
 	if args.end_phase == 3:

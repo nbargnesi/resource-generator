@@ -1,0 +1,28 @@
+[Equivalence]
+NameString=GO Cellular Component (Identifier) Equivalences
+DescriptionString=GO Cellular Component Identifier equivalences. Cell component and complex namespace equivalences are rooted to GO, such that each primary GO identifier is assigned a unique UUID.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=GO Cellular Components (Identifiers)
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=The Gene Ontology Consortium
+DescriptionString=GO obo-xml file.
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.geneontology.org/
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

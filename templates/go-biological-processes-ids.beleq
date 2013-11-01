@@ -1,0 +1,28 @@
+[Equivalence]
+NameString=GO Biological Process Identifier Equivalences
+DescriptionString=GO Biological Process Identifier equivalences. Biological Process namespace equivalences are rooted to GO, such that each primary GO Biological Process identifier is assigned a unique UUID.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=GO Biological Process Identifiers
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=The Gene Ontology Consortium
+DescriptionString=GO obo-xml file.
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.geneontology.org/
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

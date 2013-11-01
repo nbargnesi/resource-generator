@@ -1,0 +1,28 @@
+[Equivalence]
+NameString=Disease Ontology Name Equivalences
+DescriptionString=Disease Ontology Name equivalences. Disease namespace equivalences are rooted to Disease Ontology identifiers, such that each Disease Ontology identifier is assigned a unique UUID.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=Disease Ontology Names
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=The Disease Ontology (DO)
+DescriptionString=The Disease Ontology OWL file, http://www.berkeleybop.org/ontologies/doid.owl
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://disease-ontology.org/
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

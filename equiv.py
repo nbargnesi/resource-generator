@@ -464,6 +464,14 @@ def write_beleq(eq_dict, filename):
 		print('	   WARNING: skipping writing ' + fullname + '; no equivalence data found.')
 	else:
 		with open(fullname, 'w') as f:
+			# insert header chunk
+			if os.path.exists(dir+'/templates/'+fullname):
+				tf = open(dir+'/templates/'+name, encoding="utf-8")
+				header = tf.read()
+				tf.close()
+			else:
+				header = '[Values]\n'
+			f.write(header)
+			# write data
 			for name, uid in sorted(eq_dict.items()):
 				f.write('|'.join((name,str(uid))) + '\n')
-

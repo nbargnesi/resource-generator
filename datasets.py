@@ -357,6 +357,31 @@ class RGDData(DataSet):
 			id_map[rgd_id] = symbol
 		return id_map
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.rgd_dict:
+			synonyms = set()
+			synonyms.add(symbol)
+			mapping = self.rgd_dict.get(symbol)
+			if mapping.get('OLD_SYMBOL'):
+				old_symbols = mapping.get('OLD_SYMBOL').split(';')
+				synonyms.update(old_symbols)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.rgd_dict:
+			synonyms = set()
+			mapping = self.rgd_dict.get(symbol)
+			name = mapping.get('NAME')
+			synonyms.add(name)
+			if mapping.get('OLD_NAME'):
+				old_names = mapping.get('OLD_NAME').split(';')
+				synonyms.update(old_names)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'rgd'
 

@@ -142,11 +142,15 @@ def build_data(entry, parser):
 		name = entry.get('NAME')
 		symb = entry.get('SYMBOL')
 		rgd_id = entry.get('GENE_RGD_ID')
+		old_symbol = entry.get('OLD_SYMBOL')
+		old_name = entry.get('OLD_NAME')
 
 		rgd[symb] = {
 			'GENE_TYPE' : gene_type,
 			'NAME' : name,
-			'GENE_RGD_ID' : rgd_id }
+			'GENE_RGD_ID' : rgd_id,
+			'OLD_SYMBOL' : old_symbol,
+			'OLD_NAME' : old_name }
 
 	elif parser == 'SwissProt_Parser':
 		name = entry.get('name')

@@ -104,8 +104,8 @@ class EntrezInfoData(DataSet):
 			synonym_dict[gene_id] = synonyms
 		return synonym_dict
 
-  
 	def __str__(self):
+		return 'entrez_info'
 
 
 class EntrezHistoryData(DataSet):
@@ -188,6 +188,28 @@ class HGNCData(DataSet):
 			map[hgnc_id] = symbol
 		return id_map
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.hgnc_dict:
+			synonyms = set()
+			mapping = self.hgnc_dict.get(symbol)
+			#name = mapping.get('Marker Name')
+			#marker_synonyms = mapping.get('Marker Synonyms')
+			#synonyms.update(marker_synonyms.split('|'))
+			synonyms.add(symbol)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.hgnc_dict:
+			synonyms = set()
+			mapping = self.hgnc_dict.get(symbol)
+			#name = mapping.get('Marker Name')
+			#synonyms.add(name)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'hgnc'
 
@@ -251,6 +273,28 @@ class MGIData(DataSet):
 			acc_id = mapping.get('MGI Accession ID')
 			id_map[acc_id] = marker_symbol
 		return id_map
+
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.mgi_dict:
+			synonyms = set()
+			mapping = self.mgi_dict.get(symbol)
+			marker_synonyms = mapping.get('Marker Synonyms')
+			if marker_synonyms != '':
+				synonyms.update(marker_synonyms.split('|'))
+			synonyms.add(symbol)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.mgi_dict:
+			synonyms = set()
+			mapping = self.mgi_dict.get(symbol)
+			name = mapping.get('Marker Name')
+			synonyms.add(name)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'mgi'

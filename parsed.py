@@ -117,11 +117,15 @@ def build_data(entry, parser):
 		feature_type = entry.get('Feature Type')
 		m_type = entry.get('Marker Type')
 		acc_id = entry.get('MGI Accession ID')
+		m_name = entry.get('Marker Name')
+		m_syn = entry.get('Marker Synonyms (pipe-separated)')
 
 		mgi[m_symbol] = {
 			'Feature Type' : feature_type,
 			'Marker Type' : m_type,
-			'MGI Accession ID' : acc_id }
+			'MGI Accession ID' : acc_id,
+			'Marker Name' : m_name,
+			'Marker Synonyms' : m_syn }
 
 	elif parser == 'RGD_Parser':
 		gene_type = entry.get('GENE_TYPE')

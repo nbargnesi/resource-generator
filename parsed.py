@@ -157,11 +157,19 @@ def build_data(entry, parser):
 		acc = entry.get('accessions')
 		gene_type = entry.get('type')
 		dbref = entry.get('dbreference')
+		alt_fullnames = entry.get('alternativeFullNames')
+		alt_shortnames = entry.get('alternativeShortNames')
+		rec_fullname = entry.get('recommendedFullName')
+		rec_shortname = entry.get('recommededShortName')
 
 		swiss[name] = {
 			'type' : gene_type,
 			'accessions' : acc,
-			'dbreference' : dbref }
+			'dbreference' : dbref,
+			'alternativeFullNames' : alt_fullnames,
+			'alternativeShortNames' : alt_shortnames,
+			'recommendedFullName' : rec_fullname,
+			'recommendedShortName' : rec_shortname }
 
 	elif parser == 'Affy_Parser':
 		probe_id = entry.get('Probe Set ID')

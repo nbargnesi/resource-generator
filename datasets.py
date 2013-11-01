@@ -424,6 +424,28 @@ class SwissProtData(DataSet):
 			acc = mapping.get('accessions')
 			yield name, dbrefs, acc
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.sp_dict:
+			synonyms = set()
+			synonyms.add(symbol)
+			mapping = self.sp_dict.get(symbol)
+			synonyms.update(mapping.get('alternativeShortNames'))
+			if mapping.get('recommendedShortName'):
+				synonyms.add(mapping.get('recommendedShortname'))
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.sp_dict:
+			synonyms = set()
+			mapping = self.sp_dict.get(symbol)
+			synonyms.add(mapping.get('recommendedFullName'))
+			synonyms.update(mapping.get('alternativeFullNames'))
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'swiss'
 
@@ -521,6 +543,21 @@ class CHEBIData(DataSet):
 		mapping = self.chebi_dict.get(name)
 		primary_id = mapping.get('primary_id')
 		return primary_id
+
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for name in self.chebi_dict:
+			synonyms = set()
+			mapping = self.chebi_dict.get(name)
+			synonyms.add(name)
+			if mapping.get('synonyms'):
+				alt_names = mapping.get('synonyms')
+				synonyms.update(alt_names)
+			synonym_dict[name] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'chebi'

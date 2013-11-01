@@ -193,11 +193,15 @@ class HGNCData(DataSet):
 		for symbol in self.hgnc_dict:
 			synonyms = set()
 			mapping = self.hgnc_dict.get(symbol)
-			#name = mapping.get('Marker Name')
-			#marker_synonyms = mapping.get('Marker Synonyms')
-			#synonyms.update(marker_synonyms.split('|'))
+			if mapping.get('Synonyms'):
+				symbol_synonyms = [s.strip() for s in mapping.get('Synonyms').split(',')]
+				synonyms.update(symbol_synonyms)
+			if mapping.get('Previous Symbols'):
+				old_symbols = [s.strip() for s in mapping.get('Previous Symbols').split(',')]
+				synonyms.update(old_symbols)
 			synonyms.add(symbol)
-			synonym_dict[symbol] = synonyms
+			if '~withdrawn' not in symbol:
+				synonym_dict[symbol] = synonyms
 		return synonym_dict
 
 	def get_synonym_names(self):
@@ -205,9 +209,13 @@ class HGNCData(DataSet):
 		for symbol in self.hgnc_dict:
 			synonyms = set()
 			mapping = self.hgnc_dict.get(symbol)
-			#name = mapping.get('Marker Name')
-			#synonyms.add(name)
-			synonym_dict[symbol] = synonyms
+			name = mapping.get('Approved Name')
+			synonyms.add(name)
+			if mapping.get('Previous Names'):
+				old_names = [s.strip('" ') for s in mapping.get('Previous Names').split(', "')]
+				synonyms.update(old_names)
+			if '~withdrawn' not in symbol:
+				synonym_dict[symbol] = synonyms
 		return synonym_dict
 
 	def __str__(self):

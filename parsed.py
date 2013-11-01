@@ -107,10 +107,20 @@ def build_data(entry, parser):
 		app_symb = entry.get('Approved Symbol')
 		loc_type = entry.get('Locus Type')
 		hgnc_id = entry.get('HGNC ID')
+		old_symbols = entry.get('Previous Symbols')
+		old_names = entry.get('Previous Names')
+		synonyms = entry.get('Synonyms')
+		name_synonyms = entry.get('Name Synonyms')
+		name = entry.get('Approved Name')
 
 		hgnc[app_symb] = {
 			'Locus Type' : loc_type,
-			'HGNC ID' : hgnc_id }
+			'HGNC ID' : hgnc_id, 
+			'Previous Symbols' : old_symbols,
+			'Previous Names' : old_names,
+			'Synonyms' : synonyms,
+			'Name Synonyms' : name_synonyms,
+			'Approved Name' : name }
 
 	elif parser == 'MGI_Parser':
 		m_symbol = entry.get('Marker Symbol')

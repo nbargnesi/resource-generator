@@ -465,8 +465,8 @@ def write_beleq(eq_dict, filename):
 	else:
 		with open(fullname, 'w') as f:
 			# insert header chunk
-			if os.path.exists(dir+'/templates/'+fullname):
-				tf = open(dir+'/templates/'+name, encoding="utf-8")
+			if os.path.exists('./templates/'+fullname):
+				tf = open('./templates/'+fullname, encoding="utf-8")
 				header = tf.read()
 				tf.close()
 			else:

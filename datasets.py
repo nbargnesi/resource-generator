@@ -821,6 +821,19 @@ class GOBPData(DataSet):
 
 			yield termid, termname, altids
 
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for termid in self.gobp_dict:
+			synonyms = set()
+			mapping = self.gobp_dict.get(termid)
+			synonyms.update(mapping.get('synonyms'))
+			synonyms.add(mapping.get('termname'))
+			synonym_dict[termid] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'gobp'
 
@@ -869,6 +882,19 @@ class GOCCData(DataSet):
 			altids = mapping.get('altids')
 
 			yield termid, termname, altids
+
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for termid in self.gocc_dict:
+			synonyms = set()
+			mapping = self.gocc_dict.get(termid)
+			synonyms.update(mapping.get('synonyms'))
+			synonyms.add(mapping.get('termname'))
+			synonym_dict[termid] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'gocc'

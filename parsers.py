@@ -694,10 +694,13 @@ class GOBPParser(Parser):
 					bp_altids = [altid.replace('GO:','') for altid in bp_altids]
 				else:
 					bp_altids = False
-				
-				
+				#get synonyms - limited to scope='exact'
+				bp_syn = []
+				for syn in t.findall('synonym'):
+					if syn.get('scope') == 'exact':
+						bp_syn.append(syn.find('synonym_text').text)
 				yield { 'termid' : bp_termid, 'termname' : bp_termname,
-						'altids' : bp_altids }
+						'altids' : bp_altids, 'synonyms' : bp_syn }
 
 	def obsolete_parse(self):
 
@@ -777,8 +780,14 @@ class GOCCParser(Parser):
 			cc_termid = cc_termid.replace('GO:','')
 			cc_altids = [altid.replace('GO:','') for altid in cc_altids]
  
+			#get synonyms - limited to scope='exact'
+			synonyms = []
+			for syn in t.findall('synonym'):
+				if syn.get('scope') == 'exact':
+					synonyms.append(syn.find('synonym_text').text)
+
 			yield { 'termid' : cc_termid, 'termname' : cc_termname,
-					'altids' : cc_altids, 'complex' : complex }
+					'altids' : cc_altids, 'complex' : complex, 'synonyms' : synonyms }
 
 	def obsolete_parse(self):
 

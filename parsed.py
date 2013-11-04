@@ -161,6 +161,8 @@ def build_data(entry, parser):
 		alt_shortnames = entry.get('alternativeShortNames')
 		rec_fullname = entry.get('recommendedFullName')
 		rec_shortname = entry.get('recommededShortName')
+		gene_name = entry.get('geneName')
+		gene_syn = entry.get('geneSynonyms')
 
 		swiss[name] = {
 			'type' : gene_type,
@@ -169,7 +171,9 @@ def build_data(entry, parser):
 			'alternativeFullNames' : alt_fullnames,
 			'alternativeShortNames' : alt_shortnames,
 			'recommendedFullName' : rec_fullname,
-			'recommendedShortName' : rec_shortname }
+			'recommendedShortName' : rec_shortname,
+			'geneName' : gene_name,
+			'geneSynonym' : gene_syn }
 
 	elif parser == 'Affy_Parser':
 		probe_id = entry.get('Probe Set ID')

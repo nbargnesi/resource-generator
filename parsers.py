@@ -190,6 +190,7 @@ class SwissProtParser(Parser):
 		self.entry = '{http://uniprot.org/uniprot}entry'
 		self.accession = '{http://uniprot.org/uniprot}accession'
 		self.name = '{http://uniprot.org/uniprot}name'
+		self.gene = '{http://uniprot.org/uniprot}gene'
 
 	def parse(self):
 
@@ -252,6 +253,18 @@ class SwissProtParser(Parser):
 				temp_dict['alternativeFullNames'] = alt_fullnames
 				temp_dict['alternativeShortNames'] = alt_shortnames
 
+				# get gene data, add primary names (symbols) and synonyms
+				gene = e.find(self.gene)
+				gene_synonyms = []
+				if gene not None:
+					for name in gene.findall(self.name):
+						if name.get('type') == 'primary':
+							gene_name = name.text
+						elif name.get('type') == 'synonym':
+							gene_synonyms.append(name.text)
+					temp_dict['geneName'] = gene_name
+					temp_dict['geneSynonyms'] = gene_synonyms
+				
 				# get all accessions
 				entry_accessions = []
 				for entry_accession in e.findall(self.accession):

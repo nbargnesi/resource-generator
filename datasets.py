@@ -433,6 +433,10 @@ class SwissProtData(DataSet):
 			synonyms.update(mapping.get('alternativeShortNames'))
 			if mapping.get('recommendedShortName'):
 				synonyms.add(mapping.get('recommendedShortname'))
+			if mapping.get('geneName'):
+				synonyms.add(mapping.get('geneName'))
+			if mapping.get('geneSynonyms'):
+				synonyms.update(mapping.get('geneSynonyms'))
 			synonym_dict[symbol] = synonyms
 		return synonym_dict
 

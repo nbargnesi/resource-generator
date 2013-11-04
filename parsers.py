@@ -996,6 +996,7 @@ class DOParser(Parser):
 		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
 		self.id = '{http://www.geneontology.org/formats/oboInOwl#}id'
 		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
+		self.exactsynonym = '{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym'
 
 	def parse(self):
 
@@ -1004,6 +1005,7 @@ class DOParser(Parser):
 			for event, elem in tree:
 				do_dict = {}
 				dbxrefs = []
+				synonyms = []
 				name = ''
 				id = ''
 				try:
@@ -1019,9 +1021,12 @@ class DOParser(Parser):
 									id = child.text.split(':')[1]
 								elif child.tag == self.label:
 									name = child.text
+								elif child.tag == self.exactsynonym:
+									synonyms.append(child.text)
 							do_dict['name'] = name
 							do_dict['id'] = id
 							do_dict['dbxrefs'] = dbxrefs
+							do_dict['synonyms'] = synonyms
 							yield do_dict
 				except DeprecatedTermException:
 					continue

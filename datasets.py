@@ -1029,5 +1029,17 @@ class DOData(DataSet):
 			if ref in dbxrefs:
 				return name
 
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for name in self.do_dict:
+			mapping = self.do_dict.get(name)
+			synonyms  = set(mapping.get('synonyms'))
+			synonyms.add(name)
+			synonym_dict[name] = synonyms
+		return synonym_dict
+
+	def get_synonym_symbols(self):
+		return None
+
 	def __str__(self):
 		return 'do'

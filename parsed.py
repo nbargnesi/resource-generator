@@ -312,9 +312,11 @@ def build_data(entry, parser):
 		name = entry.get('name')
 		id = entry.get('id')
 		dbxrefs = entry.get('dbxrefs')
+		synonyms = entry.get('synonyms')
 		do_dict[name] = {
 			'id' : id,
-			'dbxrefs' : dbxrefs }
+			'dbxrefs' : dbxrefs,
+			'synonyms' : synonyms }
 
 def load_data(label):
 

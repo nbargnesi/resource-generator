@@ -967,7 +967,7 @@ class MESHData(DataSet):
 			mh  = mapping.get('mesh_header')
 			synonyms = set(mapping.get('synonyms'))
 			synonyms.add(mh)
-			synonym_dict[ui] = synonyms
+			synonym_dict[mh] = synonyms
 		return synonym_dict
 
 	def get_synonym_symbols(self):

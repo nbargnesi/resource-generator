@@ -118,6 +118,12 @@ for df in os.listdir(src_dir+'/templates'):
 	if verbose:
 		print('Copying template file %s to %s/templates/' % (df, os.getcwd()))
 
+# make BEL file headers directory
+#if not os.path.exists('headers'):
+#	os.mkdir('headers')
+#	if verbose:
+#		print('Created BEL file header directory')
+
 cwd = os.getcwd()
 
 start_time = time.time()
@@ -386,6 +392,7 @@ if args.begin_phase <= 3:
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
+		#dataset.write_ns_values(cwd)
 		try:
 			dataset.write_ns_values(cwd)
 		except:

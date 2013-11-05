@@ -53,7 +53,7 @@ def download(url, fileName=None):
 			info.write("URL: " + url + "\n")
 			info.write("Filename: " + fileName + "\n")
 			if 'Last-Modified' in r.info():
-				info.write("Last modified: " + r.info()['Last-Modified'].strip("\"'"))
+				info.write("Last modified: " + r.info()['Last-Modified'].strip("\"'") + "\n")
 			info.write("Downloaded at: " + time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
 
 def gzip_to_text(gzip_file, encoding="ascii"):
@@ -86,3 +86,73 @@ def get_latest_GO_filename(go_file):
 		print('WARNINIG! [function get_latest_GO_filename] Unable to identify data file in %s\n' % (url))
 		pass
 	return go_file
+
+p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)
+p2 = re.compile('Downloaded at: ?(.*?)[\n|$]', re.M|re.S)
+data_file_info = {
+	'affy-probeset-ids' : 'affy.xml.info',
+	'chebi-ids' : 'chebi.owl.info',
+	'chebi-names' : 'chebi.owl.info',
+	'disease-ontology-ids' : 'doid.owl.info',
+	'disease-ontology-names' : 'doid.owl.info',
+	'entrez-gene-ids' : 'entrez_info.gz.info',
+	'go-biological-processes-ids' : 'gobp.xml.gz.info',
+	'go-biological-processes-names' : 'gobp.xml.gz.info',
+	'go-cellular-component-ids' : 'gocc.xml.gz.info',
+	'go-cellular-component-names' : 'gocc.xml.gz.info',
+	'hgnc-approved-symbols' : 'hgnc.tsv.info',
+	'mesh-biological-processes' : 'mesh.bin.info',
+	'mesh-cellular-locations' : 'mesh.bin.info',
+	'mesh-diseases' : 'mesh.bin.info',
+	'mgi-approved-symbols' : 'mgi.rpt.info',
+	'rgd-approved-symbols' : 'rgd.txt.info',
+	'selventa-legacy-chemical-names' : 'schem.info',
+	'selventa-legacy-diseases' : 'sdis.info',
+	'selventa-named-complexes' : 'named_complex.info',
+	'swissprot-accession-numbers' : 'swiss.xml.gz.info',
+	'swissprot-entry-names' : 'swiss.xml.gz.info'
+}
+
+
+def get_citation_info(name, header):
+	""" 
+	Add Namespace, Citation and Author values
+	"""
+	header = header.replace('\nCreatedDateTime=[#VALUE#]',
+		'\nCreatedDateTime='+time.strftime("%Y-%m-%dT%X"))
+	header = header.replace('\nVersionString=[#VALUE#]',
+		'\nVersionString='+time.strftime("%Y%m%d"))
+	header = header.replace('\nCopyrightString=Copyright (c) [#VALUE#]', 
+		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
+
+	info_file = data_file_info[name.split('.bel')[0]]
+	info_text = open('./datasets/'+info_file).read()
+	pubver = 'NA'
+	try:
+		pubdate = p1.search(info_text).group(1)
+	except:
+		try:
+			pubdate = p2.search(info_text).group(1)
+		except:
+			pass
+	if pubdate:
+		if re.match('^\d+$', pubdate):
+			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
+			pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
+		pd = pubdate.replace(' GMT', '')
+		if re.match('^[A-Za-z]{3}, \d\d [A-Za-z]{3} \d{4} \d\d:\d\d:\d\d$', pd):
+			tv = time.strptime(pd,"%a, %d %b %Y %H:%M:%S")
+		elif re.match('^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d', pd):
+			tv = time.strptime(pd,"%Y-%m-%d %H:%M:%S")
+		pubver = time.strftime("%Y_%m_%d", tv)
+	else:
+		pubdate = 'NA'
+		
+	header = header.replace('\nPublishedVersionString=[#VALUE#]',
+		'\nPublishedVersionString='+pubver)
+	header = header.replace('\nPublishedDate=[#VALUE#]',
+		'\nPublishedDate='+pubdate)
+	
+	print('...%s : %s -- %s' % (name, pubdate, pubver))
+
+	return header

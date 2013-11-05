@@ -15,7 +15,9 @@ import uuid
 import csv
 import parsed
 import os
+import time
 from collections import deque, defaultdict
+from common import get_citation_info
 
 hgnc_list = []
 mgi_list = []
@@ -467,11 +469,19 @@ def write_beleq(eq_dict, filename):
 			# insert header chunk
 			if os.path.exists('./templates/'+fullname):
 				tf = open('./templates/'+fullname, encoding="utf-8")
-				header = tf.read()
+				header = tf.read().rstrip()
 				tf.close()
+				# add Namespace and Author values
+				header = get_citation_info(fullname, header)
+#				header = header.replace('\nCreatedDateTime=[#VALUE#]',
+#					'\nCreatedDateTime='+time.strftime("%Y-%m-%dT%X"))
+#				header = header.replace('\nVersionString=[#VALUE#]',
+#					'\nVersionString='+time.strftime("%Y%m%d"))
+#				header = header.replace('\nCopyrightString=Copyright (c) [#VALUE#]', 
+#					'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 			else:
-				header = '[Values]\n'
-			f.write(header)
+				header = '[Values]'
+			f.write(header+'\n')
 			# write data
 			for name, uid in sorted(eq_dict.items()):
 				f.write('|'.join((name,str(uid))) + '\n')

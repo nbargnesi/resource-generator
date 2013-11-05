@@ -11,6 +11,8 @@
 '''
 
 import os.path
+import time
+from common import get_citation_info
 
 class DataSet():
 	def __init__(self, dictionary):
@@ -27,11 +29,13 @@ class DataSet():
 				# insert header chunk
 				if os.path.exists(dir+'/templates/'+name):
 					tf = open(dir+'/templates/'+name, encoding="utf-8")
-					header = tf.read()
+					header = tf.read().rstrip()
 					tf.close()
+					# add Namespace, Citation and Author values
+					header = get_citation_info(name, header)
 				else:
-					header = '[Values]\n'
-				f.write(header)
+					header = '[Values]'
+				f.write(header+'\n')
 				# write data
 				for i in sorted(data.items()):
 					f.write('|'.join(i) + '\n')

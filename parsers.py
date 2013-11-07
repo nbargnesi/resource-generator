@@ -256,7 +256,7 @@ class SwissProtParser(Parser):
 				# get gene data, add primary names (symbols) and synonyms
 				gene = e.find(self.gene)
 				gene_synonyms = []
-				if gene is not None:
+				if not gene == None:
 					for name in gene.findall(self.name):
 						if name.get('type') == 'primary':
 							gene_name = name.text

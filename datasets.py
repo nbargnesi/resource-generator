@@ -83,6 +83,31 @@ class EntrezInfoData(DataSet):
 		for gene_id in self.entrez_info_dict:
 			yield gene_id
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for gene_id in self.entrez_info_dict:
+			synonyms = set()
+			mapping = self.entrez_info_dict.get(gene_id)
+			if mapping.get('Synonyms') is not '-':
+				 synonyms.update(mapping.get('Synonyms').split('|'))
+			synonyms.add(mapping.get('Symbol'))
+			synonym_dict[gene_id] = synonyms
+		return synonym_dict
+   
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for gene_id in self.entrez_info_dict:
+			synonyms = set()
+			mapping = self.entrez_info_dict.get(gene_id)
+			if mapping.get('Other_designations') is not '-':
+				synonyms.update(mapping.get('Other_designations').split('|'))
+			if mapping.get('Full_name_from_nomenclature_authority') != '-':
+				synonyms.add(mapping.get('Full_name_from_nomenclature_authority'))
+			if mapping.get('description') != '-':
+				synonyms.add(mapping.get('description'))
+			synonym_dict[gene_id] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'entrez_info'
 
@@ -167,6 +192,36 @@ class HGNCData(DataSet):
 			map[hgnc_id] = symbol
 		return id_map
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.hgnc_dict:
+			synonyms = set()
+			mapping = self.hgnc_dict.get(symbol)
+			if mapping.get('Synonyms'):
+				symbol_synonyms = [s.strip() for s in mapping.get('Synonyms').split(',')]
+				synonyms.update(symbol_synonyms)
+			if mapping.get('Previous Symbols'):
+				old_symbols = [s.strip() for s in mapping.get('Previous Symbols').split(',')]
+				synonyms.update(old_symbols)
+			synonyms.add(symbol)
+			if '~withdrawn' not in symbol:
+				synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.hgnc_dict:
+			synonyms = set()
+			mapping = self.hgnc_dict.get(symbol)
+			name = mapping.get('Approved Name')
+			synonyms.add(name)
+			if mapping.get('Previous Names'):
+				old_names = [s.strip('" ') for s in mapping.get('Previous Names').split(', "')]
+				synonyms.update(old_names)
+			if '~withdrawn' not in symbol:
+				synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'hgnc'
 
@@ -231,6 +286,28 @@ class MGIData(DataSet):
 			id_map[acc_id] = marker_symbol
 		return id_map
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.mgi_dict:
+			synonyms = set()
+			mapping = self.mgi_dict.get(symbol)
+			marker_synonyms = mapping.get('Marker Synonyms')
+			if marker_synonyms != '':
+				synonyms.update(marker_synonyms.split('|'))
+			synonyms.add(symbol)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.mgi_dict:
+			synonyms = set()
+			mapping = self.mgi_dict.get(symbol)
+			name = mapping.get('Marker Name')
+			synonyms.add(name)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'mgi'
 
@@ -284,6 +361,31 @@ class RGDData(DataSet):
 			id_map[rgd_id] = symbol
 		return id_map
 
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.rgd_dict:
+			synonyms = set()
+			synonyms.add(symbol)
+			mapping = self.rgd_dict.get(symbol)
+			if mapping.get('OLD_SYMBOL'):
+				old_symbols = mapping.get('OLD_SYMBOL').split(';')
+				synonyms.update(old_symbols)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.rgd_dict:
+			synonyms = set()
+			mapping = self.rgd_dict.get(symbol)
+			name = mapping.get('NAME')
+			synonyms.add(name)
+			if mapping.get('OLD_NAME'):
+				old_names = mapping.get('OLD_NAME').split(';')
+				synonyms.update(old_names)
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'rgd'
 
@@ -325,6 +427,32 @@ class SwissProtData(DataSet):
 			dbrefs = mapping.get('dbreference')
 			acc = mapping.get('accessions')
 			yield name, dbrefs, acc
+
+	def get_synonym_symbols(self):
+		synonym_dict = {}
+		for symbol in self.sp_dict:
+			synonyms = set()
+			synonyms.add(symbol)
+			mapping = self.sp_dict.get(symbol)
+			synonyms.update(mapping.get('alternativeShortNames'))
+			if mapping.get('recommendedShortName'):
+				synonyms.add(mapping.get('recommendedShortname'))
+			if mapping.get('geneName'):
+				synonyms.add(mapping.get('geneName'))
+			if mapping.get('geneSynonyms'):
+				synonyms.update(mapping.get('geneSynonyms'))
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for symbol in self.sp_dict:
+			synonyms = set()
+			mapping = self.sp_dict.get(symbol)
+			synonyms.add(mapping.get('recommendedFullName'))
+			synonyms.update(mapping.get('alternativeFullNames'))
+			synonym_dict[symbol] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'swiss'
@@ -423,6 +551,21 @@ class CHEBIData(DataSet):
 		mapping = self.chebi_dict.get(name)
 		primary_id = mapping.get('primary_id')
 		return primary_id
+
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for name in self.chebi_dict:
+			synonyms = set()
+			mapping = self.chebi_dict.get(name)
+			synonyms.add(name)
+			if mapping.get('synonyms'):
+				alt_names = mapping.get('synonyms')
+				synonyms.update(alt_names)
+			synonym_dict[name] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'chebi'
@@ -686,6 +829,19 @@ class GOBPData(DataSet):
 
 			yield termid, termname, altids
 
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for termid in self.gobp_dict:
+			synonyms = set()
+			mapping = self.gobp_dict.get(termid)
+			synonyms.update(mapping.get('synonyms'))
+			synonyms.add(mapping.get('termname'))
+			synonym_dict[termid] = synonyms
+		return synonym_dict
+
 	def __str__(self):
 		return 'gobp'
 
@@ -734,6 +890,19 @@ class GOCCData(DataSet):
 			altids = mapping.get('altids')
 
 			yield termid, termname, altids
+
+	def get_synonym_symbols(self):
+		return None
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for termid in self.gocc_dict:
+			synonyms = set()
+			mapping = self.gocc_dict.get(termid)
+			synonyms.update(mapping.get('synonyms'))
+			synonyms.add(mapping.get('termname'))
+			synonym_dict[termid] = synonyms
+		return synonym_dict
 
 	def __str__(self):
 		return 'gocc'
@@ -798,10 +967,22 @@ class MESHData(DataSet):
 			synonyms = mapping.get('synonyms')
 
 			yield ui, mh, mns, synonyms
+  
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for ui in self.mesh_dict:
+			mapping = self.mesh_dict.get(ui)
+			mh  = mapping.get('mesh_header')
+			synonyms = set(mapping.get('synonyms'))
+			synonyms.add(mh)
+			synonym_dict[mh] = synonyms
+		return synonym_dict
 
+	def get_synonym_symbols(self):
+		return None
+  
 	def __str__(self):
 		return 'mesh'
-
 
 class SwissWithdrawnData(DataSet):
 
@@ -855,6 +1036,18 @@ class DOData(DataSet):
 			dbxrefs = mapping.get('dbxrefs')
 			if ref in dbxrefs:
 				return name
+
+	def get_synonym_names(self):
+		synonym_dict = {}
+		for name in self.do_dict:
+			mapping = self.do_dict.get(name)
+			synonyms  = set(mapping.get('synonyms'))
+			synonyms.add(name)
+			synonym_dict[name] = synonyms
+		return synonym_dict
+
+	def get_synonym_symbols(self):
+		return None
 
 	def __str__(self):
 		return 'do'

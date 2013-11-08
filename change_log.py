@@ -297,15 +297,24 @@ new_do_ns_ids = set()
 indir = os.getcwd()
 for root, dirs, filenames in os.walk(indir):
 	for f in filenames:
-		if '.belns' in f:
+		if '.belns' in f and 'templates' not in root:
 			with open(os.path.join(root, f), 'r') as fp:
+				#test
+				print('parsing {0}'.format(os.path.join(root,f)))
 				values = set()
+				field = ''
 				for line in fp:
-					if len(str(line).split('|')) == 2 and line is not 'DelimiterString=|':
+					if not line.strip():
+						continue
+					if line.strip() == '[Values]':
+						field = line.strip()
+					elif '[Values]' in field:
 						(value, encoding) = str(line).split('|')
 						values.add(value)
 					else:
 						continue 
+				#testing
+				print(len(values))
 				if 'entrez' in fp.name:
 					new_entrez = values
 				elif 'hgnc' in fp.name:
@@ -387,9 +396,9 @@ if verbose:
 	print('len of new mesh-diseases is ' +str(len(new_mesh_disease)))
 	print('len of new selventa-legacy-chemicals is ' +str(len(new_schem_ns)))
 	print('len of new selventa-legacy-diseases is ' +str(len(new_sdis_ns)))
-	print('len of new mesh-diseases-anno is ' +str(len(new_mesh_disease_anno)))
-	print('len of new mesh-cell is ' +str(len(new_mesh_cell_struct_anno)))
-	print('len of new mesh-anatomy is ' +str(len(new_mesh_anatomy_anno)))
+	#print('len of new mesh-diseases-anno is ' +str(len(new_mesh_disease_anno)))
+	#print('len of new mesh-cell is ' +str(len(new_mesh_cell_struct_anno)))
+	#print('len of new mesh-anatomy is ' +str(len(new_mesh_anatomy_anno)))
 	print('len of new diseases-ontology-names is ' +str(len(new_do_ns_names)))
 	print('len of new diseases-ontology-ids is ' +str(len(new_do_ns_ids)))
 

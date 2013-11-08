@@ -15,11 +15,11 @@ from common import get_latest_GO_filename
 import parsers
 
 changelog_data = OrderedDict()
-changelog_data['entrez_info.gz'] = \
+changelog_data['gene_history.gz'] = \
 	('ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz', parsers.EntrezGeneHistoryParser)
 changelog_data['hgnc.tsv'] = \
 	('http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag', parsers.HGNCParser)
-changelog_data['mgi.rpt'] = \
+changelog_data['MRK_List1.rpt'] = \
 	('ftp://ftp.informatics.jax.org/pub/reports/MRK_List1.rpt', parsers.MGIParser)
 changelog_data['rgd.txt'] = \
 	('ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt', parsers.RGDParser)

@@ -55,36 +55,45 @@ cc_namespaces = ['mesh-cellular-locations',
 		'go-cellular-component-ids',
 				'selventa-named-complexes']
 
+def get_value_dict(f):
+	""" Return dictionary of values and encoding or uuids from a 
+	.belns or .beleq file. """
+	value_dict = {}
+	value_block = False
+	for line in iter(f):
+		if line.strip() == '[Values]':
+			value_block = True
+		elif value_block is True:
+			(value, other) = line.split('|')
+			value_dict[value] = other
+	return value_dict
+	
+
 def test_namespace_values(ns):
 	"""Outputsand compares number of values in .belns and .beleq files;
 	number and identity of values is expected to match."""
-	ns_vals = []
-	eq_vals = []
 	ns_name = n + '.belns'
 	eq_name = n + '.beleq'
 	try:
 		with open(ns_name, 'r') as f:
-			for line in iter(f):
-				(value, encoding) = line.split('|')
-				ns_vals.append(value)
+			ns_dict = get_value_dict(f)
+	
 	except IOError:
 		print('{0}.belns does not appear to exist'.format(ns))
 	
 	try:
 		with open(eq_name, 'r') as eq:
-			for line in iter(eq):
-				(value, uid) = line.split('|')
-				eq_vals.append(value)
-
+			eq_dict = get_value_dict(eq)
+	
 	except IOError:
 		print('{0}.beleq does not appear to exist.'.format(ns))
 	
-	if len(eq_vals) > 0 and len(ns_vals) >0:
+	if len(eq_dict.keys()) > 0 and len(ns_dict.keys()) >0:
 
-		if len(eq_vals) != len(ns_vals):
+		if len(eq_dict.keys()) != len(ns_dict.keys()):
 			print(ns + ' .beleq and .belns value number mismatch!')
 			check =	 False
-			extra_vals = set(ns_vals).symmetric_difference(set(eq_vals))
+			extra_vals = set(ns_dict.keys().symmetric_difference(set(eq_dict.keys())))
   
 			if len(extra_vals) > 0:
 				check = False
@@ -92,7 +101,7 @@ def test_namespace_values(ns):
 			check = True
 	else:
 		check = False
-	length = len(ns_vals)
+	length = len(ns_dict.keys())
 	return length, check
 
 def compare_namespace_equivalences(ns1, ns2):
@@ -104,18 +113,18 @@ def compare_namespace_equivalences(ns1, ns2):
 	ns1_length = 0
 	try:
 		with open(eq_name1, 'r') as eq1:
-			for line in iter(eq1):
-				(value, uid) = line.split('|')
-				ns1_uids.append(uid)
+			eq1_dict = get_value_dict(eq1)
+			for value, uuid in eq1_dict.items():
+				ns1_uids.append(uuid)
 	except IOError:
 		print('{0}.beleq does not appear to exist.'.format(ns1))
 		
 	ns1_length = len(ns1_uids)
 	try:
 		with open(eq_name2, 'r') as eq2:
-			for line in iter(eq2):
-				(value, uid) = line.split('|')
-				ns2_uids.add(uid)
+			eq2_dict = get_value_dict(eq2)
+			for value, uuid in eq2_dict.items():
+				ns2_uids.add(uuid)
 	except IOError:
 		print('{0}.beleq does not appear to exist.'.format(ns2))
 
@@ -131,9 +140,9 @@ def test_namespace_equivalences(ns):
 	ns_uids = []
 	try:
 		with open(eq_name, 'r') as eq:
-			for line in iter(eq):
-				(value, uid) = line.split('|')
-				ns_uids.append(uid)
+			eq_dict = get_value_dict(eq)
+			for value, uuid in eq_dict.items():
+				ns_uids.append(uuid)
 	except IOError:
 		print('{0}.beleq does not appear to exist.'.format(ns))
 
@@ -149,12 +158,12 @@ def get_no_match(ns1, ns2):
 	no_match = {}
 	ns2_uids = set()
 	with open(eq_name2, 'r') as eq2:
-		for line in iter(eq2):
-			(value, uid) = line.split('|')
+		eq2_dict = get_value_dict(eq2)
+		for value, uid in eq2_dict.items():
 			ns2_uids.add(uid)
 	with open(eq_name1, 'r') as eq1:
-		for line in iter(eq1):
-			(value, uid) = line.split('|')
+		eq1_dict = get_value_dict(eq1)
+		for value, uid in eq1_dict.items():
 			if uid not in ns2_uids:
 				no_match[value] = uid
 	return no_match	   

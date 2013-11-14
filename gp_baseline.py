@@ -392,7 +392,7 @@ if args.begin_phase <= 3:
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
-		#dataset.write_ns_values(cwd)
+	#	dataset.write_ns_values(cwd)
 		try:
 			dataset.write_ns_values(cwd)
 		except:

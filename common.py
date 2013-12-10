@@ -12,6 +12,7 @@
 
 from ftplib import FTP
 from sys import stderr
+from lxml import etree
 import gzip
 import os
 import re
@@ -210,6 +211,20 @@ def get_citation_info(name, header):
 				break
 		f.close()
 	
+	elif name.find('affy') == 0 and data_file:
+		f = etree.iterparse(data_file)
+		for action, elem in f:
+			# mapping version and date to HG-U133_Plus_2 Array
+			if elem.tag == 'Array' and elem.get('name') == 'HG-U133_Plus_2':
+				for n in elem.findall('Annotation'):
+					if n.get('type') == 'Annot CSV':
+						# date format e.g., "Oct 30, 2012"
+						annofile = n.find('File')
+						date = annofile.get('date')
+						tv = time.strptime(date, "%b %d, %Y")
+						pubdate = time.strftime("%Y-%m-%d", tv)
+						pubver = annofile.get('name').split('.')[1]
+				break	
 	else:
 	
 		try:

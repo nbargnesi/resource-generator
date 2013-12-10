@@ -319,7 +319,7 @@ class RGDData(DataSet):
 		'gene' : 'GRP', 'miscrna' : 'GR', 'predicted-high' : 'GRP',
 		'predicted-low' : 'GRP', 'predicted-moderate' : 'GRP',
 		'protein-coding' : 'GRP', 'pseudo' : 'GR', 'snrna' : 'GR',
-		'trna' : 'GR', 'rrna' : 'GR'
+		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
 	def __init__(self, dictionary):

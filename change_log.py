@@ -313,7 +313,7 @@ for root, dirs, filenames in os.walk(indir):
 						values.add(value)
 					else:
 						continue 
-				#testing
+				#test
 				print(len(values))
 				if 'entrez' in fp.name:
 					new_entrez = values
@@ -529,10 +529,12 @@ change_log['DO'] = {}
 change_log['DOID'] = {}
 # download the data needed for resolving lost values
 print('\nDownloading data needed for resolving changed/lost terms...')
+if not os.path.exists('changelog_datasets/'):
+	os.mkdir('changelog_datasets/')
 for name, data_tuple in changelog_data.items():
 	if verbose:
 		print('Downloading ' +str(data_tuple[RES_LOCATION]))
-	path = os.path.join('datasets/', name)
+	path = os.path.join('changelog_datasets/', name)
 	if 'ftp' in data_tuple[RES_LOCATION] or 'http' in data_tuple[RES_LOCATION]:
 		download(data_tuple[RES_LOCATION], path)
 
@@ -540,7 +542,7 @@ print('Resolving changed/lost terms...')
 sp_accession_ids = []
 for label, data_tuple in changelog_data.items():
 	url = label
-	parser = data_tuple[PARSER_TYPE]('datasets/'+url)
+	parser = data_tuple[PARSER_TYPE]('changelog_datasets/'+url)
 
 	if str(parser) == 'EntrezGeneHistory_Parser':
 		log = change_log.get('EGID')

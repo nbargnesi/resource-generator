@@ -75,7 +75,7 @@ def get_latest_GO_filename(go_file):
 	try:
 		src = urllib.request.urlopen(url).read().decode("utf-8")
 	except:
-		print('WARNINIG! [function get_latest_GO_filename] Unable to fetch URL: %s\n' % (url))
+		print('WARNING! [function get_latest_GO_filename] Unable to fetch URL: %s\n' % (url))
 		return go_file
 	# file matching pattern for resoure filename
 	p_fn = re.compile('go_\d+-termdb.obo-xml.gz', re.M|re.S)
@@ -84,32 +84,58 @@ def get_latest_GO_filename(go_file):
 		go_file = '/'.join([url, fn])
 	except:
 		# unable to locate resoure filename
-		print('WARNINIG! [function get_latest_GO_filename] Unable to identify data file in %s\n' % (url))
+		print('WARNING! [function get_latest_GO_filename] Unable to identify data file in %s\n' % (url))
 		pass
 	return go_file
 
+def get_latest_MeSH_filename(url, prefix):
+	""" Get the URL of the current MeSH file, given the directory url and file prefix. 
+	The ASCII MeSH Descriptors file will start with prefix 'd' and be found in ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/. """
+	pass
+	
 data_file_info = {
-	'affy-probeset-ids' : 'affy.xml.info',
-	'chebi-ids' : 'chebi.owl.info',
-	'chebi-names' : 'chebi.owl.info',
-	'disease-ontology-ids' : 'doid.owl.info',
-	'disease-ontology-names' : 'doid.owl.info',
-	'entrez-gene-ids' : 'entrez_info.gz.info',
-	'go-biological-processes-ids' : 'gobp.xml.gz.info',
-	'go-biological-processes-names' : 'gobp.xml.gz.info',
-	'go-cellular-component-ids' : 'gocc.xml.gz.info',
-	'go-cellular-component-names' : 'gocc.xml.gz.info',
-	'hgnc-approved-symbols' : 'hgnc.tsv.info',
-	'mesh-biological-processes' : 'mesh.bin.info',
-	'mesh-cellular-locations' : 'mesh.bin.info',
-	'mesh-diseases' : 'mesh.bin.info',
-	'mgi-approved-symbols' : 'mgi.rpt.info',
-	'rgd-approved-symbols' : 'rgd.txt.info',
-	'selventa-legacy-chemical-names' : 'schem.info',
-	'selventa-legacy-diseases' : 'sdis.info',
-	'selventa-named-complexes' : 'named_complex.info',
-	'swissprot-accession-numbers' : 'swiss.xml.gz.info',
-	'swissprot-entry-names' : 'swiss.xml.gz.info'
+	'affy-probeset-ids.belns' : 'affy.xml.info',
+	'chebi-ids.belns' : 'chebi.owl.info',
+	'chebi-names.belns' : 'chebi.owl.info',
+	'disease-ontology-ids.belns' : 'doid.owl.info',
+	'disease-ontology-names.belns' : 'doid.owl.info',
+	'entrez-gene-ids.belns' : 'entrez_info.gz.info',
+	'go-biological-processes-ids.belns' : 'gobp.xml.gz.info',
+	'go-biological-processes-names.belns' : 'gobp.xml.gz.info',
+	'go-cellular-component-ids.belns' : 'gocc.xml.gz.info',
+	'go-cellular-component-names.belns' : 'gocc.xml.gz.info',
+	'hgnc-approved-symbols.belns' : 'hgnc.tsv.info',
+	'mesh-biological-processes.belns' : 'mesh.bin.info',
+	'mesh-cellular-locations.belns' : 'mesh.bin.info',
+	'mesh-diseases.belns' : 'mesh.bin.info',
+	'mgi-approved-symbols.belns' : 'mgi.rpt.info',
+	'rgd-approved-symbols.belns' : 'rgd.txt.info',
+	'selventa-legacy-chemical-names.belns' : 'schem.info',
+	'selventa-legacy-diseases.belns' : 'sdis.info',
+	'selventa-named-complexes.belns' : 'named_complex.info',
+	'swissprot-accession-numbers.belns' : 'swiss.xml.gz.info',
+	'swissprot-entry-names.belns' : 'swiss.xml.gz.info',
+	'affy-probeset-ids.beleq' : 'affy.xml.info',
+	'chebi-ids.beleq' : 'chebi.owl.info',
+	'chebi-names.beleq' : 'chebi.owl.info',
+	'disease-ontology-ids.beleq' : 'doid.owl.info',
+	'disease-ontology-names.beleq' : 'doid.owl.info',
+	'entrez-gene-ids.beleq' : 'entrez_info.gz.info',
+	'go-biological-processes-ids.beleq' : 'gobp.xml.gz.info',
+	'go-biological-processes-names.beleq' : 'gobp.xml.gz.info',
+	'go-cellular-component-ids.beleq' : 'gocc.xml.gz.info',
+	'go-cellular-component-names.beleq' : 'gocc.xml.gz.info',
+	'hgnc-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'mesh-biological-processes.beleq' : 'mesh.bin.info',
+	'mesh-cellular-locations.beleq' : 'mesh.bin.info',
+	'mesh-diseases.beleq' : 'mesh.bin.info',
+	'mgi-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'rgd-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'selventa-legacy-chemical-names.beleq' : 'schem.info',
+	'selventa-legacy-diseases.beleq' : 'sdis.info',
+	'selventa-named-complexes.beleq' : 'named_complex.info',
+	'swissprot-accession-numbers.beleq' : 'swiss.xml.gz.info',
+	'swissprot-entry-names.beleq' : 'swiss.xml.gz.info'
 }
 
 p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)
@@ -151,15 +177,14 @@ def get_citation_info(name, header):
 	header = header.replace('\nCopyrightString=Copyright (c) [#VALUE#]', 
 		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 
-	info_file = data_file_info[name.split('.bel')[0]]
+	info_file = data_file_info[name]
 	info_text = open('./datasets/'+info_file).read()
 	try:
 		data_file = p3.search(info_text).group(1)
 	except:
 		data_file = None
-	pubver = 'NA'
-	
-	if name.find('chebi') == 0 and data_file:
+	pubver = 'NA'	
+	if data_file.find('chebi') >= 0:
 		f = open(data_file, 'r')
 		while 1:
 			line = f.readline().strip()
@@ -171,7 +196,7 @@ def get_citation_info(name, header):
 				break
 		f.close()
 	
-	elif name.find('disease-ontology') == 0 and data_file:
+	elif data_file.find('doid') >= 0:
 		f = open(data_file, 'r')
 		while 1:
 			line = f.readline().strip()
@@ -184,7 +209,7 @@ def get_citation_info(name, header):
 				break
 		f.close()
 	
-	elif name.find('go-') == 0 and data_file:
+	elif data_file.find('go') >= 0 and data_file:
 		f = gzip.open(data_file, 'r')
 		while 1:
 			line = f.readline().strip()
@@ -199,7 +224,7 @@ def get_citation_info(name, header):
 				break
 		f.close()
 	
-	elif name.find('rgd-') == 0 and data_file:
+	elif data_file.find('rgd') >= 0:
 		f = open(data_file, 'r')
 		while 1:
 			line = f.readline().strip()
@@ -211,7 +236,7 @@ def get_citation_info(name, header):
 				break
 		f.close()
 	
-	elif name.find('affy') == 0 and data_file:
+	elif data_file.find('affy') >= 0:
 		f = etree.iterparse(data_file)
 		for action, elem in f:
 			# mapping version and date to HG-U133_Plus_2 Array

@@ -90,7 +90,8 @@ def get_latest_GO_filename(go_file):
 
 def get_latest_MeSH_filename(url, prefix, suffix):
 	""" Get the URL of the current MeSH file, given the directory url and file prefix.
-	The ASCII MeSH Descriptors file will start with prefix 'd' and be found in ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/. """
+	For example, the ASCII MeSH Descriptors file will start with prefix 'd' and be found in 
+	ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/. """
 	try:
 		directory = urllib.request.urlopen(url)
 	except:
@@ -151,6 +152,7 @@ data_file_info = {
 p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)
 p2 = re.compile('Downloaded at: ?(.*?)[\n|$]', re.M|re.S)
 p3 = re.compile('Filename: ?(.*?)[\n|$]', re.M|re.S)
+p4 = re.compile('URL: ?(.*?)[\n|$]', re.M|re.S)
 
 p_chebi_1 = re.compile('\<owl:versionIRI .*?\>(\d+)\<\/owl:versionIRI\>')
 p_chebi_2 = re.compile('\<dc:date .*?>(\d\d\d\d-\d\d-\d\d).*?\<\/dc:date\>')
@@ -165,7 +167,7 @@ def get_citation_info(name, header):
 	""" 
 	Add Namespace, Citation and Author values
 	
-	affy: ?
+	+ affy: (datasets/affy.xml) 
 		
 	+ chebi: (datasets/chebi.owl)
 		<owl:versionIRI rdf:datatype="http://www.w3.org/2001/XMLSchema#string">109</owl:versionIRI>
@@ -259,7 +261,14 @@ def get_citation_info(name, header):
 						tv = time.strptime(date, "%b %d, %Y")
 						pubdate = time.strftime("%Y-%m-%d", tv)
 						pubver = annofile.get('name').split('.')[1]
-				break	
+				break
+	elif data_file.find('mesh') >= 0:
+		# get MeSH version from info file download URL, pubdate from last modified date
+		pubver = p4.search(info_text).group(1)
+		pubver = pubver.split('/')[-1]
+		pubver = pubver.lstrip('d').rstrip('.bin')
+		pubdate = p1.search(info_text).group(1)
+	
 	else:
 	
 		try:

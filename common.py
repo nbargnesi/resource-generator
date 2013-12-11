@@ -88,10 +88,20 @@ def get_latest_GO_filename(go_file):
 		pass
 	return go_file
 
-def get_latest_MeSH_filename(url, prefix):
-	""" Get the URL of the current MeSH file, given the directory url and file prefix. 
+def get_latest_MeSH_filename(url, prefix, suffix):
+	""" Get the URL of the current MeSH file, given the directory url and file prefix.
 	The ASCII MeSH Descriptors file will start with prefix 'd' and be found in ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/. """
-	pass
+	try:
+		directory = urllib.request.urlopen(url)
+	except:
+		print('WARNING! unable to fetch URL: {0}'.format(url))
+	filenames = []
+	for line in directory:
+		line=line.decode('cp1252')
+		filenames.append(line.split()[-1])
+	filenames = sorted( [filename for filename in filenames if (filename.startswith(prefix) and filename.endswith(suffix))] )
+	current_file = '/'.join([url,filenames[-1]])
+	return current_file
 	
 data_file_info = {
 	'affy-probeset-ids.belns' : 'affy.xml.info',

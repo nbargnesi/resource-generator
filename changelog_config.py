@@ -12,6 +12,7 @@
 
 from collections import OrderedDict
 from common import get_latest_GO_filename
+from common import get_latest_MeSH_filename
 import parsers
 
 changelog_data = OrderedDict()
@@ -37,7 +38,8 @@ changelog_data['gocc.xml.gz'] = (go_file, parsers.GOCCParser)
 #	 ('http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz', parsers.GOCCParser)
 changelog_data['chebi.owl'] = \
 	('ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl', parsers.CHEBIParser)
+mesh_replace_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.newterms/', 'replace', '.txt')
 changelog_data['replace2013.txt'] = \
-	('ftp://nlmpubs.nlm.nih.gov/online/mesh/.newterms/replace2013.txt', parsers.MESHChangesParser)
+	(mesh_replace_file, parsers.MESHChangesParser)
 changelog_data['doid.owl'] = \
 	('http://purl.obolibrary.org/obo/doid.owl', parsers.DODeprecatedParser)

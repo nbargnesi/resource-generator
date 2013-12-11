@@ -13,6 +13,7 @@
 
 from collections import OrderedDict
 from common import get_latest_GO_filename
+from common import get_latest_MeSH_filename
 import parsers
 
 
@@ -102,7 +103,8 @@ baseline_data['doid.owl'] = (
 	'http://purl.obolibrary.org/obo/doid.owl',
 	parsers.DOParser
 )
+mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
 baseline_data['mesh.bin'] = (
-	'ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/d2013.bin',
+	mesh_file,
 	parsers.MESHParser
 )

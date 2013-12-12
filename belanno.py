@@ -11,6 +11,7 @@ import csv
 import os
 import argparse
 import annoheaders
+from common import get_latest_MeSH_filename
 
 def get_data(url):
 	""" From url, get data, download and save locally. """
@@ -36,7 +37,7 @@ def write_belanno(name, annodef, citation, anno_dict):
 			for k,v in sorted(anno_dict.items(), key = itemgetter(1)):
 				belanno.write(v + delim + k + '\n')
 
-def parse_owl(url, id):
+def parse_owl(url, id, annotype):
 	"""" Download and parse owl files to return a dictionary of annotation values, 
 	where the unique identifier is the key and the name is the value, 
 	and the version and date information for the owl file. """
@@ -72,7 +73,7 @@ def parse_owl(url, id):
 				and term.startswith(id)\
 				and elem.find(obsolete) is None:
 				val = elem.find(label).text.strip()
-				if id == 'EFO' and not cell_line(elem):
+				if id == 'EFO' and not check_elem_type(elem,annotype):
 					continue
 				else:
 					anno_dict[term] = val
@@ -80,16 +81,18 @@ def parse_owl(url, id):
 	os.chdir(os.pardir)
 	return anno_dict, ver, pub_date
 
-def cell_line(elem):
-	""" Determine if an element from the EFO owl file is a cell line. """
+def check_elem_type(elem, annotype):
+	""" Determine if an element from the EFO owl file is a specified type. """
+	type_dict = {
+				'cell-line':'EFO_0000322'
+				}
 	for tag in elem.findall(subClassOf):
 		if tag.get(resource) is not None:
-			if tag.get(resource).split('/')[-1] == 'EFO_0000322':
+			if tag.get(resource).split('/')[-1] == type_dict.get(annotype):
 				return True
 				break
 		else:
 			return False
-
 
 def parse_mesh(mesh_url):
 	""" Download and parse MeSH file, and return dictionary with
@@ -132,9 +135,10 @@ owl_data = {
 	('http://www.ebi.ac.uk/efo/efo.owl', 'EFO')]
 	}
 
-# MeSH file is updated yearly - will need to update
-mesh_url = 'ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/d2013.bin'
-mesh_ver = '2013'
+# MeSH file is updated yearly - get latest
+mesh_url = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/','d','.bin')
+# parse version from MeSH filename
+mesh_ver = mesh_url.split('/')[-1].lstrip('d').rstrip('.bin')
 
 # names of .belanno files from MeSH
 mesh_anno_names = ['cell-structure', 'mesh-diseases', 'mesh-anatomy']
@@ -184,7 +188,7 @@ for (name, dlist) in owl_data.items():
 	citation = '[Citation]\n'
 	print('\nGenerating .belanno file for {0} ...'.format(name))
 	for (url, id) in dlist:
-		(anno_values, sv, sdate) = parse_owl(url, id)
+		(anno_values, sv, sdate) = parse_owl(url, id, name)
 		anno_dict.update(anno_values)
 		citation = citation + annoheaders.citation_info(id, sv, sdate)
 	annodef = annoheaders.annotation_definition(name, version, crdate)

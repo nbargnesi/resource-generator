@@ -10,15 +10,32 @@ from string import Template
 import datetime
 from bel_functions import bel_term
 
+'''
+Generates resource 'scaffolding' document for named complexes to be used with the BEL Compiler.
+
+1. Identifies GOCC ID values that have the encoding 'C' (complex).
+2. Downloads current GO Annotation files for human, mouse, and rat.
+3. Validates values in GO annotation files as proteins ('GRP' encoding in .belns files).
+4. Generates output file with complex hasComponent BEL statements.
+
+'''
+
+# name of output BEL file
 output_file = 'named-complexes.bel'
+
 # url for .belns document with complex, values are expected to be GO IDs
 gocc_url = 'http://resource.belframework.org/belframework/testing/namespace/go-cellular-component-ids.belns'
+
+# GO annotation file locations and associated namespaces
 datasets = [('9606','ftp://ftp.geneontology.org/pub/go/gene-associations/gene_association.goa_human.gz', 'HGNC'), 
 	('10116','ftp://ftp.geneontology.org/pub/go/gene-associations/gene_association.mgi.gz', 'MGI'), 
 	('10090','ftp://ftp.geneontology.org/pub/go/gene-associations/gene_association.rgd.gz', 'RGD')]
 
-# parse belns document and make set of complexes
 def get_complexes(belns_url):
+	""" Parse .belns document and make set of complexes
+	based on encoding values. Returns set of values that
+	can be complexes and the keyword (namespace prefix) 
+	from the .belns document. """
 	complexes = set()
 	complex_ns = ''
 	field = ''
@@ -43,6 +60,8 @@ def get_complexes(belns_url):
 	return complexes, complex_ns
 
 def get_encoding_dict(belns_url):
+	""" Parse .belns document and return a value:encoding 
+	dictionary. Used to validate values as proteins. """
 	field = ''
 	encoding_dict = {}
 	belns = urllib.request.urlopen(belns_url)

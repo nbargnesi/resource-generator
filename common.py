@@ -268,7 +268,9 @@ def get_citation_info(name, header):
 		pubver = pubver.split('/')[-1]
 		pubver = pubver.lstrip('d').rstrip('.bin')
 		pubdate = p1.search(info_text).group(1)
-	
+		if re.match('^\d+$', pubdate):
+			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
+			pubdate = time.strftime("%Y-%m-%d", tt)
 	else:
 	
 		try:

@@ -13,6 +13,11 @@
 import os.path
 import time
 from common import get_citation_info
+from rdflib import URIRef, BNode, Literal, Namespace, Graph
+from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD
+
+namespace = Namespace("http://www.selventa.com/bel/namespace/")
+belv = Namespace("http://www.selventa.com/vocabulary/")
 
 class DataSet():
 	def __init__(self, dictionary):
@@ -47,25 +52,74 @@ class DataSet():
 class EntrezInfoData(DataSet):
 
 	NS = 'entrez-gene-ids.belns'
+	N = 'entrez-gene'
 	ENC = {
 		'protein-coding' : 'GRP', 'miscRNA' : 'GR', 'ncRNA' : 'GR',
 		'snoRNA' : 'GR', 'snRNA' : 'GR', 'tRNA' : 'GR', 'scRNA' : 'GR',
 		'other' : 'G', 'pseudo' : 'GR', 'unknown' : 'GRP', 'rRNA' : 'GR'
 	}
+	subject = "gene/RNA/protein"
+	description = "NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus."
 
 	def __init__(self, dictionary):
 		super(EntrezInfoData, self).__init__(dictionary)
-		self.entrez_info_dict = dictionary
+		self.ns_dict = dictionary
 
 	def get_dictionary(self):
-		return self.entrez_info_dict
+		return self.ns_dict
 
 	def get_ns_values(self):
-		for gene_id in self.entrez_info_dict:
-			mapping = self.entrez_info_dict.get(gene_id)
+		for gene_id in self.ns_dict:
+			mapping = self.ns_dict.get(gene_id)
 			gene_type = mapping.get('type_of_gene')
 			description = mapping.get('description')
 			yield gene_id, gene_type, description
+
+	def get_rdf(self):
+		g = Graph()
+		n = Namespace("http://www.selventa.com/bel/namespace/" + EntrezInfoData.N + '/')
+		for gene_id in self.ns_dict:
+			g.add((n[gene_id], DCTERMS.identifier, Literal(gene_id)))
+			# add official name (title)
+			name = self.ns_dict.get(gene_id).get('Full_name_from_nomenclature_authority')
+			g.add((n[gene_id], DCTERMS.title, Literal(name)))
+			g.add((n[gene_id], SKOS.inScheme, namespace[EntrezInfoData.N]))
+			# for EntrezGene, use Gene ID as prefLabel?
+			g.add((n[gene_id], SKOS.prefLabel, Literal(gene_id)))
+			# add species
+			species = self.ns_dict.get(gene_id).get('tax_id')
+			g.add((n[gene_id], belv.fromSpecies, Literal(species)))
+			encoding = self.get_encoding(gene_id)
+			if 'G' in encoding:
+				g.add((n[gene_id], RDF.type, belv.GeneConcept))
+			if 'R' in encoding:
+				g.add((n[gene_id], RDF.type, belv.RNAConcept))
+			if 'M' in encoding:
+				g.add((n[gene_id], RDF.type, belv.MicroRNAConcept))
+			if 'P' in encoding:
+				g.add((n[gene_id], RDF.type, belv.ProteinConcept))
+			for symbol in self.get_alt_symbols(gene_id):
+				g.add((n[gene_id], SKOS.altLabel, Literal(symbol)))
+		return g
+
+	def get_encoding(self, gene_id):
+		mapping = self.ns_dict.get(gene_id)
+		gene_type = mapping.get('type_of_gene')
+		description = mapping.get('description')
+		encoding = EntrezInfoData.ENC.get(gene_type, 'G')
+		if gene_type == 'miscRNA' and 'microRNA' in description:
+			encoding = 'GRM'
+		if gene_type not in EntrezInfoData.ENC:
+			print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
+		return encoding		
+
+	def get_alt_symbols(self, gene_id):
+		synonyms = set()
+		mapping = self.ns_dict.get(gene_id)
+		if mapping.get('Synonyms') is not '-':
+			synonyms.update(mapping.get('Synonyms').split('|'))
+			synonyms.add(mapping.get('Symbol'))
+		return synonyms
 
 	def write_ns_values(self, dir):
 		data = {}
@@ -80,12 +134,12 @@ class EntrezInfoData(DataSet):
 		super(EntrezInfoData, self).write_data(data, dir, name)
 
 	def get_eq_values(self):
-		for gene_id in self.entrez_info_dict:
+		for gene_id in self.ns_dict:
 			yield gene_id
 
 	def get_synonym_symbols(self):
 		synonym_dict = {}
-		for gene_id in self.entrez_info_dict:
+		for gene_id in self.ns_dict:
 			synonyms = set()
 			mapping = self.entrez_info_dict.get(gene_id)
 			if mapping.get('Synonyms') is not '-':

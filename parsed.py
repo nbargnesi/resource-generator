@@ -113,9 +113,9 @@ def build_data(entry, parser):
 		name_synonyms = entry.get('Name Synonyms')
 		name = entry.get('Approved Name')
 
-		hgnc[app_symb] = {
+		hgnc[hgnc_id] = {
 			'Locus Type' : loc_type,
-			'HGNC ID' : hgnc_id, 
+			'Symbol' : app_symb, 
 			'Previous Symbols' : old_symbols,
 			'Previous Names' : old_names,
 			'Synonyms' : synonyms,
@@ -130,10 +130,10 @@ def build_data(entry, parser):
 		m_name = entry.get('Marker Name')
 		m_syn = entry.get('Marker Synonyms (pipe-separated)')
 
-		mgi[m_symbol] = {
+		mgi[acc_id] = {
 			'Feature Type' : feature_type,
 			'Marker Type' : m_type,
-			'MGI Accession ID' : acc_id,
+			'Symbol' : m_symbol,
 			'Marker Name' : m_name,
 			'Marker Synonyms' : m_syn }
 
@@ -145,16 +145,17 @@ def build_data(entry, parser):
 		old_symbol = entry.get('OLD_SYMBOL')
 		old_name = entry.get('OLD_NAME')
 
-		rgd[symb] = {
+		rgd[rgd_id] = {
 			'GENE_TYPE' : gene_type,
 			'NAME' : name,
-			'GENE_RGD_ID' : rgd_id,
+			'SYMBOL' : symb,
 			'OLD_SYMBOL' : old_symbol,
 			'OLD_NAME' : old_name }
 
 	elif parser == 'SwissProt_Parser':
 		name = entry.get('name')
 		acc = entry.get('accessions')
+		primary_acc = acc[0]
 		gene_type = entry.get('type')
 		dbref = entry.get('dbreference')
 		alt_fullnames = entry.get('alternativeFullNames')
@@ -164,7 +165,8 @@ def build_data(entry, parser):
 		gene_name = entry.get('geneName')
 		gene_syn = entry.get('geneSynonyms')
 
-		swiss[name] = {
+		swiss[primary_acc] = {
+			'name' : name,
 			'type' : gene_type,
 			'accessions' : acc,
 			'dbreference' : dbref,
@@ -239,8 +241,8 @@ def build_data(entry, parser):
 		alt_ids = entry.get('alt_ids')
 		synonyms = entry.get('synonyms')
 
-		chebi[name] = {
-			'primary_id' : primary_id,
+		chebi[primary_id] = {
+			'name' : name,
 			'alt_ids' : alt_ids,
 			'synonyms' : synonyms }
 

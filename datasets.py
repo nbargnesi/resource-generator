@@ -26,6 +26,34 @@ class DataSet():
 	def get_dictionary(self):
 		return self.dict
 
+	def get_values(self):
+		''' Get all non-obsolete primary ids in dataset dict.
+		Default is all keys. '''
+		for term_id in self.dict:
+			yield term_id
+
+	def get_label(self, term_id):
+		''' Return the value to be used as the preffered
+		label for the associated term id. Use id as default, 
+		but will generally be a name/symbol. '''
+		return term_id
+
+	def get_name(self, term_id):
+		''' Return the term name to use as title. '''
+
+	def get_species(self, term_id):
+		''' Return species as NCBI tax ID (or None, as applicable). '''
+		return None
+
+	def get_encoding(self, term_id):
+		''' Return encoding (allowed abundance types) for value. 
+		Default = 'A' (Abundance). '''
+		return 'A'
+
+	def get_alt_symbols(self, term_id):
+		''' Return set of symbol synonyms. Default = None. '''
+		return None
+
 	def write_data(self, data, dir, name):
 		if len(data) == 0:
 			print('	   WARNING: skipping writing ' + name + '; no namespace data found.')
@@ -240,8 +268,8 @@ class HGNCData(DataSet):
 			print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
 		return encoding
 
-	def get_species(self, term_id):
-		return '9606'		
+	#def get_species(self, term_id):
+	#	return '9606'		
 
 	def get_alt_symbols(self, term_id):
 		synonyms = set()
@@ -338,21 +366,21 @@ class MGIData(DataSet):
 
 	def __init__(self, dictionary):
 		super(MGIData, self).__init__(dictionary)
-		self.mgi_dict = dictionary
+		self.ns_dict = dictionary
 
 	def get_dictionary(self):
-		return self.mgi_dict
+		return self.ns_dict
 
 	def get_values(self):
-		for term_id in self.mgi_dict:
-			mapping = self.mgi_dict.get(term_id)
+		for term_id in self.ns_dict:
+			mapping = self.ns_dict.get(term_id)
 			marker_type = mapping.get('Marker Type')
 			if marker_type =='Gene' or marker_type == 'Pseudogene':
 				yield term_id
 
 	def get_ns_values(self):
-		for marker_symbol in self.mgi_dict:
-			mapping = self.mgi_dict.get(marker_symbol)
+		for marker_symbol in self.ns_dict:
+			mapping = self.ns_dict.get(marker_symbol)
 			feature_type = mapping.get('Feature Type')
 			acc_id = mapping.get('MGI Accession ID')
 			marker_type = mapping.get('Marker Type')
@@ -370,25 +398,25 @@ class MGIData(DataSet):
 		super(MGIData, self).write_data(data, dir, name)
 
 	def get_eq_values(self):
-		for marker_symbol in self.mgi_dict:
-			mapping = self.mgi_dict.get(marker_symbol)
+		for marker_symbol in self.ns_dict:
+			mapping = self.ns_dict.get(marker_symbol)
 			marker_type = mapping.get('Marker Type')
 			if marker_type == 'Gene' or marker_type == 'Pseudogene':
 				yield marker_symbol
 	
 	def get_map(self):
 		id_map = {}
-		for marker_symbol in self.mgi_dict:
-			mapping = self.mgi_dict.get(marker_symbol)
+		for marker_symbol in self.ns_dict:
+			mapping = self.ns_dict.get(marker_symbol)
 			acc_id = mapping.get('MGI Accession ID')
 			id_map[acc_id] = marker_symbol
 		return id_map
 
 	def get_synonym_symbols(self):
 		synonym_dict = {}
-		for symbol in self.mgi_dict:
+		for symbol in self.ns_dict:
 			synonyms = set()
-			mapping = self.mgi_dict.get(symbol)
+			mapping = self.ns_dict.get(symbol)
 			marker_synonyms = mapping.get('Marker Synonyms')
 			if marker_synonyms != '':
 				synonyms.update(marker_synonyms.split('|'))
@@ -398,9 +426,9 @@ class MGIData(DataSet):
 
 	def get_synonym_names(self):
 		synonym_dict = {}
-		for symbol in self.mgi_dict:
+		for symbol in self.ns_dict:
 			synonyms = set()
-			mapping = self.mgi_dict.get(symbol)
+			mapping = self.ns_dict.get(symbol)
 			name = mapping.get('Marker Name')
 			synonyms.add(name)
 			synonym_dict[symbol] = synonyms
@@ -558,6 +586,7 @@ class SwissProtData(DataSet):
 
 class AffyData(DataSet):
 
+	N = 'affy'
 	NS = 'affy-probeset-ids.belns'
 
 	def __init__(self, dictionary):
@@ -570,6 +599,11 @@ class AffyData(DataSet):
 	def get_ns_values(self):
 		for probe_id in self.affy_dict:
 			yield probe_id
+
+	def get_encoding(self, term_id):
+		''' Return encoding (allowed abundance types) for value. 
+		R - RNAAbundance. '''
+		return 'R'
 
 	def write_ns_values(self, dir):
 		data = {}
@@ -590,6 +624,7 @@ class AffyData(DataSet):
 
 class CHEBIData(DataSet):
 
+	N = 'chebi'
 	NS_NAMES = 'chebi-names.belns'
 	NS_IDS = 'chebi-ids.belns'
 
@@ -670,7 +705,7 @@ class CHEBIData(DataSet):
 
 
 class SCHEMData(DataSet):
-	
+	N = 'schem'	
 	NS = 'selventa-legacy-chemical-names.belns'
 
 	def __init__(self, dictionary):
@@ -733,6 +768,11 @@ class NCHData(DataSet):
 	def get_ns_values(self):
 		for entry in self.nch_dict:
 			yield entry
+
+	def get_encoding(self, term_id):
+		''' Return encoding (allowed abundance types) for 
+		value - 'C' complexAbundance. ''' 
+		return 'C'
 
 	def write_ns_values(self, dir):
 		data = {}

@@ -275,25 +275,25 @@ def build_data(entry, parser):
 	elif parser == 'GOBP_Parser':
 		termid = entry.get('termid')
 		termname = entry.get('termname')
-		altids = entry.get('altids')
+		alt_ids = entry.get('altids')
 		syn = entry.get('synonyms')
 
 		gobp_dict[termid] = {
 			'termname' : termname,
-			'altids' : altids,
+			'alt_ids' : alt_ids,
 			'synonyms' : syn }
 
 	elif parser == 'GOCC_Parser':
 		termid = entry.get('termid')
 		termname = entry.get('termname')
 		complex = entry.get('complex')
-		altids = entry.get('altids')
+		alt_ids = entry.get('altids')
 		syn = entry.get('synonyms')
 
 		gocc_dict[termid] = {
 			'termname' : termname,
 			'complex' : complex,
-			'altids' : altids,
+			'alt_ids' : alt_ids,
 			'synonyms' : syn }
 
 	elif parser == 'MESH_Parser':

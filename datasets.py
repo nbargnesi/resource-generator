@@ -20,6 +20,8 @@ namespace = Namespace("http://www.selventa.com/bel/namespace/")
 belv = Namespace("http://www.selventa.com/vocabulary/")
 
 class DataSet():
+	N = 'please-name-me!'
+
 	def __init__(self, dictionary):
 		self.dict = dictionary
 
@@ -53,6 +55,13 @@ class DataSet():
 	def get_alt_symbols(self, term_id):
 		''' Return set of symbol synonyms. Default = None. '''
 		return None
+
+	def get_alt_ids(self, term_id):
+		''' Returns set of alternative IDs. IDs should be
+		unique.  '''
+		ns_dict = self.get_dictionary()
+		alt_ids = ns_dict.get(term_id).get('alt_ids')
+		return alt_ids
 
 	def write_data(self, data, dir, name):
 		if len(data) == 0:
@@ -377,6 +386,9 @@ class MGIData(DataSet):
 			marker_type = mapping.get('Marker Type')
 			if marker_type =='Gene' or marker_type == 'Pseudogene':
 				yield term_id
+	
+	def get_species(self, term_id):
+		return '10090'
 
 	def get_ns_values(self):
 		for marker_symbol in self.ns_dict:
@@ -462,6 +474,9 @@ class RGDData(DataSet):
 			gene_type = mapping.get('GENE_TYPE')
 			rgd_id = mapping.get('GENE_RGD_ID')
 			yield symbol, gene_type, name, rgd_id
+	
+	def get_species(self, term_id):
+		return '10116'
 
 	def write_ns_values(self, dir):
 		data = {}
@@ -518,6 +533,7 @@ class RGDData(DataSet):
 
 class SwissProtData(DataSet):
 
+	N = 'swissprot'
 	NS_NAMES = 'swissprot-entry-names.belns'
 	NS_ACCESSION = 'swissprot-accession-numbers.belns'
 
@@ -641,15 +657,19 @@ class CHEBIData(DataSet):
 			primary_id = mapping.get('primary_id')
 			altIds = mapping.get('alt_ids')
 			yield name, primary_id, altIds
+	
+	def get_label(self, term_id):
+		label = self.chebi_dict.get(term_id).get('name')
+		return label
 
 	def write_ns_values(self, dir):
 		data_names = {}
 		data_ids = {}
 		encoding = 'A'
-		for name, primary_id, altids in self.get_ns_values():
+		for name, primary_id, alt_ids in self.get_ns_values():
 			data_names[name] = encoding
 			data_ids[primary_id] = encoding
-			for i in altids:
+			for i in alt_ids:
 				data_ids[i] = encoding
 		super(CHEBIData, self).write_data(data_names, dir, CHEBIData.NS_NAMES)
 		super(CHEBIData, self).write_data(data_ids, dir, CHEBIData.NS_IDS)
@@ -664,13 +684,14 @@ class CHEBIData(DataSet):
 			primary_id = mapping.get('primary_id')
 			yield primary_id
 
-	def get_alt_ids(self):
-		for name in self.chebi_dict:
-			mapping = self.chebi_dict.get(name)
-			altIds = mapping.get('alt_ids')
-			if altIds is not None:
-				for alt in altIds:
-					yield alt
+# TODO need to fix this for ns generation!
+#	def get_alt_ids(self):
+#		for name in self.chebi_dict:
+#			mapping = self.chebi_dict.get(name)
+#			altIds = mapping.get('alt_ids')
+#			if altIds is not None:
+#				for alt in altIds:
+#					yield alt
 
 	def alt_to_primary(self, alt):
 		for name in self.chebi_dict:
@@ -756,6 +777,7 @@ class SCHEMtoCHEBIData(DataSet):
 
 class NCHData(DataSet):
 
+	PREFIX = 'SCOMP'
 	NS = 'selventa-named-complexes.belns'
 
 	def __init__(self, dictionary):
@@ -928,6 +950,7 @@ class Gene2AccData(DataSet):
 
 class GOBPData(DataSet):
 
+	N = 'go-biological-process'
 	NS_NAMES = 'go-biological-processes-names.belns'
 	NS_IDS = 'go-biological-processes-ids.belns'
 
@@ -938,23 +961,30 @@ class GOBPData(DataSet):
 	def get_dictionary(self):
 		return self.gobp_dict
 
+	def get_encoding(self, term_id):
+		return 'B'
+
+	def get_label(self, term_id):
+		label = self.gobp_dict.get(term_id).get('termname')
+		return label
+
 	def get_ns_values(self):
 		for termid in self.gobp_dict:
 			mapping = self.gobp_dict.get(termid)
 			termname = mapping.get('termname')
-			altids = mapping.get('altids')
+			alt_ids = mapping.get('alt_ids')
 
-			yield termid, termname, altids
+			yield termid, termname, alt_ids
 
 	def write_ns_values(self, dir):
 		data_names = {}
 		data_ids = {}
 		encoding = 'B'
-		for termid, termname, altids in self.get_ns_values():
+		for termid, termname, alt_ids in self.get_ns_values():
 			data_names[termname] = encoding
 			data_ids[termid] = encoding
-			if altids is not None:
-				for i in altids:
+			if alt_ids is not None:
+				for i in alt_ids:
 					data_ids[i] = encoding
 		super(GOBPData, self).write_data(data_names, dir, GOBPData.NS_NAMES)
 		super(GOBPData, self).write_data(data_ids, dir, GOBPData.NS_IDS)
@@ -963,9 +993,9 @@ class GOBPData(DataSet):
 		for termid in self.gobp_dict:
 			mapping = self.gobp_dict.get(termid)
 			termname = mapping.get('termname')
-			altids = mapping.get('altids')
+			alt_ids = mapping.get('alt_ids')
 
-			yield termid, termname, altids
+			yield termid, termname, alt_ids
 
 	def get_synonym_symbols(self):
 		return None
@@ -986,6 +1016,7 @@ class GOBPData(DataSet):
 
 class GOCCData(DataSet):
 
+	N = 'go-cellular-component'
 	NS_NAMES = 'go-cellular-component-names.belns'
 	NS_IDS = 'go-cellular-component-ids.belns'
 
@@ -1001,22 +1032,33 @@ class GOCCData(DataSet):
 			mapping = self.gocc_dict.get(termid)
 			termname = mapping.get('termname')
 			complex = mapping.get('complex')
-			altids = mapping.get('altids')
+			alt_ids = mapping.get('alt_ids')
 
-			yield termid, termname, altids, complex
+			yield termid, termname, alt_ids, complex
+
+	def get_label(self, term_id):
+		label = self.gocc_dict.get(term_id).get('termname')
+		return label
+
+	def get_encoding(self, term_id):
+		if self.gocc_dict.get(term_id).get('complex'):
+			encoding = 'C'
+		else:
+			encoding = 'A'
+		return encoding
 
 	def write_ns_values(self, dir):
 		data_names = {}
 		data_ids = {}
-		for termid, termname, altids, complex in self.get_ns_values():
+		for termid, termname, alt_ids, complex in self.get_ns_values():
 			if complex:
 				encoding = 'C'
 			else:
 				encoding = 'A'
 			data_names[termname] = encoding
 			data_ids[termid] = encoding
-			if altids is not None:
-				for i in altids:
+			if alt_ids is not None:
+				for i in alt_ids:
 					data_ids[i] = encoding
 		super(GOCCData, self).write_data(data_names, dir, GOCCData.NS_NAMES)
 		super(GOCCData, self).write_data(data_ids, dir, GOCCData.NS_IDS)
@@ -1025,9 +1067,9 @@ class GOCCData(DataSet):
 		for termid in self.gocc_dict:
 			mapping = self.gocc_dict.get(termid)
 			termname = mapping.get('termname')
-			altids = mapping.get('altids')
+			alt_ids = mapping.get('alt_ids')
 
-			yield termid, termname, altids
+			yield termid, termname, alt_ids
 
 	def get_synonym_symbols(self):
 		return None

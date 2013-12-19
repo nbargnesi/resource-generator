@@ -58,6 +58,11 @@ g.bind(d.N, n)
 for term_id in d.get_values():
 	# add primary identifier (may need to add/update for cases with alt ids)
 	g.add((n[term_id], DCTERMS.identifier, Literal(term_id)))
+	# add alt ids
+	alt_ids = d.get_alt_ids(term_id)
+	if alt_ids:
+		for alt_id in alt_ids:
+			g.add((n[term_id], DCTERMS.identifier, Literal(alt_id)))
 	# add official name (as title - make general)
 	name = d.get_name(term_id)
 	if name:
@@ -85,6 +90,12 @@ for term_id in d.get_values():
 		g.add((n[term_id], RDF.type, belv.ProteinConcept))
 	if 'A' in encoding:
 		g.add((n[term_id], RDF.type, belv.AbundanceConcept))
+	if 'B' in encoding:
+		g.add((n[term_id], RDF.type, belv.BiologicalProcessConcept))
+	if 'C' in encoding:
+		g.add((n[term_id], RDF.type, belv.ComplexConcept))
+	if 'O' in encoding:
+		g.add((n[term_id], RDF.type, belv.PathologyConcept))
 	symbols = d.get_alt_symbols(term_id)
 	if symbols:
 		for symbol in symbols:

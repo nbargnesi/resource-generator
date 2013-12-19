@@ -68,6 +68,7 @@ class EntrezInfoData(DataSet):
 	def get_dictionary(self):
 		return self.ns_dict
 
+	# get rid of this block (find where used)
 	def get_ns_values(self):
 		for gene_id in self.ns_dict:
 			mapping = self.ns_dict.get(gene_id)
@@ -75,34 +76,24 @@ class EntrezInfoData(DataSet):
 			description = mapping.get('description')
 			yield gene_id, gene_type, description
 
-	def get_rdf(self):
-		g = Graph()
-		n = Namespace("http://www.selventa.com/bel/namespace/" + EntrezInfoData.N + '/')
-		for gene_id in self.ns_dict:
-			g.add((n[gene_id], DCTERMS.identifier, Literal(gene_id)))
-			# add official name (title)
-			name = self.ns_dict.get(gene_id).get('Full_name_from_nomenclature_authority')
-			g.add((n[gene_id], DCTERMS.title, Literal(name)))
-			g.add((n[gene_id], SKOS.inScheme, namespace[EntrezInfoData.N]))
-			# for EntrezGene, use Gene ID as prefLabel?
-			g.add((n[gene_id], SKOS.prefLabel, Literal(gene_id)))
-			# add species
-			species = self.ns_dict.get(gene_id).get('tax_id')
-			g.add((n[gene_id], belv.fromSpecies, Literal(species)))
-			encoding = self.get_encoding(gene_id)
-			if 'G' in encoding:
-				g.add((n[gene_id], RDF.type, belv.GeneConcept))
-			if 'R' in encoding:
-				g.add((n[gene_id], RDF.type, belv.RNAConcept))
-			if 'M' in encoding:
-				g.add((n[gene_id], RDF.type, belv.MicroRNAConcept))
-			if 'P' in encoding:
-				g.add((n[gene_id], RDF.type, belv.ProteinConcept))
-			for symbol in self.get_alt_symbols(gene_id):
-				g.add((n[gene_id], SKOS.altLabel, Literal(symbol)))
-		return g
+	def get_label(self, term_id):
+		''' Return the value to be used as the preffered
+		label for the associated term id. For Entrez, 
+		using the gene ID. '''
+		return term_id
+
+	def get_values(self):
+		''' Get non-obsolete term values. '''
+		for term_id in self.ns_dict:
+			yield term_id
+	
+	def get_species(self, term_id):
+		''' Return species as NCBI tax ID (or None, as applicable). '''
+		species = self.ns_dict.get(term_id).get('tax_id')
+		return species
 
 	def get_encoding(self, gene_id):
+		''' Return encoding (allowed abundance types) for value. '''
 		mapping = self.ns_dict.get(gene_id)
 		gene_type = mapping.get('type_of_gene')
 		description = mapping.get('description')
@@ -114,6 +105,7 @@ class EntrezInfoData(DataSet):
 		return encoding		
 
 	def get_alt_symbols(self, gene_id):
+		''' Return set of symbol synonyms. '''
 		synonyms = set()
 		mapping = self.ns_dict.get(gene_id)
 		if mapping.get('Synonyms') is not '-':
@@ -122,21 +114,20 @@ class EntrezInfoData(DataSet):
 		return synonyms
 
 	def write_ns_values(self, dir):
+		''' Write .belns file. '''
 		data = {}
-		for gene_id, gene_type, description in self.get_ns_values():
-			encoding = EntrezInfoData.ENC.get(gene_type, 'G')
-			if gene_type == 'miscRNA' and 'microRNA' in description:
-				encoding = 'GRM'
-			if gene_type not in EntrezInfoData.ENC:
-				print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
+		for gene_id in self.get_values():
+			encoding = self.get_encoding(gene_id)
 			data[gene_id] = encoding
 		name = EntrezInfoData.NS
 		super(EntrezInfoData, self).write_data(data, dir, name)
 
+	# get rid of this block (find where used)
 	def get_eq_values(self):
 		for gene_id in self.ns_dict:
 			yield gene_id
 
+	# can get rid of this and use get_alt_symbols
 	def get_synonym_symbols(self):
 		synonym_dict = {}
 		for gene_id in self.ns_dict:
@@ -148,6 +139,12 @@ class EntrezInfoData(DataSet):
 			synonym_dict[gene_id] = synonyms
 		return synonym_dict
    
+	def get_name(self, term_id):
+		''' Get official term name. '''
+		mapping = self.ns_dict.get(term_id)
+		name = mapping.get('Full_name_from_nomenclature_authority')
+		return name
+
 	def get_synonym_names(self):
 		synonym_dict = {}
 		for gene_id in self.entrez_info_dict:
@@ -187,7 +184,8 @@ class EntrezHistoryData(DataSet):
 
 
 class HGNCData(DataSet):
-
+	
+	N = 'hgnc'
 	NS = 'hgnc-approved-symbols.belns'
 	ENC = {
 		'gene with protein product' : 'GRP', 'RNA, cluster' : 'GR',
@@ -210,47 +208,80 @@ class HGNCData(DataSet):
 
 	def __init__(self, dictionary):
 		super(HGNCData, self).__init__(dictionary)
-		self.hgnc_dict = dictionary
+		self.ns_dict = dictionary
 
 	def get_dictionary(self):
-		return self.hgnc_dict
+		return self.ns_dict
 
 	def get_ns_values(self):
-		for symbol in self.hgnc_dict:
-			mapping = self.hgnc_dict.get(symbol)
+	# ideally, make this obsolete - output not consistent
+		for symbol in self.ns_dict:
+			mapping = self.ns_dict.get(symbol)
 			loc_type = mapping.get('Locus Type')
 			hgnc_id = mapping.get('HGNC ID')
 			if '~withdrawn' not in symbol:
 				yield symbol, loc_type, hgnc_id
 
+	def get_values(self):
+		for term_id in self.ns_dict:
+			if '~withdrawn' not in self.ns_dict.get(term_id).get('Symbol'):
+				yield term_id
+
+	def get_label(self, term_id):
+		''' Return preferred label associated with term id. '''
+		label = self.ns_dict.get(term_id).get('Symbol')
+		return label
+
+	def get_encoding(self, term_id):
+		mapping = self.ns_dict.get(term_id)
+		locus_type = mapping.get('Locus Type')
+		encoding = HGNCData.ENC.get(locus_type, 'G')
+		if locus_type not in HGNCData.ENC:
+			print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
+		return encoding
+
+	def get_species(self, term_id):
+		return '9606'		
+
+	def get_alt_symbols(self, term_id):
+		synonyms = set()
+		mapping = self.ns_dict.get(term_id)
+		if mapping.get('Synonyms'):
+			symbol_synonyms = [s.strip() for s in mapping.get('Synonyms').split(',')]
+			synonyms.update(symbol_synonyms)
+		if mapping.get('Previous Symbols'):
+			old_symbols = [s.strip() for s in mapping.get('Previous Symbols').split(',')]
+			synonyms.update(old_symbols)
+		synonyms.add(mapping.get('Symbol'))
+		return synonyms
+
 	def write_ns_values(self, dir):
 		data = {}
-		for symbol, locus_type, hgnc_id in self.get_ns_values():
-			encoding = HGNCData.ENC.get(locus_type, 'G')
-			if locus_type not in HGNCData.ENC:
-				print('WARNING ' + locus_type + ' not defined for HGNC. G assigned as default encoding.')
+		for term_id in self.get_values():
+			encoding = self.get_encoding(term_id)
+			symbol = self.ns_dict.get(term_id).get('Symbol')
 			data[symbol] = encoding
 		name = HGNCData.NS
 		super(HGNCData, self).write_data(data, dir, name)
 
 	def get_eq_values(self):
-		for symbol in self.hgnc_dict:
+		for symbol in self.ns_dict:
 			if '~withdrawn' not in symbol:
 				yield symbol
 
 	def get_map(self):
 		id_map = {}
-		for symbol in self.hgnc_dict:
-			mapping = self.hgnc_dict.get(symbol)
+		for symbol in self.ns_dict:
+			mapping = self.ns_dict.get(symbol)
 			hgnc_id = mapping.get('HGNC ID')
 			map[hgnc_id] = symbol
 		return id_map
 
 	def get_synonym_symbols(self):
 		synonym_dict = {}
-		for symbol in self.hgnc_dict:
+		for symbol in self.ns_dict:
 			synonyms = set()
-			mapping = self.hgnc_dict.get(symbol)
+			mapping = self.ns_dict.get(symbol)
 			if mapping.get('Synonyms'):
 				symbol_synonyms = [s.strip() for s in mapping.get('Synonyms').split(',')]
 				synonyms.update(symbol_synonyms)
@@ -264,9 +295,9 @@ class HGNCData(DataSet):
 
 	def get_synonym_names(self):
 		synonym_dict = {}
-		for symbol in self.hgnc_dict:
+		for symbol in self.ns_dict:
 			synonyms = set()
-			mapping = self.hgnc_dict.get(symbol)
+			mapping = self.ns_dict.get(symbol)
 			name = mapping.get('Approved Name')
 			synonyms.add(name)
 			if mapping.get('Previous Names'):
@@ -276,12 +307,18 @@ class HGNCData(DataSet):
 				synonym_dict[symbol] = synonyms
 		return synonym_dict
 
+	def get_name(self, term_id):
+		mapping = self.ns_dict.get(term_id)
+		name = mapping.get('Approved Name')
+		return name
+
 	def __str__(self):
 		return 'hgnc'
 
 
 class MGIData(DataSet):
 
+	N = 'mgi'
 	NS = 'mgi-approved-symbols.belns'
 	ENC = {
 		'gene' : 'GRP', 'protein coding gene' : 'GRP',
@@ -305,6 +342,13 @@ class MGIData(DataSet):
 
 	def get_dictionary(self):
 		return self.mgi_dict
+
+	def get_values(self):
+		for term_id in self.mgi_dict:
+			mapping = self.mgi_dict.get(term_id)
+			marker_type = mapping.get('Marker Type')
+			if marker_type =='Gene' or marker_type == 'Pseudogene':
+				yield term_id
 
 	def get_ns_values(self):
 		for marker_symbol in self.mgi_dict:

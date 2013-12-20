@@ -96,10 +96,16 @@ for term_id in d.get_values():
 		g.add((n[term_id], RDF.type, belv.ComplexConcept))
 	if 'O' in encoding:
 		g.add((n[term_id], RDF.type, belv.PathologyConcept))
-	symbols = d.get_alt_symbols(term_id)
-	if symbols:
-		for symbol in symbols:
+
+	# get synonyms (symbols and names)
+	alt_symbols = d.get_alt_symbols(term_id)
+	if alt_symbols:
+		for symbol in alt_symbols:
 			g.add((n[term_id], SKOS.altLabel, Literal(symbol)))
+	alt_names = d.get_alt_names(term_id)
+	if alt_names:
+		for name in alt_names:
+			g.add((n[term_id], SKOS.altLabel, Literal(name)))
 #with open(output_file, 'w') as f:
 print('serializing RDF graph ...')
 g.serialize("testfile.ttl", format='turtle')	

@@ -164,6 +164,7 @@ def build_data(entry, parser):
 		rec_shortname = entry.get('recommededShortName')
 		gene_name = entry.get('geneName')
 		gene_syn = entry.get('geneSynonyms')
+		tax_id = entry.get('NCBI Taxonomy')
 
 		swiss[primary_acc] = {
 			'name' : name,
@@ -175,14 +176,17 @@ def build_data(entry, parser):
 			'recommendedFullName' : rec_fullname,
 			'recommendedShortName' : rec_shortname,
 			'geneName' : gene_name,
-			'geneSynonym' : gene_syn }
+			'geneSynonym' : gene_syn,
+			'tax_id': tax_id }
 
 	elif parser == 'Affy_Parser':
 		probe_id = entry.get('Probe Set ID')
 		entrez_gene = entry.get('Entrez Gene')
+		species = entry.get('Species Scientific Name')
 
 		affy[probe_id] = {
-			'Entrez Gene' : entrez_gene }
+			'Entrez Gene' : entrez_gene,
+			'Species' : species }
 
 	elif parser == 'Gene2Acc_Parser':
 		status = entry.get('status')
@@ -319,8 +323,8 @@ def build_data(entry, parser):
 		id = entry.get('id')
 		dbxrefs = entry.get('dbxrefs')
 		synonyms = entry.get('synonyms')
-		do_dict[name] = {
-			'id' : id,
+		do_dict[id] = {
+			'name' : name,
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }
 

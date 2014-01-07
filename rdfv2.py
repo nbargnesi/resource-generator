@@ -13,7 +13,7 @@ from constants import PARSER_TYPE, RES_LOCATION
 import datasets
 from rdflib import URIRef, BNode, Literal, Namespace, Graph
 from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD
-
+from urllib import parse
 
 parser = argparse.ArgumentParser(description="""Generate namespace and equivalence files
 for gene/protein datasets.""")
@@ -56,46 +56,48 @@ g.bind("belv", belv)
 g.bind(d.N, n)
 
 for term_id in d.get_values():
+	term_clean = parse.quote(term_id)
+	term_uri = URIRef(n[term_clean])
 	# add primary identifier (may need to add/update for cases with alt ids)
-	g.add((n[term_id], DCTERMS.identifier, Literal(term_id)))
+	g.add((term_uri, DCTERMS.identifier, Literal(term_id)))
 	# add alt ids
 	alt_ids = d.get_alt_ids(term_id)
 	if alt_ids:
 		for alt_id in alt_ids:
-			g.add((n[term_id], DCTERMS.identifier, Literal(alt_id)))
+			g.add((term_uri, DCTERMS.identifier, Literal(alt_id)))
 	# add official name (as title - make general)
 	name = d.get_name(term_id)
 	if name:
-		g.add((n[term_id], DCTERMS.title, Literal(name)))
+		g.add((term_uri, DCTERMS.title, Literal(name)))
 	# map to Concept Scheme
-	g.add((n[term_id], SKOS.inScheme, namespace[d.N]))
+	g.add((term_uri, SKOS.inScheme, namespace[d.N]))
 	# for EntrezGene, use Gene ID as prefLabel?
 	# need to return pref label! make function?
 	pref_label = d.get_label(term_id)
 	if pref_label:
-		g.add((n[term_id], SKOS.prefLabel, Literal(pref_label)))
+		g.add((term_uri, SKOS.prefLabel, Literal(pref_label)))
 	# add species - make method for data set?
 	species = d.get_species(term_id)
 	if species:
-		g.add((n[term_id], belv.fromSpecies, Literal(species)))
+		g.add((term_uri, belv.fromSpecies, Literal(species)))
 	# use encoding information to determine concept types
 	encoding = d.get_encoding(term_id)
 	if 'G' in encoding:
-		g.add((n[term_id], RDF.type, belv.GeneConcept))
+		g.add((term_uri, RDF.type, belv.GeneConcept))
 	if 'R' in encoding:
-		g.add((n[term_id], RDF.type, belv.RNAConcept))
+		g.add((term_uri, RDF.type, belv.RNAConcept))
 	if 'M' in encoding:
-		g.add((n[term_id], RDF.type, belv.MicroRNAConcept))
+		g.add((term_uri, RDF.type, belv.MicroRNAConcept))
 	if 'P' in encoding:
-		g.add((n[term_id], RDF.type, belv.ProteinConcept))
+		g.add((term_uri, RDF.type, belv.ProteinConcept))
 	if 'A' in encoding:
-		g.add((n[term_id], RDF.type, belv.AbundanceConcept))
+		g.add((term_uri, RDF.type, belv.AbundanceConcept))
 	if 'B' in encoding:
-		g.add((n[term_id], RDF.type, belv.BiologicalProcessConcept))
+		g.add((term_uri, RDF.type, belv.BiologicalProcessConcept))
 	if 'C' in encoding:
-		g.add((n[term_id], RDF.type, belv.ComplexConcept))
+		g.add((term_uri, RDF.type, belv.ComplexConcept))
 	if 'O' in encoding:
-		g.add((n[term_id], RDF.type, belv.PathologyConcept))
+		g.add((term_uri, RDF.type, belv.PathologyConcept))
 
 	# get synonyms (symbols and names)
 	alt_symbols = d.get_alt_symbols(term_id)

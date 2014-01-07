@@ -46,8 +46,11 @@ class NamespaceDataSet(DataSet):
 
 	def get_name(self, term_id):
 		''' Return the term name to use as title (or None). '''
-		name = self._dict.get(term_id).get('name')
-		return name
+		try:
+			name = self._dict.get(term_id).get('name')
+			return name
+		except:
+			return None
 
 	def get_species(self, term_id):
 		''' Return species as NCBI tax ID (or None, as applicable). '''
@@ -69,8 +72,11 @@ class NamespaceDataSet(DataSet):
 	def get_alt_ids(self, term_id):
 		''' Returns set of alternative IDs. IDs should be
 		unique.  '''
-		alt_ids = self._dict.get(term_id).get('alt_ids')
-		return alt_ids
+		try:
+			alt_ids = self._dict.get(term_id).get('alt_ids')
+			return alt_ids
+		except:
+			return None
 
 	def write_data(self, data, dir, name):
 		if len(data) == 0:

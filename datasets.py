@@ -1031,7 +1031,7 @@ class GOBPData(NamespaceDataSet):
 
 	def get_alt_names(self, term_id):
 		synonyms = set()
-		mapping = self.gobp_dict.get(term_id)
+		mapping = self._dict.get(term_id)
 		synonyms.update(mapping.get('synonyms'))
 		return synonym_dict
 
@@ -1104,9 +1104,9 @@ class GOCCData(NamespaceDataSet):
 
 	def get_alt_names(self, term_id):
 		synonyms = set()
-		mapping = self.gobp_dict.get(term_id)
+		mapping = self._dict.get(term_id)
 		synonyms.update(mapping.get('synonyms'))
-		return synonym_dict
+		return synonyms
 
 	def get_encoding(self, term_id):
 		if self._dict.get(term_id).get('complex'):

@@ -103,7 +103,7 @@ for term_id in d.get_values():
 	alt_symbols = d.get_alt_symbols(term_id)
 	if alt_symbols:
 		for symbol in alt_symbols:
-			g.add((n[term_id], SKOS.altLabel, Literal(symbol)))
+			g.add((term_uri, SKOS.altLabel, Literal(symbol)))
 	alt_names = d.get_alt_names(term_id)
 	if alt_names:
 		for name in alt_names:

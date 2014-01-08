@@ -189,7 +189,7 @@ class EntrezInfoData(NamespaceDataSet):
 	# can get rid of this and use get_alt_symbols
 	def get_synonym_symbols(self):
 		synonym_dict = {}
-		for gene_id in self.ns_dict:
+		for gene_id in self._dict:
 			synonyms = set()
 			mapping = self.entrez_info_dict.get(gene_id)
 			if mapping.get('Synonyms') is not '-':
@@ -200,7 +200,7 @@ class EntrezInfoData(NamespaceDataSet):
    
 	def get_name(self, term_id):
 		''' Get official term name. '''
-		mapping = self.ns_dict.get(term_id)
+		mapping = self._dict.get(term_id)
 		name = mapping.get('Full_name_from_nomenclature_authority')
 		return name
 	
@@ -268,8 +268,8 @@ class HGNCData(NamespaceDataSet):
 
 	def get_ns_values(self):
 	# ideally, make this obsolete - output not consistent
-		for symbol in self.ns_dict:
-			mapping = self.ns_dict.get(symbol)
+		for symbol in self._dict:
+			mapping = self._dict.get(symbol)
 			loc_type = mapping.get('Locus Type')
 			hgnc_id = mapping.get('HGNC ID')
 			if '~withdrawn' not in symbol:
@@ -277,7 +277,7 @@ class HGNCData(NamespaceDataSet):
 
 	def get_values(self):
 		for term_id in self._dict:
-			if '~withdrawn' not in self.ns_dict.get(term_id).get('Symbol'):
+			if '~withdrawn' not in self._dict.get(term_id).get('Symbol'):
 				yield term_id
 
 	def get_label(self, term_id):
@@ -353,7 +353,7 @@ class HGNCData(NamespaceDataSet):
 		synonym_dict = {}
 		for term_id in self.get_values():
 			synonyms = set()
-			mapping = self.ns_dict.get(term_id)
+			mapping = self._dict.get(term_id)
 			name = mapping.get('Approved Name')
 			synonyms.add(name)
 			if mapping.get('Previous Names'):
@@ -394,8 +394,8 @@ class MGIData(NamespaceDataSet):
 		super().__init__(dictionary)
 
 	def get_values(self):
-		for term_id in self.ns_dict:
-			mapping = self.ns_dict.get(term_id)
+		for term_id in self._dict:
+			mapping = self._dict.get(term_id)
 			marker_type = mapping.get('Marker Type')
 			if marker_type =='Gene' or marker_type == 'Pseudogene':
 				yield term_id
@@ -414,8 +414,9 @@ class MGIData(NamespaceDataSet):
 				yield marker_symbol, feature_type, acc_id
 	
 	def get_encoding(self, term_id):
-		encoding = MGIData.ENC.get(feature_type, 'G')
-		if feature_type not in MGIData.ENC:
+		feature_type = self._dict.get(term_id).get('Feature Type')
+		encoding = self.ENC.get(feature_type, 'G')
+		if feature_type not in self.ENC:
 			print('WARNING ' + feature_type + ' not defined for MGI. G assigned as default encoding.')
 		return encoding
 
@@ -426,9 +427,9 @@ class MGIData(NamespaceDataSet):
 	def get_alt_symbols(self, term_id):
 		synonyms = set()
 		mapping = self._dict.get(term_id)
-		synonyms = mapping.get('Marker Synonyms')
-		if marker_synonyms != '':
-			synonyms.update(marker_synonyms.split('|'))
+		synonyms = mapping.get('Marker Synonyms').split('|')
+		#if synonyms != '':
+		#	synonyms.update(marker_synonyms.split('|'))
 		return synonyms
 
 	def write_ns_values(self, dir):
@@ -461,7 +462,7 @@ class MGIData(NamespaceDataSet):
 		synonym_dict = {}
 		for symbol in self._dict:
 			synonyms = set()
-			mapping = self.ns_dict.get(symbol)
+			mapping = self._dict.get(symbol)
 			marker_synonyms = mapping.get('Marker Synonyms')
 			if marker_synonyms != '':
 				synonyms.update(marker_synonyms.split('|'))
@@ -1033,7 +1034,7 @@ class GOBPData(NamespaceDataSet):
 		synonyms = set()
 		mapping = self._dict.get(term_id)
 		synonyms.update(mapping.get('synonyms'))
-		return synonym_dict
+		return synonyms
 
 	def get_ns_values(self):
 		for termid in self._dict:
@@ -1154,6 +1155,7 @@ class GOCCData(NamespaceDataSet):
 
 class MESHData(NamespaceDataSet):
 
+	N = 'mesh'
 	NS_CL = 'mesh-cellular-locations.belns'
 	NS_DS = 'mesh-diseases.belns'
 	NS_BP = 'mesh-biological-processes.belns'

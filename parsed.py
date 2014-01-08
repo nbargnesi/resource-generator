@@ -106,7 +106,7 @@ def build_data(entry, parser):
 	elif parser == 'HGNC_Parser':
 		app_symb = entry.get('Approved Symbol')
 		loc_type = entry.get('Locus Type')
-		hgnc_id = entry.get('HGNC ID')
+		hgnc_id = entry.get('HGNC ID').replace('HGNC:','')
 		old_symbols = entry.get('Previous Symbols')
 		old_names = entry.get('Previous Names')
 		synonyms = entry.get('Synonyms')
@@ -126,7 +126,7 @@ def build_data(entry, parser):
 		m_symbol = entry.get('Marker Symbol')
 		feature_type = entry.get('Feature Type')
 		m_type = entry.get('Marker Type')
-		acc_id = entry.get('MGI Accession ID')
+		acc_id = entry.get('MGI Accession ID').replace('MGI:','')
 		m_name = entry.get('Marker Name')
 		m_syn = entry.get('Marker Synonyms (pipe-separated)')
 

@@ -37,7 +37,10 @@ pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 gobp_dict = {}
 gocc_dict = {}
-mesh_dict = {}
+#mesh_dict = {}
+meshcs_dict = {}
+meshd_dict = {}
+meshbp_dict = {}
 do_dict = {}
 
 entrez_data = EntrezInfoData(entrez_info)
@@ -57,7 +60,11 @@ pub_ns_data = PubNamespaceData(pub_ns_dict)
 pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
-mesh_data = MESHData(mesh_dict)
+#mesh_data = MESHData(mesh_dict)
+meshcs_data = MESHData(meshcs_dict, 'meshcs')
+meshd_data = MESHData(meshd_dict, 'meshd')
+meshbp_data = MESHData(meshbp_dict, 'meshbp')
+
 do_data = DOData(do_dict)
 nch_data = NCHData(nch)
 ctg_data = CTGData(ctg)
@@ -306,12 +313,28 @@ def build_data(entry, parser):
 		mns = entry.get('mns')
 		sts = entry.get('sts')
 		synonyms = entry.get('synonyms')
-
-		mesh_dict[ui] = {
-			'mesh_header' : mh,
-			'sts' : sts,
-			'mns' : mns,
-			'synonyms' : synonyms }
+		
+		if any(branch.startswith('A11.284') for branch in mns):
+			print(mh + '\tMESHCS')
+			meshcs_dict[ui] = {
+				'mesh_header' : mh,
+				'sts' : sts,
+				'mns' : mns,
+				'synonyms' : synonyms }
+		if any(branch.startswith('C') for branch in mns):
+			meshd_dict[ui] = {
+				'mesh_header' : mh,
+				'sts' : sts,
+				'mns' : mns,
+				'synonyms' : synonyms }
+		if any(branch.startswith('G') for branch in mns):
+			excluded = ('G01', 'G15', 'G17')
+			if not all(branch.startswith(excluded) for branch in mns):	
+				meshbp_dict[ui] = {
+					'mesh_header' : mh,
+					'sts' : sts,
+					'mns' : mns,
+					'synonyms' : synonyms }
 
 	elif parser == 'SwissWithdrawn_Parser':
 		acc = entry.get('accession')
@@ -328,15 +351,16 @@ def build_data(entry, parser):
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }
 
-def load_data(label):
+def load_data(string):
 
 	datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
 				swiss_data, affy_data, chebi_data, pub_ns_data,
 				gene2acc_data, entrez_history_data, pub_equiv_data,
 				schem_data, schem_to_chebi_data, gobp_data,
-				gocc_data, mesh_data, swiss_withdrawn_acc_data,
-				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data]
+				gocc_data, swiss_withdrawn_acc_data,
+				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
+				meshcs_data, meshd_data, meshbp_data]
 
 	for d in datasets:
-		if str(d) == label:
+		if str(d) == string:
 			return d

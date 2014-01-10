@@ -29,7 +29,8 @@ class NamespaceDataSet(DataSet):
 
 	N = 'please-name-me!'
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary, label='namespace-label'):
+		self._label = label
 		super().__init__(dictionary)
 
 	def get_values(self):
@@ -98,7 +99,7 @@ class NamespaceDataSet(DataSet):
 					f.write('|'.join(i) + '\n')
 
 	def __str__(self):
-		return 'DataSet_Object'
+		return self._label
 
 
 class EntrezInfoData(NamespaceDataSet):
@@ -113,8 +114,8 @@ class EntrezInfoData(NamespaceDataSet):
 	subject = "gene/RNA/protein"
 	description = "NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus."
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='entrez_info'):
+		super().__init__(dictionary, label)
 
 	# get rid of this block (find where used)
 	def get_ns_values(self):
@@ -219,8 +220,8 @@ class EntrezInfoData(NamespaceDataSet):
 			synonym_dict[gene_id] = synonyms
 		return synonym_dict
 
-	def __str__(self):
-		return 'entrez_info'
+	#def __str__(self):
+	#	return 'entrez_info'
 
 
 class EntrezHistoryData(DataSet):
@@ -263,8 +264,8 @@ class HGNCData(NamespaceDataSet):
 		'RNA, misc' : 'GR', 'RNA, Y' : 'GR', 'RNA, vault' : 'GR',
 	}
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='hgnc'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 	# ideally, make this obsolete - output not consistent
@@ -305,7 +306,14 @@ class HGNCData(NamespaceDataSet):
 		if mapping.get('Previous Symbols'):
 			old_symbols = [s.strip() for s in mapping.get('Previous Symbols').split(',')]
 			synonyms.update(old_symbols)
-		#synonyms.add(mapping.get('Symbol'))
+		return synonyms
+
+	def get_alt_names(self, term_id):
+		synonyms = set()
+		mapping = self._dict.get(term_id)
+		if mapping.get('Previous Names'):
+			old_names = [s.strip('" ') for s in mapping.get('Previous Names').split(', "')]
+			synonyms.update(old_names)
 		return synonyms
 
 	def write_ns_values(self, dir):
@@ -366,9 +374,6 @@ class HGNCData(NamespaceDataSet):
 		name = mapping.get('Approved Name')
 		return name
 
-	def __str__(self):
-		return 'hgnc'
-
 
 class MGIData(NamespaceDataSet):
 
@@ -390,8 +395,8 @@ class MGIData(NamespaceDataSet):
 		'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'
 	}
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='mgi'):
+		super().__init__(dictionary, label)
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -424,12 +429,16 @@ class MGIData(NamespaceDataSet):
 		label = self._dict.get(term_id).get('Symbol')
 		return label
 
+	def get_name(self, term_id):
+		mapping = self._dict.get(term_id)
+		name = mapping.get('Marker Name')
+		return name
+
 	def get_alt_symbols(self, term_id):
 		synonyms = set()
 		mapping = self._dict.get(term_id)
 		synonyms = mapping.get('Marker Synonyms').split('|')
-		#if synonyms != '':
-		#	synonyms.update(marker_synonyms.split('|'))
+		synonyms = {s for s in synonyms if s}
 		return synonyms
 
 	def write_ns_values(self, dir):
@@ -457,32 +466,6 @@ class MGIData(NamespaceDataSet):
 			id_map[term_id] = symbol
 		return id_map
 
-	# replace with get_alt_symbols(term_id)
-	def get_synonym_symbols(self):
-		synonym_dict = {}
-		for symbol in self._dict:
-			synonyms = set()
-			mapping = self._dict.get(symbol)
-			marker_synonyms = mapping.get('Marker Synonyms')
-			if marker_synonyms != '':
-				synonyms.update(marker_synonyms.split('|'))
-			synonyms.add(symbol)
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def get_synonym_names(self):
-		synonym_dict = {}
-		for symbol in self.get_values():
-			synonyms = set()
-			mapping = self._dict.get(symbol)
-			name = mapping.get('Marker Name')
-			synonyms.add(name)
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def __str__(self):
-		return 'mgi'
-
 
 class RGDData(NamespaceDataSet):
 
@@ -495,8 +478,8 @@ class RGDData(NamespaceDataSet):
 		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='rgd'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for symbol in self._dict:
@@ -536,6 +519,15 @@ class RGDData(NamespaceDataSet):
 			synonyms.update(old_symbols)
 		return synonyms
 
+	def get_alt_names(self, term_id):
+		synonyms = set()
+		mapping = self._dict.get(term_id)
+		if mapping.get('OLD_NAME'):
+			old_names = mapping.get('OLD_NAME').split(';')
+			synonyms.update(old_names)
+		synonyms = {s for s in synonyms if s}
+		return synonyms
+
 	def write_ns_values(self, dir):
 		data = {}
 		for term_id in self.get_values():
@@ -556,34 +548,6 @@ class RGDData(NamespaceDataSet):
 			id_map[term_id] = symbol
 		return id_map
 
-	def get_synonym_symbols(self):
-		synonym_dict = {}
-		for symbol in self._dict:
-			synonyms = set()
-			synonyms.add(symbol)
-			mapping = self._dict.get(symbol)
-			if mapping.get('OLD_SYMBOL'):
-				old_symbols = mapping.get('OLD_SYMBOL').split(';')
-				synonyms.update(old_symbols)
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def get_synonym_names(self):
-		synonym_dict = {}
-		for symbol in self._dict:
-			synonyms = set()
-			mapping = self._dict.get(symbol)
-			name = mapping.get('NAME')
-			synonyms.add(name)
-			if mapping.get('OLD_NAME'):
-				old_names = mapping.get('OLD_NAME').split(';')
-				synonyms.update(old_names)
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def __str__(self):
-		return 'rgd'
-
 
 class SwissProtData(NamespaceDataSet):
 
@@ -591,8 +555,8 @@ class SwissProtData(NamespaceDataSet):
 	NS_NAMES = 'swissprot-entry-names.belns'
 	NS_ACCESSION = 'swissprot-accession-numbers.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='swiss'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for name in self._dict:
@@ -606,6 +570,11 @@ class SwissProtData(NamespaceDataSet):
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')
 		return label
+
+	def get_name(self, term_id):
+		mapping = self._dict.get(term_id)
+		name = mapping.get('recommendedFullName')
+		return name 
 
 	def get_alt_ids(self, term_id):
 		alt_ids = self._dict.get(term_id).get('accessions')
@@ -657,34 +626,31 @@ class SwissProtData(NamespaceDataSet):
 			acc = mapping.get('accessions')
 			yield name, dbrefs, acc
 
-	def get_synonym_symbols(self):
-		synonym_dict = {}
-		for symbol in self._dict:
-			synonyms = set()
-			synonyms.add(symbol)
-			mapping = self._dict.get(symbol)
-			synonyms.update(mapping.get('alternativeShortNames'))
-			if mapping.get('recommendedShortName'):
-				synonyms.add(mapping.get('recommendedShortname'))
-			if mapping.get('geneName'):
-				synonyms.add(mapping.get('geneName'))
-			if mapping.get('geneSynonyms'):
-				synonyms.update(mapping.get('geneSynonyms'))
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def get_synonym_names(self):
-		synonym_dict = {}
-		for symbol in self._dict:
-			synonyms = set()
-			mapping = self._dict.get(symbol)
-			synonyms.add(mapping.get('recommendedFullName'))
-			synonyms.update(mapping.get('alternativeFullNames'))
-			synonym_dict[symbol] = synonyms
-		return synonym_dict
-
-	def __str__(self):
-		return 'swiss'
+#	def get_synonym_symbols(self):
+#		synonym_dict = {}
+#		for symbol in self._dict:
+#			synonyms = set()
+#			synonyms.add(symbol)
+#			mapping = self._dict.get(symbol)
+#			synonyms.update(mapping.get('alternativeShortNames'))
+#			if mapping.get('recommendedShortName'):
+#				synonyms.add(mapping.get('recommendedShortname'))
+#			if mapping.get('geneName'):
+#				synonyms.add(mapping.get('geneName'))
+#			if mapping.get('geneSynonyms'):
+#				synonyms.update(mapping.get('geneSynonyms'))
+#			synonym_dict[symbol] = synonyms
+#		return synonym_dict
+#
+#	def get_synonym_names(self):
+#		synonym_dict = {}
+#		for symbol in self._dict:
+#			synonyms = set()
+#			mapping = self._dict.get(symbol)
+#			synonyms.add(mapping.get('recommendedFullName'))
+#			synonyms.update(mapping.get('alternativeFullNames'))
+#			synonym_dict[symbol] = synonyms
+#		return synonym_dict
 
 
 class AffyData(NamespaceDataSet):
@@ -692,8 +658,8 @@ class AffyData(NamespaceDataSet):
 	N = 'affy'
 	NS = 'affy-probeset-ids.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='affy'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for probe_id in self.affy_dict:
@@ -725,9 +691,6 @@ class AffyData(NamespaceDataSet):
 			gene_id	 = mapping.get('Entrez Gene')
 			yield probe_id, gene_id
 
-	def __str__(self):
-		return 'affy'
-
 
 class CHEBIData(NamespaceDataSet):
 
@@ -735,8 +698,8 @@ class CHEBIData(NamespaceDataSet):
 	NS_NAMES = 'chebi-names.belns'
 	NS_IDS = 'chebi-ids.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='chebi'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for name in self._dict:
@@ -818,16 +781,13 @@ class CHEBIData(NamespaceDataSet):
 			synonym_dict[name] = synonyms
 		return synonym_dict
 
-	def __str__(self):
-		return 'chebi'
-
 
 class SCHEMData(NamespaceDataSet):
 	N = 'schem'	
 	NS = 'selventa-legacy-chemical-names.belns'
 
-	def __init__(self, dictionary):
-		super(SCHEMData, self).__init__(dictionary)
+	def __init__(self, dictionary, label='schem'):
+		super(SCHEMData, self).__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for entry in self._dict:
@@ -843,9 +803,6 @@ class SCHEMData(NamespaceDataSet):
 	def get_eq_values(self):
 		for entry in self.schem_dict:
 			yield entry
-
-	def __str__(self):
-		return 'schem'
 
 
 class SCHEMtoCHEBIData(DataSet):
@@ -870,8 +827,8 @@ class NCHData(NamespaceDataSet):
 	PREFIX = 'SCOMP'
 	NS = 'selventa-named-complexes.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='nch'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for entry in self._dict:
@@ -893,8 +850,6 @@ class NCHData(NamespaceDataSet):
 		for entry in self.nch_dict:
 			yield entry
 
-	def __str__(self):
-		return 'nch'
 
 class CTGData(DataSet):
 
@@ -917,8 +872,8 @@ class SDISData(NamespaceDataSet):
 	N = 'selventa-legacy-diseases'
 	NS = 'selventa-legacy-diseases.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='sdis'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for entry in self.sdis_dict:
@@ -938,8 +893,8 @@ class SDISData(NamespaceDataSet):
 		for entry in self._dict:
 			yield entry
 
-	def __str__(self):
-		return 'sdis'
+	#def __str__(self):
+	#	return 'sdis'
 
 
 class SDIStoDOData(DataSet):
@@ -1020,8 +975,8 @@ class GOBPData(NamespaceDataSet):
 	NS_NAMES = 'go-biological-processes-names.belns'
 	NS_IDS = 'go-biological-processes-ids.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='gobp'):
+		super().__init__(dictionary, label)
 
 	def get_encoding(self, term_id):
 		return 'B'
@@ -1077,8 +1032,8 @@ class GOBPData(NamespaceDataSet):
 			synonym_dict[termid] = synonyms
 		return synonym_dict
 
-	def __str__(self):
-		return 'gobp'
+	#def __str__(self):
+	#	return 'gobp'
 
 
 class GOCCData(NamespaceDataSet):
@@ -1087,8 +1042,8 @@ class GOCCData(NamespaceDataSet):
 	NS_NAMES = 'go-cellular-component-names.belns'
 	NS_IDS = 'go-cellular-component-ids.belns'
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary, label='gocc'):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for termid in self._dict:
@@ -1149,19 +1104,19 @@ class GOCCData(NamespaceDataSet):
 			synonym_dict[termid] = synonyms
 		return synonym_dict
 
-	def __str__(self):
-		return 'gocc'
+	#def __str__(self):
+	#	return 'gocc'
 
 
 class MESHData(NamespaceDataSet):
 
 	N = 'mesh'
-	NS_CL = 'mesh-cellular-locations.belns'
-	NS_DS = 'mesh-diseases.belns'
-	NS_BP = 'mesh-biological-processes.belns'
+#	NS_CL = 'mesh-cellular-locations.belns'
+#	NS_DS = 'mesh-diseases.belns'
+#	NS_BP = 'mesh-biological-processes.belns'
 
-	def __init__(self, dictionary):
-		super(MESHData, self).__init__(dictionary)
+	def __init__(self, dictionary, label):
+		super().__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for ui in self._dict:
@@ -1172,25 +1127,40 @@ class MESHData(NamespaceDataSet):
 
 			yield ui, mh, mns, sts
 
+	def get_label(self, term_id):
+		label = self._dict.get(term_id).get('mesh_header')
+		return label
+
+	def get_encoding(self, term_id):
+		if self._label == 'meshcs':
+			return 'A'
+		elif self._label == 'meshd':
+			return 'O'
+		elif self._label == 'meshbp':
+			return 'B'
+		else:
+			return 'A'		
+
 	def write_ns_values(self, dir):
-		data_cl = {}
-		data_ds = {}
-		data_bp = {}
-		for ui, mh, mns, sts in self.get_ns_values():
-			if any(branch.startswith('A11.284') for branch in mns):
-				# MeSH Cellular Locations; encoding = 'A'
-				data_cl[mh] = 'A'
-			if any(branch.startswith('C') for branch in mns):
-				# MeSH Diseases; encoding = 'O'
-				data_ds[mh] = 'O'
-			if any(branch.startswith('G') for branch in mns):
-				# MeSH Phenomena and Processes; encoding = 'B'
-				excluded = ('G01', 'G15', 'G17')
-				if not all(branch.startswith(excluded) for branch in mns):
-					data_bp[mh] = 'B'
-		super(MESHData, self).write_data(data_cl, dir, MESHData.NS_CL)
-		super(MESHData, self).write_data(data_ds, dir, MESHData.NS_DS)
-		super(MESHData, self).write_data(data_bp, dir, MESHData.NS_BP)
+#		data_cl = {}
+#		data_ds = {}
+#		data_bp = {}
+#		for ui, mh, mns, sts in self.get_ns_values():
+#			if any(branch.startswith('A11.284') for branch in mns):
+#				# MeSH Cellular Locations; encoding = 'A'
+#				data_cl[mh] = 'A'
+#			if any(branch.startswith('C') for branch in mns):
+#				# MeSH Diseases; encoding = 'O'
+#				data_ds[mh] = 'O'
+#			if any(branch.startswith('G') for branch in mns):
+#				# MeSH Phenomena and Processes; encoding = 'B'
+#				excluded = ('G01', 'G15', 'G17')
+#				if not all(branch.startswith(excluded) for branch in mns):
+#					data_bp[mh] = 'B'
+#		super(MESHData, self).write_data(data_cl, dir, MESHData.NS_CL)
+#		super(MESHData, self).write_data(data_ds, dir, MESHData.NS_DS)
+#		super(MESHData, self).write_data(data_bp, dir, MESHData.NS_BP)
+		super(MESHData, self).write_data(data, dir, MESHData.NS)
 
 	def get_eq_values(self):
 		for ui in self._dict:
@@ -1220,8 +1190,8 @@ class MESHData(NamespaceDataSet):
 			synonym_dict[mh] = synonyms
 		return synonym_dict
 
-	def __str__(self):
-		return 'mesh'
+	#def __str__(self):
+	#	return 'meshcs'
 
 class SwissWithdrawnData(DataSet):
 
@@ -1242,8 +1212,8 @@ class DOData(NamespaceDataSet):
 	NS_NAMES = 'disease-ontology-names.belns'
 	NS_IDS = 'disease-ontology-ids.belns'
 
-	def __init__(self, dictionary):
-		super(DOData, self).__init__(dictionary)
+	def __init__(self, dictionary, label='do'):
+		super(DOData, self).__init__(dictionary, label)
 
 	def get_ns_values(self):
 		for name, mapping in self._dict.items():
@@ -1282,14 +1252,12 @@ class DOData(NamespaceDataSet):
 			if ref in dbxrefs:
 				return name
 
-	def get_synonym_names(self):
-		synonym_dict = {}
-		for name in self.do_dict:
-			mapping = self.do_dict.get(name)
-			synonyms  = set(mapping.get('synonyms'))
-			synonyms.add(name)
-			synonym_dict[name] = synonyms
-		return synonym_dict
+#	def get_synonym_names(self):
+#		synonym_dict = {}
+#		for name in self.do_dict:
+#			mapping = self.do_dict.get(name)
+#			synonyms  = set(mapping.get('synonyms'))
+#			synonyms.add(name)
+#			synonym_dict[name] = synonyms
+#		return synonym_dict
 
-	def __str__(self):
-		return 'do'

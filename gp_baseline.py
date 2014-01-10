@@ -206,8 +206,12 @@ if args.begin_phase <= 2:
 	#	pickle.dump(parsed.load_data('pubchem_equiv'), f, pickle.HIGHEST_PROTOCOL)
 	# with open('pub_ns.'+args.parsed_pickle, 'wb') as f:
 	#	pickle.dump( parsed.load_data('pubchem_namespace'), f, pickle.HIGHEST_PROTOCOL)
-	with open('mesh.'+args.parsed_pickle, 'wb') as f:
-		pickle.dump(parsed.load_data('mesh'), f, pickle.HIGHEST_PROTOCOL)
+	with open('meshcs.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('meshcs'), f, pickle.HIGHEST_PROTOCOL)
+	with open('meshd.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('meshd'), f, pickle.HIGHEST_PROTOCOL)
+	with open('meshbp.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('meshbp'), f, pickle.HIGHEST_PROTOCOL)
 	with open('do.'+args.parsed_pickle, 'wb') as f:
 		pickle.dump(parsed.load_data('do'), f, pickle.HIGHEST_PROTOCOL)
 	
@@ -384,7 +388,9 @@ if args.begin_phase <= 3:
 		gocc = parsed.load_data('gocc')
 		# pub_eq = parsed.load_data('pubchem_equiv')
 		# pub_ns = parsed.load_data('pubchem_namespace')
-		mesh = parsed.load_data('mesh')
+		meshcs = parsed.load_data('meshcs')
+		meshd = parsed.load_data('meshd')
+		meshbp = parsed.load_data('meshbp')
 		do = parsed.load_data('do')
 
 	# does NOT include pubchem currently

@@ -22,7 +22,7 @@ parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
 					help="directory to store the new namespace equivalence data")
 args = parser.parse_args()
 
-dataset = args.d
+#dataset = args.d
 
 if os.path.exists(args.n[0]):
     os.chdir(args.n[0])

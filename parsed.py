@@ -38,9 +38,9 @@ pub_ns_dict = defaultdict(list)
 gobp_dict = {}
 gocc_dict = {}
 #mesh_dict = {}
-meshcs_dict = {}
+meshcl_dict = {}
 meshd_dict = {}
-meshbp_dict = {}
+meshpp_dict = {}
 do_dict = {}
 
 entrez_data = EntrezInfoData(entrez_info)
@@ -61,9 +61,9 @@ pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
 #mesh_data = MESHData(mesh_dict)
-meshcs_data = MESHData(meshcs_dict, 'meshcs')
-meshd_data = MESHData(meshd_dict, 'meshd')
-meshbp_data = MESHData(meshbp_dict, 'meshbp')
+meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
+meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
+meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
 
 do_data = DOData(do_dict)
 nch_data = NCHData(nch)
@@ -92,7 +92,9 @@ def build_data(entry, parser):
 		name = entry.get('Full_name_from_nomenclature_authority')
 		symbol = entry.get('Symbol')
 		description = entry.get('description')
+		dbXrefs = entry.get('dbXrefs')
 		entrez_info[gene_id] = {
+			'dbXrefs' : dbXrefs,
 			'type_of_gene' : type_of_gene,
 			'description' : description,
 			'tax_id' : tax_id,
@@ -315,8 +317,7 @@ def build_data(entry, parser):
 		synonyms = entry.get('synonyms')
 		
 		if any(branch.startswith('A11.284') for branch in mns):
-			print(mh + '\tMESHCS')
-			meshcs_dict[ui] = {
+			meshcl_dict[ui] = {
 				'mesh_header' : mh,
 				'sts' : sts,
 				'mns' : mns,
@@ -330,7 +331,7 @@ def build_data(entry, parser):
 		if any(branch.startswith('G') for branch in mns):
 			excluded = ('G01', 'G15', 'G17')
 			if not all(branch.startswith(excluded) for branch in mns):	
-				meshbp_dict[ui] = {
+				meshpp_dict[ui] = {
 					'mesh_header' : mh,
 					'sts' : sts,
 					'mns' : mns,
@@ -359,7 +360,7 @@ def load_data(string):
 				schem_data, schem_to_chebi_data, gobp_data,
 				gocc_data, swiss_withdrawn_acc_data,
 				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
-				meshcs_data, meshd_data, meshbp_data]
+				meshcl_data, meshd_data, meshpp_data]
 
 	for d in datasets:
 		if str(d) == string:

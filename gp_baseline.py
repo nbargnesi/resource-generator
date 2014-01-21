@@ -237,6 +237,7 @@ if args.begin_phase <= 3:
 	if args.begin_phase == 3:
 		# starting at this phase, so need pickled data files for:
 		# [ei, hg, mg, rg, sp, af, chebi, schem, sdis, gobp, gocc, mesh, do, nch]
+		# NOTE - these are the data files that generate namespaces
 		if not os.path.exists('ei.'+args.parsed_pickle):
 			print('WARNING !!! Required pickled data file %s not found.' % ('ei.'+args.parsed_pickle))
 			ei = None
@@ -303,12 +304,24 @@ if args.begin_phase <= 3:
 		else:
 			with open('gocc.'+args.parsed_pickle, 'rb') as f:
 				gocc = pickle.load(f)
-		if not os.path.exists('mesh.'+args.parsed_pickle):
-			print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
-			mesh = None
+		if not os.path.exists('meshcs.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshcs.'+args.parsed_pickle))
+			meshcs = None
 		else:
-			with open('mesh.'+args.parsed_pickle, 'rb') as f:
-				mesh = pickle.load(f)
+			with open('meshcs.'+args.parsed_pickle, 'rb') as f:
+				meshcs = pickle.load(f)
+		if not os.path.exists('meshd.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshd.'+args.parsed_pickle))
+			meshd = None
+		else:
+			with open('meshd.'+args.parsed_pickle, 'rb') as f:
+				meshd = pickle.load(f)
+		if not os.path.exists('meshbp.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshbp.'+args.parsed_pickle))
+			meshbp = None
+		else:
+			with open('meshbp.'+args.parsed_pickle, 'rb') as f:
+				meshbp = pickle.load(f)
 		if not os.path.exists('do.'+args.parsed_pickle):
 			print('WARNING !!! Required pickled data file %s not found.' % ('do.'+args.parsed_pickle))
 			do = None
@@ -321,52 +334,6 @@ if args.begin_phase <= 3:
 		else:
 			with open('nch.'+args.parsed_pickle, 'rb') as f:
 				nch = pickle.load(f)
-
-		# Additional data
-		#if not os.path.exists('eh.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('eh.'+args.parsed_pickle))
-		#	eh = None
-		#else:
-		#	with open('eh.'+args.parsed_pickle, 'rb') as f:
-		#		eh = pickle.load(f)
-		#if not os.path.exists('g2.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('g2.'+args.parsed_pickle))
-		#	g2 = None
-		#else:
-		#	with open('g2.'+args.parsed_pickle, 'rb') as f:
-		#		g2 = pickle.load(f)		
-		#if not os.path.exists('schem_to_chebi.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('schem_to_chebi.'+args.parsed_pickle))
-		#	schem_to_chebi = None
-		#else:
-		#	with open('schem_to_chebi.'+args.parsed_pickle, 'rb') as f:
-		#		schem_to_chebi = pickle.load(f)
-		#if not os.path.exists('sdis_to_do.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('sdis_to_do.'+args.parsed_pickle))
-		#	sdis_to_do = None
-		#else:
-		#	with open('sdis_to_do.'+args.parsed_pickle, 'rb') as f:
-		#		sdis_to_do = pickle.load(f)
-		#if not os.path.exists('ctg.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('ctg.'+args.parsed_pickle))
-		#	ctg = None
-		#else:
-		#	with open('ctg.'+args.parsed_pickle, 'rb') as f:
-		#		ctg = pickle.load(f)
-
-		#if not os.path.exists('pub_eq.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_eq.'+args.parsed_pickle))
-		#	pub_eq = None
-		#else:
-		#	with open('pub_eq.'+args.parsed_pickle, 'rb') as f:
-		#		pub_eq = pickle.load(f)
-		#if not os.path.exists('pub_ns.'+args.parsed_pickle):
-		#	print('WARNING !!! Required pickled data file %s not found.' % ('pub_ns.'+args.parsed_pickle))
-		#	pub_ns = None
-		#else:
-		#	with open('pub_ns.'+args.parsed_pickle, 'rb') as f:
-		#		pub_ns = pickle.load(f)
-		
 	else:
 		# data already in memory	
 		ei = parsed.load_data('entrez_info')
@@ -394,15 +361,14 @@ if args.begin_phase <= 3:
 		do = parsed.load_data('do')
 
 	# does NOT include pubchem currently
-	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, mesh, schem, do, sdis, nch]
+	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, meshcs, meshbp, meshd, schem, do, sdis, nch]
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
-	#	dataset.write_ns_values(cwd)
 		try:
 			dataset.write_ns_values(cwd)
 		except:
-			print("Unexpected error:", sys.exc_info()[0])
+			print("Unexpected error:", sys.exc_info()[1])
 			
 	print('Phase III ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	

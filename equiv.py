@@ -48,9 +48,9 @@ mesh_d_eq = {}
 mesh_pp_eq = {}
 
 # ID to symbol mapping data used for SwissProt equivalences
-hgnc_map = parsed.load_data('hgnc').get_map()
-mgi_map = parsed.load_data('mgi').get_map()
-rgd_map = parsed.load_data('rgd').get_map()
+#hgnc_map = parsed.load_data('hgnc').get_map()
+#mgi_map = parsed.load_data('mgi').get_map()
+#rgd_map = parsed.load_data('rgd').get_map()
 
 ref_status = {'REVIEWED' : 0,
 			  'VALIDATED' : 1,
@@ -62,19 +62,6 @@ ref_status = {'REVIEWED' : 0,
 
 delim = '|'
 
-# this method is called once, to build an equivalence dict used by SwissProt
-#def build_equivs():
-#
-#	 ns_dicts = [namespaces.hgnc_ns_dict, namespaces.mgi_ns_dict, \
-#				  namespaces.rgd_ns_dict]
-#	 for d in ns_dicts:
-#		 for k, v in d.items():
-#			 if d is namespaces.hgnc_ns_dict:
-#				 equiv(k, 'hgnc')
-#			 if d is namespaces.mgi_ns_dict:
-#				 equiv(k, 'mgi')
-#			 if d is namespaces.rgd_ns_dict:
-#				 equiv(k, 'rgd')
 
 def make_eq_dict(d):
 	temp_dict = d.get_dictionary()
@@ -95,9 +82,9 @@ def make_eq_dict(d):
 # This may not be needed in final implementation.
 def equiv(d, verbose):
 	if str(d) == 'entrez_info':
-		for gene_id in d.get_eq_values():
+		for term_id in d.get_values():
 			uid = uuid.uuid4()
-			entrez_eq[gene_id] = uid
+			entrez_eq[term_id] = uid
 		write_beleq(entrez_eq, 'entrez-gene-ids')
 		make_eq_dict(d)
 

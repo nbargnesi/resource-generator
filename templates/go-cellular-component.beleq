@@ -1,0 +1,28 @@
+[Equivalence]
+NameString=GO Cellular Component (Name) Equivalences
+DescriptionString=GO Cellular Component Name equivalences are assigned based on the correpsonding GO Cellular Component identifier. 
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=GO Cellular Components (Names)
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=The Gene Ontology Consortium
+DescriptionString=GO obo-xml file.
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.geneontology.org/
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

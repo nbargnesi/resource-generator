@@ -2,7 +2,8 @@ from string import Template
 
 # templates for annotation blocks
 author = Template("""[Author]
-NameString=OpenBEL (c) ${year}, OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+NameString=OpenBEL 
+CopyrightString=Copyright (c) ${year}, OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 ContactInfoString=info@openbel.org\n
 """)
 

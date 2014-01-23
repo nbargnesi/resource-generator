@@ -127,8 +127,6 @@ class EntrezInfoData(NamespaceDataSet):
 
 	labels = False
 	ids = True
-	#NS = 'entrez-gene-ids.belns'
-	#N = 'entrez-gene'
 	ENC = {
 		'protein-coding' : 'GRP', 'miscRNA' : 'GR', 'ncRNA' : 'GR',
 		'snoRNA' : 'GR', 'snRNA' : 'GR', 'tRNA' : 'GR', 'scRNA' : 'GR',
@@ -139,13 +137,6 @@ class EntrezInfoData(NamespaceDataSet):
 
 	def __init__(self, dictionary, label='entrez_info', name='entrez-gene', prefix='egid'):
 		super().__init__(dictionary, label, name, prefix)
-	# get rid of this block (find where used)
-	#def get_ns_values(self):
-	#	for gene_id in self._dict:
-	#		mapping = self._dict.get(gene_id)
-	#		gene_type = mapping.get('type_of_gene')
-	#		description = mapping.get('description')
-	#		yield gene_id, gene_type, description
 
 	def get_label(self, term_id):
 		''' Return the value to be used as the preffered
@@ -193,56 +184,12 @@ class EntrezInfoData(NamespaceDataSet):
 			synonyms.add(mapping.get('description'))
 		return synonyms
 
-	#def write_ns_values(self, dir):
-	#	''' Write .belns file. '''
-	#	data = {}
-	#	for gene_id in self.get_values():
-	#		encoding = self.get_encoding(gene_id)
-	#		data[gene_id] = encoding
-	#	name = EntrezInfoData.NS
-	#	super(EntrezInfoData, self).write_data(data, dir, name)
-
-	# get rid of this block (find where used)
-	def get_eq_values(self):
-		for gene_id in self._dict:
-			yield gene_id
-
-	# can get rid of this and use get_alt_symbols
-	#def get_synonym_symbols(self):
-	#	synonym_dict = {}
-	#	for gene_id in self._dict:
-	#		synonyms = set()
-	#		mapping = self.entrez_info_dict.get(gene_id)
-	#		if mapping.get('Synonyms') is not '-':
-	#			 synonyms.update(mapping.get('Synonyms').split('|'))
-	#		synonyms.add(mapping.get('Symbol'))
-	#		synonym_dict[gene_id] = synonyms
-	#	return synonym_dict
-   
 	def get_name(self, term_id):
 		''' Get official term name. '''
 		mapping = self._dict.get(term_id)
 		name = mapping.get('Full_name_from_nomenclature_authority')
 		return name
 	
-	# can get rid of this and use get_alt_names
-	#def get_synonym_names(self):
-	#	synonym_dict = {}
-	#	for gene_id in self.entrez_info_dict:
-	#		synonyms = set()
-	#		mapping = self.entrez_info_dict.get(gene_id)
-	#		if mapping.get('Other_designations') is not '-':
-	#			synonyms.update(mapping.get('Other_designations').split('|'))
-	#		if mapping.get('Full_name_from_nomenclature_authority') != '-':
-	#			synonyms.add(mapping.get('Full_name_from_nomenclature_authority'))
-	#		if mapping.get('description') != '-':
-	#			synonyms.add(mapping.get('description'))
-	#		synonym_dict[gene_id] = synonyms
-	#	return synonym_dict
-
-	#def __str__(self):
-	#	return 'entrez_info'
-
 
 class EntrezHistoryData(DataSet):
 
@@ -263,10 +210,6 @@ class EntrezHistoryData(DataSet):
 
 class HGNCData(NamespaceDataSet):
 	
-#	N = 'hgnc'
-#	NS = 'hgnc-approved-symbols.belns'
-#	prefix = 'hgnc'
-#	name = 'hgnc'
 	ENC = {
 		'gene with protein product' : 'GRP', 'RNA, cluster' : 'GR',
 		'RNA, long non-coding' : 'GR', 'RNA, micro' : 'GRM',
@@ -288,14 +231,6 @@ class HGNCData(NamespaceDataSet):
 
 	def __init__(self, dictionary, label='hgnc', name='hgnc-approved-symbols', prefix='hgnc'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	# ideally, make this obsolete - output not consistent
-	#	for symbol in self._dict:
-	#		mapping = self._dict.get(symbol)
-	#		loc_type = mapping.get('Locus Type')
-	#		hgnc_id = mapping.get('HGNC ID')
-	#		if '~withdrawn' not in symbol:
-	#			yield symbol, loc_type, hgnc_id
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -337,49 +272,6 @@ class HGNCData(NamespaceDataSet):
 			synonyms.update(old_names)
 		return synonyms
 
-	def get_eq_values(self):
-		for symbol in self._dict:
-			if '~withdrawn' not in symbol:
-				yield symbol
-
-	def get_map(self):
-		id_map = {}
-		for term_id in self._dict:
-			mapping = self._dict.get(term_id)
-			symbol = mapping.get('Symbol')
-			map[term_id] = symbol
-		return id_map
-
-	# may replace with get_alt_symbols()
-#	def get_synonym_symbols(self):
-#		synonym_dict = {}
-#		for term_id in self.get_values():
-		#	synonyms = set()
-		#	mapping = self._dict.get(symbol)
-		#	if mapping.get('Synonyms'):
-		#		symbol_synonyms = [s.strip() for s in mapping.get('Synonyms').split(',')]
-		#		synonyms.update(symbol_synonyms)
-	#		if mapping.get('Previous Symbols'):
-	#			old_symbols = [s.strip() for s in mapping.get('Previous Symbols').split(',')]
-	#			synonyms.update(old_symbols)
-	#		synonyms.add(symbol)
-	#		if '~withdrawn' not in symbol:
-	#			synonym_dict[symbol] = synonyms
-	#	return synonym_dict
-
-	# may replace with get_alt_names()
-#	def get_synonym_names(self):
-#		synonym_dict = {}
-#		for term_id in self.get_values():
-#			synonyms = set()
-#			mapping = self._dict.get(term_id)
-#			name = mapping.get('Approved Name')
-#			synonyms.add(name)
-#			if mapping.get('Previous Names'):
-#				old_names = [s.strip('" ') for s in mapping.get('Previous Names').split(', "')]
-#				synonyms.update(old_names)
-#		return synonym_dict
-
 	def get_name(self, term_id):
 		mapping = self._dict.get(term_id)
 		name = mapping.get('Approved Name')
@@ -388,8 +280,6 @@ class HGNCData(NamespaceDataSet):
 
 class MGIData(NamespaceDataSet):
 
-	#N = 'mgi'
-	#NS = 'mgi-approved-symbols.belns'
 	ENC = {
 		'gene' : 'GRP', 'protein coding gene' : 'GRP',
 		'non-coding RNA gene' : 'GR', 'rRNA gene' : 'GR',
@@ -419,16 +309,6 @@ class MGIData(NamespaceDataSet):
 	def get_species(self, term_id):
 		return '10090'
 
-	# get rid of this, after removing references to 
-	#def get_ns_values(self):
-	#	for marker_symbol in self._dict:
-	#		mapping = self._dict.get(marker_symbol)
-	#		feature_type = mapping.get('Feature Type')
-	#		acc_id = mapping.get('MGI Accession ID')
-	#		marker_type = mapping.get('Marker Type')
-	#		if marker_type == 'Gene' or marker_type == 'Pseudogene':
-	#			yield marker_symbol, feature_type, acc_id
-	
 	def get_encoding(self, term_id):
 		feature_type = self._dict.get(term_id).get('Feature Type')
 		encoding = self.ENC.get(feature_type, 'G')
@@ -452,36 +332,9 @@ class MGIData(NamespaceDataSet):
 		synonyms = {s for s in synonyms if s}
 		return synonyms
 
-	#def write_ns_values(self, dir):
-	#	data = {}
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		symbol = self.get_label(term_id)
-	#		data[symbol] = encoding
-	#	name = MGIData.NS
-	#	super(MGIData, self).write_data(data, dir, name)
-
-	# remove references to this
-	def get_eq_values(self):
-		for marker_symbol in self._dict:
-			mapping = self._dict.get(marker_symbol)
-			marker_type = mapping.get('Marker Type')
-			if marker_type == 'Gene' or marker_type == 'Pseudogene':
-				yield marker_symbol
-	
-	# remove dependency on, if possible
-	def get_map(self):
-		id_map = {}
-		for term_id in self._dict:
-			symbol = self.get_label(term_id) 
-			id_map[term_id] = symbol
-		return id_map
-
 
 class RGDData(NamespaceDataSet):
 
-	#N = 'rgd'
-	#NS = 'rgd-approved-symbols.belns'
 	ENC = {
 		'gene' : 'GRP', 'miscrna' : 'GR', 'predicted-high' : 'GRP',
 		'predicted-low' : 'GRP', 'predicted-moderate' : 'GRP',
@@ -491,13 +344,6 @@ class RGDData(NamespaceDataSet):
 
 	def __init__(self, dictionary, label='rgd', name='rgd-approved-symbols', prefix='rgd'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for symbol in self._dict:
-	#		mapping = self._dict.get(symbol)
-	#		name = mapping.get('NAME')
-	#		gene_type = mapping.get('GENE_TYPE')
-	#		rgd_id = mapping.get('GENE_RGD_ID')
-	#		yield symbol, gene_type, name, rgd_id
 	
 	def get_species(self, term_id):
 		''' Rat '''
@@ -538,41 +384,13 @@ class RGDData(NamespaceDataSet):
 		synonyms = {s for s in synonyms if s}
 		return synonyms
 
-	#def write_ns_values(self, dir):
-	#	data = {}
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		symbol = self.get_label(term_id)
-	#		data[symbol] = encoding
-	#	name = RGDData.NS
-	#	super(RGDData, self).write_data(data, dir, name)
-
-	def get_eq_values(self):
-		for symbol in self._dict:
-			yield symbol
-  
-	def get_map(self):
-		id_map = {}
-		for term_id in self._dict:
-			symbol = get_label(term_id)
-			id_map[term_id] = symbol
-		return id_map
-
 
 class SwissProtData(NamespaceDataSet):
 
-	#N = 'swissprot'
-	#NS_NAMES = 'swissprot-entry-names.belns'
-	#NS_ACCESSION = 'swissprot-accession-numbers.belns'
 	ids = True
 
 	def __init__(self, dictionary, label='swiss', name='swissprot', prefix='sp'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for name in self._dict:
-	#		mapping = self._dict.get(name)
-	#		acc = mapping.get('accessions')
-	#		yield name, acc
 
 	def get_encoding(self, term_id):
 		return 'GRP'
@@ -614,59 +432,9 @@ class SwissProtData(NamespaceDataSet):
 		species = self._dict.get(term_id).get('tax_id')
 		return species
 
-	#def write_ns_values(self, dir):
-	#	data_name = {}
-	#	data_acc = {}
-	#	ns_name = SwissProtData.NS_NAMES
-	#	ns_acc = SwissProtData.NS_ACCESSION
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		label = self.get_label(term_id)
-	#		data_name[label] = encoding
-	#		accessions = self.get_alt_ids(term_id)
-	#		for acc in accessions:
-	#			data_acc[acc] = encoding
-	#	super(SwissProtData, self).write_data(data_name, dir, ns_name)
-	#	super(SwissProtData, self).write_data(data_acc, dir, ns_acc)
-
-	def get_eq_values(self):
-		for name in self._dict:
-			mapping = self._dict.get(name)
-			dbrefs = mapping.get('dbreference')
-			acc = mapping.get('accessions')
-			yield name, dbrefs, acc
-
-#	def get_synonym_symbols(self):
-#		synonym_dict = {}
-#		for symbol in self._dict:
-#			synonyms = set()
-#			synonyms.add(symbol)
-#			mapping = self._dict.get(symbol)
-#			synonyms.update(mapping.get('alternativeShortNames'))
-#			if mapping.get('recommendedShortName'):
-#				synonyms.add(mapping.get('recommendedShortname'))
-#			if mapping.get('geneName'):
-#				synonyms.add(mapping.get('geneName'))
-#			if mapping.get('geneSynonyms'):
-#				synonyms.update(mapping.get('geneSynonyms'))
-#			synonym_dict[symbol] = synonyms
-#		return synonym_dict
-#
-#	def get_synonym_names(self):
-#		synonym_dict = {}
-#		for symbol in self._dict:
-#			synonyms = set()
-#			mapping = self._dict.get(symbol)
-#			synonyms.add(mapping.get('recommendedFullName'))
-#			synonyms.update(mapping.get('alternativeFullNames'))
-#			synonym_dict[symbol] = synonyms
-#		return synonym_dict
-
 
 class AffyData(NamespaceDataSet):
 
-	#N = 'affy'
-	#NS = 'affy-probeset-ids.belns'
 	labels = False
 	ids = True
 
@@ -686,35 +454,24 @@ class AffyData(NamespaceDataSet):
 		R - RNAAbundance. '''
 		return 'R'
 
-#	def write_ns_values(self, dir):
-#		data = {}
-#		for pid in self.get_values():
-#			encoding = self.get_encoding(pid)
-#			data[pid] = encoding
-#		super(AffyData, self).write_data(data, dir, AffyData.NS)
-
-	def get_eq_values(self):
-		for probe_id in self.affy_dict:
-			mapping = self.affy_dict.get(probe_id)
-			gene_id	 = mapping.get('Entrez Gene')
-			yield probe_id, gene_id
-
+	def get_equivalence(self, term_id):
+		''' Returns equivalent Entrez Gene ID for value . '''
+		entrez_ids = self._dict.get(term_id).get('Entrez Gene').split('///').strip()
+		if entrez_ids[0] == '---':
+			return None
+		elif len(entrez_ids) == 1:
+			return entrez_ids[0]
+		# TODO - need to add logic for multiple entrez gene Id reductions
+		else:
+			return None
+			
 
 class CHEBIData(NamespaceDataSet):
 
-	#N = 'chebi'
-	#NS_NAMES = 'chebi-names.belns'
-	#NS_IDS = 'chebi-ids.belns'
 	ids = True
 
 	def __init__(self, dictionary, label='chebi', name='chebi', prefix='chebi'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for name in self._dict:
-	#		mapping = self._dict.get(name)
-	#		primary_id = mapping.get('primary_id')
-	#		altIds = mapping.get('alt_ids')
-	#		yield name, primary_id, altIds
 	
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')
@@ -727,80 +484,11 @@ class CHEBIData(NamespaceDataSet):
 			synonyms.update(mapping.get('synonyms'))
 		return synonyms
 
-	#def write_ns_values(self, dir):
-	#	data_names = {}
-	#	data_ids = {}
-	#	for term_id in self.get_values():
-	#		label = self.get_label(term_id)
-	#		encoding = self.get_encoding(term_id)
-	#		alt_ids = self.get_alt_ids(term_id)
-	#		data_names[label] = encoding
-	#		data_ids[term_id] = encoding
-	#		for i in alt_ids:
-	#			data_ids[i] = encoding
-	#	super(CHEBIData, self).write_data(data_names, dir, CHEBIData.NS_NAMES)
-	#	super(CHEBIData, self).write_data(data_ids, dir, CHEBIData.NS_IDS)
-
-	# remove if possible
-	def get_names(self):
-		for name in self._dict:
-			yield name
-
-	# remove if possible
-	def get_primary_ids(self):
-		for name in self._dict:
-			mapping = self._dict.get(name)
-			primary_id = mapping.get('primary_id')
-			yield primary_id
-
-	# TODO remove if possible
-	def alt_to_primary(self, alt):
-		for name in self._dict:
-			mapping = self._dict.get(name)
-			altIds = mapping.get('alt_ids')
-			if alt in altIds:
-				primary_id = mapping.get('primary_id')
-				return primary_id
-
-	# TODO remove if possible
-	def name_to_primary(self, name):
-		mapping = self._dict.get(name)
-		primary_id = mapping.get('primary_id')
-		return primary_id
-
-	def get_synonym_names(self):
-		synonym_dict = {}
-		for name in self._dict:
-			synonyms = set()
-			mapping = self._dict.get(name)
-			synonyms.add(name)
-			if mapping.get('synonyms'):
-				alt_names = mapping.get('synonyms')
-				synonyms.update(alt_names)
-			synonym_dict[name] = synonyms
-		return synonym_dict
-
 
 class SCHEMData(NamespaceDataSet):
-	#N = 'schem'	
-	#NS = 'selventa-legacy-chemical-names.belns'
 	
 	def __init__(self, dictionary, label='schem', name='selventa-legacy-chemical-names', prefix='schem'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for entry in self._dict:
-	#		yield entry
-
-	#def write_ns_values(self, dir):
-	#	data = {}
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		data[term_id] = encoding
-	#	super(SCHEMData, self).write_data(data, dir, SCHEMData.NS)
-
-	def get_eq_values(self):
-		for entry in self.schem_dict:
-			yield entry
 
 
 class SCHEMtoCHEBIData(DataSet):
@@ -821,30 +509,13 @@ class SCHEMtoCHEBIData(DataSet):
 
 class NCHData(NamespaceDataSet):
 
-	#N = 'selventa-named-complexes'
-	#PREFIX = 'SCOMP'
-	#NS = 'selventa-named-complexes.belns'
-
 	def __init__(self, dictionary, label='nch', name='selventa-named-complexes', prefix='scomp'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for entry in self._dict:
-	#		yield entry
 
 	def get_encoding(self, term_id):
 		''' Return encoding (allowed abundance types) for 
 		value - 'C' complexAbundance. ''' 
 		return 'C'
-
-	#def write_ns_values(self, dir):
-	#	data = {}
-	#	for entry in self.get_values():
-	#		data[entry] = self.get_encoding(entry)
-	#	super(NCHData, self).write_data(data, dir, NCHData.NS)
-
-	def get_eq_values(self):
-		for entry in self.nch_dict:
-			yield entry
 
 
 class CTGData(DataSet):
@@ -865,31 +536,11 @@ class CTGData(DataSet):
 
 class SDISData(NamespaceDataSet):
 
-	#N = 'selventa-legacy-diseases'
-	#NS = 'selventa-legacy-diseases.belns'
-
 	def __init__(self, dictionary, label='sdis', name='selventa-legacy-diseases', prefix='sdis'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for entry in self.sdis_dict:
-	#		yield entry
 
 	def get_encoding(self, term_id):
 		return 'O'
-
-	#def write_ns_values(self, dir):
-	#	data = {}
-	#	for term_id in self.get_ns_values():
-	#		encoding = self.get_encoding(term_id)
-	#		data[term_id] = encoding
-	#	super(SDISData, self).write_data(data, dir, SDISData.NS)
-
-	def get_eq_values(self):
-		for entry in self._dict:
-			yield entry
-
-	#def __str__(self):
-	#	return 'sdis'
 
 
 class SDIStoDOData(DataSet):
@@ -898,7 +549,7 @@ class SDIStoDOData(DataSet):
 		super().__init__(dictionary)
 
 	def get_equivalence(self, sdis_term):
-		mapping = self.sdis_to_do.get(sdis_term)
+		mapping = self._dict.get(sdis_term)
 		if mapping:
 			do_id = mapping.get('DOID').replace('DOID_', '')
 			return do_id
@@ -907,45 +558,6 @@ class SDIStoDOData(DataSet):
 
 	def __str__(self):
 		return 'sdis_to_do'
-
-
-class PubNamespaceData(NamespaceDataSet):
-
-	#NS = 'pubchem.belns'
-
-	def __init__(self, dictionary):
-		super(PubNamespaceData, self).__init__(dictionary)
-
-	#def get_ns_values(self):
-	#	for pid in self._dict:
-	#		yield pid
-
-	def write_ns_values(self, dir):
-		data = {}
-		encoding = 'A'
-		for pid in self.get_ns_values():
-			data[pid] = encoding
-		super(PubNamespaceData, self).write_data(data, dir, PubNamespaceData.NS)
-
-	def __str__(self):
-		return 'pubchem_namespace'
-
-
-class PubEquivData(DataSet):
-
-	def __init__(self, dictionary):
-		super(PubEquivData, self).__init__(dictionary)
-
-	def get_eq_values(self):
-		for sid in self._dict:
-			mapping = self._dict.get(sid)
-			source = mapping.get('Source')
-			cid = mapping.get('PubChem CID')
-
-			yield sid, source, cid
-
-	def __str__(self):
-		return 'pubchem_equiv'
 
 
 class Gene2AccData(DataSet):
@@ -966,9 +578,6 @@ class Gene2AccData(DataSet):
 
 class GOBPData(NamespaceDataSet):
 
-	#N = 'go-biological-process'
-	#NS_NAMES = 'go-biological-processes-names.belns'
-	#NS_IDS = 'go-biological-processes-ids.belns'
 	ids = True
 
 	def __init__(self, dictionary, label='gobp', name='go-biological-processes', prefix='gobp'):
@@ -987,68 +596,13 @@ class GOBPData(NamespaceDataSet):
 		synonyms.update(mapping.get('synonyms'))
 		return synonyms
 
-	#def get_ns_values(self):
-	#	for termid in self._dict:
-	#		mapping = self._dict.get(termid)
-	#		termname = mapping.get('termname')
-	#		alt_ids = mapping.get('alt_ids')
-#
-#			yield termid, termname, alt_ids
-
-	#def write_ns_values(self, dir):
-	#	data_names = {}
-	#	data_ids = {}
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		label = self.get_label(term_id)
-	#		data_names[label] = encoding
-	#		data_ids[term_id] = encoding
-	#		alt_ids = self.get_alt_ids(term_id)
-	#		if alt_ids is not None:
-	#			for i in alt_ids:
-	#				data_ids[i] = encoding
-	#	super(GOBPData, self).write_data(data_names, dir, GOBPData.NS_NAMES)
-	#	super(GOBPData, self).write_data(data_ids, dir, GOBPData.NS_IDS)
-
-	def get_eq_values(self):
-		for termid in self._dict:
-			mapping = self._dict.get(termid)
-			termname = mapping.get('termname')
-			alt_ids = mapping.get('alt_ids')
-
-			yield termid, termname, alt_ids
-
-	#def get_synonym_names(self):
-	#	synonym_dict = {}
-	#	for termid in self._dict:
-	#		synonyms = set()
-	#		mapping = self._dict.get(termid)
-	#		synonyms.update(mapping.get('synonyms'))
-	#		synonyms.add(mapping.get('termname'))
-	#		synonym_dict[termid] = synonyms
-	#	return synonym_dict
-
-	#def __str__(self):
-	#	return 'gobp'
-
 
 class GOCCData(NamespaceDataSet):
 
-#	N = 'go-cellular-component'
-#	NS_NAMES = 'go-cellular-component-names.belns'
-#	NS_IDS = 'go-cellular-component-ids.belns'
 	ids = True
 
 	def __init__(self, dictionary, label='gocc', name='go-cellular-component', prefix='gocc'):
 		super().__init__(dictionary, label, name, prefix)
-	#def get_ns_values(self):
-	#	for termid in self._dict:
-	#		mapping = self._dict.get(termid)
-	#		termname = mapping.get('termname')
-	#		complex = mapping.get('complex')
-	#		alt_ids = mapping.get('alt_ids')
-
-	#		yield termid, termname, alt_ids, complex
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('termname')
@@ -1067,61 +621,11 @@ class GOCCData(NamespaceDataSet):
 			encoding = 'A'
 		return encoding
 
-	#def write_ns_values(self, dir):
-	#	data_names = {}
-	#	data_ids = {}
-	#	for term_id in self.get_values():
-	#		encoding = self.get_encoding(term_id)
-	#		label = self.get_label(term_id)
-	#		data_names[label] = encoding
-	#		data_ids[term_id] = encoding
-	#		alt_ids = self.get_alt_ids(term_id)
-	#		if alt_ids is not None:
-	#			for i in alt_ids:
-	#				data_ids[i] = encoding
-	#	super(GOCCData, self).write_data(data_names, dir, GOCCData.NS_NAMES)
-	#	super(GOCCData, self).write_data(data_ids, dir, GOCCData.NS_IDS)
-
-	def get_eq_values(self):
-		for termid in self._dict:
-			mapping = self._dict.get(termid)
-			termname = mapping.get('termname')
-			alt_ids = mapping.get('alt_ids')
-
-			yield termid, termname, alt_ids
-
-	#def get_synonym_names(self):
-	#	synonym_dict = {}
-	#	for termid in self._dict:
-	#		synonyms = set()
-	#		mapping = self._dict.get(termid)
-	#		synonyms.update(mapping.get('synonyms'))
-	#		synonyms.add(mapping.get('termname'))
-	#		synonym_dict[termid] = synonyms
-	#	return synonym_dict
-
-	#def __str__(self):
-	#	return 'gocc'
-
 
 class MESHData(NamespaceDataSet):
 
-	#N = 'mesh'
-#	NS_CL = 'mesh-cellular-locations.belns'
-#	NS_DS = 'mesh-diseases.belns'
-#	NS_BP = 'mesh-biological-processes.belns'
-
 	def __init__(self, dictionary, label, prefix='mesh', name='mesh-temp'):
 		super().__init__(dictionary, label, prefix, name)
-
-	#def get_ns_values(self):
-	#	for ui in self._dict:
-	#		mapping = self._dict.get(ui)
-	#		mh = mapping.get('mesh_header')
-	#		mns = mapping.get('mns')
-	#		sts = mapping.get('sts')
-#
-#			yield ui, mh, mns, sts
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('mesh_header')
@@ -1135,63 +639,14 @@ class MESHData(NamespaceDataSet):
 		elif self._label == 'meshpp':
 			return 'B'
 		else:
-			return 'A'		
+			return 'A'	
 
-#	def write_ns_values(self, dir):
-#		data_labels = {}
-#		data_ds = {}
-#		data_bp = {}
-#		for ui, mh, mns, sts in self.get_ns_values():
-#		for term_id in self.get_values():
-#			label = self.get_label(term_id)
-#			encoding = self.get_encoding(term_id)
-#			data_labels[label] = encoding
-#			if any(branch.startswith('A11.284') for branch in mns):
-#				# MeSH Cellular Locations; encoding = 'A'
-#				data_cl[mh] = 'A'
-#			if any(branch.startswith('C') for branch in mns):
-#				# MeSH Diseases; encoding = 'O'
-#				data_ds[mh] = 'O'
-#			if any(branch.startswith('G') for branch in mns):
-#				# MeSH Phenomena and Processes; encoding = 'B'
-#				excluded = ('G01', 'G15', 'G17')
-#				if not all(branch.startswith(excluded) for branch in mns):
-#					data_bp[mh] = 'B'
-#		super(MESHData, self).write_data(data_cl, dir, MESHData.NS_CL)
-#		super(MESHData, self).write_data(data_ds, dir, MESHData.NS_DS)
-#		super(MESHData, self).write_data(data_bp, dir, MESHData.NS_BP)
-#		super(MESHData, self).write_data(data_labels, dir, str(self))
+	def get_alt_names(self, term_id):
+		synonyms = set()
+		mapping = self._dict.get(term_id)
+		synonyms.update(mapping.get('synonyms'))
+		return synonyms	
 
-	def get_eq_values(self):
-		for ui in self._dict:
-			mapping = self._dict.get(ui)
-			mh = mapping.get('mesh_header')
-			mns = mapping.get('mns')
-			synonyms = mapping.get('synonyms')
-
-			yield ui, mh, mns, synonyms
-
-	def get_annot_values(self):
-		for ui in self._dict:
-			mapping = self._dict.get(ui)
-			mh = mapping.get('mesh_header')
-			mns = mapping.get('mns')
-			synonyms = mapping.get('synonyms')
-
-			yield ui, mh, mns, synonyms
-  
-#	def get_synonym_names(self):
-#		synonym_dict = {}
-#		for ui in self._dict:
-#			mapping = self._dict.get(ui)
-#			mh  = mapping.get('mesh_header')
-#			synonyms = set(mapping.get('synonyms'))
-#			synonyms.add(mh)
-#			synonym_dict[mh] = synonyms
-#		return synonym_dict
-
-	#def __str__(self):
-	#	return 'meshcs'
 
 class SwissWithdrawnData(DataSet):
 
@@ -1208,17 +663,10 @@ class SwissWithdrawnData(DataSet):
 
 class DOData(NamespaceDataSet):
 
-	#N = 'disease-ontology'
-	#NS_NAMES = 'disease-ontology-names.belns'
-	#NS_IDS = 'disease-ontology-ids.belns'
 	ids = True
 
 	def __init__(self, dictionary, label='do', name='disease-ontology', prefix ='do'):
 		super(DOData, self).__init__(dictionary, label, name, prefix)
-
-	#def get_ns_values(self):
-	#	for name, mapping in self._dict.items():
-	#		yield name, mapping.get('id')
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')
@@ -1232,33 +680,9 @@ class DOData(NamespaceDataSet):
 		synonyms  = set(mapping.get('synonyms'))
 		return synonyms
 
-#	def write_ns_values(self, dir):
-#		data_names = {}
-#		data_ids = {}
-#		for term_id in self.get_values():
-#			encoding = self.get_encoding(term_id)
-#			label = self.get_label(term_id)
-#			data_names[label] = encoding
-#			data_ids[term_id] = encoding
-#		super(DOData, self).write_data(data_names, dir, DOData.NS_NAMES)
-#		super(DOData, self).write_data(data_ids, dir, DOData.NS_IDS)
-
-	def get_eq_values(self):
-		for name, mapping in self._dict.items():
-			yield name, mapping.get('id')
-
 	def get_xrefs(self, ref):
 		for name, mapping in self._dict.items():
 			dbxrefs = mapping.get('dbxrefs')
 			if ref in dbxrefs:
 				return name
-
-#	def get_synonym_names(self):
-#		synonym_dict = {}
-#		for name in self.do_dict:
-#			mapping = self.do_dict.get(name)
-#			synonyms  = set(mapping.get('synonyms'))
-#			synonyms.add(name)
-#			synonym_dict[name] = synonyms
-#		return synonym_dict
 

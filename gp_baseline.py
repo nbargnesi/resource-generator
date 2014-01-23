@@ -206,12 +206,12 @@ if args.begin_phase <= 2:
 	#	pickle.dump(parsed.load_data('pubchem_equiv'), f, pickle.HIGHEST_PROTOCOL)
 	# with open('pub_ns.'+args.parsed_pickle, 'wb') as f:
 	#	pickle.dump( parsed.load_data('pubchem_namespace'), f, pickle.HIGHEST_PROTOCOL)
-	with open('meshcs.'+args.parsed_pickle, 'wb') as f:
-		pickle.dump(parsed.load_data('meshcs'), f, pickle.HIGHEST_PROTOCOL)
+	with open('meshcl.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('meshcl'), f, pickle.HIGHEST_PROTOCOL)
 	with open('meshd.'+args.parsed_pickle, 'wb') as f:
 		pickle.dump(parsed.load_data('meshd'), f, pickle.HIGHEST_PROTOCOL)
-	with open('meshbp.'+args.parsed_pickle, 'wb') as f:
-		pickle.dump(parsed.load_data('meshbp'), f, pickle.HIGHEST_PROTOCOL)
+	with open('meshpp.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('meshpp'), f, pickle.HIGHEST_PROTOCOL)
 	with open('do.'+args.parsed_pickle, 'wb') as f:
 		pickle.dump(parsed.load_data('do'), f, pickle.HIGHEST_PROTOCOL)
 	
@@ -304,24 +304,24 @@ if args.begin_phase <= 3:
 		else:
 			with open('gocc.'+args.parsed_pickle, 'rb') as f:
 				gocc = pickle.load(f)
-		if not os.path.exists('meshcs.'+args.parsed_pickle):
-			print('WARNING !!! Required pickled data file %s not found.' % ('meshcs.'+args.parsed_pickle))
-			meshcs = None
+		if not os.path.exists('meshcl.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshcl.'+args.parsed_pickle))
+			meshcl = None
 		else:
-			with open('meshcs.'+args.parsed_pickle, 'rb') as f:
-				meshcs = pickle.load(f)
+			with open('meshcl.'+args.parsed_pickle, 'rb') as f:
+				meshcl = pickle.load(f)
 		if not os.path.exists('meshd.'+args.parsed_pickle):
 			print('WARNING !!! Required pickled data file %s not found.' % ('meshd.'+args.parsed_pickle))
 			meshd = None
 		else:
 			with open('meshd.'+args.parsed_pickle, 'rb') as f:
 				meshd = pickle.load(f)
-		if not os.path.exists('meshbp.'+args.parsed_pickle):
-			print('WARNING !!! Required pickled data file %s not found.' % ('meshbp.'+args.parsed_pickle))
+		if not os.path.exists('meshpp.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshpp.'+args.parsed_pickle))
 			meshbp = None
 		else:
-			with open('meshbp.'+args.parsed_pickle, 'rb') as f:
-				meshbp = pickle.load(f)
+			with open('meshpp.'+args.parsed_pickle, 'rb') as f:
+				meshpp = pickle.load(f)
 		if not os.path.exists('do.'+args.parsed_pickle):
 			print('WARNING !!! Required pickled data file %s not found.' % ('do.'+args.parsed_pickle))
 			do = None
@@ -355,13 +355,13 @@ if args.begin_phase <= 3:
 		gocc = parsed.load_data('gocc')
 		# pub_eq = parsed.load_data('pubchem_equiv')
 		# pub_ns = parsed.load_data('pubchem_namespace')
-		meshcs = parsed.load_data('meshcs')
+		meshcl = parsed.load_data('meshcl')
 		meshd = parsed.load_data('meshd')
-		meshbp = parsed.load_data('meshbp')
+		meshpp = parsed.load_data('meshpp')
 		do = parsed.load_data('do')
 
 	# does NOT include pubchem currently
-	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, meshcs, meshbp, meshd, schem, do, sdis, nch]
+	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, meshcl, meshpp, meshd, schem, do, sdis, nch]
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
@@ -389,15 +389,29 @@ if args.begin_phase <= 4:
 	#   check if this is the starting point and pickled data needs to be loaded
 	#   or if data exists in memory already -> mesh loaded in phase 3
 	if args.begin_phase == 4:
-		if not os.path.exists('mesh.'+args.parsed_pickle):
-			print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
-			mesh = None
+		if not os.path.exists('meshd.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshd.'+args.parsed_pickle))
+			meshd = None
 		else:
-			with open('mesh.'+args.parsed_pickle, 'rb') as f:
-				mesh = pickle.load(f)
+			with open('meshd.'+args.parsed_pickle, 'rb') as f:
+				meshd = pickle.load(f)
+				print('loaded meshd dataset!')	
+		if not os.path.exists('meshcl.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshcl.'+args.parsed_pickle))
+			meshcl = None
+		else:
+			with open('meshcl.'+args.parsed_pickle, 'rb') as f:
+				meshcl = pickle.load(f)
+		if not os.path.exists('meshpp.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('meshpp.'+args.parsed_pickle))
+			meshpp = None
+		else:
+			with open('meshpp.'+args.parsed_pickle, 'rb') as f:
+				meshpp = pickle.load(f)
 	
-	if mesh:
-		annotate.make_annotations(mesh)
+	# NOTE - Phase Iv not implemented!
+	#if mesh:
+	#	annotate.make_annotations(mesh)
 	
 	print('Phase IV ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	
@@ -551,12 +565,24 @@ if args.begin_phase == 5:
 	# Already loaded: [ei, hg, mg, rg, sp, af, chebi, schem, sdis, gobp, gocc, do, nch, 
 	#                  sdis_to_do, schem_to_chebi, ctg]
 	# still need data files for: [mesh]
-	if not os.path.exists('mesh.'+args.parsed_pickle):
-		print('WARNING !!! Required pickled data file %s not found.' % ('mesh.'+args.parsed_pickle))
-		mesh = None
+	if not os.path.exists('meshd.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('meshd.'+args.parsed_pickle))
+		meshd = None
 	else:
-		with open('mesh.'+args.parsed_pickle, 'rb') as f:
-			mesh = pickle.load(f)
+		with open('meshd.'+args.parsed_pickle, 'rb') as f:
+			meshd = pickle.load(f)
+	if not os.path.exists('meshcl.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('meshcl.'+args.parsed_pickle))
+		meshcl = None
+	else:
+		with open('meshcl.'+args.parsed_pickle, 'rb') as f:
+			meshcl = pickle.load(f)
+	if not os.path.exists('meshpp.'+args.parsed_pickle):
+		print('WARNING !!! Required pickled data file %s not found.' % ('meshpp.'+args.parsed_pickle))
+		meshpp = None
+	else:
+		with open('meshpp.'+args.parsed_pickle, 'rb') as f:
+			meshpp = pickle.load(f)
 
 if args.begin_phase > 2:
 	# need to reload some data into parsed objects since they are needed by eqiv:
@@ -564,7 +590,9 @@ if args.begin_phase > 2:
 	#  - schem_to_chebi ...needs... schem
 	#  - nch            ...needs... ctg
 	parsed.sdis_data = sdis
+	parsed.sdis_to_do_data = sdis_to_do
 	parsed.schem_data = schem
+	parsed.schem_to_chebi_data = schem_to_chebi
 	parsed.ctg_data = ctg
 	#  - swiss          ...needs... hgnc, mgi, rgd
 	parsed.hgnc_data = hg
@@ -575,8 +603,8 @@ if args.begin_phase > 2:
 	#  - affy           ...needs... g2
 	parsed.gene2acc_data = g2
 
-equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, mesh, sdis_to_do,
-               schem_to_chebi, nch]
+equiv_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, do, meshd, meshcl, meshpp, sdis,
+               schem, nch]
 for d in equiv_data:
 	if d:
 		if verbose:

@@ -37,7 +37,6 @@ pub_equiv_dict = {}
 pub_ns_dict = defaultdict(list)
 gobp_dict = {}
 gocc_dict = {}
-#mesh_dict = {}
 meshcl_dict = {}
 meshd_dict = {}
 meshpp_dict = {}
@@ -56,11 +55,8 @@ schem_data = SCHEMData(schem)
 schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
 sdis_data = SDISData(sdis)
 sdis_to_do_data = SDIStoDOData(sdis_to_do)
-pub_ns_data = PubNamespaceData(pub_ns_dict)
-pub_equiv_data = PubEquivData(pub_equiv_dict)
 gobp_data = GOBPData(gobp_dict)
 gocc_data = GOCCData(gocc_dict)
-#mesh_data = MESHData(mesh_dict)
 meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
 meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
 meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
@@ -355,8 +351,8 @@ def build_data(entry, parser):
 def load_data(string):
 
 	datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
-				swiss_data, affy_data, chebi_data, pub_ns_data,
-				gene2acc_data, entrez_history_data, pub_equiv_data,
+				swiss_data, affy_data, chebi_data, 
+				gene2acc_data, entrez_history_data, 
 				schem_data, schem_to_chebi_data, gobp_data,
 				gocc_data, swiss_withdrawn_acc_data,
 				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,

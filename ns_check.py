@@ -12,19 +12,19 @@ namespaces = ['selventa-legacy-chemical-names',
 		'selventa-legacy-diseases',
 				'selventa-named-complexes',
 		'disease-ontology-ids',
-		'disease-ontology-names',
+		'disease-ontology',
 		'mesh-biological-processes',
 		'mesh-diseases', 
 		'mesh-cellular-locations',
-		'go-cellular-component-names',
+		'go-cellular-component',
 		'go-cellular-component-ids',
-		'go-biological-processes-names', 
+		'go-biological-processes', 
 		'go-biological-processes-ids', 
 		'chebi-ids',
-		'chebi-names',
+		'chebi',
 		'affy-probeset-ids',
-		'swissprot-accession-numbers',
-		'swissprot-entry-names',
+		'swissprot-ids',
+		'swissprot',
 		'rgd-approved-symbols',
 		'mgi-approved-symbols',
 		'hgnc-approved-symbols',
@@ -32,13 +32,13 @@ namespaces = ['selventa-legacy-chemical-names',
 
 gp_root = 'entrez-gene-ids'
 disease_root = 'disease-ontology-ids'
-chemical_root = 'chebi-names'
-bp_root = 'go-biological-processes-names'
-cc_root = 'go-cellular-component-names'
+chemical_root = 'chebi'
+bp_root = 'go-biological-processes'
+cc_root = 'go-cellular-component'
 
 gp_namespaces = ['affy-probeset-ids',
-		'swissprot-accession-numbers',
-		'swissprot-entry-names',
+		'swissprot-ids',
+		'swissprot',
 		'rgd-approved-symbols',
 		'mgi-approved-symbols',
 		'hgnc-approved-symbols']
@@ -91,9 +91,9 @@ def test_namespace_values(ns):
 	if len(eq_dict.keys()) > 0 and len(ns_dict.keys()) >0:
 
 		if len(eq_dict.keys()) != len(ns_dict.keys()):
-			print(ns + ' .beleq and .belns value number mismatch!')
+			print(ns + ' .beleq {0} and .belns {1} value number mismatch!'.format(len(eq_dict.keys()), len(ns_dict.keys())))
 			check =	 False
-			extra_vals = set(ns_dict.keys().symmetric_difference(set(eq_dict.keys())))
+			extra_vals = set(ns_dict.keys()).symmetric_difference(set(eq_dict.keys()))
   
 			if len(extra_vals) > 0:
 				check = False
@@ -171,7 +171,8 @@ def get_no_match(ns1, ns2):
 # checking namespaces and equivalence files
 # check that values in ns and eq files match
 for n in namespaces:
-	test_namespace_values(n)
+	length, check = test_namespace_values(n)
+	print('{0} - {1} - {2}'.format(n, length, check))
 
 # report unique uuids vs unique values for each ns
 for n in namespaces:
@@ -185,7 +186,7 @@ for n in gp_namespaces:
 
 # report number of equivalenced values for SwissProt accessions to names
 # ~1200 secondary accessions are mapped to multiple entry names
-(matches, ns1_length) = compare_namespace_equivalences('swissprot-accession-numbers', 'swissprot-entry-names')
+(matches, ns1_length) = compare_namespace_equivalences('swissprot-ids', 'swissprot')
 print('{0} of {1} values in {2} are equivalenced to {3}'.format(matches, ns1_length, 'swissprot-accession-numbers', 'swissprot-entry-names'))
 
 for n in disease_namespaces:

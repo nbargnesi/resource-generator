@@ -35,14 +35,14 @@ else:
 def make_rdf(d, g):
 	# build RDF and serialize
 	# make namespace for data set (using class attribute 'N'
-	n = Namespace("http://www.selventa.com/bel/namespace/" + d.N + '/')
+	n = Namespace("http://www.selventa.com/bel/namespace/" + d._name + '/')
 
 	print('building RDF graph for {0} ...'.format(n))
 	# bind namespace prefixes
 	g.bind("skos", SKOS)
 	g.bind("dcterms", DCTERMS)
 	g.bind("belv", belv)
-	g.bind(d.N, n)
+	g.bind(d._prefix, n)
 
 	for term_id in d.get_values():
 		term_clean = parse.quote(term_id)
@@ -59,7 +59,7 @@ def make_rdf(d, g):
 		if name:
 			g.add((term_uri, DCTERMS.title, Literal(name)))
 		# map to Concept Scheme
-		g.add((term_uri, SKOS.inScheme, namespace[d.N]))
+		g.add((term_uri, SKOS.inScheme, namespace[d._name]))
 		pref_label = d.get_label(term_id)
 		if pref_label:
 			g.add((term_uri, SKOS.prefLabel, Literal(pref_label)))

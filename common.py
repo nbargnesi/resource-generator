@@ -145,8 +145,8 @@ data_file_info = {
 	'selventa-legacy-chemical-names.beleq' : 'schem.info',
 	'selventa-legacy-diseases.beleq' : 'sdis.info',
 	'selventa-named-complexes.beleq' : 'named_complex.info',
-	'swissprot-accession-numbers.beleq' : 'swiss.xml.gz.info',
-	'swissprot-entry-names.beleq' : 'swiss.xml.gz.info'
+	'swissprot-ids.beleq' : 'swiss.xml.gz.info',
+	'swissprot.beleq' : 'swiss.xml.gz.info'
 }
 
 p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)

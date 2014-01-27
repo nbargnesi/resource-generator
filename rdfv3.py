@@ -35,7 +35,7 @@ else:
 def make_rdf(d, g):
 	# build RDF and serialize
 	# make namespace for data set (using class attribute 'N'
-	n = Namespace("http://www.selventa.com/bel/namespace/" + d._name + '/')
+	n = Namespace("http://www.openbel.org/bel/namespace/" + d._name + '/')
 
 	print('building RDF graph for {0} ...'.format(n))
 	# bind namespace prefixes
@@ -97,8 +97,8 @@ def make_rdf(d, g):
 				g.add((n[term_id], SKOS.altLabel, Literal(name)))
 		#with open(output_file, 'w') as f:
 #g.serialize(destination=output_file, format='turtle')	
-namespace = Namespace("http://www.selventa.com/bel/namespace/")
-belv = Namespace("http://www.selventa.com/vocabulary/")
+namespace = Namespace("http://www.openbel.org/bel/namespace/")
+belv = Namespace("http://www.openbel.org/vocabulary/")
 g = Graph()
 for files in os.listdir("."):
 	if files.endswith("parsed_data.pickle"):

@@ -15,14 +15,16 @@ from rdflib import URIRef, BNode, Literal, Namespace, Graph
 from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD
 from urllib import parse
 
+namespace = Namespace("http://www.openbel.org/bel/namespace/")
+belv = Namespace("http://www.openbel.org/vocabulary/")
+
+# command line arguments - directory for pickled data objects
 parser = argparse.ArgumentParser(description="""Generate namespace and equivalence files
 for gene/protein datasets.""")
 
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
 					help="directory to store the new namespace equivalence data")
 args = parser.parse_args()
-
-#dataset = args.d
 
 if os.path.exists(args.n[0]):
     os.chdir(args.n[0])
@@ -31,10 +33,9 @@ else:
 
 
 # loads parsed data from pickle file (after running phase 2 of gp_baseline.py)
-
 def make_rdf(d, g):
 	# build RDF and serialize
-	# make namespace for data set (using class attribute 'N'
+	# make namespace for data set (using data object attributes '_name' and '_prefix')
 	n = Namespace("http://www.openbel.org/bel/namespace/" + d._name + '/')
 
 	print('building RDF graph for {0} ...'.format(n))
@@ -47,26 +48,30 @@ def make_rdf(d, g):
 	for term_id in d.get_values():
 		term_clean = parse.quote(term_id)
 		term_uri = URIRef(n[term_clean])
-		# add primary identifier (may need to add/update for cases with alt ids)
+		# add primary identifier 
 		g.add((term_uri, DCTERMS.identifier, Literal(term_id)))
-		# add alt ids
+		# add secondary/alternative identifiers (alt_ids)
 		alt_ids = d.get_alt_ids(term_id)
 		if alt_ids:
 			for alt_id in alt_ids:
 				g.add((term_uri, DCTERMS.identifier, Literal(alt_id)))
-		# add official name (as title - make general)
+
+		# add official name (as title)
 		name = d.get_name(term_id)
 		if name:
 			g.add((term_uri, DCTERMS.title, Literal(name)))
-		# map to Concept Scheme
+
+		# link to to Concept Scheme
 		g.add((term_uri, SKOS.inScheme, namespace[d._name]))
 		pref_label = d.get_label(term_id)
 		if pref_label:
 			g.add((term_uri, SKOS.prefLabel, Literal(pref_label)))
-		# add species - make method for data set?
+
+		# add species (tax id as literal)
 		species = d.get_species(term_id)
 		if species:
 			g.add((term_uri, belv.fromSpecies, Literal(species)))
+
 		# use encoding information to determine concept types
 		encoding = d.get_encoding(term_id)
 		if 'G' in encoding:
@@ -86,7 +91,7 @@ def make_rdf(d, g):
 		if 'O' in encoding:
 			g.add((term_uri, RDF.type, belv.PathologyConcept))
 
-		# get synonyms (symbols and names)
+		# get synonyms (alternative symbols and names)
 		alt_symbols = d.get_alt_symbols(term_id)
 		if alt_symbols:
 			for symbol in alt_symbols:
@@ -95,11 +100,35 @@ def make_rdf(d, g):
 		if alt_names:
 			for name in alt_names:
 				g.add((n[term_id], SKOS.altLabel, Literal(name)))
-		#with open(output_file, 'w') as f:
-#g.serialize(destination=output_file, format='turtle')	
-namespace = Namespace("http://www.openbel.org/bel/namespace/")
-belv = Namespace("http://www.openbel.org/vocabulary/")
+
+		# get equivalences to other namespaces (must be in data set)
+		xrefs = d.get_xrefs(term_id)
+		if xrefs:
+			for x in xrefs:
+				# xrefs are expected in format PREFIX:value
+				if len(x.split(':')) == 2:
+					prefix, value = x.split(':')
+					# NOTE - only xrefs with prefixes that match namespaces in the data set will be used	
+					if prefix.lower() in prefix_dict:
+						xrefns = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[prefix.lower()] + '/') 		
+						g.bind(prefix.lower(), xrefns)
+						xref_uri = URIRef(xrefns[value])
+						g.add((term_uri, SKOS.exactMatch, xref_uri))
+
+	
 g = Graph()
+
+# build dictionary of namespace prefixes to names (from dataset objects)
+print('gathering namespace information ...')
+prefix_dict = {}
+for files in os.listdir("."):
+	if files.endswith("parsed_data.pickle"):
+		with open(files, 'rb') as f:
+			d = pickle.load(f)
+		if isinstance(d, datasets.NamespaceDataSet):
+			prefix_dict[d._prefix] = d._name
+			print('\t{0} - {1}'.format(d._prefix, d._name))
+	
 for files in os.listdir("."):
 	if files.endswith("parsed_data.pickle"):
 		with open(files,'rb') as f:

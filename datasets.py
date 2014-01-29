@@ -49,6 +49,10 @@ class NamespaceDataSet(DataSet):
 		but will generally be a name/symbol. '''
 		return term_id
 
+	def get_xrefs(self, term_id):
+		''' Return equivalences to other namespaces (or None). '''
+		return None
+
 	def get_name(self, term_id):
 		''' Return the term name to use as title (or None). '''
 		try:
@@ -164,8 +168,17 @@ class EntrezInfoData(NamespaceDataSet):
 			encoding = 'GRM'
 		if gene_type not in EntrezInfoData.ENC:
 			print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')
-		return encoding		
+		return encoding	
 
+	def get_xrefs(self, term_id):
+		''' Returns xrefs to HGNC, MGI, RGD. '''
+		targets = ('MGI:', 'HGNC:', 'RGD:')
+		xrefs = set()
+		mapping = self._dict.get(term_id)
+		xrefs.update(mapping.get('dbXrefs').split('|'))
+		xrefs = {x for x in xrefs if x.startswith(targets)}
+		return xrefs
+			
 	def get_alt_symbols(self, gene_id):
 		''' Return set of symbol synonyms. '''
 		synonyms = set()
@@ -428,6 +441,22 @@ class SwissProtData(NamespaceDataSet):
 		synonyms.update(mapping.get('alternativeFullNames'))
 		return synonyms
 
+	def get_xrefs(self, term_id):
+		''' Returns GeneIDs or HGNC/MGI/RGD IDs. '''
+		mapping = self._dict.get(term_id)
+		xrefs = set()
+		xrefs_dict = mapping.get('dbreference')
+		for ns, values in xrefs_dict.items():
+			if ns == 'GeneId':
+				values = {('EGID:' + v) for v in values} 
+				xrefs.update(values)
+			elif ns == 'HGNC' or ns == 'MGI':
+				xrefs.update(values)
+			elif ns == 'RGD':
+				values = {('RGD:' + v) for v in values}
+				xrefs.update(values)
+		return xrefs
+		
 	def get_species(self, term_id):
 		species = self._dict.get(term_id).get('tax_id')
 		return species

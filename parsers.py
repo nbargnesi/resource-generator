@@ -18,45 +18,53 @@ import urllib.request
 import zipfile
 import io
 
-
 class Parser(object):
+	''' Generic/parent parser. Expects tab-delimited file with associated headers. '''
+		
+	headers = ['term_id', 'term_name', 'encoding', 'description', 
+					'alt_names', 'xref', 'species']
+
 	def __init__(self, url):
-		self.url = url
+		self._url = url
+		self._label = label
 		self.verbose = False
 
 	def is_verbose(self):
 		self.verbose = True
 
-	def parse():
-		pass
-
+	def parse(self):
+		with open(self._url) as f:
+			reader = csv.DictReader(f, delimiter='\t', fieldnames=self.headers)
+			for row in reader:
+				yield row
+	
+	def __str__(self):
+		return "Parser"
 
 class EntrezGeneInfoParser(Parser):
 	resourceLocation = """http://resource.belframework.org/belframework/1.0/
 						  namespace/entrez-gene-ids-hmr.belns"""
 
+	# columns for an Entrez gene info dataset.
+	headers = ['tax_id', 'GeneID', 'Symbol', 'LocusTag',
+					   'Synonyms', 'dbXrefs', 'chromosome',
+					   'map_location', 'description',
+					   'type_of_gene',
+					   'Symbol_from_nomenclature_authority',
+					   'Full_name_from_nomenclature_authority',
+					   'Nomenclature_status',
+					   'Other_designations', 'Modification_date']
+
 	def __init__(self, url):
-		super(EntrezGeneInfoParser, self).__init__(url)
-		self.entrez_info = url
+		super().__init__(url, label)
+		#self.entrez_info = url
 
 	def parse(self):
+		reader = csv.DictReader(gzip_to_text(self._url),
+					   delimiter='\t',
+					   fieldnames=self.headers)
 
-		# columns for an Entrez gene info dataset.
-		entrez_info_headers = ['tax_id', 'GeneID', 'Symbol', 'LocusTag',
-							   'Synonyms', 'dbXrefs', 'chromosome',
-							   'map_location', 'description',
-							   'type_of_gene',
-							   'Symbol_from_nomenclature_authority',
-							   'Full_name_from_nomenclature_authority',
-							   'Nomenclature_status',
-							   'Other_designations', 'Modification_date']
-
-		# dictionary for base gene info
-		info_csvr = csv.DictReader(gzip_to_text(self.entrez_info),
-								   delimiter='\t',
-								   fieldnames=entrez_info_headers)
-
-		for row in info_csvr:
+		for row in reader:
 			if row['tax_id'] in ('9606', '10090', '10116'):
 				yield row
 
@@ -68,21 +76,19 @@ class EntrezGeneHistoryParser(Parser):
 	resourceLocation = """"http://resource.belframework.org/belframework/1.0/
 						   namespace/entrez-gene-ids-hmr.belns"""
 
+	entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
+							  "Discontinued_Symbol", "Discontinue_Date"]
+
 	def __init__(self, url):
-		super(EntrezGeneHistoryParser, self).__init__(url)
-		self.entrez_history = url
+		super().__init__(url)
+		#self.entrez_history = url
 
 	def parse(self):
+		reader = csv.DictReader(gzip_to_text(self._url),
+						  delimiter='\t',
+						  fieldnames=self.headers)
 
-		entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
-								  "Discontinued_Symbol", "Discontinue_Date"]
-
-		# dictionary for base gene info
-		history_csvr = csv.DictReader(gzip_to_text(self.entrez_history),
-									  delimiter='\t',
-									  fieldnames=entrez_history_headers)
-
-		for row in history_csvr:
+		for row in reader:
 			if row['tax_id'] in ("9606", "10090", "10116"):
 				yield row
 
@@ -95,22 +101,22 @@ class HGNCParser(Parser):
 						  namespace/hgnc-approved-symbols.belns"""
 
 	def __init__(self, url):
-		super(HGNCParser, self).__init__(url)
-		self.hgnc_file = url
+		super().__init__(url)
+		#self.hgnc_file = url
 
 	def parse(self):
 
 		# use iso-8859-1 as default encoding.
-		with open(self.hgnc_file, "r", encoding="iso-8859-1") as hgncf:
+		with open(self._url, "r", encoding="iso-8859-1") as hgncf:
 
 			# Note that HGNC uses TWO columns named the same thing for Entrez
 			# Gene ID. Currently we are not using these columns and it is not a
 			# big deal, but in the future we could account for this by using
 			# custom headers (like EntrezGeneInfo_Parser), or resolving to the
 			# SECOND of the Entrez Gene ID columns.
-			hgnc_csvr = csv.DictReader(hgncf, delimiter='\t')
+			reader = csv.DictReader(hgncf, delimiter='\t')
 
-			for row in hgnc_csvr:
+			for row in reader:
 				yield row
 
 	def __str__(self):
@@ -122,14 +128,14 @@ class MGIParser(Parser):
 						  namespace/mgi-approved-symbols.belns"""
 
 	def __init__(self, url):
-		super(MGIParser, self).__init__(url)
-		self.mgi_file = url
+		super().__init__(url)
+		#self.mgi_file = url
 
 	def parse(self):
-		with open(self.mgi_file, "r") as mgif:
-			mgi_csvr = csv.DictReader(mgif, delimiter='\t')
+		with open(self._url, "r") as f:
+			reader = csv.DictReader(f, delimiter='\t')
 
-			for row in mgi_csvr:
+			for row in reader:
 				yield row
 
 	def __str__(self):
@@ -141,26 +147,26 @@ class RGDParser(Parser):
 						  namespace/rgd-approved-symbols.belns"""
 
 	def __init__(self, url):
-		super(RGDParser, self).__init__(url)
-		self.rgd_file = url
+		super().__init__(url)
+		#self.rgd_file = url
 
 	def parse(self):
-		with open(self.rgd_file, "r") as rgdf:
+		with open(self._url, "r") as f:
 			# skip all the comment lines beginning with '#' and also the header.
-			rgd_csvr = csv.DictReader(filter(lambda row:
-												 not row[0].startswith('#'), rgdf),
+			reader = csv.DictReader(filter(lambda row:
+									 not row[0].startswith('#'), f),
 									  delimiter='\t')
 
-			for row in rgd_csvr:
+			for row in reader:
 				yield row
 
 	def __str__(self):
 		return "RGD_Parser"
 
 
-# This class exists mainly as a way to break the iteration loop during parsing
-# of the SwissProt dataset if needed.
 class GeneTypeError(Exception):
+	''' This class exists mainly as a way to break the iteration loop during parsing
+	 of the SwissProt dataset if needed.'''
 	def __init__(self, value):
 		self.value = value
 	def __str__(self):
@@ -174,8 +180,8 @@ class SwissProtParser(Parser):
 					  belframework/1.0/namespace/swissprot-entry-names.belns"""
 
 	def __init__(self, url):
-		super(SwissProtParser, self).__init__(url)
-		self.sprot_file = url
+		super().__init__(url)
+		#self.sprot_file = url
 		self.entries = {}
 		self.accession_numbers = {}
 		self.gene_ids = {}
@@ -194,9 +200,9 @@ class SwissProtParser(Parser):
 
 	def parse(self):
 
-		with gzip.open(self.sprot_file) as sprotf:
+		with gzip.open(self._url) as f:
 #		 with open(self.sprot_file, 'rb') as sprotf:
-			ctx = etree.iterparse(sprotf, tag=self.entry)
+			ctx = etree.iterparse(f, tag=self.entry)
 
 			for ev, e in ctx:
 				temp_dict = {}
@@ -317,19 +323,21 @@ class AffyParser(Parser):
 
 	def __init__(self, url):
 		super(AffyParser, self).__init__(url)
-		self.affy_file = url
+		#self.affy_file = url
 
 	def parse(self):
 
-		# the arrays we are concerned with
-		array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
-					   'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
-					   'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
-					   'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
+		# the arrays we are concerned with - moved to configuration.py
+#		array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
+#					   'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
+#					   'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
+#					   'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 
+#						'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
 
+		from configuration import affy_array_names
 		urls = []
-		with open(self.affy_file, 'rb') as affyf:
-			ctx = etree.iterparse(affyf, events=('start', 'end'))
+		with open(self._url, 'rb') as f:
+			ctx = etree.iterparse(f, events=('start', 'end'))
 
 			# This is probably not the best way to traverse this tree. Look at
 			# the lxml.etree API more closely for possible implementations when
@@ -340,7 +348,7 @@ class AffyParser(Parser):
 				# iterate the Array elements
 				for n in e.findall('Array'):
 					name = n.get('name')
-					if name in array_names:
+					if name in affy_array_names:
 						# iterate Annotation elements
 						for child in n:
 							if child.get('type') == 'Annot CSV':

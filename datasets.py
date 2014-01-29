@@ -330,8 +330,11 @@ class MGIData(NamespaceDataSet):
 		return encoding
 
 	def get_label(self, term_id):
-		label = self._dict.get(term_id).get('Symbol')
-		return label
+		try:
+			label = self._dict.get(term_id).get('Symbol')
+			return label
+		except:
+			return None
 
 	def get_name(self, term_id):
 		mapping = self._dict.get(term_id)
@@ -364,8 +367,11 @@ class RGDData(NamespaceDataSet):
 
 	def get_label(self, term_id):
 		''' Use Symbol as preferred label for RGD. '''
-		label = self._dict.get(term_id).get('SYMBOL')
-		return label
+		try:
+			label = self._dict.get(term_id).get('SYMBOL')
+			return label
+		except:
+			return None
 
 	def get_name(self, term_id):
 		name = self._dict.get(term_id).get('NAME')

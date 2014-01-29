@@ -51,14 +51,14 @@ def equiv(d, verbose):
 		write_beleq(entrez_eq, 'entrez-gene-ids')
 		# Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI, RGD
 		target = ('HGNC:', 'MGI:', 'RGD:')
-		for entrez_id in d._dict:
+		for term_id in d.get_values():
 			#mapping = d._dict.get(entrez_id)
 			#dbXrefs = mapping.get('dbXrefs').split('|')
 			dbXrefs = d.get_xrefs(term_id)
 			for dbXref in dbXrefs:
-				#if dbXref.startswith(target):
-					entrez_converter[dbXref] = entrez_id
-					continue
+				#if dbXref.startswith(target)
+				entrez_converter[dbXref] = term_id
+				#continue
 
 	elif str(d) == 'hgnc':
 		for term_id in d.get_values():
@@ -103,7 +103,7 @@ def equiv(d, verbose):
 			gene_ids = []
 			other_ids = []
 			name = d.get_label(term_id)
-			try:
+			#try:
 				#dbrefs = d._dict.get(term_id).get('dbreference')
 				#for k, v in dbrefs.items():
 				#	if k == 'GeneId':
@@ -114,27 +114,27 @@ def equiv(d, verbose):
 				#			uid = uuid.uuid4()
 				#	elif k == 'HGNC' or k == 'MGI' or k == 'RGD':
 				#		other_ids.extend(v)
-				dbrefs = d.get_xrefs(term_id)
+			dbrefs = d.get_xrefs(term_id)
 				#targets = ('EGID:', 'HGNC:', 'MGI:', 'RGD:')
-				egids = {x for x in xrefs if x.startswith('EGID:')}
-				if len(egids) == 1:
-					uid = entrez_eq.get(egids[0].replace(targets, ''))
-				elif len(egids) > 1:
+			egids = [x for x in dbrefs if x.startswith('EGID:')]
+			if len(egids) == 1:
+				uid = entrez_eq.get(egids[0].replace('EGID:', ''))
+			elif len(egids) > 1:
+				uid = None
+			elif len(egids) == 0:
+				if len(dbrefs) > 1:
 					uid = None
-				elif len(egids) == 0:
-					if len(xrefs) > 1:
-						uid = None
-					elif len(xrefs) == 1:
-						prefix, xref = xrefs[0].split(':')
-						if prefix == 'HGNC':	
-							hgnc_key = hgnc.get_label(xref)
-							uid = hgnc_eq.get(hgnc_key)
-						if prefix == 'MGI':
-							mgi_key = mgi.get_label(xref)
-							uid = mgi_eq.get(mgi_key)
-						if prefix == 'RGD':
-							rgd_key = rgd.get_label(xref)
-							uid = rgd_eq.get(rgd_key)
+				elif len(dbrefs) == 1:
+					prefix, xref = dbrefs.pop().split(':')
+					if prefix == 'HGNC':	
+						hgnc_key = hgnc.get_label(xref)
+						uid = hgnc_eq.get(hgnc_key)
+					if prefix == 'MGI':
+						mgi_key = mgi.get_label(xref)
+						uid = mgi_eq.get(mgi_key)
+					if prefix == 'RGD':
+						rgd_key = rgd.get_label(xref)
+						uid = rgd_eq.get(rgd_key)
 									
 				#if len(xrefs) == 1:
 				#	if xrefs[0].startswith('EGID:'):
@@ -168,8 +168,8 @@ def equiv(d, verbose):
 					#elif len(other_ids) >1:
 					#uid = uuid.uuid4()
 	  
-			except:
-				dbrefs = None
+			#except:
+			#	dbrefs = None
 				#print('No dbXrefs for {0} - {1}'.format(term_id, name))
 			if uid is None:
 				uid = uuid.uuid4()

@@ -26,7 +26,6 @@ class Parser(object):
 
 	def __init__(self, url):
 		self._url = url
-		self._label = label
 		self.verbose = False
 
 	def is_verbose(self):
@@ -56,7 +55,7 @@ class EntrezGeneInfoParser(Parser):
 					   'Other_designations', 'Modification_date']
 
 	def __init__(self, url):
-		super().__init__(url, label)
+		super().__init__(url)
 		#self.entrez_info = url
 
 	def parse(self):
@@ -76,7 +75,7 @@ class EntrezGeneHistoryParser(Parser):
 	resourceLocation = """"http://resource.belframework.org/belframework/1.0/
 						   namespace/entrez-gene-ids-hmr.belns"""
 
-	entrez_history_headers = ["tax_id", "GeneID", "Discontinued_GeneID",
+	headers = ["tax_id", "GeneID", "Discontinued_GeneID",
 							  "Discontinued_Symbol", "Discontinue_Date"]
 
 	def __init__(self, url):

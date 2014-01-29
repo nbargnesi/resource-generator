@@ -483,17 +483,22 @@ class AffyData(NamespaceDataSet):
 		R - RNAAbundance. '''
 		return 'R'
 
-	def get_equivalence(self, term_id):
-		''' Returns equivalent Entrez Gene ID for value . '''
-		entrez_ids = self._dict.get(term_id).get('Entrez Gene').split('///').strip()
+	def get_xrefs(self, term_id):
+		''' Returns equivalent Entrez Gene IDs for value . '''
+		entrez_ids = self._dict.get(term_id).get('Entrez Gene').split('///')
 		if entrez_ids[0] == '---':
 			return None
-		elif len(entrez_ids) == 1:
-			return entrez_ids[0]
-		# TODO - need to add logic for multiple entrez gene Id reductions
 		else:
-			return None
-			
+			entrez_ids = ['EGID:' + eid.strip() for eid in entrez_ids]
+		#entrez_ids.update(self._dict.get(term_id).get('Entrez Gene').split('///').strip())
+		#if entrez_ids[0] == '---':
+		#	return None
+		#elif len(entrez_ids) == 1:
+		#	return entrez_ids[0]
+		# TODO - need to add logic for multiple entrez gene Id reductions
+		#else:
+		#	return None
+		return set(entrez_ids)	
 
 class CHEBIData(NamespaceDataSet):
 

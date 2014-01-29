@@ -24,6 +24,7 @@ for gene/protein datasets.""")
 
 parser.add_argument("-n", required=True, nargs=1, metavar="DIRECTORY",
 					help="directory to store the new namespace equivalence data")
+parser.add_argument("-d", required=False, help="dataset by prefix; if none specified, all datasets in directory will be run")
 args = parser.parse_args()
 
 if os.path.exists(args.n[0]):
@@ -133,7 +134,9 @@ for files in os.listdir("."):
 	if files.endswith("parsed_data.pickle"):
 		with open(files,'rb') as f:
 			d = pickle.load(f)
-			if isinstance(d, datasets.NamespaceDataSet):
+			if isinstance(d, datasets.NamespaceDataSet) and args.d == None:
+				make_rdf(d, g)
+			elif isinstance(d, datasets.NamespaceDataSet) and d._prefix in args.d:
 				make_rdf(d, g)
 print('serializing RDF graph ...')
 g.serialize("testfile.ttl", format='turtle')	

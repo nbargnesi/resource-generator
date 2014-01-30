@@ -52,13 +52,9 @@ def equiv(d, verbose):
 		# Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI, RGD
 		target = ('HGNC:', 'MGI:', 'RGD:')
 		for term_id in d.get_values():
-			#mapping = d._dict.get(entrez_id)
-			#dbXrefs = mapping.get('dbXrefs').split('|')
 			dbXrefs = d.get_xrefs(term_id)
 			for dbXref in dbXrefs:
-				#if dbXref.startswith(target)
 				entrez_converter[dbXref] = term_id
-				#continue
 
 	elif str(d) == 'hgnc':
 		for term_id in d.get_values():
@@ -103,19 +99,7 @@ def equiv(d, verbose):
 			gene_ids = []
 			other_ids = []
 			name = d.get_label(term_id)
-			#try:
-				#dbrefs = d._dict.get(term_id).get('dbreference')
-				#for k, v in dbrefs.items():
-				#	if k == 'GeneId':
-				#		gene_ids.extend(v)
-				#		if len(gene_ids) == 1:
-				#			uid = entrez_eq.get(gene_ids[0])
-				#		elif len(gene_ids) >1:
-				#			uid = uuid.uuid4()
-				#	elif k == 'HGNC' or k == 'MGI' or k == 'RGD':
-				#		other_ids.extend(v)
 			dbrefs = d.get_xrefs(term_id)
-				#targets = ('EGID:', 'HGNC:', 'MGI:', 'RGD:')
 			egids = [x for x in dbrefs if x.startswith('EGID:')]
 			if len(egids) == 1:
 				uid = entrez_eq.get(egids[0].replace('EGID:', ''))
@@ -136,41 +120,6 @@ def equiv(d, verbose):
 						rgd_key = rgd.get_label(xref)
 						uid = rgd_eq.get(rgd_key)
 									
-				#if len(xrefs) == 1:
-				#	if xrefs[0].startswith('EGID:'):
-				#		uid = entrez_eq.get(xrefs[0].replace(targets, ''))
-				#	elif xrefs[0].startswith('HGNC:'):
-				#		hgnc_key = hgnc.get_label(xrefs[0].replace(targets, ''))
-				#		uid = hgnc_eq.get(hgnc_key)
-				#	elif xrefs[0].startswith('MGI:'):
-				#		mgi_key = mgi.get_label(xrefs[0].replace(targets, ''))
-				#		uid = mgi_eq.get(mgi_key)
-				#	elif xrefs[0].startswith('RGD:'):
-				#		rgd_key = rgd.get_label(xrefs[0].replace(targets, ''))
-				#		uid = rgd_eq.get(rgd_key)	
-				
-					#if uid == None:
-					# if no gene ids, try HGNC, MGI or RGD refs
-					#if len(other_ids) == 0:
-					#	uid = uuid.uuid4()
-					#elif len(other_ids) == 1:
-					#	a_id = other_ids[0]
-					#	if 'HGNC' in a_id:
-					#		hgnc_key = hgnc.get_label(a_id)
-					#		uid = hgnc_eq.get(hgnc_key)
-					#	elif 'MGI' in a_id:
-					#		mgi_key = mgi.get_label(a_id)
-					#		uid = mgi_eq.get(mgi_key)
-					#	else:
-					#		# note 'RGD' not in id string for RGD dbrefs
-					#		rgd_key = rgd.get_label(a_id)
-					#		uid = rgd_eq.get(rgd_key)
-					#elif len(other_ids) >1:
-					#uid = uuid.uuid4()
-	  
-			#except:
-			#	dbrefs = None
-				#print('No dbXrefs for {0} - {1}'.format(term_id, name))
 			if uid is None:
 				uid = uuid.uuid4()
 			sp_eq[name] = uid
@@ -202,27 +151,22 @@ def equiv(d, verbose):
 			  '-' : 6}
 
 		refseq = build_refseq(parsed.load_data('gene2acc'))
-		#for probe_id, gene_id in d.get_eq_values():
 		for term_id in d.get_values():
-			gene_id = d._dict.get(term_id).get('Entrez Gene')
-			if gene_id is not None and '---' not in gene_id:
-
-				# need the space before and after '///' because that is how it is parsed.
-				entrez_ids = gene_id.split(' /// ')
-
-				# for 1 entrez mapping, use the entez uuid
-				if len(entrez_ids) == 1:
-					uid = entrez_eq.get(entrez_ids[0])
-					if uid is None:
-						uid = uuid.uuid4()
-
-				# if > 1 entrez mapping, resolve to one.
-				else:
-					adjacent_list = []
-					for entrez_gene in entrez_ids:
-						refstatus = refseq.get(entrez_gene)
-						adjacent_list.append(ref_status.get(refstatus))
-
+			uid = None
+			entrez_ids = d.get_xrefs(term_id)
+			if entrez_ids:
+				entrez_ids = [eid.replace('EGID:', '') for eid in entrez_ids]
+			else: 
+				continue
+			# for 1 entrez mapping, use the entrez gene uuid
+			if len(entrez_ids) == 1:
+				uid = entrez_eq.get(entrez_ids.pop())
+			# if > 1 entrez mapping, resolve to one, prioritizing by refseq status and lowest ID#.
+			elif len(entrez_ids) > 1:
+				adjacent_list = []
+				for entrez_gene in entrez_ids:
+					refstatus = refseq.get(entrez_gene)
+					adjacent_list.append(ref_status.get(refstatus))
 					# zipping yields a list of tuples like [('5307',0), ('104',2), ('3043',None)]
 					# i.e. [(entrez_id, refseq_status)]
 					list_of_tuples = list(zip(entrez_ids, adjacent_list))
@@ -230,9 +174,9 @@ def equiv(d, verbose):
 					# get rid of all 'None' tuples (No entrez mapping)
 					list_of_tuples = [tup for tup in list_of_tuples if tup[1] is not None]
 
-					# no mapping, generate new uuid
+					# no mapping
 					if len(list_of_tuples) == 0:
-						uid = uuid.uuid4()
+						uid = None
 
 					# multiple entrez, resolve by refseq status
 					else:
@@ -249,13 +193,11 @@ def equiv(d, verbose):
 						target_tuple = min(lowest_tuples)
 						uid = entrez_eq.get(target_tuple[0])
 			# no entrez mapping, create a new uuid
-			else:
+			if uid == None:
 				uid = uuid.uuid4()
 			affy_eq[term_id] = uid
 		write_beleq(affy_eq, d._name+'-ids') 
 
-	# equiv for alt ids and names relies on the equivalence for
-	# primary ids being completely generated.
 	elif str(d) == 'chebi':
 		for term_id in d.get_values():
 			uid = uuid.uuid4()
@@ -305,8 +247,7 @@ def equiv(d, verbose):
 
 	elif str(d) == 'sdis':
 		sdis_to_do = parsed.load_data('sdis_to_do')
-		# try to resolve sdis terms to DO. If there is not one,
-		# assign a new uuid.
+		# map to disease ontology using mapping  file sdis_to_do
 		count = 0
 		for entry in d.get_values():
 			do_id = sdis_to_do.get_equivalence(entry)

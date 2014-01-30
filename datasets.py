@@ -28,6 +28,7 @@ class DataSet():
 class NamespaceDataSet(DataSet):
 
 	# Make .belns file containing ids/labels
+	# default is to make .belns file for labels, and not IDs
 	ids = False
 	labels = True
 
@@ -208,14 +209,6 @@ class EntrezHistoryData(DataSet):
 
 	def __init__(self, dictionary):
 		super().__init__(dictionary)
-
-	# this is likely never used, not a namespace data set
-	#def get_ns_values(self):
-	#	for gene_id in self.entrez_history_dict:
-	#		mapping = self.entrez_history_dict.get(gene_id)
-	#		gene_type = mapping.get('type_of_gene')
-	#		description = mapping.get('description')
-	#		yield gene_id, gene_type, description
 
 	def __str__(self):
 		return 'entrez_history'
@@ -496,14 +489,6 @@ class AffyData(NamespaceDataSet):
 			return None
 		else:
 			entrez_ids = ['EGID:' + eid.strip() for eid in entrez_ids]
-		#entrez_ids.update(self._dict.get(term_id).get('Entrez Gene').split('///').strip())
-		#if entrez_ids[0] == '---':
-		#	return None
-		#elif len(entrez_ids) == 1:
-		#	return entrez_ids[0]
-		# TODO - need to add logic for multiple entrez gene Id reductions
-		#else:
-		#	return None
 		return set(entrez_ids)	
 
 class CHEBIData(NamespaceDataSet):

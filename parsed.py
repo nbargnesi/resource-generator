@@ -55,8 +55,8 @@ schem_data = SCHEMData(schem)
 schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
 sdis_data = SDISData(sdis)
 sdis_to_do_data = SDIStoDOData(sdis_to_do)
-gobp_data = GOBPData(gobp_dict)
-gocc_data = GOCCData(gocc_dict)
+gobp_data = GOData(gobp_dict, 'gobp', 'go-biological-processes', 'gobp')
+gocc_data = GOData(gocc_dict, 'gocc', 'go-cellular-component', 'gocc')
 meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
 meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
 meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
@@ -255,55 +255,29 @@ def build_data(entry, parser):
 			'alt_ids' : alt_ids,
 			'synonyms' : synonyms }
 
-	# elif parser == 'PubNamespace_Parser':
-	#	  pub_id = entry.get('pubchem_id')
-	#	  synonym = entry.get('synonym')
-	#	  global count
-	#	  count = count + 1
-	#	  if count % 1000 == 0:
-	#		  print('Entry number ' +str(count))
-	#		  print('Pub ID: '+pub_id)
-	#	  pub_db = dbm.open('pub-names', 'cf')
-	#	  pub_db = dbm.gnu.open('pub-names', 'cfu')
-	#	  pub_db[bytes(pub_id, 'utf-8')] = bytes(synonym, 'utf-8')
-	#	  pub_db.close()
-	#	  pub_ns_dict[pub_id].append(synonym)
-
-	# elif parser == 'PubEquiv_Parser':
-	#	  source = entry.get('Source')
-	#	  cid = entry.get('PubChem CID')
-	#	  sid = entry.get('PubChem SID')
-	#	  global count
-	#	  count = count + 1
-	#	  if count % 50000 == 0:
-	#		  print(str(count))
-	#	  pub_equiv_dict[sid] = {
-	#		  'Source' : source,
-	#		  'PubChem CID' : cid }
-
-	elif parser == 'GOBP_Parser':
+	elif parser == 'GO_Parser':
 		termid = entry.get('termid')
 		termname = entry.get('termname')
 		alt_ids = entry.get('altids')
 		syn = entry.get('synonyms')
+		namespace = entry.get('namespace')
+		is_obsolete = entry.get('is_obsolete')
+		is_complex = entry.get('complex')		
 
-		gobp_dict[termid] = {
-			'termname' : termname,
-			'alt_ids' : alt_ids,
-			'synonyms' : syn }
-
-	elif parser == 'GOCC_Parser':
-		termid = entry.get('termid')
-		termname = entry.get('termname')
-		complex = entry.get('complex')
-		alt_ids = entry.get('altids')
-		syn = entry.get('synonyms')
-
-		gocc_dict[termid] = {
-			'termname' : termname,
-			'complex' : complex,
-			'alt_ids' : alt_ids,
-			'synonyms' : syn }
+		if namespace == 'cellular_component':
+			gocc_dict[termid] = {
+				'termname' : termname,
+				'alt_ids' : alt_ids,
+				'synonyms' : syn,
+				'complex': is_complex,
+				'is_obsolete' : is_obsolete }
+				
+		elif namespace == 'biological_process':
+			gobp_dict[termid] = {
+				'termname' : termname,
+				'alt_ids' : alt_ids,
+				'synonyms' : syn,
+				'is_obsolete' : is_obsolete }
 
 	elif parser == 'MESH_Parser':
 		ui = entry.get('ui')

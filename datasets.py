@@ -149,10 +149,10 @@ class EntrezInfoData(NamespaceDataSet):
 		using the gene ID. '''
 		return term_id
 
-	def get_values(self):
-		''' Get non-obsolete term values. '''
-		for term_id in self._dict:
-			yield term_id
+	#def get_values(self):
+	#	''' Get non-obsolete term values. '''
+	#	for term_id in self._dict:
+	#		yield term_id
 	
 	def get_species(self, term_id):
 		''' Return species as NCBI tax ID (or None, as applicable). '''
@@ -601,33 +601,19 @@ class Gene2AccData(DataSet):
 		return 'gene2acc'
 
 
-class GOBPData(NamespaceDataSet):
+class GOData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary, label='gobp', name='go-biological-processes', prefix='gobp'):
+	def __init__(self, dictionary, label='go', name='go', prefix='go'):
 		super().__init__(dictionary, label, name, prefix)
 
-	def get_encoding(self, term_id):
-		return 'B'
-
-	def get_label(self, term_id):
-		label = self._dict.get(term_id).get('termname')
-		return label
-
-	def get_alt_names(self, term_id):
-		synonyms = set()
-		mapping = self._dict.get(term_id)
-		synonyms.update(mapping.get('synonyms'))
-		return synonyms
-
-
-class GOCCData(NamespaceDataSet):
-
-	ids = True
-
-	def __init__(self, dictionary, label='gocc', name='go-cellular-component', prefix='gocc'):
-		super().__init__(dictionary, label, name, prefix)
+	def get_values(self):
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('is_obsolete'):
+				continue
+			else:
+				yield term_id
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('termname')
@@ -642,6 +628,8 @@ class GOCCData(NamespaceDataSet):
 	def get_encoding(self, term_id):
 		if self._dict.get(term_id).get('complex'):
 			encoding = 'C'
+		elif self._prefix == 'gobp':
+			encoding = 'B'
 		else:
 			encoding = 'A'
 		return encoding

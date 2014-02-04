@@ -157,7 +157,7 @@ def equiv(d, verbose):
 			if entrez_ids:
 				entrez_ids = [eid.replace('EGID:', '') for eid in entrez_ids]
 			else: 
-				continue
+				entrez_ids = []
 			# for 1 entrez mapping, use the entrez gene uuid
 			if len(entrez_ids) == 1:
 				uid = entrez_eq.get(entrez_ids.pop())

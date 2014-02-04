@@ -80,6 +80,7 @@ def test_namespace_values(ns):
 	
 	except IOError:
 		print('{0}.belns does not appear to exist'.format(ns))
+		return None, None
 	
 	try:
 		with open(eq_name, 'r') as eq:
@@ -87,6 +88,7 @@ def test_namespace_values(ns):
 	
 	except IOError:
 		print('{0}.beleq does not appear to exist.'.format(ns))
+		return None, None
 	
 	if len(eq_dict.keys()) > 0 and len(ns_dict.keys()) >0:
 

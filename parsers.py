@@ -690,115 +690,61 @@ class SDIStoDOParser(Parser):
 		return 'SDIStoDO_Parser'
 
 
-class GOBPParser(Parser):
-
+class GOParser(Parser):
+	# TODO - build obsolete methods into data set
 	def __init__(self, url):
-		super(GOBPParser, self).__init__(url)
-		self.go_file = url
-
-	def parse(self):
-
-		# parse xml tree using lxml
-		parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
-		with gzip.open(self.go_file, 'r') as go:
-			root = etree.parse(go, parser)
-			bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and not(is_obsolete)]")
-
-			# iterate the NON-OBSOLETE biological_process terms
-			for t in bp_terms:
-				bp_termid = t.find('id').text
-				bp_termid = bp_termid.replace('GO:','')
-				bp_termname = t.find('name').text
-				if t.findall('alt_id') is not None:
-					bp_altids = [x.text for x in t.findall('alt_id')]
-					bp_altids = [altid.replace('GO:','') for altid in bp_altids]
-				else:
-					bp_altids = False
-				#get synonyms - limited to scope='exact'
-				bp_syn = []
-				for syn in t.findall('synonym'):
-					if syn.get('scope') == 'exact':
-						bp_syn.append(syn.find('synonym_text').text)
-				yield { 'termid' : bp_termid, 'termname' : bp_termname,
-						'altids' : bp_altids, 'synonyms' : bp_syn }
-
-	def obsolete_parse(self):
-
-		# parse xml tree using lxml
-		parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
-		with gzip.open(self.go_file, 'r') as go:
-			root = etree.parse(go, parser)
-			bp_terms = root.xpath("/obo/term [namespace = 'biological_process' and is_obsolete]")
-
-			# iterate the OBSOLETE biological_process terms
-			for t in bp_terms:
-				bp_termid = t.find('id').text
-				bp_termid = bp_termid.replace('GO:','')
-				bp_termname = t.find('name').text
-				if t.findall('alt_id') is not None:
-					bp_altids = [x.text for x in t.findall('alt_id')]
-					bp_altids = [altid.replace('GO:','') for altid in bp_altids]
-				else:
-					bp_altids = False
-				yield { 'termid' : bp_termid, 'termname' : bp_termname,
-						'altids' : bp_altids }
-
-
-	def __str__(self):
-		return 'GOBP_Parser'
-
-
-class GOCCParser(Parser):
-
-	def __init__(self, url):
-		super(GOCCParser, self).__init__(url)
-		self.go_file = url
-		self.mesh_file = 'meshcs_to_gocc.csv'
+		super().__init__(url)
 
 	def parse(self):
 
 		# initialize empty dictionaries using tuple assignment
-		cc_parents, accession_dict, term_dict = {}, {}, {}
+		parents, accession_dict, term_dict = {}, {}, {}
 
 		# parse xml tree using lxml
 		parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
-		root = etree.parse(self.go_file, parser)
-		cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and not(is_obsolete)]")
+		root = etree.parse(self._url, parser)
+		terms = root.xpath("/obo/term")
 
-		# iterate the NON-OBSOLETE complex terms to build parent dictionary
-		for t in cc_terms:
-			cc_termid = t.find("id").text
-			cc_parent_ids = [isa.text for isa in t.findall("is_a")]
-			cc_parents[cc_termid] = cc_parent_ids
+		# iterate the complex terms to build parent dictionary
+		for t in terms:
+			if t.find('namespace').text == 'cellular_component':
+				termid = t.find("id").text
+				parent_ids = [isa.text for isa in t.findall("is_a")]
+				parents[termid] = parent_ids
 
-		for t in cc_terms:
-			cc_termid = t.find('id').text
-			cc_termname = t.find('name').text
-			cc_parent_stack = cc_parents[cc_termid]
+		for t in terms:
+			is_obsolete = False
+			termid = t.find('id').text
+			termname = t.find('name').text
+			namespace = t.find('namespace').text
+			if t.find('is_obsolete') is not None:
+				is_obsolete = True
 			if t.findall('alt_id') is not None:
-				cc_altids = [x.text for x in t.findall('alt_id')]
+				altids = [x.text for x in t.findall('alt_id')]
 			else:
-				cc_altids = False
-			complex = False
+				altids = False
+	
+			# identify complexes (for GOCC), based on parent terms
+			is_complex = False
+			if namespace == 'cellular_component':
+				parent_stack = parents[termid]
+				if termid == "GO:0032991":
+					is_complex = True
+				elif t.find("is_root") is not None:
+					is_complex = False
+				else:
+					parent_stack.extend(parents[termid])
+					while len(parent_stack) > 0:
+						parent_id = parent_stack.pop()
+						if parent_id == "GO:0032991":
+							is_complex = True
+							break
+						if parent_id in parents:
+							parent_stack.extend(parents[parent_id])
 
-			if cc_termid == "GO:0032991":
-				complex = True
-			elif t.find("is_root") is not None:
-				complex = False
-			else:
-				cc_parent_stack.extend(cc_parents[cc_termid])
-				while len(cc_parent_stack) > 0:
-					cc_parent_id = cc_parent_stack.pop()
-
-					if cc_parent_id == "GO:0032991":
-						complex = True
-						break
-
-					if cc_parent_id in cc_parents:
-						cc_parent_stack.extend(cc_parents[cc_parent_id])
-			
-			cc_termid = cc_termid.replace('GO:','')
-			cc_altids = [altid.replace('GO:','') for altid in cc_altids]
+			# strip 'GO:' from term_ids	
+			termid = termid.replace('GO:','')
+			altids = [altid.replace('GO:','') for altid in altids]
  
 			#get synonyms - limited to scope='exact'
 			synonyms = []
@@ -806,60 +752,12 @@ class GOCCParser(Parser):
 				if syn.get('scope') == 'exact':
 					synonyms.append(syn.find('synonym_text').text)
 
-			yield { 'termid' : cc_termid, 'termname' : cc_termname,
-					'altids' : cc_altids, 'complex' : complex, 'synonyms' : synonyms }
-
-	def obsolete_parse(self):
-
-		# initialize empty dictionaries using tuple assignment
-		cc_parents, accession_dict, term_dict = {}, {}, {}
-
-		# parse xml tree using lxml
-		parser = etree.XMLParser(ns_clean=True, recover=True, encoding='UTF-8')
-		root = etree.parse(self.go_file, parser)
-		cc_terms = root.xpath("/obo/term [namespace = 'cellular_component' and is_obsolete]")
-
-		# iterate the OBSOLETE complex terms to build parent dictionary
-		for t in cc_terms:
-			cc_termid = t.find("id").text
-			cc_parent_ids = [isa.text for isa in t.findall("is_a")]
-			cc_parents[cc_termid] = cc_parent_ids
-
-		for t in cc_terms:
-			cc_termid = t.find('id').text
-			cc_termname = t.find('name').text
-			cc_parent_stack = cc_parents[cc_termid]
-			if t.findall('alt_id') is not None:
-				cc_altids = [x.text for x in t.findall('alt_id')]
-			else:
-				cc_altids = False
-			complex = False
-
-			if cc_termid == "GO:0032991":
-				complex = True
-			elif t.find("is_root") is not None:
-				complex = False
-			else:
-				cc_parent_stack.extend(cc_parents[cc_termid])
-				while len(cc_parent_stack) > 0:
-					cc_parent_id = cc_parent_stack.pop()
-
-					if cc_parent_id == "GO:0032991":
-						complex = True
-						break
-
-					if cc_parent_id in cc_parents:
-						cc_parent_stack.extend(cc_parents[cc_parent_id])
-
-			cc_termid = cc_termid.replace('GO:','')
-			cc_altids = [altid.replace('GO:','') for altid in cc_altids]
-
-			yield { 'termid' : cc_termid, 'termname' : cc_termname,
-					'altids' : cc_altids, 'complex' : complex }
+			yield { 'termid' : termid, 'termname' : termname, 'namespace' : namespace,
+					'altids' : altids, 'complex' : is_complex, 'synonyms' : synonyms,
+					'is_obsolete' : is_obsolete }
 
 	def __str__(self):
-		return 'GOCC_Parser'
-
+		return 'GO_Parser'
 
 class MESHParser(Parser):
 

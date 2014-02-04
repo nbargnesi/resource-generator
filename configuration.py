@@ -54,14 +54,6 @@ baseline_data['chebi.owl'] = (
 	'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
 	parsers.CHEBIParser
 )
-#baseline_data['pubchem_namespace.gz'] = (
-#	'ftp://ftp.ncbi.nlm.nih.gov/pubchem/Compound/Extras/CID-Synonym-filtered.gz',
-#	parsers.PubNamespaceParser
-#)
-#baseline_data['pubchem_equiv.gz'] = (
-#	'ftp://ftp.ncbi.nlm.nih.gov/pubchem/Substance/Extras/SID-Map.gz',
-#	parsers.PubEquivParser
-#)
 baseline_data['SCHEM_to_CHEBIID.txt'] = (
 	'datasets/SCHEM_to_CHEBIID.txt',
 	parsers.SCHEMtoCHEBIParser
@@ -86,19 +78,9 @@ baseline_data['named_complexes_to_GOCC.csv'] = (
 	'datasets/named_complexes_to_GOCC.csv',
 	parsers.ComplexToGOParser
 )
-# need to change links to GO - date in filename will change with each update
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
-baseline_data['gobp.xml.gz'] = (go_file, parsers.GOBPParser)
-baseline_data['gocc.xml.gz'] = (go_file, parsers.GOCCParser)
-#baseline_data['gobp.xml.gz'] = (
-#	'http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz',
-#	parsers.GOBPParser
-#)
-#baseline_data['gocc.xml.gz'] = (
-#	'http://archive.geneontology.org/latest-full/go_201309-termdb.obo-xml.gz',
-#	parsers.GOCCParser
-#)					
+baseline_data['go.xml.gz'] = (go_file, parsers.GOParser)
 baseline_data['doid.owl'] = (
 	'http://purl.obolibrary.org/obo/doid.owl',
 	parsers.DOParser

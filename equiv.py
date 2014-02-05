@@ -341,7 +341,7 @@ def equiv(d, verbose):
 
 		for term_id in d.get_values():
 			name = d.get_label(term_id)
-			xref = do_data.get_xrefs('MSH:'+term_id)
+			xref = do_data.find_xref('MSH:'+term_id)
 			if xref:
 				uid = do_id_eq[xref]
 			else:

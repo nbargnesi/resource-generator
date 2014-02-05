@@ -693,9 +693,18 @@ class DOData(NamespaceDataSet):
 		synonyms  = set(mapping.get('synonyms'))
 		return synonyms
 
-	def get_xrefs(self, ref):
-		for name, mapping in self._dict.items():
+	def find_xref(self, ref):
+		'''Given an ID, returns xref DO ID.
+		Used in equiv.py module for MeSHD equivalences. '''
+		for term_id, mapping in self._dict.items():
 			dbxrefs = mapping.get('dbxrefs')
 			if ref in dbxrefs:
-				return name
+				return term_id
 
+	def get_xrefs(self, term_id):
+		''' Returns MeSH (MSH) xrefs for a given DO ID . '''
+		xrefs = set()
+		mapping = self._dict.get(term_id)
+		xrefs.update(mapping.get('dbxrefs'))
+		xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
+		return xrefs

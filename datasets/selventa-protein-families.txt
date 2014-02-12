@@ -1,0 +1,257 @@
+[Header]										
+Keyword=SFAM										
+NameString=Selventa Protein Families										
+DomainString=Gene/Protein										
+"SpeciesString=9606, 10090, 10116"										
+DescriptionString=Selventa-defined names of protein families. Each family represents a group of related proteins.										
+VersionString=20140212										
+										
+[Values]										
+ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN
+F0001		14-3-3 Family			P					
+F0002		ACAD Family	acyl-CoA dehydrogenase		P					
+F0003		Acetyl-CoA Synthetase Family	ACSL family	Same as ACSL family.	P					
+F0004		ACOX Family	acyl-CoA oxidase		P					
+F0005		ACSL Family	acetyl-CoA synthetase 	Same as 'Acetyl-CoA Synthetase Family'	P					
+F0006		ACT Family	actin family|actin	"For 'actin', use GO Cellular Component term 'filamentous actin'."	P					
+F0007		ACTN Family	alpha-actinin		P					
+F0008		ADCY Family	adenylyl cyclase family		P					
+F0009		ADH Family	alcohol dehydrogenase		P					
+F0010		ADRA Family	alpha adrenergic receptor family	"Note, alpha 1 and alpha 2 members are not paralogs."	P					
+F0011		ADRA2 Family	alpha-2 adrenergic receptor		P					
+F0012		ADRB Family	beta-adrenergic receptor|beta adrenergic receptor		P					
+F0013		ADRBK Family	beta-adrenergic receptor kinase		P					
+F0014		AKT Family			P					
+F0015		ALDH Family	aldehyde dehydrogenase		P					
+F0016		ALDO Family	aldolase|fructose-bisphosphate aldolase		P					
+F0017		APOA Family			P					
+F0018		ARRB Family	beta arrestin family		P					
+F0019		ATP2A Family	SERCA ATPase family		P					
+F0020		ATP5G Family	ATPase C chain family		P					
+F0021		AXIN Family			P					
+F0022		BIRC Family	IAP family|inhibitor of apoptosis	See http://en.wikipedia.org/wiki/Inhibitor_of_apoptosis.	P					
+F0023		BMP Family	bone morphogenic protein		P					
+F0024		BMP Receptor Type I Family	bone morphogenic protein receptor type II		P					
+F0025		BMP Receptor Type II Family	bone morphogenic protein receptor type I		P					
+F0026		CALM Family	calmodulin		P					
+F0027		CAMK Family			P					
+F0028		CAMK2 Family	calcium/calmodulin-dependent protein kinase II		P					
+F0029		CAPN Family	calpain large chain family|calpain|peptidase C2 family	See http://en.wikipedia.org/wiki/Calpain.	P					
+F0030		Carboxylesterase Family		Members have EC 3.1.1.1 (carboxylesterase) activity. See http://en.wikipedia.org/wiki/Carboxylesterase.	P					
+F0031		CASP Family	caspase family|caspase|peptidase C14A family		P					
+F0032		CAV Family	caveolin family|caveolin		P					
+F0033		CCNA Family	cyclin A family|cyclin A		P					
+F0034		CCND Family	cyclin D family|cyclin D		P					
+F0035		CCNE Family	cyclin E family|cyclin E		P					
+F0036		CD16 Family		"CD16 is a low affinity Fc receptor family, including members FCGR3A and FCGR3B."	P					
+F0037		CD32 Family		CD32 is a low affinity surface receptor for IgG in B cells.	P					
+F0038		CD64 Family			P					
+F0039		CDC25 Family	MPI phosphatase family		P					
+F0040		CDH Family	cadherin		P					
+F0041		CEBP Family	C/EBP family|CCAAT-enhancer-binding protein	See http://en.wikipedia.org/wiki/C/EBP. 	P					
+F0042		Chemokine Receptor Family			P					
+F0043		Cholinesterase Family			P					
+F0044		CHRM Family	muscarinic acetylcholine receptor family	See http://en.wikipedia.org/wiki/Muscarinic_acetylcholine_receptor. 	P					
+F0045		COL1 Family	collagen type I	"Consider using GO Cellular Component term ""collagen type I"" (refers to heterotrimer)"	P					
+F0046		COL4 Family	collagen type IV	"Consider using GO Cellular Component term ""collagen type IV"" (refers to heterotrimer)"	P					
+F0047		COL5 Family	collagen type V	"Consider using GO Cellular Component term ""collagen type V"" (refers to heterotrimer)"	P					
+F0048		COX4 Family	cytochrome-c oxidase chain IV|cytochrome c oxidase IV family		P					
+F0049		COX6A Family	"cytochrome-c oxidase, subunit VIa "		P					
+F0050		COX6B Family	"cytochrome-c oxidase, subunit VIb"		P					
+F0051		COX7A Family	cytochrome-c oxidase chain VIIb		P					
+F0052		COX7B Family	cytochrome-c oxidase chain VIII		P					
+F0053		COX8 Family	cytochrome-c oxidase chain VIIa		P					
+F0054		CREB Family	cAMP response element-binding protein (CREB)		P					
+F0055		CRISP Family	cysteine-rich secretory protein	See http://en.wikipedia.org/wiki/Cysteine-rich_secretory_protein. 	P					
+F0056		CSNK1 Family	casein kinase I family| CK1 family	See http://en.wikipedia.org/wiki/Casein_kinase_1. 	P					
+F0057		CSNK2 Family	CK2 family	"Consider using GO Cellular Component term ""protein kinase CK2 complex"";  this family term refers to the catalytic (alpha) subunit only. See http://en.wikipedia.org/wiki/Casein_kinase_2. "	P					
+F0058		CTNNA Family	alpha catenin		P					
+F0059		CUL Family	cullin		P					
+F0060		Cu-Zn SOD Family	copper-zinc superoxide dismutase family		P					
+F0061		CXCL ELR-Negative Family	ELR-positive CXC Chemokine Family	"ELR negative CXC chemokines have a CXC (cysteine-any amino acid-cysteine) motif, but lack the N-terminal ELR (glutamate-leucine-arginine) motif."	P					
+F0062		CXCL ELR-Positive Family	ELR-negative CXC chemokine family	ELR positive CXC chemokines have an N-terminal ELR (glutamate-leucine-arginine) motif and a CXC (cysteine-any amino acid-cysteine) motif. 	P					
+F0063		Cyclophilin Family			P					
+F0064		DDR Family	discoidin domain-containing receptor		P					
+F0065		Desmoglein Family			P					
+F0066		DGK Family	diacylglycerol kinase|eukaryotic diacylglycerol kinase family		P					
+F0067		DNM Family	dynamin family		P					
+F0068		DRD Family	dopamine receptor		P					
+F0069		DVL Family	dishevelled family|DSH family|dishevelled	See http://en.wikipedia.org/wiki/Dishevelled. 	P					
+F0070		E2F Family			P					
+F0071		EDN Family	endothelin family		P					
+F0072		EGFR Ligand Family			P					
+F0073		EGFR/ERBB Family	EGF receptor family		P					
+F0074		EGR Family	early growth response family		P					
+F0075		EIF4A Family	translation initiation factor eIF-4A		P					
+F0076		EIF4EBP Family	EIF4E-binding protein family		P					
+F0077		ELA Family	elastase family|elastase		P					
+F0078		ENO Family	enolase	See http://en.wikipedia.org/wiki/Enolase. 	P					
+F0079		Ephrin Receptor Family			P					
+F0080		EPN Family	epsin Family		P					
+F0081		ESR Family	estrogen receptor		P					
+F0082		ETS Family	ETS transcription factor family	See http://en.wikipedia.org/wiki/ETS_transcription_factor_family.	P					
+F0083		FGF Family	fibroblast growth factor		P					
+F0084		FGFR Family	fibroblast growth factor receptor		P					
+F0085		FLOT Family	flotillin family		P					
+F0086		FLRT Family		See PMID 10644439.	P					
+F0087		FOXO Family			P					
+F0088		FZD Family	frizzled family|frizzled	See http://en.wikipedia.org/wiki/Frizzled.	P					
+F0089		GABR Family	GABAA Receptor Family		P					
+F0090		GAS6 Receptor Family			P					
+F0091		GATA Family		See PMID 11042222; this family of transcription factors binds to the DNA sequence (A/T)GATA(A/G).	P					
+F0092		GNA Gq Family	G-alpha G(q) family		P					
+F0093		GNA Gs Family	G-alpha G(s) family		P					
+F0094		GNAI Family	G-alpha G(i) family		P					
+F0095		GNB Family	G-beta family		P					
+F0096		GNG Family	G-gamma family		P					
+F0097		GPX Family	glutathione peroxidase		P					
+F0098		GRIA Family	AMPA-selective glutamate receptor		P					
+F0099		GRK Family	G protein-coupled receptor kinase	See http://en.wikipedia.org/wiki/G_protein-coupled_receptor_kinase.	P					
+F0100		GRM Family	metabotropic glutamate receptor|mGluR family|mGluR	See http://en.wikipedia.org/wiki/Metabotropic_glutamate_receptor.	P					
+F0101		GSK3 Family			P					
+F0102		GST Family	glutathione s-transferase	See http://en.wikipedia.org/wiki/Glutathione_S-transferase.	P					
+F0103		GUCY Family	guanylyl cyclase family		P					
+F0104		GYS Family	glycogen synthase family		P					
+F0105		HDAC Class I Family			P				SFAM:F0107	
+F0106		HDAC Class II Family			P				SFAM:F0107	
+F0107		HDAC Family	histone deacetylase family	See http://en.wikipedia.org/wiki/Histone_deacetylase. 	P					
+F0108		Hedgehog Family			P					
+F0109		HES Family	hairy enhancer of split		P					
+F0110		Histone Family			P					
+F0111		Histone H1 Family			P				SFAM:F0110	
+F0112		Histone H2A Family			P				SFAM:F0110	
+F0113		Histone H2B Family			P				SFAM:F0110	
+F0114		Histone H3 Family			P				SFAM:F0110	
+F0115		Histone H4 Family			P				SFAM:F0110	
+F0116		HLA-DR Family			P					
+F0117		HMOX Family	heme oxygenase		P					
+F0118		HSP90 Family	heat shock protein 90		P					
+F0119		HSPA Family	heat shock protein 70 family|HSP70 family		P					
+F0120		HSPB Family	HSP27 family		P					
+F0121		IFNA Family	interferon alpha		P					
+F0122		IgE Family	immunoglobulin E	"Consider using GO Cellular Component term ""IgE immunoglobulin complex""."	P					
+F0123		IGFBP Family	insulin-like growth factor binding protein	See http://en.wikipedia.org/wiki/Insulin-like_growth_factor_binding_protein.	P					
+F0124		IkappaB Kinase Family			P					
+F0125		IL1 Family	interleukin-1		P					
+F0126		INS Family	insulin 		P					
+F0127		INSR Family	insulin receptor		P					
+F0128		IRS Family	insulin receptor substrate		P					
+F0129		IRX Family	Iroquois related homeobox		P					
+F0130		JAK Family	janus kinase		P					
+F0131		KLK Family	kallikrein family		P					
+F0132		LDH Family	lactate dehydrogenase	See http://en.wikipedia.org/wiki/Lactate_dehydrogenase.	P					
+F0133		MAF Family			P					
+F0134		MAPK Erk1/2 Family	ERK1/2		P					
+F0135		MAPK JNK Family	JNK		P					
+F0136		MAPK p38 Family	p38		P					
+F0137		MEF2 Family			P					
+F0138		MEK1/2 Family	MAP2K1/2 family		P					
+F0139		MMP Family	matrix metalloproteinase		P					
+F0140		MYH Family	myosin heavy chain		P					
+F0141		MYL Alkali Family	"myosin light chain, alkali"		P				SFAM:F0142	
+F0142		MYL Family	myosin light chain		P					
+F0143		MYL Regulatory Family	"myosin light chain, regulatory"		P				SFAM:F0142	
+F0144		MYL Slow Family	"myosin light chain, slow"		P				SFAM:F0142	
+F0145		MYST Family	MYST histone acetylase		P					
+F0146		NCOR Family			P					
+F0147		NDRG Family	 N-myc downstream regulated gene	See PMID 20667976.	P					
+F0148		NFAT Family			P					
+F0149		NKD Family	naked cuticle	See http://en.wikipedia.org/wiki/Naked_cuticle.	P					
+F0150		NOS Family	nitric oxide synthase		P					
+F0151		NOTCH Family			P					
+F0152		NRG1/2 Family	neuregulin 1/2		P					
+F0153		NRG3/4 Family	neuregulin 3/4		P					
+F0154		NTRK Family			P					
+F0155		p160/SRC Family			P					
+F0156		P2RX Family	P2X receptor family		P					
+F0157		P2RY Family	P2Y receptor family	See http://en.wikipedia.org/wiki/P2Y_receptor.	P					
+F0158		PAK Family	p21-activated kinase family	See http://en.wikipedia.org/wiki/P21_activated_kinase	P					
+F0159		PARV Family	parvin|parvin family		P					
+F0160		PBX Family			P					
+F0161		PDE Family	phosphodiesterase family		P					
+F0162		PDE1 Family			P				SFAM:F0161	
+F0163		PDE3 Family			P				SFAM:F0161	
+F0164		PDE4 Family			P				SFAM:F0161	
+F0165		PDE4 Long Family			P				SFAM:F0164	
+F0166		PDE4 Long No A Family			P				SFAM:F0164	
+F0167		PDE4 Short Family			P				SFAM:F0164	
+F0168		PDE6 Family			P				SFAM:F0161	
+F0169		PDGF Family	platelet derived growth factor		P					
+F0170		PDGFR Family	platelet derived growth factor receptor		P					
+F0171		PDK Family	pyruvate dehydrogenase kinase	See http://en.wikipedia.org/wiki/Pyruvate_dehydrogenase_kinase.	P					
+F0172		PFN Family	profilin		P					
+F0173		PIK3C Class IA Family	PI3K p110 class IA family		P					
+F0174		PIK3R Class IA Family	PI3K p85 family		P					
+F0175		PKI Family	"protein kinase inhibitor family|protein kinase (cAMP-dependent, catalytic) inhibitor"		P					
+F0176		PLA2 Family	phospholipase A2 		P					
+F0177		PLA2G2 Family	"phospholipase A2, group 2"		P				SFAM:F0176	
+F0178		PLC Family	phopholipase C		P					
+F0179		PLCB Family	"phospholipase C, beta"		P				SFAM:F0178	
+F0180		PLCG Family	"phopholipase C, gamma"		P				SFAM:F0178	
+F0181		PLD Family	phospholipase D		P					
+F0182		PPAP2 Family	phosphatidic acid phosphatase type 2		P					
+F0183		PPAR Family	peroxisome proliferator-activated receptor family	See http://en.wikipedia.org/wiki/Peroxisome_proliferator-activated_receptor.	P					
+F0184		PPP1C Family	PP1 catalytic family		P					
+F0185		PPP1R Family	PP1 regulatory family		P					
+F0186		PPP2C Family			P					
+F0187		PPP2R Subunit A Family			P					
+F0188		PPP2R Subunit B Family			P					
+F0189		PPP3 Family	"protein phosphatase 3, catalytic subunit"	same as PPP3C family.	P					
+F0190		PPP3C Family	"protein phosphatase 3, catalytic subunit"		P					
+F0191		PPP3R Family			P					
+F0192		PRDX Family	peroxiredoxin	See http://en.wikipedia.org/wiki/Peroxiredoxin.	P					
+F0193		PRKA Family	PKA family		P					
+F0194		PRKAA Family			P					
+F0195		PRKAB Family			P					
+F0196		PRKAG Family			P					
+F0197		PRKAR Family			P					
+F0198		PRKC Family			P					
+F0199		PRKG Family			P					
+F0200		PTGER Family			P					
+F0201		RAB Family			P					
+F0202		RAC Family			P					
+F0203		RAF Family			P					
+F0204		RAR Family	retinoic acid receptor	See http://en.wikipedia.org/wiki/Retinoic_acid_receptor.	P					
+F0205		RAS Family			P					
+F0206		RFX Family	regulatory factor X		P					
+F0207		RHO Family			P					
+F0208		ROCK Family	Rho-associated protein kinase		P					
+F0209		ROR Family			P					
+F0210		RPS6KA Family	"ribosomal protein S6 kinase, 90kDa"		P					
+F0211		RPS6KB Family	"ribosomal protein S6 kinase, 70kDa"		P					
+F0212		RXR Family			P					
+F0213		S100A Family			P					
+F0214		S1PR Family			P					
+F0215		SAA Family			P					
+F0216		SCD Family	acyl-CoA desaturase		P					
+F0217		SERPINB Family			P					
+F0218		SLC2A Family	solute carrier family 2|glucose transporter	See http://en.wikipedia.org/wiki/Facilitative_GLUT_transporter	P					
+F0219		SMAD Family			P					
+F0220		SMC1 Family			P					
+F0221		SNAI Family			P					
+F0222		SOS Family	son of sevenless		P					
+F0223		SRC Family			P					
+F0224		SREBF Family	sterol regulatory element-binding protein|SREBP family	See http://en.wikipedia.org/wiki/SREBP.	P					
+F0225		STAT Family	signal transducer and transcription activator family		P					
+F0226		STAT5 Family	signal transducer and transcription activator 5 family		P				SFAM:F0226	
+F0227		Sulfonylurea Receptor Family			P					
+F0228		TAP Family	 ABCB family		P					
+F0229		TCF/LEF Family			P					
+F0230		TFAP2 Family	transcription factor AP-2|AP-2 family|activating protein 2	See http://en.wikipedia.org/wiki/Activating_protein_2.	P					
+F0231		TFDP Family	transcription factor DP	See http://en.wikipedia.org/wiki/Transcription_factor_DP.	P					
+F0232		TGFB Family	transforming growth factor beta|TGF-beta	See http://en.wikipedia.org/wiki/Tgf_beta.	P					
+F0233		THBS Family	thrombospondin	See http://en.wikipedia.org/wiki/Thrombospondin.	P					
+F0234		THR Family	thyroid hormone receptor	See http://en.wikipedia.org/wiki/Thyroid_hormone_receptor.	P					
+F0235		TN Family	tenascin family|tenascin		P					
+F0236		TNFRSF Family	tumor necrosis factor receptor superfamily		P					
+F0237		TOP2 Family	topoisomerase II|type II DNA topoisomerase		P					
+F0238		Tryptase Family		See http://en.wikipedia.org/wiki/Tryptase. 	P					
+F0239		TUBA Family	"alpha-tubulin|tubulin, alpha"		P					
+F0240		TUBB Family	"beta-tubulin|tubulin, beta"		P					
+F0241		TXN Family	thioredoxin		P					
+F0242		TXNRD Family	thioredoxin reductase		P					
+F0243		UBE2 Family	ubiquitin-conjugating enzyme E2 family		P					
+F0244		VAV Family			P					
+F0245		VEGF Family	vascular endothelial growth factor family		P					
+F0246		VEGFR Family	vascular endothelial growth factor receptor family		P					
+F0247		WNT Family			P					

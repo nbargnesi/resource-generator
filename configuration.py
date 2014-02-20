@@ -74,10 +74,13 @@ baseline_data['named_complex'] = (
 	'http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns',
 	parsers.ComplexParser
 )
-baseline_data['named_complexes_to_GOCC.csv'] = (
-	'datasets/named_complexes_to_GOCC.csv',
-	parsers.ComplexToGOParser
+baseline_data['selventa-protein-families.txt'] = (
+	'datasets/selventa-protein-families.txt', parsers.NamespaceParser
 )
+#baseline_data['named_complexes_to_GOCC.csv'] = (
+#	'datasets/named_complexes_to_GOCC.csv',
+#	parsers.ComplexToGOParser
+#)
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 baseline_data['go.xml.gz'] = (go_file, parsers.GOParser)

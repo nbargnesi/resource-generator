@@ -127,6 +127,41 @@ class NamespaceDataSet(DataSet):
 	def __str__(self):
 		return self._label
 
+class StandardCustomData(NamespaceDataSet):
+	
+	def __init__(self, dictionary, label, name, prefix):
+		super().__init(dictioanry, label, name, prefix)	
+
+	def get_values(self):
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('OBSOLETE') is None:
+				yield term_id
+
+	def get_label(self, term_id):
+		''' Return the value to be used as the preferred
+		label for the associated term id. '''
+		label = self._dict.get(term_id).get('LABEL')
+		return label
+
+	def get_xrefs(self, term_id):
+		xrefs = set()
+		if self._dict.get(term_id).get('XREF'):
+			xrefs.update(self._dict.get(term_id).get('XREF'))
+		return xrefs
+	
+	def get_species(self, term_id):
+		species = self._dict.get(term_id).get('SPECIES')
+		return species
+
+	def get_encoding(self, term_id):
+		encoding = self._dict.get(term_id).get('TYPE')
+		return encoding
+
+	def get_alt_names(self, term_id):
+		alt_names = self._dict.get(term_id).get('SYNONYMS')
+		return synonyms
+
+	
 
 class EntrezInfoData(NamespaceDataSet):
 
@@ -283,6 +318,13 @@ class HGNCData(NamespaceDataSet):
 		name = mapping.get('Approved Name')
 		return name
 
+	def get_orthologs(self, term_id):
+		orthologs = set()
+		mapping = self._dict.get(term_id)
+		orthologs.update(mapping.get('Mouse Ortholog'))
+		orthologs.update(mapping.get('Human Ortholog'))
+		return orthologs
+		
 
 class MGIData(NamespaceDataSet):
 

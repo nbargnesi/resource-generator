@@ -95,11 +95,12 @@ if not os.path.exists('datasets'):
 		print('Created datasets directory')
 # bring in some dependancies
 dep_files = []
-dep_files.append('meshcs_to_gocc.csv')
+#dep_files.append('meshcs_to_gocc.csv')
 dep_files.append('SDIS_to_DO.txt')
 dep_files.append('SCHEM_to_CHEBIID.txt')
 dep_files.append('named_complexes_to_GOCC.csv')
-#dep_files.append('test')
+dep_files.append('selventa-protein-families.txt')
+
 for df in dep_files:
 	if not os.path.exists(src_dir+'/datasets/'+df):
 		print('WARNING !!! Dependency file %s not found in %s/datasets/' % (df, src_dir))
@@ -214,6 +215,8 @@ if args.begin_phase <= 2:
 		pickle.dump(parsed.load_data('meshpp'), f, pickle.HIGHEST_PROTOCOL)
 	with open('do.'+args.parsed_pickle, 'wb') as f:
 		pickle.dump(parsed.load_data('do'), f, pickle.HIGHEST_PROTOCOL)
+	with open('sfam.'+args.parsed_pickle, 'wb') as f:
+		pickle.dump(parsed.load_data('sfam'), f, pickle.HIGHEST_PROTOCOL)
 	
 	print('Phase II ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	

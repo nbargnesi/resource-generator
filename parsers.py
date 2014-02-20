@@ -19,11 +19,8 @@ import zipfile
 import io
 
 class Parser(object):
-	''' Generic/parent parser. Expects tab-delimited file with associated headers. '''
+	''' Generic/parent parser. '''
 		
-	headers = ['term_id', 'term_name', 'encoding', 'description', 
-					'alt_names', 'xref', 'species']
-
 	def __init__(self, url):
 		self._url = url
 		self.verbose = False
@@ -33,12 +30,37 @@ class Parser(object):
 
 	def parse(self):
 		with open(self._url) as f:
-			reader = csv.DictReader(f, delimiter='\t', fieldnames=self.headers)
+			reader = csv.DictReader(f, delimiter='\t')
 			for row in reader:
 				yield row
 	
 	def __str__(self):
 		return "Parser"
+
+class NamespaceParser(Parser):
+	''' Generic parser. Expects tab-delimited file, split into '[Header]' and '[Values]'. '''
+		
+	def __init__(self, url):
+		super().__init__(url)
+
+	def parse(self):
+		field = None
+		info_dict = {}
+		with open(self._url, 'r') as f:
+			for line in f.readlines():
+				if line.startswith('[') and line.endswith(']'):
+					field = line.strip()
+					continue
+				elif 'Header' in field:
+					k, v = line.split('=')
+					info_dict[k.strip()] = v.strip()
+				elif 'Value' in field:
+					reader = csv.DictReader(f, delimiter='\t')
+					for row in reader:
+						yield row
+	
+	def __str__(self):
+		return "NamespaceParser"
 
 class EntrezGeneInfoParser(Parser):
 	resourceLocation = """http://resource.belframework.org/belframework/1.0/
@@ -101,7 +123,6 @@ class HGNCParser(Parser):
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.hgnc_file = url
 
 	def parse(self):
 
@@ -128,7 +149,6 @@ class MGIParser(Parser):
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.mgi_file = url
 
 	def parse(self):
 		with open(self._url, "r") as f:
@@ -147,7 +167,6 @@ class RGDParser(Parser):
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.rgd_file = url
 
 	def parse(self):
 		with open(self._url, "r") as f:

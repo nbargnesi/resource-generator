@@ -41,6 +41,7 @@ meshcl_dict = {}
 meshd_dict = {}
 meshpp_dict = {}
 do_dict = {}
+sfam_dict ={}
 
 entrez_data = EntrezInfoData(entrez_info)
 entrez_history_data = EntrezHistoryData(entrez_history)
@@ -60,6 +61,7 @@ gocc_data = GOData(gocc_dict, 'gocc', 'go-cellular-component', 'gocc')
 meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
 meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
 meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
+sfam_data = StandardCustomData(sfam_dict, 'sfam', 'selventa-protein-families', 'sfam')
 
 do_data = DOData(do_dict)
 nch_data = NCHData(nch)
@@ -77,6 +79,19 @@ swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
 # the file being parsed by its parser.
 def build_data(entry, parser):
 
+	if parser == 'NamespaceParser':
+		sfam_dict[entry.get('ID')] = {
+			'ALTIDS' : entry.get('ALTIDS'),
+			'LABEL' : entry.get('LABEL'),
+			'SYNONYMS' : entry.get('SYNONYMS'), 
+			'DESCRIPTION' : entry.get('DESCRIPTION'), 
+			'TYPE' : entry.get('TYPE'), 
+			'SPECIES' : entry.get('SPECIES'), 
+			'XREF' : entry.get('XREF'),
+			'OBSOLETE' : entry.get('OBSOLETE'),
+			'PARENTS' : entry.get('PARENTS'),
+			'CHILDREN' : entry.get('CHILDREN') }
+		
 	if parser == 'EntrezGeneInfo_Parser':
 		gene_id = entry.get('GeneID')
 		type_of_gene = entry.get('type_of_gene')
@@ -117,6 +132,8 @@ def build_data(entry, parser):
 		synonyms = entry.get('Synonyms')
 		name_synonyms = entry.get('Name Synonyms')
 		name = entry.get('Approved Name')
+		mouse_ortholog = entry.get('Mouse Genome Database ID (supplied by MGI)')
+		rat_ortholog = entry.get('Rat Genome Database ID (supplied by RGD)')
 
 		hgnc[hgnc_id] = {
 			'Locus Type' : loc_type,
@@ -125,7 +142,9 @@ def build_data(entry, parser):
 			'Previous Names' : old_names,
 			'Synonyms' : synonyms,
 			'Name Synonyms' : name_synonyms,
-			'Approved Name' : name }
+			'Approved Name' : name,
+			'Mouse Ortholog' : mouse_ortholog,
+			'Rat Ortholog' : rat_ortholog }
 
 	elif parser == 'MGI_Parser':
 		m_symbol = entry.get('Marker Symbol')
@@ -330,7 +349,7 @@ def load_data(string):
 				schem_data, schem_to_chebi_data, gobp_data,
 				gocc_data, swiss_withdrawn_acc_data,
 				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
-				meshcl_data, meshd_data, meshpp_data]
+				meshcl_data, meshd_data, meshpp_data, sfam_data]
 
 	for d in datasets:
 		if str(d) == string:

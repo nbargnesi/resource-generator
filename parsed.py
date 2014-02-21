@@ -15,57 +15,57 @@ from datasets import *
 #import dbm.gnu
 #import dbm
 from collections import defaultdict
-
+from configuration import *
 
 # Data needed for namespacing and equivalencing
-entrez_info = {}
-entrez_history = {}
-hgnc = {}
-mgi = {}
-rgd = {}
-swiss = defaultdict(list)
-affy = defaultdict(list)
-gene2acc = {}
-chebi = {}
-schem = {}
-sdis = {}
-schem_to_chebi = {}
-sdis_to_do = {}
-nch = {}
-ctg = {}
-pub_equiv_dict = {}
-pub_ns_dict = defaultdict(list)
-gobp_dict = {}
-gocc_dict = {}
-meshcl_dict = {}
-meshd_dict = {}
-meshpp_dict = {}
-do_dict = {}
-sfam_dict ={}
+#entrez_info = {}
+#entrez_history = {}
+#hgnc = {}
+#mgi = {}
+#rgd = {}
+#swiss = defaultdict(list)
+#affy = defaultdict(list)
+#gene2acc = {}
+#chebi = {}
+#schem = {}
+#sdis = {}
+#schem_to_chebi = {}
+#sdis_to_do = {}
+#nch = {}
+#ctg = {}
+#pub_equiv_dict = {}
+#pub_ns_dict = defaultdict(list)
+#gobp_dict = {}
+#gocc_dict = {}
+#meshcl_dict = {}
+#meshd_dict = {}
+#meshpp_dict = {}
+#do_dict = {}
+#sfam_dict ={}
 
-entrez_data = EntrezInfoData(entrez_info)
-entrez_history_data = EntrezHistoryData(entrez_history)
-hgnc_data = HGNCData(hgnc)
-mgi_data = MGIData(mgi)
-rgd_data = RGDData(rgd)
-swiss_data = SwissProtData(swiss)
-affy_data = AffyData(affy)
-chebi_data = CHEBIData(chebi)
-gene2acc_data = Gene2AccData(gene2acc)
-schem_data = SCHEMData(schem)
-schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
-sdis_data = SDISData(sdis)
-sdis_to_do_data = SDIStoDOData(sdis_to_do)
-gobp_data = GOData(gobp_dict, 'gobp', 'go-biological-processes', 'gobp')
-gocc_data = GOData(gocc_dict, 'gocc', 'go-cellular-component', 'gocc')
-meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
-meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
-meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
-sfam_data = StandardCustomData(sfam_dict, 'sfam', 'selventa-protein-families', 'sfam')
+#entrez_data = EntrezInfoData(entrez_info)
+#entrez_history_data = EntrezHistoryData(entrez_history)
+#hgnc_data = HGNCData(hgnc)
+#mgi_data = MGIData(mgi)
+#rgd_data = RGDData(rgd)
+#swiss_data = SwissProtData(swiss)
+#affy_data = AffyData(affy)
+#chebi_data = CHEBIData(chebi)
+#gene2acc_data = Gene2AccData(gene2acc)
+#schem_data = SCHEMData(schem)
+#schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
+#sdis_data = SDISData(sdis)
+#sdis_to_do_data = SDIStoDOData(sdis_to_do)
+#gobp_data = GOData(gobp_dict, 'gobp', 'go-biological-processes', 'gobp')
+#gocc_data = GOData(gocc_dict, 'gocc', 'go-cellular-component', 'gocc')
+#meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
+#meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
+#meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
+#sfam_data = StandardCustomData(label='sfam' ,name='selventa-protein-families', prefix='sfam')
 
-do_data = DOData(do_dict)
-nch_data = NCHData(nch)
-ctg_data = CTGData(ctg)
+#do_data = DOData(do_dict)
+#nch_data = NCHData(nch)
+#ctg_data = CTGData(ctg)
 
 count = 0
 
@@ -77,10 +77,10 @@ swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
 
 # entry passed to this function will be one row from
 # the file being parsed by its parser.
-def build_data(entry, parser):
+def build_data(entry, parser, data_object):
 
 	if parser == 'NamespaceParser':
-		sfam_dict[entry.get('ID')] = {
+		data_object._dict[entry.get('ID')] = {
 			'ALTIDS' : entry.get('ALTIDS'),
 			'LABEL' : entry.get('LABEL'),
 			'SYNONYMS' : entry.get('SYNONYMS'), 
@@ -104,7 +104,7 @@ def build_data(entry, parser):
 		symbol = entry.get('Symbol')
 		description = entry.get('description')
 		dbXrefs = entry.get('dbXrefs')
-		entrez_info[gene_id] = {
+		data_object._dict[gene_id] = {
 			'dbXrefs' : dbXrefs,
 			'type_of_gene' : type_of_gene,
 			'description' : description,
@@ -120,7 +120,7 @@ def build_data(entry, parser):
 		gene_id = entry.get('GeneID')
 		discontinued_id = entry.get('Discontinued_GeneID')
 
-		entrez_history[gene_id] = {
+		data_object._dict[gene_id] = {
 			'Discontinued_GeneID' : discontinued_id }
 
 	elif parser == 'HGNC_Parser':
@@ -135,7 +135,7 @@ def build_data(entry, parser):
 		mouse_ortholog = entry.get('Mouse Genome Database ID (supplied by MGI)')
 		rat_ortholog = entry.get('Rat Genome Database ID (supplied by RGD)')
 
-		hgnc[hgnc_id] = {
+		data_object._dict[hgnc_id] = {
 			'Locus Type' : loc_type,
 			'Symbol' : app_symb, 
 			'Previous Symbols' : old_symbols,
@@ -154,7 +154,7 @@ def build_data(entry, parser):
 		m_name = entry.get('Marker Name')
 		m_syn = entry.get('Marker Synonyms (pipe-separated)')
 
-		mgi[acc_id] = {
+		data_object._dict[acc_id] = {
 			'Feature Type' : feature_type,
 			'Marker Type' : m_type,
 			'Symbol' : m_symbol,
@@ -169,7 +169,7 @@ def build_data(entry, parser):
 		old_symbol = entry.get('OLD_SYMBOL')
 		old_name = entry.get('OLD_NAME')
 
-		rgd[rgd_id] = {
+		data_object._dict[rgd_id] = {
 			'GENE_TYPE' : gene_type,
 			'NAME' : name,
 			'SYMBOL' : symb,
@@ -190,7 +190,7 @@ def build_data(entry, parser):
 		gene_syn = entry.get('geneSynonyms')
 		tax_id = entry.get('NCBI Taxonomy')
 
-		swiss[primary_acc] = {
+		data_object._dict[primary_acc] = {
 			'name' : name,
 			'type' : gene_type,
 			'accessions' : acc,
@@ -208,7 +208,7 @@ def build_data(entry, parser):
 		entrez_gene = entry.get('Entrez Gene')
 		species = entry.get('Species Scientific Name')
 
-		affy[probe_id] = {
+		data_object._dict[probe_id] = {
 			'Entrez Gene' : entrez_gene,
 			'Species' : species }
 
@@ -217,7 +217,7 @@ def build_data(entry, parser):
 		taxid = entry.get('tax_id')
 		entrez_gene = entry.get('GeneID')
 
-		gene2acc[entrez_gene] = {
+		data_object._dict[entrez_gene] = {
 			'status' : status,
 			'tax_id' : taxid,
 			'entrez_gene' : entrez_gene }
@@ -225,41 +225,41 @@ def build_data(entry, parser):
 	elif parser == 'SCHEM_Parser':
 		schem_id = entry.get('schem_id')
 
-		schem[schem_id] = 'A'
+		data_object._dict[schem_id] = 'A'
 
 	elif parser == 'SCHEMtoCHEBI_Parser':
 		schem_term = entry.get('SCHEM_term')
 		chebi_id = entry.get('CHEBIID')
 		chebi_name = entry.get('CHEBI_name')
 
-		schem_to_chebi[schem_term] = {
+		data_object._dict[schem_term] = {
 			'CHEBIID' : chebi_id,
 			'CHEBI_name' : chebi_name }
 
 	elif parser == 'SDIS_Parser':
 		sdis_id = entry.get('sdis_id')
 
-		sdis[sdis_id] = 'O'
+		data_object._dict[sdis_id] = 'O'
 
 	elif parser == 'SDIStoDO_Parser':
 		sdis_term = entry.get('SDIS_term')
 		do_id = entry.get('DOID')
 		do_name = entry.get('DO_name')
 
-		sdis_to_do[sdis_term] = {
+		data_object._dict[sdis_term] = {
 			'DOID' : do_id,
 			'DO_name' : do_name }
 	
 	elif parser == 'Complex_Parser':
 		complex_term = entry.get('term')
 
-		nch[complex_term] = 'C'
+		data_object._dict[complex_term] = 'C'
   
 	elif parser == 'Complex_To_GO_Parser':
 		term = entry.get('NCH_Value')
 		go_id = entry.get('GO_Id')
 		go_id = go_id.replace('GO:', '')
-		ctg[term] = {
+		data_object._dict[term] = {
 			'go_id' : go_id }
 			
 
@@ -269,7 +269,7 @@ def build_data(entry, parser):
 		alt_ids = entry.get('alt_ids')
 		synonyms = entry.get('synonyms')
 
-		chebi[primary_id] = {
+		data_object._dict[primary_id] = {
 			'name' : name,
 			'alt_ids' : alt_ids,
 			'synonyms' : synonyms }
@@ -329,14 +329,14 @@ def build_data(entry, parser):
 	elif parser == 'SwissWithdrawn_Parser':
 		acc = entry.get('accession')
 
-		swiss_withdrawn_acc_dict['accessions'].append(acc)
+		data_object._dict['accessions'].append(acc)
 
 	elif str(parser) == 'DO_Parser':
 		name = entry.get('name')
 		id = entry.get('id')
 		dbxrefs = entry.get('dbxrefs')
 		synonyms = entry.get('synonyms')
-		do_dict[id] = {
+		data_object._dict[id] = {
 			'name' : name,
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }

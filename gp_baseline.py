@@ -24,6 +24,7 @@
 
 '''
 
+from configuration import *
 from configuration import baseline_data
 import argparse
 import os
@@ -33,6 +34,7 @@ import time
 import shutil
 import annotate
 from common import download
+from datasets import NamespaceDataSet
 from constants import PARSER_TYPE, RES_LOCATION
 
 # collect paths needed for proper resource file location
@@ -136,9 +138,12 @@ if args.begin_phase <= 1:
 			print('Downloading ' +str(name))
 			sys.stdout.flush()
 		path = os.path.join('datasets/', name)
-		if url_tuple[RES_LOCATION].startswith('http') or \
-				url_tuple[RES_LOCATION].startswith('ftp'):
+	#	if url_tuple[RES_LOCATION].startswith('http') or \
+	#			url_tuple[RES_LOCATION].startswith('ftp'):
+		loc = url_tuple[RES_LOCATION]
+		if any([loc.startswith(x) for x in ['file', 'ftp', 'http']]):
 			download(url_tuple[RES_LOCATION], path)
+			print(loc)
 	print('Phase 1 ran in %.3f minutes' % ((time.time() - start_time) / 60))
 	
 	if args.end_phase == 1:
@@ -165,8 +170,10 @@ if args.begin_phase <= 2:
 				if verbose:
 					parser.is_verbose()
 					print('Running ' +str(parser))
+				if len(data_tuple) >= 3:
+					data_object = data_tuple[2]			
 				for x in parser.parse():
-					parsed.build_data(x, str(parser))
+					parsed.build_data(x, str(parser), data_object)
 	# pickle parsed data
 	# - just do it.... pickle each dataset by name :-(
 	with open('ei.'+args.parsed_pickle, 'wb') as f:
@@ -337,6 +344,12 @@ if args.begin_phase <= 3:
 		else:
 			with open('nch.'+args.parsed_pickle, 'rb') as f:
 				nch = pickle.load(f)
+		if not os.path.exists('sfam.'+args.parsed_pickle):
+			print('WARNING !!! Required pickled data file %s not found.' % ('sfam.'+args.parsed_pickle))
+			sfam = None
+		else:
+			with open('sfam.'+args.parsed_pickle, 'rb') as f:
+				sfam = pickle.load(f)
 	else:
 		# data already in memory	
 		ei = parsed.load_data('entrez_info')
@@ -356,15 +369,15 @@ if args.begin_phase <= 3:
 		ctg = parsed.load_data('ctg')
 		gobp = parsed.load_data('gobp')
 		gocc = parsed.load_data('gocc')
-		# pub_eq = parsed.load_data('pubchem_equiv')
-		# pub_ns = parsed.load_data('pubchem_namespace')
 		meshcl = parsed.load_data('meshcl')
 		meshd = parsed.load_data('meshd')
 		meshpp = parsed.load_data('meshpp')
 		do = parsed.load_data('do')
-
-	# does NOT include pubchem currently
-	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, meshcl, meshpp, meshd, schem, do, sdis, nch]
+		sfam = parsed.load_data('sfam')
+	#for key in parsed.__dict__.keys():
+		#if isinstance(key, NamespaceDataSet):
+		#print(key)
+	ns_data = [ei, hg, mg, rg, sp, af, chebi, gobp, gocc, meshcl, meshpp, meshd, schem, do, sdis, nch, sfam]
 	for dataset in ns_data:
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))

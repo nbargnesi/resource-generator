@@ -13,6 +13,7 @@
 import os.path
 import time
 from common import get_citation_info
+from collections import defaultdict
 
 class DataSet():
 	
@@ -129,7 +130,7 @@ class NamespaceDataSet(DataSet):
 
 class StandardCustomData(NamespaceDataSet):
 	
-	def __init__(self, dictionary, label, name, prefix):
+	def __init__(self, dictionary={}, *, label, name, prefix):
 		super().__init__(dictionary, label, name, prefix)	
 
 	def get_values(self):
@@ -175,7 +176,7 @@ class EntrezInfoData(NamespaceDataSet):
 	subject = "gene/RNA/protein"
 	description = "NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus."
 
-	def __init__(self, dictionary, label='entrez_info', name='entrez-gene', prefix='egid'):
+	def __init__(self, dictionary={}, label='entrez_info', name='entrez-gene', prefix='egid'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_label(self, term_id):
@@ -184,11 +185,6 @@ class EntrezInfoData(NamespaceDataSet):
 		using the gene ID. '''
 		return term_id
 
-	#def get_values(self):
-	#	''' Get non-obsolete term values. '''
-	#	for term_id in self._dict:
-	#		yield term_id
-	
 	def get_species(self, term_id):
 		''' Return species as NCBI tax ID (or None, as applicable). '''
 		species = self._dict.get(term_id).get('tax_id')
@@ -241,8 +237,8 @@ class EntrezInfoData(NamespaceDataSet):
 	
 
 class EntrezHistoryData(DataSet):
-
-	def __init__(self, dictionary):
+	
+	def __init__(self, dictionary={}):
 		super().__init__(dictionary)
 
 	def __str__(self):
@@ -268,9 +264,10 @@ class HGNCData(NamespaceDataSet):
 		'transposable element' : 'G', 'unknown' : 'GRP',
 		'virus integration site' : 'G', 'RNA, micro' : 'GRM',
 		'RNA, misc' : 'GR', 'RNA, Y' : 'GR', 'RNA, vault' : 'GR',
+	
 	}
 
-	def __init__(self, dictionary, label='hgnc', name='hgnc-approved-symbols', prefix='hgnc'):
+	def __init__(self, dictionary={}, label='hgnc', name='hgnc-approved-symbols', prefix='hgnc'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_values(self):
@@ -344,7 +341,7 @@ class MGIData(NamespaceDataSet):
 		'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'
 	}
 
-	def __init__(self, dictionary, label='mgi', name='mgi-approved-symbols', prefix='mgi'):
+	def __init__(self, dictionary={}, label='mgi', name='mgi-approved-symbols', prefix='mgi'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_values(self):
@@ -393,7 +390,7 @@ class RGDData(NamespaceDataSet):
 		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
-	def __init__(self, dictionary, label='rgd', name='rgd-approved-symbols', prefix='rgd'):
+	def __init__(self, dictionary={}, label='rgd', name='rgd-approved-symbols', prefix='rgd'):
 		super().__init__(dictionary, label, name, prefix)
 	
 	def get_species(self, term_id):
@@ -443,7 +440,7 @@ class SwissProtData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary, label='swiss', name='swissprot', prefix='sp'):
+	def __init__(self, dictionary=defaultdict(list), label='swiss', name='swissprot', prefix='sp'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_encoding(self, term_id):
@@ -508,7 +505,7 @@ class AffyData(NamespaceDataSet):
 	labels = False
 	ids = True
 
-	def __init__(self, dictionary, label='affy', name='affy-probeset', prefix='affx'):
+	def __init__(self, dictionary=defaultdict(list), label='affy', name='affy-probeset', prefix='affx'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_species(self, term_id):
@@ -537,7 +534,7 @@ class CHEBIData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary, label='chebi', name='chebi', prefix='chebi'):
+	def __init__(self, dictionary={}, label='chebi', name='chebi', prefix='chebi'):
 		super().__init__(dictionary, label, name, prefix)
 	
 	def get_label(self, term_id):
@@ -554,13 +551,13 @@ class CHEBIData(NamespaceDataSet):
 
 class SCHEMData(NamespaceDataSet):
 	
-	def __init__(self, dictionary, label='schem', name='selventa-legacy-chemical-names', prefix='schem'):
+	def __init__(self, dictionary={}, label='schem', name='selventa-legacy-chemical-names', prefix='schem'):
 		super().__init__(dictionary, label, name, prefix)
 
 
 class SCHEMtoCHEBIData(DataSet):
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}):
 		super().__init__(dictionary)
 
 	def get_equivalence(self, schem_term):
@@ -576,7 +573,7 @@ class SCHEMtoCHEBIData(DataSet):
 
 class NCHData(NamespaceDataSet):
 
-	def __init__(self, dictionary, label='nch', name='selventa-named-complexes', prefix='scomp'):
+	def __init__(self, dictionary={}, label='nch', name='selventa-named-complexes', prefix='scomp'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_encoding(self, term_id):
@@ -587,7 +584,7 @@ class NCHData(NamespaceDataSet):
 
 class CTGData(DataSet):
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}):
 		super().__init__(dictionary)
 
 	def get_equivalence(self, term):
@@ -603,7 +600,7 @@ class CTGData(DataSet):
 
 class SDISData(NamespaceDataSet):
 
-	def __init__(self, dictionary, label='sdis', name='selventa-legacy-diseases', prefix='sdis'):
+	def __init__(self, dictionary={}, label='sdis', name='selventa-legacy-diseases', prefix='sdis'):
 		super().__init__(dictionary, label, name, prefix)
 
 	def get_encoding(self, term_id):
@@ -612,7 +609,7 @@ class SDISData(NamespaceDataSet):
 
 class SDIStoDOData(DataSet):
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}):
 		super().__init__(dictionary)
 
 	def get_equivalence(self, sdis_term):
@@ -629,7 +626,7 @@ class SDIStoDOData(DataSet):
 
 class Gene2AccData(DataSet):
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}):
 		super(Gene2AccData, self).__init__(dictionary)
 
 	def get_eq_values(self):
@@ -646,7 +643,7 @@ class Gene2AccData(DataSet):
 class GOData(NamespaceDataSet):
 
 	ids = True
-
+	# dictionary is required, since GO file parsed into multiple objects
 	def __init__(self, dictionary, label='go', name='go', prefix='go'):
 		super().__init__(dictionary, label, name, prefix)
 
@@ -678,8 +675,8 @@ class GOData(NamespaceDataSet):
 
 
 class MESHData(NamespaceDataSet):
-
-	def __init__(self, dictionary, label, prefix='mesh', name='mesh-temp'):
+	# dictionary and other arguments are required since MeSH file parsed into mulitple objects
+	def __init__(self, dictionary, label, prefix, name):
 		super().__init__(dictionary, label, prefix, name)
 
 	def get_label(self, term_id):
@@ -705,7 +702,7 @@ class MESHData(NamespaceDataSet):
 
 class SwissWithdrawnData(DataSet):
 
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}):
 		super(SwissWithdrawnData, self).__init__(dictionary)
 
 	def get_withdrawn_accessions(self):
@@ -720,7 +717,7 @@ class DOData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary, label='do', name='disease-ontology', prefix ='do'):
+	def __init__(self, dictionary={}, label='do', name='disease-ontology', prefix ='do'):
 		super(DOData, self).__init__(dictionary, label, name, prefix)
 
 	def get_label(self, term_id):

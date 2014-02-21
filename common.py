@@ -124,6 +124,7 @@ data_file_info = {
 	'selventa-legacy-chemical-names.belns' : 'schem.info',
 	'selventa-legacy-diseases.belns' : 'sdis.info',
 	'selventa-named-complexes.belns' : 'named_complex.info',
+	'selventa-protein-families.belns' : 'selventa-protein-families.txt.info',
 	'swissprot-ids.belns' : 'swiss.xml.gz.info',
 	'swissprot.belns' : 'swiss.xml.gz.info',
 	'affy-probeset-ids.beleq' : 'affy.xml.info',

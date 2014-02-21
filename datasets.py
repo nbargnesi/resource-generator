@@ -130,11 +130,11 @@ class NamespaceDataSet(DataSet):
 class StandardCustomData(NamespaceDataSet):
 	
 	def __init__(self, dictionary, label, name, prefix):
-		super().__init(dictioanry, label, name, prefix)	
+		super().__init__(dictionary, label, name, prefix)	
 
 	def get_values(self):
 		for term_id in self._dict:
-			if self._dict.get(term_id).get('OBSOLETE') is None:
+			if self._dict.get(term_id).get('OBSOLETE') != 1:
 				yield term_id
 
 	def get_label(self, term_id):

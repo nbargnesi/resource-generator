@@ -1,12 +1,12 @@
-[Header]										
-Keyword=SFAM										
-NameString=Selventa Protein Families										
-DomainString=Gene/Protein										
-"SpeciesString=9606, 10090, 10116"										
-DescriptionString=Selventa-defined names of protein families. Each family represents a group of related proteins.										
-VersionString=20140212										
-										
-[Values]										
+#[Header]										
+#Keyword=SFAM										
+#NameString=Selventa Protein Families										
+#DomainString=Gene/Protein										
+#SpeciesString=9606, 10090, 10116										
+#DescriptionString=Selventa-defined names of protein families. Each family represents a group of related proteins.										
+#VersionString=20140212										
+#										
+#[Values]										
 ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN
 F0001		14-3-3 Family			P					
 F0002		ACAD Family	acyl-CoA dehydrogenase		P					

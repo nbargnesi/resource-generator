@@ -44,21 +44,29 @@ class NamespaceParser(Parser):
 		super().__init__(url)
 
 	def parse(self):
-		field = None
-		info_dict = {}
+		#info_dict = {}
 		with open(self._url, 'r') as f:
-			for line in f.readlines():
-				if line.startswith('[') and line.endswith(']'):
-					field = line.strip()
-					continue
-				elif 'Header' in field:
-					k, v = line.split('=')
-					info_dict[k.strip()] = v.strip()
-				elif 'Value' in field:
-					reader = csv.DictReader(f, delimiter='\t')
-					for row in reader:
-						yield row
-	
+			#for line in f.readlines():
+			#	line = line.strip()
+			#	if not line:
+			#		continue
+			#	if line.startswith('[') :
+			#		field = line.strip()
+			#		continue
+			#	elif 'Header' in field:
+			#		print(line)
+			#		k, v = line.split('=')
+			#		info_dict[k.strip()] = v.strip()
+			#	elif 'Value' in field:
+			#		reader = csv.DictReader(f, delimiter='\t')
+			#		for row in reader:
+			#			yield row
+			#			print(row)
+			reader = csv.DictReader(filter(lambda row: 
+								not row[0].startswith('#'), f), delimiter='\t')
+			for row in reader:
+				yield row
+
 	def __str__(self):
 		return "NamespaceParser"
 

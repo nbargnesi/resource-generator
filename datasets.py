@@ -33,8 +33,7 @@ class NamespaceDataSet(DataSet):
 	ids = False
 	labels = True
 
-	def __init__(self, dictionary, label='namespace-label', name='namespace-name', prefix='namespace-prefix'):
-		self._label = label
+	def __init__(self, dictionary, name='namespace-name', prefix='namespace-prefix'):
 		self._name = name
 		self._prefix = prefix
 		super().__init__(dictionary)
@@ -126,12 +125,12 @@ class NamespaceDataSet(DataSet):
 					f.write('|'.join(i) + '\n')
 
 	def __str__(self):
-		return self._label
+		return self._prefix
 
 class StandardCustomData(NamespaceDataSet):
 	
-	def __init__(self, dictionary={}, *, label, name, prefix):
-		super().__init__(dictionary, label, name, prefix)	
+	def __init__(self, dictionary={}, *, name, prefix):
+		super().__init__(dictionary, name, prefix)	
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -176,8 +175,8 @@ class EntrezInfoData(NamespaceDataSet):
 	subject = "gene/RNA/protein"
 	description = "NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus."
 
-	def __init__(self, dictionary={}, label='entrez_info', name='entrez-gene', prefix='egid'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='entrez-gene', prefix='egid'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_label(self, term_id):
 		''' Return the value to be used as the preffered
@@ -267,8 +266,8 @@ class HGNCData(NamespaceDataSet):
 	
 	}
 
-	def __init__(self, dictionary={}, label='hgnc', name='hgnc-approved-symbols', prefix='hgnc'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='hgnc-approved-symbols', prefix='hgnc'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -341,8 +340,8 @@ class MGIData(NamespaceDataSet):
 		'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'
 	}
 
-	def __init__(self, dictionary={}, label='mgi', name='mgi-approved-symbols', prefix='mgi'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='mgi-approved-symbols', prefix='mgi'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -390,8 +389,8 @@ class RGDData(NamespaceDataSet):
 		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
-	def __init__(self, dictionary={}, label='rgd', name='rgd-approved-symbols', prefix='rgd'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='rgd-approved-symbols', prefix='rgd'):
+		super().__init__(dictionary, name, prefix)
 	
 	def get_species(self, term_id):
 		''' Rat '''
@@ -440,8 +439,8 @@ class SwissProtData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary=defaultdict(list), label='swiss', name='swissprot', prefix='sp'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary=defaultdict(list), name='swissprot', prefix='sp'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_encoding(self, term_id):
 		return 'GRP'
@@ -505,8 +504,8 @@ class AffyData(NamespaceDataSet):
 	labels = False
 	ids = True
 
-	def __init__(self, dictionary=defaultdict(list), label='affy', name='affy-probeset', prefix='affx'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary=defaultdict(list), name='affy-probeset', prefix='affx'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_species(self, term_id):
 		species = self._dict.get(term_id).get('Species')
@@ -534,8 +533,8 @@ class CHEBIData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary={}, label='chebi', name='chebi', prefix='chebi'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='chebi', prefix='chebi'):
+		super().__init__(dictionary, name, prefix)
 	
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')
@@ -551,8 +550,8 @@ class CHEBIData(NamespaceDataSet):
 
 class SCHEMData(NamespaceDataSet):
 	
-	def __init__(self, dictionary={}, label='schem', name='selventa-legacy-chemical-names', prefix='schem'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='selventa-legacy-chemical-names', prefix='schem'):
+		super().__init__(dictionary, name, prefix)
 
 
 class SCHEMtoCHEBIData(DataSet):
@@ -573,8 +572,8 @@ class SCHEMtoCHEBIData(DataSet):
 
 class NCHData(NamespaceDataSet):
 
-	def __init__(self, dictionary={}, label='nch', name='selventa-named-complexes', prefix='scomp'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='selventa-named-complexes', prefix='scomp'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_encoding(self, term_id):
 		''' Return encoding (allowed abundance types) for 
@@ -600,8 +599,8 @@ class CTGData(DataSet):
 
 class SDISData(NamespaceDataSet):
 
-	def __init__(self, dictionary={}, label='sdis', name='selventa-legacy-diseases', prefix='sdis'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='selventa-legacy-diseases', prefix='sdis'):
+		super().__init__(dictionary, name, prefix)
 
 	def get_encoding(self, term_id):
 		return 'O'
@@ -644,8 +643,8 @@ class GOData(NamespaceDataSet):
 
 	ids = True
 	# dictionary is required, since GO file parsed into multiple objects
-	def __init__(self, dictionary, label='go', name='go', prefix='go'):
-		super().__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary,  name, prefix):
+		super().__init__(dictionary, name, prefix)
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -676,19 +675,19 @@ class GOData(NamespaceDataSet):
 
 class MESHData(NamespaceDataSet):
 	# dictionary and other arguments are required since MeSH file parsed into mulitple objects
-	def __init__(self, dictionary, label, prefix, name):
-		super().__init__(dictionary, label, prefix, name)
+	def __init__(self, dictionary, *, name, prefix):
+		super().__init__(dictionary, name, prefix)
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('mesh_header')
 		return label
 
 	def get_encoding(self, term_id):
-		if self._label == 'meshcl':
+		if self._prefix == 'meshcl':
 			return 'A'
-		elif self._label == 'meshd':
+		elif self._prefix == 'meshd':
 			return 'O'
-		elif self._label == 'meshpp':
+		elif self._prefix == 'meshpp':
 			return 'B'
 		else:
 			return 'A'	
@@ -717,8 +716,8 @@ class DOData(NamespaceDataSet):
 
 	ids = True
 
-	def __init__(self, dictionary={}, label='do', name='disease-ontology', prefix ='do'):
-		super(DOData, self).__init__(dictionary, label, name, prefix)
+	def __init__(self, dictionary={}, name='disease-ontology', prefix ='do'):
+		super(DOData, self).__init__(dictionary, name, prefix)
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')

@@ -17,55 +17,6 @@ from datasets import *
 from collections import defaultdict
 from configuration import *
 
-# Data needed for namespacing and equivalencing
-#entrez_info = {}
-#entrez_history = {}
-#hgnc = {}
-#mgi = {}
-#rgd = {}
-#swiss = defaultdict(list)
-#affy = defaultdict(list)
-#gene2acc = {}
-#chebi = {}
-#schem = {}
-#sdis = {}
-#schem_to_chebi = {}
-#sdis_to_do = {}
-#nch = {}
-#ctg = {}
-#pub_equiv_dict = {}
-#pub_ns_dict = defaultdict(list)
-#gobp_dict = {}
-#gocc_dict = {}
-#meshcl_dict = {}
-#meshd_dict = {}
-#meshpp_dict = {}
-#do_dict = {}
-#sfam_dict ={}
-
-#entrez_data = EntrezInfoData(entrez_info)
-#entrez_history_data = EntrezHistoryData(entrez_history)
-#hgnc_data = HGNCData(hgnc)
-#mgi_data = MGIData(mgi)
-#rgd_data = RGDData(rgd)
-#swiss_data = SwissProtData(swiss)
-#affy_data = AffyData(affy)
-#chebi_data = CHEBIData(chebi)
-#gene2acc_data = Gene2AccData(gene2acc)
-#schem_data = SCHEMData(schem)
-#schem_to_chebi_data = SCHEMtoCHEBIData(schem_to_chebi)
-#sdis_data = SDISData(sdis)
-#sdis_to_do_data = SDIStoDOData(sdis_to_do)
-#gobp_data = GOData(gobp_dict, 'gobp', 'go-biological-processes', 'gobp')
-#gocc_data = GOData(gocc_dict, 'gocc', 'go-cellular-component', 'gocc')
-#meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
-#meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
-#meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
-#sfam_data = StandardCustomData(label='sfam' ,name='selventa-protein-families', prefix='sfam')
-
-#do_data = DOData(do_dict)
-#nch_data = NCHData(nch)
-#ctg_data = CTGData(ctg)
 
 count = 0
 
@@ -341,16 +292,17 @@ def build_data(entry, parser, data_object):
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }
 
-def load_data(string):
+#def load_data(string):
+#
+#	datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
+#				swiss_data, affy_data, chebi_data, 
+#				gene2acc_data, entrez_history_data, 
+#				schem_data, schem_to_chebi_data, gobp_data,
+#				gocc_data, swiss_withdrawn_acc_data,
+#				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
+#				meshcl_data, meshd_data, meshpp_data, sfam_data]
+#
+#	for d in datasets:
+#		if str(d) == string:
+#			return d
 
-	datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
-				swiss_data, affy_data, chebi_data, 
-				gene2acc_data, entrez_history_data, 
-				schem_data, schem_to_chebi_data, gobp_data,
-				gocc_data, swiss_withdrawn_acc_data,
-				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
-				meshcl_data, meshd_data, meshpp_data, sfam_data]
-
-	for d in datasets:
-		if str(d) == string:
-			return d

@@ -22,10 +22,10 @@ file_url = 'file://{0}/datasets/'.format(os.getcwd())
 
 baseline_data = OrderedDict()
 
-entrez_data = EntrezInfoData()
+egid_data = EntrezInfoData()
 baseline_data['entrez_info.gz'] = (
 	'ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/All_Mammalia.gene_info.gz',
-	parsers.EntrezGeneInfoParser, entrez_data
+	parsers.EntrezGeneInfoParser, egid_data
 )
 
 entrez_history_data = EntrezHistoryData()
@@ -52,10 +52,10 @@ baseline_data['rgd.txt'] = (
 	parsers.RGDParser, rgd_data
 )
 
-swiss_data = SwissProtData() 
+sp_data = SwissProtData() 
 baseline_data['swiss.xml.gz'] = (
 	'ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz',
-	parsers.SwissProtParser, swiss_data
+	parsers.SwissProtParser, sp_data
 )
 
 gene2acc_data = Gene2AccData()
@@ -64,10 +64,10 @@ baseline_data['gene2acc.gz'] = (
 	parsers.Gene2AccParser, gene2acc_data
 )
 
-affy_data = AffyData()
+affx_data = AffyData()
 baseline_data['affy.xml'] = (
 	'http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
-	parsers.AffyParser, affy_data
+	parsers.AffyParser, affx_data
 )
 
 chebi_data = CHEBIData()
@@ -100,13 +100,13 @@ baseline_data['sdis'] = (
 	parsers.SDISParser, sdis_data
 )
 
-nch_data = NCHData()
+scomp_data = NCHData()
 baseline_data['named_complex'] = (
 	'http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns',
-	parsers.ComplexParser, nch_data
+	parsers.ComplexParser, scomp_data
 )
 
-sfam_data = StandardCustomData(label='sfam' ,name='selventa-protein-families', prefix='sfam')
+sfam_data = StandardCustomData(name='selventa-protein-families', prefix='sfam')
 baseline_data['selventa-protein-families.txt'] = (
 	file_url + 'selventa-protein-families.txt', parsers.NamespaceParser, sfam_data
 )
@@ -120,8 +120,8 @@ baseline_data['named_complexes_to_GOCC.csv'] = (
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 gobp_dict, gocc_dict = {}, {}
-gobp_data = GOData(gobp_dict, label='gobp',name='go-biological-processes', prefix='gobp')
-gocc_data = GOData(gocc_dict, label='gocc', name='go-cellular-component', prefix='gocc')
+gobp_data = GOData(gobp_dict, name='go-biological-processes', prefix='gobp')
+gocc_data = GOData(gocc_dict, name='go-cellular-component', prefix='gocc')
 baseline_data['go.xml.gz'] = (go_file, parsers.GOParser, [gobp_data, gocc_data])
 
 do_data = DOData()
@@ -132,9 +132,9 @@ baseline_data['doid.owl'] = (
 
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
 meshcl_dict, meshd_dict, meshpp_dict = {}, {}, {}
-meshcl_data = MESHData(meshcl_dict, 'meshcl', 'mesh-cellular-locations', 'meshcl')
-meshd_data = MESHData(meshd_dict, 'meshd', 'mesh-diseases', 'meshd')
-meshpp_data = MESHData(meshpp_dict, 'meshpp', 'mesh-biological-processes', 'meshpp')
+meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-locations', prefix='meshcl')
+meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd')
+meshpp_data = MESHData(meshpp_dict, name='mesh-biological-processes', prefix='meshpp')
 baseline_data['mesh.bin'] = (
 	mesh_file,
 	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data]

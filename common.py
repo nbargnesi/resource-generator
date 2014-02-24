@@ -147,7 +147,8 @@ data_file_info = {
 	'selventa-legacy-diseases.beleq' : 'sdis.info',
 	'selventa-named-complexes.beleq' : 'named_complex.info',
 	'swissprot-ids.beleq' : 'swiss.xml.gz.info',
-	'swissprot.beleq' : 'swiss.xml.gz.info'
+	'swissprot.beleq' : 'swiss.xml.gz.info',
+	'selventa-protein-families.beleq' : 'selventa-protein-families.txt.info'
 }
 
 p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)

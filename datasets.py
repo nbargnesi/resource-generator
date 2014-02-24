@@ -195,7 +195,7 @@ class EntrezInfoData(NamespaceDataSet):
 		gene_type = mapping.get('type_of_gene')
 		description = mapping.get('description')
 		encoding = EntrezInfoData.ENC.get(gene_type, 'G')
-		if gene_type == 'miscRNA' and 'microRNA' in description:
+		if gene_type == 'ncRNA' and 'microRNA' in description:
 			encoding = 'GRM'
 		if gene_type not in EntrezInfoData.ENC:
 			print('WARNING ' + gene_type + ' not defined for Entrez. G assigned as default encoding.')

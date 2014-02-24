@@ -147,7 +147,7 @@ def equiv(d, verbose):
 		write_beleq(sp_acc_eq, d._name+'-ids')
 	
 	elif str(d) == 'affx':
-		if parsed.gene2acc_data is None or if len(parsed.gene2acc_data._dict == 0):
+		if parsed.gene2acc_data is None or len(parsed.gene2acc_data._dict) == 0:
 			print('Missing required dependency data gene2acc_data')
 
 		ref_status = {'REVIEWED' : 0,

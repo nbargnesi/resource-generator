@@ -1,0 +1,145 @@
+[Header]										
+Keyword=SCOMP										
+NameString=Selventa Named Complexes										
+DomainString=Cell Components and Complexes										
+"SpeciesString=9606, 10090, 10116"										
+DescriptionString=Selventa-defined names of protein complexes.										
+VersionString=20140224										
+										
+[Values]										
+ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN
+C0001		9-1-1 Complex			C		GOCC:0030896			
+C0002		AMP Activated Protein Kinase Complex	AMP-activated protein kinase		C		GOCC:0031588			
+C0003		AP-1 Complex	AP-1 transcription factor	See http://en.wikipedia.org/wiki/AP-1_transcription_factor.	C		GOCC:0035976			
+C0004		ATP Dependent Potassium Channel Complex			C		GOCC:0008282			
+C0005		Acetyl CoA Carboxylase Complex			C		GOCC:0009317			
+C0006		Acetylcholine Current Channel Complex			C		GOCC:0005892			
+C0007		Adaptor Protein I Complex			C		GOCC:0030121			
+C0008		Adaptor Protein II Complex			C		GOCC:0030122			
+C0009		Adaptor Protein III Complex			C		GOCC:0030123			
+C0010		Anaphase Promoting Complex			C		GOCC:0005680			
+C0011		Annexin II Heterotetramer Complex			C					
+C0012		Arp2/3 Protein Complex			C		GOCC:0005885			
+C0013		BK Channel Complex			C					
+C0014		Branched Chain Alpha Keto Acid Dehydrogenase Complex			C		GOCC:0017086			
+C0015		C1 Complex			C		GOCC:0005602			
+C0016		C1q Complex			C		GOCC:0005602			
+C0017		C3 Convertase Complex			C		GOCC:0005601			
+C0018		C5 Convertase Complex			C		GOCC:0005601			
+C0019		CAMK2 Complex			C		GOCC:0005954			
+C0020		CBF3 Complex			C		GOCC:0031518			
+C0021		CCT Complex			C		GOCC:0005832			
+C0022		CD3 Complex			C					
+C0023		CD8 Complex			C					
+C0024		CHRN Complex			C		GOCC:0005892			
+C0025		CK II Complex			C		GOCC:0005956			
+C0026		CRSP Complex			C					
+C0027		CSNK2 Complex			C		GOCC:0005956			
+C0028		Ca Activated Chloride Channel Complex			C					
+C0029		Ca Activated Potassium Channel Complex			C					
+C0030		Calcineurin Complex			C		GOCC:0005955			
+C0031		Clathrin Complex			C		GOCC:0071439			
+C0032		CoA Ligase GDP Complex			C		GOCC:0045244			
+C0033		Cohesin Complex			C		GOCC:0008278			
+C0034		Cytochrome C Oxidase Complex			C		GOCC:0045277			
+C0035		Cytochrome C Oxidase Complex Muscle			C					
+C0036		Cytochrome C Oxidase Complex Non Muscle			C					
+C0037		Cytoplasmic Dynein Complex			C		GOCC:0005868			
+C0038		Cytosolic NFAT Complex			C					
+C0039		DNA Polymerase delta Complex			C		GOCC:0043625			
+C0040		Dodecenoyl CoA Isomerase Complex			C					
+C0041		Dystrophin Associated Glycoprotein Complex			C		GOCC:0016010			
+C0042		E1A Binding Protein Complex			C					
+C0043		ECH1 Complex			C					
+C0044		ECHS1 Complex			C					
+C0045		EIF2 Complex			C		GOCC:0005850			
+C0046		EIF2B Complex			C		GOCC:0005851			
+C0047		EIF4F Complex			C		GOCC:0016281			
+C0048		ENaC Complex			C					
+C0049		ER Chaperone Complex			C		GOCC:0034663			
+C0050		F Channel Complex			C					
+C0051		FcR Gamma Chain Complex			C		GOCC:0032997			
+C0052		Fibrinogen Complex			C		GOCC:0005577			
+C0053		Follicle Stimulating Hormone Complex			C		GOCC:0016914			
+C0054		GABRA Complex			C					
+C0055		GPIT Complex			C		GOCC:0042765			
+C0056		GTF2E Complex			C					
+C0057		GTF2F Complex			C					
+C0058		GUCY1 Complex			C		GOCC:0008074			
+C0059		HDL Complex			C		GOCC:0034364			
+C0060		Hemoglobin Complex			C		GOCC:0005833			
+C0061		IK Channel Complex			C					
+C0062		IL2R Complex			C					
+C0063		Ib-V-IX Complex			C					
+C0064		IgG Immune Complex		Complex of an IgG immunoglobulin and its antigen.	C					
+C0065		IkappaB Kinase Complex	IKK		C		GOCC:0008385			
+C0066		Inhibin Complex			C		GOCC:0043511			
+C0067		Interferon Gamma Receptor Complex			C					
+C0068		Interleukin 4 Receptor Complex			C		GOCC:0016516			
+C0069		Inward Rectifier Potassium Channel Complex			C					
+C0070		Kinetochore Complex			C		GOCC:0000776			
+C0071		L Type Calcium Channel Complex			C					
+C0072		Laminin 1 Complex			C		GOCC:0005606			
+C0073		Laminin 5 Complex			C		GOCC:0005610			
+C0074		Laminin Complex			C		GOCC:0043256			
+C0075		Luteinizing Hormone Complex			C					
+C0076		MHC Class I Complex			C		GOCC:0042612			
+C0077		MHC Class II Complex			C		GOCC:0042613			
+C0078		Membrane Attack Complex			C		GOCC:0005579			
+C0079		NADH Dehydrogenase Complex			C		GOCC:0030964			
+C0080		NADH Dehydrogenase Complex I			C		GOCC:0045271			
+C0081		NADPH Oxidase Complex			C		GOCC:0043020			
+C0082		NFAT Complex			C					
+C0083		Na/K Exchanging ATPase Complex			C		GOCC:0005890			
+C0084		Nfkb Complex			C		GOCC:0071159			
+C0085		Nfy Complex			C		GOCC:0016602			
+C0086		Ngf Complex			C					
+C0087		Nua4 Complex			C		GOCC:0035267			
+C0088		Nuclear NFAT Complex			C				SCOMP:C0082	
+C0089		PDGF Complex			C					
+C0090		PDGF Receptor Complex			C					
+C0091		POLR2 Complex			C		GOCC:0016591			
+C0092		PP2A Complex			C		GOCC:0000159			
+C0093		PRC1 Maintenance Complex			C		GOCC:0035102			
+C0094		PRC2 Initiation Complex			C		GOCC:0035098			
+C0095		Phosphorylase B Kinase Complex			C		GOCC:0005964			
+C0096		Phosphorylase Kinase Complex			C		GOCC:0005964			
+C0097		Prefoldin Complex			C		GOCC:0016272			
+C0098		Preinitiation Complex			C		GOCC:0070993			
+C0099		Propionyl CoA Carboxylase Complex			C					
+C0100		Proteasome Complex			C		GOCC:0000502			
+C0101		Proteasome Core Complex			C		GOCC:0005839			
+C0102		Proteasome Core Complex alpha Subunit Complex			C		GOCC:0019773		SCOMP:C0101	
+C0103		Proteasome Core Complex beta Subunit Complex			C		GOCC:0019774		SCOMP:C0101	
+C0104		Proteasome Regulatory Particle Base Complex			C		GOCC:0008540			
+C0105		Proteasome Regulatory Particle Lid Complex			C		GOCC:0008541			
+C0106		Proton Transporting ATP Synthase Complex			C		GOCC:0045259			
+C0107		Pyruvate Dehydrogenase Complex			C		GOCC:0045254			
+C0108		RFC Complex			C		GOCC:0005663			
+C0109		RNApo I Complex			C		GOCC:0005736			
+C0110		RNApo II Complex			C		GOCC:0016591			
+C0111		Respiratory Chain Complex I			C		GOCC:0045271			
+C0112		Respiratory Chain Complex II			C		GOCC:0045273			
+C0113		Respiratory Chain Complex III			C		GOCC:0045275			
+C0114		Respiratory Chain Complex IV			C		GOCC:0045277			
+C0115		SK Channel Complex			C					
+C0116		SWI/SNF Complex			C		GOCC:0016514			
+C0117		Succinate CoA Ligase GDP Forming Complex			C		GOCC:0045244			
+C0118		Succinate Dehydrogenase Complex			C		GOCC:0045281			
+C0119		T Cell Receptor Antigen Recognition Complex			C		GOCC:0042101			
+C0120		T Cell Receptor Complex			C		GOCC:0042101			
+C0121		T Type Calcium Channel Complex			C					
+C0122		TFIIH Complex			C		GOCC:0000439			
+C0123		TIF IB Complex			C					
+C0124		TORC1 Complex			C		GOCC:0031931			
+C0125		TORC2 Complex			C		GOCC:0031932			
+C0126		TR Auxiliary Protein Complex			C		GOCC:0016592			
+C0127		Ternary Complex			C		GOCC:0044207			
+C0128		Thrombin Antithrombin Complex			C					
+C0129		Trifunctional Complex			C		GOCC:0016507			
+C0130		Voltage Dependent Potassium Channel Complex			C		GOCC:0008076			
+C0131		Voltage Gated Sodium Channel Complex			C		GOCC:0001518			
+C0132		WAVE2 Complex			C					
+C0133		gamma Secretase Complex			C		GOCC:0070765			
+C0134		mRNA Cap Complex			C		GOCC:0005845			
+C0135		p85/p110 PI3Kinase Complex			C		GOCC:0005942			

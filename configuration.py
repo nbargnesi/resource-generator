@@ -2,13 +2,29 @@
 
 '''
  configuration.py
+ 
+ Data objects are initialized here; these objects are expected to be named 
+ using the data object '_prefix' string attribute + '_data'.
+ 
+ baseline_data - ordered dictionary mapping each source/input file
+ to its parser and resulting data objects. The local file name is 
+ mapped to a data tuple containing:
+	[0] the source file url
+	[1] the parser
+	[2] the data object, or a list of data objects
+		in the case that multiple objects are generated from the same file
+ This dictionary is consumed by gp_baseline.
 
- A mapping of each dataset to its proper parser. This dictionary
- is consumed by gp_baseline to generate the .belns and .beleq
- files. The datasets/parsers are themselves independant, and
- can be commented/uncommented based on the users desire to
- generate the files for a particular dataset.
+ data_file_info - dictionary mapping 'info' files for source files 
+ to .belns/.beleq output files. This is used by common.get_citation_info
+ only in the case where a different source file than the one used to generate
+ the corresponding data object should be cited, e.g, the source of the HGNC/RGD/MGI
+ equivalence mappings used for the HGNC/MGI/RGD .beleq files is EntrezGene.
 
+ affy_array_names - list of array names to include in the AFFX (Affymetrix
+ probe set) namespace. This list is consumed by parsers.AffyParser.  
+ 
+ 
 '''
 
 from collections import OrderedDict
@@ -145,3 +161,13 @@ affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 					   'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
 					   'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 
 						'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
+
+# location of info file used for each .belns/.beleq file
+#  - ONLY if different from the source file; used for common.get_citation_info
+data_file_info = {
+	'hgnc-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'mesh-diseases.beleq' : 'doid.owl.info',
+	'mgi-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'rgd-approved-symbols.beleq' : 'entrez_info.gz.info',
+}
+

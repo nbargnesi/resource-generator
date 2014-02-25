@@ -115,7 +115,8 @@ class NamespaceDataSet(DataSet):
 					header = tf.read().rstrip()
 					tf.close()
 					# add Namespace, Citation and Author values
-					header = get_citation_info(name, header)
+					# source_file attribute added to object during parsing
+					header = get_citation_info(name, header, self.source_file)
 				else:
 					print('WARNING: Missing header template for {0}'.format(name))
 					header = '[Values]'

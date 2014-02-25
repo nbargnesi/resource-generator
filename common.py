@@ -62,10 +62,6 @@ def gzip_to_text(gzip_file, encoding="ascii"):
 		for line in gzf:
 			yield str(line, encoding)
 
-#
-#	Funciton to fetch latest GO archive resource file
-#	* used by class GOBPParser and GOCCParser
-#
 def get_latest_GO_filename(go_file):
 	""" Get the name of the current GO termdb.obo-xml.gz file. """
 	url = go_file
@@ -104,53 +100,6 @@ def get_latest_MeSH_filename(url, prefix, suffix):
 	current_file = '/'.join([url,filenames[-1]])
 	return current_file
 	
-data_file_info = {
-	'affy-probeset-ids.belns' : 'affy.xml.info',
-	'chebi-ids.belns' : 'chebi.owl.info',
-	'chebi.belns' : 'chebi.owl.info',
-	'disease-ontology-ids.belns' : 'doid.owl.info',
-	'disease-ontology.belns' : 'doid.owl.info',
-	'entrez-gene-ids.belns' : 'entrez_info.gz.info',
-	'go-biological-processes-ids.belns' : 'go.xml.gz.info',
-	'go-biological-processes.belns' : 'go.xml.gz.info',
-	'go-cellular-component-ids.belns' : 'go.xml.gz.info',
-	'go-cellular-component.belns' : 'go.xml.gz.info',
-	'hgnc-approved-symbols.belns' : 'hgnc.tsv.info',
-	'mesh-biological-processes.belns' : 'mesh.bin.info',
-	'mesh-cellular-locations.belns' : 'mesh.bin.info',
-	'mesh-diseases.belns' : 'mesh.bin.info',
-	'mgi-approved-symbols.belns' : 'mgi.rpt.info',
-	'rgd-approved-symbols.belns' : 'rgd.txt.info',
-	'selventa-legacy-chemical-names.belns' : 'schem.info',
-	'selventa-legacy-diseases.belns' : 'sdis.info',
-	'selventa-named-complexes.belns' : 'named_complex.info',
-	'selventa-protein-families.belns' : 'selventa-protein-families.txt.info',
-	'swissprot-ids.belns' : 'swiss.xml.gz.info',
-	'swissprot.belns' : 'swiss.xml.gz.info',
-	'affy-probeset-ids.beleq' : 'affy.xml.info',
-	'chebi-ids.beleq' : 'chebi.owl.info',
-	'chebi.beleq' : 'chebi.owl.info',
-	'disease-ontology-ids.beleq' : 'doid.owl.info',
-	'disease-ontology.beleq' : 'doid.owl.info',
-	'entrez-gene-ids.beleq' : 'entrez_info.gz.info',
-	'go-biological-processes-ids.beleq' : 'go.xml.gz.info',
-	'go-biological-processes.beleq' : 'go.xml.gz.info',
-	'go-cellular-component-ids.beleq' : 'go.xml.gz.info',
-	'go-cellular-component.beleq' : 'go.xml.gz.info',
-	'hgnc-approved-symbols.beleq' : 'entrez_info.gz.info',
-	'mesh-biological-processes.beleq' : 'mesh.bin.info',
-	'mesh-cellular-locations.beleq' : 'mesh.bin.info',
-	'mesh-diseases.beleq' : 'mesh.bin.info',
-	'mgi-approved-symbols.beleq' : 'entrez_info.gz.info',
-	'rgd-approved-symbols.beleq' : 'entrez_info.gz.info',
-	'selventa-legacy-chemical-names.beleq' : 'schem.info',
-	'selventa-legacy-diseases.beleq' : 'sdis.info',
-	'selventa-named-complexes.beleq' : 'named_complex.info',
-	'swissprot-ids.beleq' : 'swiss.xml.gz.info',
-	'swissprot.beleq' : 'swiss.xml.gz.info',
-	'selventa-protein-families.beleq' : 'selventa-protein-families.txt.info'
-}
-
 p1 = re.compile('Last modified: ?(.*?)[\n|$]', re.M|re.S)
 p2 = re.compile('Downloaded at: ?(.*?)[\n|$]', re.M|re.S)
 p3 = re.compile('Filename: ?(.*?)[\n|$]', re.M|re.S)
@@ -165,7 +114,7 @@ p_go_2 = re.compile('\<date\>(\d\d:\d\d:\d\d\d\d).*?\<\/date\>')
 
 p_rgd_1 = re.compile('# GENERATED-ON: (\d\d\d\d\/\d\d\/\d\d)')
 
-def get_citation_info(name, header):
+def get_citation_info(name, header, data_file):
 	""" 
 	Add Namespace, Citation and Author values
 	
@@ -184,6 +133,7 @@ def get_citation_info(name, header):
 	+ rgd: (datasets/rgd.txt)
 		# GENERATED-ON: 2013/11/01
 	"""
+	from configuration import data_file_info
 	header = header.replace('\nCreatedDateTime=[#VALUE#]',
 		'\nCreatedDateTime='+time.strftime("%Y-%m-%dT%X"))
 	header = header.replace('\nVersionString=[#VALUE#]',
@@ -191,15 +141,17 @@ def get_citation_info(name, header):
 	header = header.replace('\nCopyrightString=Copyright (c) [#VALUE#]', 
 		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 
-	info_file = data_file_info[name]
+	info_file = data_file_info.get(name)
+	if info_file is None:
+		info_file = data_file + '.info'
 	info_text = open('./datasets/'+info_file).read()
-	try:
-		data_file = p3.search(info_text).group(1)
-	except:
-		data_file = None
+#	try:
+#		data_file = p3.search(info_text).group(1)
+#	except:
+#		data_file = None
 	pubver = 'NA'	
 	if data_file.find('chebi') >= 0:
-		f = open(data_file, 'r')
+		f = open('./datasets/'+data_file, 'r')
 		while 1:
 			line = f.readline().strip()
 			if not line: break
@@ -211,7 +163,7 @@ def get_citation_info(name, header):
 		f.close()
 	
 	elif data_file.find('doid') >= 0:
-		f = open(data_file, 'r')
+		f = open('./datasets/'+data_file, 'r')
 		while 1:
 			line = f.readline().strip()
 			if not line: break
@@ -224,7 +176,7 @@ def get_citation_info(name, header):
 		f.close()
 	
 	elif data_file.find('go') >= 0 and data_file:
-		f = gzip.open(data_file, 'r')
+		f = gzip.open('./datasets/'+data_file, 'r')
 		while 1:
 			line = f.readline().strip()
 			if not line: break
@@ -239,7 +191,7 @@ def get_citation_info(name, header):
 		f.close()
 	
 	elif data_file.find('rgd') >= 0:
-		f = open(data_file, 'r')
+		f = open('./datasets/'+data_file, 'r')
 		while 1:
 			line = f.readline().strip()
 			if not line: break
@@ -251,7 +203,7 @@ def get_citation_info(name, header):
 		f.close()
 	
 	elif data_file.find('affy') >= 0:
-		f = etree.iterparse(data_file)
+		f = etree.iterparse('./datasets/'+data_file)
 		for action, elem in f:
 			# mapping version and date to HG-U133_Plus_2 Array
 			if elem.tag == 'Array' and elem.get('name') == 'HG-U133_Plus_2':

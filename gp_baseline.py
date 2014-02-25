@@ -158,10 +158,10 @@ if args.begin_phase <= 2:
 	# use object_dict to access data objects by name
 	object_dict = {}
 	for root, dirs, filenames in os.walk(working_dir):
-		for f in filenames:
-			if f in baseline_data:
-				data_tuple = baseline_data.get(f)
-				parser = data_tuple[PARSER_TYPE]('datasets/'+f)
+		for fn in filenames:
+			if fn in baseline_data:
+				data_tuple = baseline_data.get(fn)
+				parser = data_tuple[PARSER_TYPE]('datasets/'+fn)
 				if verbose:
 					parser.is_verbose()
 					print('Running ' +str(parser))
@@ -172,11 +172,13 @@ if args.begin_phase <= 2:
 				# if data_tuple[2] is a list of objects, handle list
 				if isinstance(data_object, list):
 					for o in data_object:
+						o.source_file = fn
 						with open(str(o) + '.' + args.parsed_pickle, 'wb') as f:
 							pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 						object_dict[str(o) + '_data'] = o
 					continue
 				# if data_tuple[2] is a single object	
+				data_object.source_file = fn
 				with open(str(data_object) + '.' + args.parsed_pickle, 'wb') as f:
 					pickle.dump(data_object, f, pickle.HIGHEST_PROTOCOL)
 				object_dict[str(data_object) + '_data'] = data_object

@@ -49,7 +49,7 @@ def equiv(d, verbose):
 		for term_id in d.get_values():
 			uid = uuid.uuid4()
 			entrez_eq[term_id] = uid
-		write_beleq(entrez_eq, 'entrez-gene-ids')
+		write_beleq(entrez_eq, 'entrez-gene-ids', d.source_file)
 		# Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI, RGD
 		target = ('HGNC:', 'MGI:', 'RGD:')
 		for term_id in d.get_values():
@@ -66,7 +66,7 @@ def equiv(d, verbose):
 				# use the entrez uuid
 				uid = entrez_eq.get(entrez_id)
 			hgnc_eq[d.get_label(term_id)] = uid
-		write_beleq(hgnc_eq, d._name)
+		write_beleq(hgnc_eq, d._name, d.source_file)
 
 	elif str(d) == 'mgi':
 		for term_id in d.get_values():
@@ -77,7 +77,7 @@ def equiv(d, verbose):
 				# use the entrez uuid
 				uid = entrez_eq.get(entrez_id)
 			mgi_eq[d.get_label(term_id)] = uid
-		write_beleq(mgi_eq, d._name)	   
+		write_beleq(mgi_eq, d._name, d.source_file)	   
 
 	elif str(d) == 'rgd':
 		for term_id in d.get_values():
@@ -88,7 +88,7 @@ def equiv(d, verbose):
 				# use the entrez uuid
 				uid = entrez_eq.get(entrez_id)
 			rgd_eq[d.get_label(term_id)] = uid
-		write_beleq(rgd_eq, d._name)		
+		write_beleq(rgd_eq, d._name, d.source_file)		
 
 	elif str(d) == 'sp':
 		#check for dependencies
@@ -143,8 +143,8 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			sp_acc_eq[sec_acc_id] = uid
-		write_beleq(sp_eq, d._name)
-		write_beleq(sp_acc_eq, d._name+'-ids')
+		write_beleq(sp_eq, d._name, d.source_file)
+		write_beleq(sp_acc_eq, d._name+'-ids', d.source_file)
 	
 	elif str(d) == 'affx':
 		if parsed.gene2acc_data is None or len(parsed.gene2acc_data._dict) == 0:
@@ -204,7 +204,7 @@ def equiv(d, verbose):
 			if uid == None:
 				uid = uuid.uuid4()
 			affy_eq[term_id] = uid
-		write_beleq(affy_eq, d._name+'-ids') 
+		write_beleq(affy_eq, d._name+'-ids', d.source_file) 
 
 	elif str(d) == 'chebi':
 		for term_id in d.get_values():
@@ -214,8 +214,8 @@ def equiv(d, verbose):
 				chebi_id_eq[alt_id] = uid
 			name = d.get_label(term_id)
 			chebi_name_eq[name] = uid
-		write_beleq(chebi_name_eq,d._name)
-		write_beleq(chebi_id_eq,d._name+'-ids')
+		write_beleq(chebi_name_eq,d._name, d.source_file)
+		write_beleq(chebi_id_eq,d._name+'-ids', d.source_file)
 
 	elif str(d) == 'gobp':
 		for term_id in d.get_values():
@@ -227,8 +227,8 @@ def equiv(d, verbose):
 			if alt_ids:
 				for i in alt_ids:
 					gobp_id_eq[i] = uid
-		write_beleq(gobp_eq_dict, d._name)
-		write_beleq(gobp_id_eq, d._name+'-ids')
+		write_beleq(gobp_eq_dict, d._name, d.source_file)
+		write_beleq(gobp_id_eq, d._name+'-ids', d.source_file)
 
 	elif str(d) == 'gocc':
 		for term_id in d.get_values():
@@ -240,8 +240,8 @@ def equiv(d, verbose):
 			if alt_ids:
 				for i in alt_ids:
 					gocc_eq_dict[i] = uid
-		write_beleq(gocc_names_eq, d._name)
-		write_beleq(gocc_eq_dict, d._name+'-ids')
+		write_beleq(gocc_names_eq, d._name, d.source_file)
+		write_beleq(gocc_eq_dict, d._name+'-ids', d.source_file)
 
 	elif str(d) == 'do':
 		# assign DO a new uuid and use as the primary for diseases
@@ -250,8 +250,8 @@ def equiv(d, verbose):
 			name = d.get_label(term_id)
 			do_eq_dict[name] = uid
 			do_id_eq[term_id] = uid
-		write_beleq(do_eq_dict, d._name)
-		write_beleq(do_id_eq, d._name + '-ids')
+		write_beleq(do_eq_dict, d._name, d.source_file)
+		write_beleq(do_id_eq, d._name + '-ids', d.source_file)
 
 	elif str(d) == 'sdis':
 		sdis_to_do = parsed.sdis_to_do_data
@@ -265,7 +265,7 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			sdis_eq[entry] = uid
-		write_beleq(sdis_eq, d._name)
+		write_beleq(sdis_eq, d._name, d.source_file)
 		if verbose:
 			print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
 
@@ -282,7 +282,7 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			nch_eq[entry] = uid
-		write_beleq(nch_eq,d._name)
+		write_beleq(nch_eq, d._name, d.source_file)
 		if verbose:
 			print('Able to resolve {0} Selventa named complexes to GOCC'.format(str(count)))
  
@@ -302,7 +302,7 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			schem_eq[term] = uid
-		write_beleq(schem_eq,d._name)
+		write_beleq(schem_eq,d._name, d.source_file)
 		if verbose:
 			print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')
 
@@ -323,7 +323,7 @@ def equiv(d, verbose):
 			if uid is None:
 				uid = uuid.uuid4()
 			mesh_pp_eq[name] = uid
-		write_beleq(mesh_pp_eq,d._name)
+		write_beleq(mesh_pp_eq,d._name, d.source_file)
 
 	elif str(d) == 'meshcl':
 
@@ -342,7 +342,7 @@ def equiv(d, verbose):
 			if uid is None:
 				uid = uuid.uuid4()
 			mesh_cl_eq[name] = uid
-		write_beleq(mesh_cl_eq,d._name)
+		write_beleq(mesh_cl_eq, d._name, d.source_file)
 
 	elif str(d) == 'meshd':
 
@@ -356,7 +356,7 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			mesh_d_eq[name] = uid
-		write_beleq(mesh_d_eq, d._name)
+		write_beleq(mesh_d_eq, d._name, d.source_file)
 
 	else:
 		# if data set not handled above, generate new uuid for each term/name
@@ -371,7 +371,7 @@ def equiv(d, verbose):
 		if d.ids is True:
 			write_beleq(eq_id_dict, d._name)
 		if d.labels is True:
-			write_beleq(eq_name_dict, d._name)
+			write_beleq(eq_name_dict, d._name, d.source_file)
 
 def build_refseq(d):
 	""" Uses parsed gene2acc file to build dict mapping (entrez_gene -> refseq status). """
@@ -385,7 +385,7 @@ def build_refseq(d):
 			refseq[entrez_gene] = status
 	return refseq
 
-def write_beleq(eq_dict, filename):
+def write_beleq(eq_dict, filename, source_file):
 	""" Writes values and uuids from equivalence dictionary to .beleq file. """
 	fullname = '.'.join((filename, 'beleq'))
 	if len(eq_dict) == 0:
@@ -398,7 +398,7 @@ def write_beleq(eq_dict, filename):
 				header = tf.read().rstrip()
 				tf.close()
 				# add Namespace and Author values
-				header = get_citation_info(fullname, header)
+				header = get_citation_info(fullname, header, source_file)
 			else:
 				header = '[Values]'
 			f.write(header+'\n')

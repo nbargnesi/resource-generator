@@ -15,7 +15,7 @@
 		in the case that multiple objects are generated from the same file
  This dictionary is consumed by gp_baseline.
 
- data_file_info - dictionary mapping 'info' files for source files 
+ data_file_info - dictionary mapping source file names 
  to .belns/.beleq output files. This is used by common.get_citation_info
  only in the case where a different source file than the one used to generate
  the corresponding data object should be cited, e.g, the source of the HGNC/RGD/MGI
@@ -116,22 +116,25 @@ baseline_data['sdis'] = (
 	parsers.SDISParser, sdis_data
 )
 
-scomp_data = NCHData()
-baseline_data['named_complex'] = (
-	'http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns',
-	parsers.ComplexParser, scomp_data
-)
+#scomp_data = NCHData()
+#baseline_data['named_complex'] = (
+#	'http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns',
+#	parsers.ComplexParser, scomp_data
+#)
+scomp_data = StandardCustomData(name='selventa-named-complexes', prefix='scomp')
+baseline_data['selventa-named-complexes.txt'] = (
+	file_url + 'selventa-named-complexes.txt', parsers.NamespaceParser, scomp_data)
 
 sfam_data = StandardCustomData(name='selventa-protein-families', prefix='sfam')
 baseline_data['selventa-protein-families.txt'] = (
 	file_url + 'selventa-protein-families.txt', parsers.NamespaceParser, sfam_data
 )
 
-ctg_data = CTGData()
-baseline_data['named_complexes_to_GOCC.csv'] = (
-	file_url + 'named_complexes_to_GOCC.csv',
-	parsers.ComplexToGOParser, ctg_data
-)
+#ctg_data = CTGData()
+#baseline_data['named_complexes_to_GOCC.csv'] = (
+#	file_url + 'named_complexes_to_GOCC.csv',
+#	parsers.ComplexToGOParser, ctg_data
+#)
 
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
@@ -165,9 +168,9 @@ affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 # location of info file used for each .belns/.beleq file
 #  - ONLY if different from the source file; used for common.get_citation_info
 data_file_info = {
-	'hgnc-approved-symbols.beleq' : 'entrez_info.gz.info',
-	'mesh-diseases.beleq' : 'doid.owl.info',
-	'mgi-approved-symbols.beleq' : 'entrez_info.gz.info',
-	'rgd-approved-symbols.beleq' : 'entrez_info.gz.info',
+	'hgnc-approved-symbols.beleq' : 'entrez_info.gz',
+	'mesh-diseases.beleq' : 'doid.owl',
+	'mgi-approved-symbols.beleq' : 'entrez_info.gz',
+	'rgd-approved-symbols.beleq' : 'entrez_info.gz',
 }
 

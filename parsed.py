@@ -201,17 +201,17 @@ def build_data(entry, parser, data_object):
 			'DOID' : do_id,
 			'DO_name' : do_name }
 	
-	elif parser == 'Complex_Parser':
-		complex_term = entry.get('term')
+	#elif parser == 'Complex_Parser':
+	#	complex_term = entry.get('term')
 
-		data_object._dict[complex_term] = 'C'
+	#	data_object._dict[complex_term] = 'C'
   
-	elif parser == 'Complex_To_GO_Parser':
-		term = entry.get('NCH_Value')
-		go_id = entry.get('GO_Id')
-		go_id = go_id.replace('GO:', '')
-		data_object._dict[term] = {
-			'go_id' : go_id }
+	#elif parser == 'Complex_To_GO_Parser':
+	#	term = entry.get('NCH_Value')
+	#	go_id = entry.get('GO_Id')
+	#	go_id = go_id.replace('GO:', '')
+	#	data_object._dict[term] = {
+	#		'go_id' : go_id }
 			
 
 	elif parser == 'CHEBI_Parser':

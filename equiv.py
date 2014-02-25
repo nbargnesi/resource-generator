@@ -271,14 +271,18 @@ def equiv(d, verbose):
 
 	elif str(d) == 'scomp':
 		# Selventa named complexes (human) - equivalence to GOCC using manually generated .csv mapping file
-		ctg = parsed.ctg_data
+		#ctg = parsed.ctg_data
 		count = 0
 		nch_eq = {}
 		for entry in d.get_values():
-			go_id = ctg.get_equivalence(entry)
+			#go_id = ctg.get_equivalence(entry)
+			go_id = d.get_xrefs(entry)
+			go_id = {i.replace('GOCC:','')  for i in go_id if i.startswith('GOCC:')}
 			if go_id:
-				count += 1
-				uid = gocc_eq_dict.get(go_id)
+				count = count + len(go_id)
+				if len(go_id) == 1:
+					go_id = go_id.pop()
+					uid = gocc_eq_dict.get(go_id)
 			else:
 				uid = uuid.uuid4()
 			nch_eq[entry] = uid

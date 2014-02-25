@@ -1,12 +1,12 @@
-[Header]										
-Keyword=SCOMP										
-NameString=Selventa Named Complexes										
-DomainString=Cell Components and Complexes										
-"SpeciesString=9606, 10090, 10116"										
-DescriptionString=Selventa-defined names of protein complexes.										
-VersionString=20140224										
-										
-[Values]										
+#[Header]										
+#Keyword=SCOMP										
+#NameString=Selventa Named Complexes										
+#DomainString=Cell Components and Complexes										
+#SpeciesString=9606, 10090, 10116										
+#DescriptionString=Selventa-defined names of protein complexes.										
+#VersionString=20140224										
+#										
+#[Values]										
 ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN
 C0001		9-1-1 Complex			C		GOCC:0030896			
 C0002		AMP Activated Protein Kinase Complex	AMP-activated protein kinase		C		GOCC:0031588			

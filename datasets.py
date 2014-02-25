@@ -135,7 +135,7 @@ class StandardCustomData(NamespaceDataSet):
 
 	def get_values(self):
 		for term_id in self._dict:
-			if self._dict.get(term_id).get('OBSOLETE') != 1:
+			if term_id is not None and self._dict.get(term_id).get('OBSOLETE') != 1:
 				yield term_id
 
 	def get_label(self, term_id):
@@ -145,10 +145,11 @@ class StandardCustomData(NamespaceDataSet):
 		return label
 
 	def get_xrefs(self, term_id):
-		xrefs = set()
-		if self._dict.get(term_id).get('XREF'):
-			xrefs.update(self._dict.get(term_id).get('XREF'))
-		return xrefs
+		#xrefs = set()
+		#if self._dict.get(term_id).get('XREF'):
+		xrefs = self._dict.get(term_id).get('XREF').split('|')		
+		#xrefs.update(self._dict.get(term_id).get('XREF'))
+		return set(xrefs)
 	
 	def get_species(self, term_id):
 		species = self._dict.get(term_id).get('SPECIES')
@@ -571,32 +572,32 @@ class SCHEMtoCHEBIData(DataSet):
 	def __str__(self):
 		return 'schem_to_chebi'
 
-class NCHData(NamespaceDataSet):
+#class NCHData(NamespaceDataSet):
+#
+#	def __init__(self, dictionary={}, name='selventa-named-complexes', prefix='scomp'):
+#		super().__init__(dictionary, name, prefix)
+#
+#	def get_encoding(self, term_id):
+#		''' Return encoding (allowed abundance types) for 
+#		value - 'C' complexAbundance. ''' 
+#		return 'C'
 
-	def __init__(self, dictionary={}, name='selventa-named-complexes', prefix='scomp'):
-		super().__init__(dictionary, name, prefix)
 
-	def get_encoding(self, term_id):
-		''' Return encoding (allowed abundance types) for 
-		value - 'C' complexAbundance. ''' 
-		return 'C'
-
-
-class CTGData(DataSet):
-
-	def __init__(self, dictionary={}):
-		super().__init__(dictionary)
-
-	def get_equivalence(self, term):
-		mapping = self._dict.get(term)
-		if mapping:
-			go_id = mapping.get('go_id')
-			return go_id
-		else:
-			return None
-
-	def __str__(self):
-		return 'ctg'
+#class CTGData(DataSet):
+#
+#	def __init__(self, dictionary={}):
+#		super().__init__(dictionary)
+#
+#	def get_equivalence(self, term):
+#		mapping = self._dict.get(term)
+#		if mapping:
+#			go_id = mapping.get('go_id')
+#			return go_id
+#		else:
+#			return None
+#
+#	def __str__(self):
+#		return 'ctg'
 
 class SDISData(NamespaceDataSet):
 

@@ -141,9 +141,10 @@ def get_citation_info(name, header, data_file):
 	header = header.replace('\nCopyrightString=Copyright (c) [#VALUE#]', 
 		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 
-	info_file = data_file_info.get(name)
-	if info_file is None:
-		info_file = data_file + '.info'
+	new_data_file = data_file_info.get(name)
+	if new_data_file:
+		data_file = new_data_file  
+	info_file = data_file + '.info'
 	info_text = open('./datasets/'+info_file).read()
 #	try:
 #		data_file = p3.search(info_text).group(1)

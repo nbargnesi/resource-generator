@@ -98,8 +98,9 @@ if not os.path.exists('datasets'):
 dep_files = []
 dep_files.append('SDIS_to_DO.txt')
 dep_files.append('SCHEM_to_CHEBIID.txt')
-dep_files.append('named_complexes_to_GOCC.csv')
+#dep_files.append('named_complexes_to_GOCC.csv')
 dep_files.append('selventa-protein-families.txt')
+dep_files.append('selventa-named-complexes.txt')
 
 for df in dep_files:
 	if not os.path.exists(src_dir+'/datasets/'+df):

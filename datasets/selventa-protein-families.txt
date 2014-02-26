@@ -196,9 +196,9 @@ F0185		PPP1R Family	PP1 regulatory family		P
 F0186		PPP2C Family			P					
 F0187		PPP2R Subunit A Family			P					
 F0188		PPP2R Subunit B Family			P					
-F0189		PPP3 Family	"protein phosphatase 3, catalytic subunit"	same as PPP3C family.	P					
-F0190		PPP3C Family	"protein phosphatase 3, catalytic subunit"		P					
-F0191		PPP3R Family			P					
+F0189		PPP3 Family	calcineurin catalytic subunit|"protein phosphatase 3, catalytic subunit"	same as PPP3C family.	P					
+F0190		PPP3C Family	calcineurin catalytic subunit|"protein phosphatase 3, catalytic subunit"		P					
+F0191		PPP3R Family	calcineurin regulatory subunit		P					
 F0192		PRDX Family	peroxiredoxin	See http://en.wikipedia.org/wiki/Peroxiredoxin.	P					
 F0193		PRKA Family	PKA family		P					
 F0194		PRKAA Family			P					

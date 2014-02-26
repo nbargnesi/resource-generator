@@ -17,92 +17,54 @@ import parsed
 import configuration
 import os
 import time
-from collections import deque, defaultdict
+from collections import defaultdict
 from common import get_citation_info
 
+# stores xrefs from EGID dataset to build equivalences
+# to HGNC, MGI, and RGD - see resolve_entrez_id()
 entrez_converter = {}
+# primary root for all gene/protein data sets
+# needed for HGNC, MGI, RGD, SP, and AFFX
 entrez_eq = {}
-hgnc_eq = {}
-mgi_eq = {}
-rgd_eq = {}
-sp_eq = {}
-sp_acc_eq = {}
-affy_eq = {}
-refseq = {}
+# need hgnc, mgi, rgd id equivalence dicts for swissprot
+hgnc_id_eq, mgi_id_eq, rgd_id_eq = {}, {}, {}
+# need chebi id equivalence dict for schem
 chebi_id_eq = {}
-chebi_name_eq = {}
-pub_eq_dict = {}
+# need GOBP names for equivalencing MESHPP by string match
 gobp_eq_dict = {}
-gobp_id_eq = {}
-gocc_eq_dict = {}
-gocc_names_eq = {}
-do_eq_dict = {}
+# need GOCC ids for equivalencing to SCOMP
+# need GOCC names for equivalencing MESHCL by string match
+gocc_eq_dict, gocc_names_eq = {}, {}
+# need DO ids for equivalencing to MESHD
 do_id_eq = {}
-schem_eq = {}
-sdis_eq = {}
-mesh_cl_eq = {}
-mesh_d_eq = {}
-mesh_pp_eq = {}
 
 def equiv(d, verbose):
 	if str(d) == 'egid':
-		for term_id in d.get_values():
-			uid = uuid.uuid4()
-			entrez_eq[term_id] = uid
-		write_beleq(entrez_eq, 'entrez-gene-ids', d.source_file)
+		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+		entrez_eq.update(id_temp_dict)
 		# Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI, RGD
-		target = ('HGNC:', 'MGI:', 'RGD:')
 		for term_id in d.get_values():
 			dbXrefs = d.get_xrefs(term_id)
 			for dbXref in dbXrefs:
 				entrez_converter[dbXref] = term_id
 
 	elif str(d) == 'hgnc':
-		for term_id in d.get_values():
-			entrez_id = entrez_converter.get('HGNC:'+term_id)
-			if entrez_id is None:
-				uid = uuid.uuid4()
-			else:
-				# use the entrez uuid
-				uid = entrez_eq.get(entrez_id)
-			hgnc_eq[d.get_label(term_id)] = uid
-		write_beleq(hgnc_eq, d._name, d.source_file)
-
+		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+		hgnc_id_eq.update(id_temp_dict)
+	
 	elif str(d) == 'mgi':
-		for term_id in d.get_values():
-			entrez_id = entrez_converter.get('MGI:'+term_id)
-			if entrez_id is None:
-				uid = uuid.uuid4()
-			else:
-				# use the entrez uuid
-				uid = entrez_eq.get(entrez_id)
-			mgi_eq[d.get_label(term_id)] = uid
-		write_beleq(mgi_eq, d._name, d.source_file)	   
+		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+		mgi_id_eq.update(id_temp_dict)
 
 	elif str(d) == 'rgd':
-		for term_id in d.get_values():
-			entrez_id = entrez_converter.get('RGD:'+term_id)
-			if entrez_id is None:
-				uid = uuid.uuid4()
-			else:
-				# use the entrez uuid
-				uid = entrez_eq.get(entrez_id)
-			rgd_eq[d.get_label(term_id)] = uid
-		write_beleq(rgd_eq, d._name, d.source_file)		
+		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+		rgd_id_eq.update(id_temp_dict)
 
 	elif str(d) == 'sp':
-		#check for dependencies
-		if parsed.hgnc_data == None or len(parsed.hgnc_data._dict) == 0:
-			print('Missing required dependency data hgnc_data')
-		if parsed.mgi_data == None or len(parsed.mgi_data._dict) == 0:
-			print('Missing required dependency data mgi_data')
-		if parsed.rgd_data == None or len(parsed.rgd_data._dict) == 0:
-			print('Missing required dependency data rgd_data')
 		acc_helper_dict = defaultdict(list)
+		eq_name_dict, eq_id_dict = {}, {}	
 		for term_id in d.get_values():
 			uid = None
-			gene_ids = []
-			other_ids = []
 			name = d.get_label(term_id)
 			dbrefs = d.get_xrefs(term_id)
 			egids = [x for x in dbrefs if x.startswith('EGID:')]
@@ -116,19 +78,16 @@ def equiv(d, verbose):
 				elif len(dbrefs) == 1:
 					prefix, xref = dbrefs.pop().split(':')
 					if prefix == 'HGNC':	
-						hgnc_key = parsed.hgnc_data.get_label(xref)
-						uid = hgnc_eq.get(hgnc_key)
+						uid = hgnc_id_eq.get(xref)
 					if prefix == 'MGI':
-						mgi_key = parsed.mgi_data.get_label(xref)
-						uid = mgi_eq.get(mgi_key)
+						uid = mgi_id_eq.get(xref)
 					if prefix == 'RGD':
-						rgd_key = parsed.rgd_data.get_label(xref)
-						uid = rgd_eq.get(rgd_key)
+						uid = rgd_id_eq.get(xref)
 									
 			if uid is None:
 				uid = uuid.uuid4()
-			sp_eq[name] = uid
-			sp_acc_eq[term_id] = uid
+			eq_name_dict[name] = uid
+			eq_id_dict[term_id] = uid
 			# build dictionary of  secondary accessions 
 			# to identify those that map to multiple primary accessions/entry names
 			accessions = d.get_alt_ids(term_id)
@@ -136,17 +95,21 @@ def equiv(d, verbose):
 				acc_helper_dict[a].append(term_id)	
 
 		for sec_acc_id, v in acc_helper_dict.items():
+			uid = None
 		# only maps to one primary accession, same uuid
 			if len(v) == 1:
-				uid = sp_acc_eq.get(v[0])
+				uid = eq_id_dict.get(v[0])
 		# maps to > 1 primary accession, give it a new uuid.
-			else:
+			if uid is None:
 				uid = uuid.uuid4()
-			sp_acc_eq[sec_acc_id] = uid
-		write_beleq(sp_eq, d._name, d.source_file)
-		write_beleq(sp_acc_eq, d._name+'-ids', d.source_file)
+			eq_id_dict[sec_acc_id] = uid
+		if d.ids == True:
+			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+		if d.labels == True:
+			write_beleq(eq_name_dict, d._name, d.source_file)
 	
 	elif str(d) == 'affx':
+		affy_eq = {}
 		if parsed.gene2acc_data is None or len(parsed.gene2acc_data._dict) == 0:
 			print('Missing required dependency data gene2acc_data')
 			refseq = {}
@@ -209,112 +172,33 @@ def equiv(d, verbose):
 		write_beleq(affy_eq, d._name+'-ids', d.source_file) 
 
 	elif str(d) == 'chebi':
-		for term_id in d.get_values():
-			uid = uuid.uuid4()
-			chebi_id_eq[term_id] = uid
-			for alt_id in d.get_alt_ids(term_id):
-				chebi_id_eq[alt_id] = uid
-			name = d.get_label(term_id)
-			chebi_name_eq[name] = uid
-		write_beleq(chebi_name_eq,d._name, d.source_file)
-		write_beleq(chebi_id_eq,d._name+'-ids', d.source_file)
+		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+		chebi_id_eq.update(id_temp_dict)
 
 	elif str(d) == 'gobp':
-		for term_id in d.get_values():
-			uid = uuid.uuid4()
-			term_name = d.get_label(term_id)
-			alt_ids = d.get_alt_ids(term_id)
-			gobp_eq_dict[term_name] = uid
-			gobp_id_eq[term_id] = uid
-			if alt_ids:
-				for i in alt_ids:
-					gobp_id_eq[i] = uid
-		write_beleq(gobp_eq_dict, d._name, d.source_file)
-		write_beleq(gobp_id_eq, d._name+'-ids', d.source_file)
+		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+		gobp_eq_dict.update(name_temp_dict)
 
 	elif str(d) == 'gocc':
-		for term_id in d.get_values():
-			uid = uuid.uuid4()
-			term_name = d.get_label(term_id)
-			alt_ids = d.get_alt_ids(term_id)
-			gocc_names_eq[term_name] = uid
-			gocc_eq_dict[term_id] = uid
-			if alt_ids:
-				for i in alt_ids:
-					gocc_eq_dict[i] = uid
-		write_beleq(gocc_names_eq, d._name, d.source_file)
-		write_beleq(gocc_eq_dict, d._name+'-ids', d.source_file)
+		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+		gocc_eq_dict.update(id_temp_dict)
+		gocc_names_eq.update(name_temp_dict)
 
 	elif str(d) == 'do':
-		# assign DO a new uuid and use as the primary for diseases
-		for term_id in d.get_values():
-			uid = uuid.uuid4()
-			name = d.get_label(term_id)
-			do_eq_dict[name] = uid
-			do_id_eq[term_id] = uid
-		write_beleq(do_eq_dict, d._name, d.source_file)
-		write_beleq(do_id_eq, d._name + '-ids', d.source_file)
+		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+		do_id_eq.update(id_temp_dict)
 
 	elif str(d) == 'sdis':
-		sdis_to_do = parsed.sdis_to_do_data
-		# map to disease ontology using mapping  file sdis_to_do
-		count = 0
-		for entry in d.get_values():
-			do_id = sdis_to_do.get_equivalence(entry)
-			if do_id:
-				count = count + 1
-				uid = do_id_eq.get(do_id)
-			else:
-				uid = uuid.uuid4()
-			sdis_eq[entry] = uid
-		write_beleq(sdis_eq, d._name, d.source_file)
-		if verbose:
-			print('Able to resolve ' +str(count)+ ' legacy disease terms to DO.')
+		resolve_xrefs(d, 'do', do_id_eq, verbose)
 
 	elif str(d) == 'scomp':
-		# Selventa named complexes (human) - equivalence to GOCC using manually generated .csv mapping file
-		#ctg = parsed.ctg_data
-		count = 0
-		nch_eq = {}
-		for entry in d.get_values():
-			uid = None
-			label = d.get_label(entry)
-			go_id = d.get_xrefs(entry)
-			go_id = {i.replace('GOCC:','')  for i in go_id if i.startswith('GOCC:')}
-			if go_id:
-				if len(go_id) == 1:
-					count += 1
-					go_id = go_id.pop()
-					uid = gocc_eq_dict.get(go_id)
-			if uid is None:
-				uid = uuid.uuid4()
-			nch_eq[label] = uid
-		write_beleq(nch_eq, d._name, d.source_file)
-		if verbose:
-			print('Able to resolve {0} Selventa named complexes to GOCC'.format(str(count)))
- 
+		resolve_xrefs(d, 'gocc', gocc_eq_dict, verbose) 
+
 	elif str(d) == 'schem':
-		# if no xref to chebi, assign a new uuid.
-		count = 0
-		for term_id in d.get_values():
-			label = d.get_label(term_id)
-			uid = None
-			chebi_id = d.get_xrefs(term_id)
-			chebi_id = {i.replace('CHEBI:','') for i in chebi_id if i.startswith('CHEBI:')}
-			if chebi_id:
-				if len(chebi_id) == 1:
-					count += 1
-					chebi_id = chebi_id.pop()
-					uid = chebi_id_eq.get(chebi_id)
-			if uid is None:
-				uid = uuid.uuid4()
-			schem_eq[label] = uid
-		write_beleq(schem_eq,d._name, d.source_file)
-		if verbose:
-			print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')
+		resolve_xrefs(d, 'chebi', chebi_id_eq, verbose)
 
 	elif str(d) == 'meshpp':
-
+		eq_name_dict = {}
 		gobp_eq_cf = {k.casefold():v for k, v in gobp_eq_dict.items()}
 
 		for term_id in d.get_values():
@@ -329,11 +213,11 @@ def equiv(d, verbose):
 					uid = gobp_eq_cf.get(syn.casefold())
 			if uid is None:
 				uid = uuid.uuid4()
-			mesh_pp_eq[name] = uid
-		write_beleq(mesh_pp_eq,d._name, d.source_file)
+			eq_name_dict[name] = uid
+		write_beleq(eq_name_dict, d._name, d.source_file)
 
 	elif str(d) == 'meshcl':
-
+		eq_name_dict = {}
 		gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
 
 		for term_id in d.get_values():
@@ -348,12 +232,11 @@ def equiv(d, verbose):
 					uid = gocc_eq_cf.get(syn.casefold())
 			if uid is None:
 				uid = uuid.uuid4()
-			mesh_cl_eq[name] = uid
-		write_beleq(mesh_cl_eq, d._name, d.source_file)
+			eq_name_dict[name] = uid
+		write_beleq(eq_name_dict, d._name, d.source_file)
 
 	elif str(d) == 'meshd':
-
-		#do_data = parsed.load_data('do')
+		eq_name_dict = {}	
 		do_data = parsed.do_data
 		for term_id in d.get_values():
 			name = d.get_label(term_id)
@@ -362,23 +245,11 @@ def equiv(d, verbose):
 				uid = do_id_eq[xref]
 			else:
 				uid = uuid.uuid4()
-			mesh_d_eq[name] = uid
-		write_beleq(mesh_d_eq, d._name, d.source_file)
+			eq_name_dict[name] = uid
+		write_beleq(eq_name_dict, d._name, d.source_file)
 
 	else:
-		# if data set not handled above, generate new uuid for each term/name
-		# and write .beleq file(s) as directed by d.ids and d.labels
-		eq_name_dict = {}
-		eq_id_dict = {}
-		for term_id in d.get_values():
-			name = d.get_label(term_id)
-			uid = uuid.uuid4()
-			eq_name_dict[term_id] = uid
-			eq_id_dict[term_id] = uid
-		if d.ids is True:
-			write_beleq(eq_id_dict, d._name)
-		if d.labels is True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
+		write_root_beleq(d, verbose)
 
 def build_refseq(d):
 	""" Uses parsed gene2acc file to build dict mapping (entrez_gene -> refseq status). """
@@ -412,3 +283,81 @@ def write_beleq(eq_dict, filename, source_file):
 			# write data
 			for name, uid in sorted(eq_dict.items()):
 				f.write('|'.join((name,str(uid))) + '\n')
+
+def resolve_xrefs(d, root_prefix, root_eq_dict, verbose):
+	""" Writes .beleq file for dataset d, given the prefix from the 'root' dataset
+	and the (already built) equivalence dictionary from the root dataset. """
+	count = 0
+	eq_name_dict = {}
+	eq_id_dict = {}
+	prefix_string = root_prefix.upper() + ':'
+	for term_id in d.get_values():
+		label = d.get_label(term_id)
+		uid = None
+		xref_id = d.get_xrefs(term_id)
+		xref_id = {i.replace(prefix_string,'') for i in xref_id if i.startswith(prefix_string)}
+		if xref_id:
+			if len(xref_id) == 1:
+				count += 1
+				xref_id = xref_id.pop()
+				uid = root_eq_dict.get(xref_id)
+		if uid is None:
+			uid = uuid.uuid4()
+		eq_name_dict[label] = uid
+		eq_id_dict[term_id] = uid
+		if d.get_alt_ids(term_id):
+			for alt_id in d.get_alt_ids(term_id):
+				eq_id_dict[alt_id] = uid
+	if d.ids == True:
+		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+	if d.labels == True:
+		write_beleq(eq_name_dict, d._name, d.source_file)
+	if verbose:
+		print('Able to resolve {0} {1} terms to {2}.'.format(str(count), d._name, root_prefix.upper()))
+	return eq_id_dict	
+
+def write_root_beleq(d, verbose):
+	""" Writes .beleq file for data sets to be used as a 'root' or datasets
+	that will not be equivalenced. Returns ID equivalence dictionary. """
+	eq_name_dict = {}
+	eq_id_dict = {}
+	for term_id in d.get_values():
+		name = d.get_label(term_id)
+		uid = uuid.uuid4()
+		eq_name_dict[name] = uid
+		eq_id_dict[term_id] = uid
+		if d.get_alt_ids(term_id):
+			for alt_id in d.get_alt_ids(term_id):
+				eq_id_dict[alt_id] = uid
+	if d.ids == True:
+		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+	if d.labels == True:
+		write_beleq(eq_name_dict, d._name, d.source_file)
+	return eq_id_dict, eq_name_dict
+
+def resolve_entrez_id(d, verbose):
+	""" For HGNC, MGI, RGD, writes .beleq file(s) using equivalences 
+	from Entrez Gene, stored in entrez_converter dictionary. Returns
+	equivalence dictionaries. """
+	prefix_string = d._prefix.upper() + ':'
+	eq_name_dict = {}
+	eq_id_dict = {}
+	for term_id in d.get_values():
+		uid = None
+		name = d.get_label(term_id)
+		entrez_id = entrez_converter.get(prefix_string + term_id)
+		if entrez_id:
+			uid = entrez_eq.get(entrez_id)
+		if uid is None:
+			uid = uuid.uuid4()
+		eq_name_dict[name] = uid
+		eq_id_dict[term_id] = uid
+		if d.get_alt_ids(term_id):
+			for alt_id in d.get_alt_ids(term_id):
+				eq_id_dict[alt_id] = uid
+	if d.ids == True:
+		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+	if d.labels == True:
+		write_beleq(eq_name_dict, d._name, d.source_file)
+	return eq_id_dict, eq_name_dict
+	

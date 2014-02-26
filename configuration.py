@@ -96,17 +96,20 @@ schem_data = StandardCustomData(name='selventa-legacy-chemical-names', prefix='s
 baseline_data['selventa-legacy-chemical-names.txt'] = (
 	file_url + 'selventa-legacy-chemical-names.txt', parsers.NamespaceParser, schem_data)
 
-sdis_to_do_data = SDIStoDOData()
-baseline_data['SDIS_to_DO.txt'] = (
-	file_url + 'SDIS_to_DO.txt',
-	parsers.SDIStoDOParser, sdis_to_do_data
-)
+#sdis_to_do_data = SDIStoDOData()
+#baseline_data['SDIS_to_DO.txt'] = (
+#	file_url + 'SDIS_to_DO.txt',
+#	parsers.SDIStoDOParser, sdis_to_do_data
+#)
 
-sdis_data = SDISData()
-baseline_data['sdis'] = (
-	'http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-diseases.belns',
-	parsers.SDISParser, sdis_data
-)
+#sdis_data = SDISData()
+#baseline_data['sdis'] = (
+#	'http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-diseases.belns',
+#	parsers.SDISParser, sdis_data
+#)
+sdis_data = StandardCustomData(name='selventa-legacy-diseases', prefix='sdis')
+baseline_data['selventa-legacy-diseases.txt'] = (
+	file_url + 'selventa-legacy-diseases.txt', parsers.NamespaceParser, sdis_data)
 
 scomp_data = StandardCustomData(name='selventa-named-complexes', prefix='scomp')
 baseline_data['selventa-named-complexes.txt'] = (

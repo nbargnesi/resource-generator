@@ -507,48 +507,6 @@ class CHEBIParser(Parser):
 		return 'CHEBI_Parser'
 
 
-class SDISParser(Parser):
-
-	def __init__(self, url):
-		super(SDISParser, self).__init__(url)
-		self.sdis_file = url
-
-	def parse(self):
-		isFalse = True
-		with open(self.sdis_file, 'r') as fp:
-			for line in fp.readlines():
-				if '[Values]' not in line and isFalse:
-					continue
-				elif '[Values]' in line:
-					isFalse = False
-					continue
-				else:
-					sdis_id = line.split('|')[0]
-					yield {'sdis_id' : sdis_id }
-
-	def __str__(self):
-		return 'SDIS_Parser'
-
-
-class SDIStoDOParser(Parser):
-
-	def __init__(self, url):
-		super(SDIStoDOParser, self).__init__(url)
-		self.sdis_to_do = url
-
-	def parse(self):
-
-		column_headers = ['SDIS_term', 'DOID', 'DO_name']
-
-		with open(self.sdis_to_do, 'r') as fp:
-			rdr = csv.DictReader(fp, delimiter='\t', fieldnames=column_headers)
-
-			for row in rdr:
-				yield row
-
-	def __str__(self):
-		return 'SDIStoDO_Parser'
-
 
 class GOParser(Parser):
 	# TODO - build obsolete methods into data set

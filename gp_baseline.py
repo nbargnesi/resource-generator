@@ -256,12 +256,6 @@ interval_time = time.time()
 
 if args.begin_phase > 2:
 	# need to reload some data into parsed objects since they are needed by eqiv:
-	#  - sdis_to_do     ...needs... sdis
-	parsed.sdis_to_do_data = object_dict.get('sdis_to_do_data')
-	#  - swiss          ...needs... hgnc, mgi, rgd
-	parsed.hgnc_data = object_dict.get('hgnc_data')
-	parsed.mgi_data = object_dict.get('mgi_data')
-	parsed.rgd_data = object_dict.get('rgd_data')
 	#  - meshd 			...needs... do
 	parsed.do_data = object_dict.get('do_data')
 	#  - affy           ...needs... g2

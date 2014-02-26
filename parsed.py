@@ -173,20 +173,6 @@ def build_data(entry, parser, data_object):
 			'tax_id' : taxid,
 			'entrez_gene' : entrez_gene }
 
-	elif parser == 'SDIS_Parser':
-		sdis_id = entry.get('sdis_id')
-
-		data_object._dict[sdis_id] = 'O'
-
-	elif parser == 'SDIStoDO_Parser':
-		sdis_term = entry.get('SDIS_term')
-		do_id = entry.get('DOID')
-		do_name = entry.get('DO_name')
-
-		data_object._dict[sdis_term] = {
-			'DOID' : do_id,
-			'DO_name' : do_name }
-	
 
 	elif parser == 'CHEBI_Parser':
 		name = entry.get('name')

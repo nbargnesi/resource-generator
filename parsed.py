@@ -173,20 +173,6 @@ def build_data(entry, parser, data_object):
 			'tax_id' : taxid,
 			'entrez_gene' : entrez_gene }
 
-	elif parser == 'SCHEM_Parser':
-		schem_id = entry.get('schem_id')
-
-		data_object._dict[schem_id] = 'A'
-
-	elif parser == 'SCHEMtoCHEBI_Parser':
-		schem_term = entry.get('SCHEM_term')
-		chebi_id = entry.get('CHEBIID')
-		chebi_name = entry.get('CHEBI_name')
-
-		data_object._dict[schem_term] = {
-			'CHEBIID' : chebi_id,
-			'CHEBI_name' : chebi_name }
-
 	elif parser == 'SDIS_Parser':
 		sdis_id = entry.get('sdis_id')
 
@@ -201,18 +187,6 @@ def build_data(entry, parser, data_object):
 			'DOID' : do_id,
 			'DO_name' : do_name }
 	
-	#elif parser == 'Complex_Parser':
-	#	complex_term = entry.get('term')
-
-	#	data_object._dict[complex_term] = 'C'
-  
-	#elif parser == 'Complex_To_GO_Parser':
-	#	term = entry.get('NCH_Value')
-	#	go_id = entry.get('GO_Id')
-	#	go_id = go_id.replace('GO:', '')
-	#	data_object._dict[term] = {
-	#		'go_id' : go_id }
-			
 
 	elif parser == 'CHEBI_Parser':
 		name = entry.get('name')
@@ -291,18 +265,4 @@ def build_data(entry, parser, data_object):
 			'name' : name,
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }
-
-#def load_data(string):
-#
-#	datasets = [entrez_data, hgnc_data, mgi_data, rgd_data,
-#				swiss_data, affy_data, chebi_data, 
-#				gene2acc_data, entrez_history_data, 
-#				schem_data, schem_to_chebi_data, gobp_data,
-#				gocc_data, swiss_withdrawn_acc_data,
-#				do_data, sdis_data, sdis_to_do_data, ctg_data, nch_data,
-#				meshcl_data, meshd_data, meshpp_data, sfam_data]
-#
-#	for d in datasets:
-#		if str(d) == string:
-#			return d
 

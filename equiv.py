@@ -149,6 +149,9 @@ def equiv(d, verbose):
 	elif str(d) == 'affx':
 		if parsed.gene2acc_data is None or len(parsed.gene2acc_data._dict) == 0:
 			print('Missing required dependency data gene2acc_data')
+			refseq = {}
+		else:
+			refseq = build_refseq(parsed.gene2acc_data)
 
 		ref_status = {'REVIEWED' : 0,
 			  'VALIDATED' : 1,
@@ -158,7 +161,6 @@ def equiv(d, verbose):
 			  'INFERRED' : 5,
 			  '-' : 6}
 
-		refseq = build_refseq(parsed.gene2acc_data)
 		for term_id in d.get_values():
 			uid = None
 			entrez_ids = d.get_xrefs(term_id)
@@ -275,37 +277,38 @@ def equiv(d, verbose):
 		count = 0
 		nch_eq = {}
 		for entry in d.get_values():
-			#go_id = ctg.get_equivalence(entry)
+			uid = None
+			label = d.get_label(entry)
 			go_id = d.get_xrefs(entry)
 			go_id = {i.replace('GOCC:','')  for i in go_id if i.startswith('GOCC:')}
 			if go_id:
-				count = count + len(go_id)
 				if len(go_id) == 1:
+					count += 1
 					go_id = go_id.pop()
 					uid = gocc_eq_dict.get(go_id)
-			else:
+			if uid is None:
 				uid = uuid.uuid4()
-			nch_eq[entry] = uid
+			nch_eq[label] = uid
 		write_beleq(nch_eq, d._name, d.source_file)
 		if verbose:
 			print('Able to resolve {0} Selventa named complexes to GOCC'.format(str(count)))
  
 	elif str(d) == 'schem':
-		# try to resolve schem terms to CHEBI. If there is not one,
-		# assign a new uuid.
+		# if no xref to chebi, assign a new uuid.
 		count = 0
-		#schem_to_chebi = parsed.load_data('schem_to_chebi')
-		schem_to_chebi = parsed.schem_to_chebi_data
-		for term in d.get_values():
-			chebi_id = schem_to_chebi.get_equivalence(term)
+		for term_id in d.get_values():
+			label = d.get_label(term_id)
+			uid = None
+			chebi_id = d.get_xrefs(term_id)
+			chebi_id = {i.replace('CHEBI:','') for i in chebi_id if i.startswith('CHEBI:')}
 			if chebi_id:
-				count = count + 1
-				uid = chebi_id_eq.get(chebi_id)
-				if uid is None:
-					uid = uuid.uuid4()
-			else:
+				if len(chebi_id) == 1:
+					count += 1
+					chebi_id = chebi_id.pop()
+					uid = chebi_id_eq.get(chebi_id)
+			if uid is None:
 				uid = uuid.uuid4()
-			schem_eq[term] = uid
+			schem_eq[label] = uid
 		write_beleq(schem_eq,d._name, d.source_file)
 		if verbose:
 			print('Able to resolve ' +str(count)+ ' legacy chemical terms to CHEBI.')

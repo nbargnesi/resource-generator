@@ -38,30 +38,14 @@ class Parser(object):
 		return "Parser"
 
 class NamespaceParser(Parser):
-	''' Generic parser. Expects tab-delimited file, split into '[Header]' and '[Values]'. '''
+	''' Generic parser. Expects tab-delimited file - 
+	all rows prior to column header row should start with '#'.  '''
 		
 	def __init__(self, url):
 		super().__init__(url)
 
 	def parse(self):
-		#info_dict = {}
 		with open(self._url, 'r') as f:
-			#for line in f.readlines():
-			#	line = line.strip()
-			#	if not line:
-			#		continue
-			#	if line.startswith('[') :
-			#		field = line.strip()
-			#		continue
-			#	elif 'Header' in field:
-			#		print(line)
-			#		k, v = line.split('=')
-			#		info_dict[k.strip()] = v.strip()
-			#	elif 'Value' in field:
-			#		reader = csv.DictReader(f, delimiter='\t')
-			#		for row in reader:
-			#			yield row
-			#			print(row)
 			reader = csv.DictReader(filter(lambda row: 
 								not row[0].startswith('#'), f), delimiter='\t')
 			for row in reader:
@@ -71,10 +55,7 @@ class NamespaceParser(Parser):
 		return "NamespaceParser"
 
 class EntrezGeneInfoParser(Parser):
-	resourceLocation = """http://resource.belframework.org/belframework/1.0/
-						  namespace/entrez-gene-ids-hmr.belns"""
 
-	# columns for an Entrez gene info dataset.
 	headers = ['tax_id', 'GeneID', 'Symbol', 'LocusTag',
 					   'Synonyms', 'dbXrefs', 'chromosome',
 					   'map_location', 'description',
@@ -86,7 +67,6 @@ class EntrezGeneInfoParser(Parser):
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.entrez_info = url
 
 	def parse(self):
 		reader = csv.DictReader(gzip_to_text(self._url),
@@ -102,15 +82,12 @@ class EntrezGeneInfoParser(Parser):
 
 
 class EntrezGeneHistoryParser(Parser):
-	resourceLocation = """"http://resource.belframework.org/belframework/1.0/
-						   namespace/entrez-gene-ids-hmr.belns"""
 
 	headers = ["tax_id", "GeneID", "Discontinued_GeneID",
 							  "Discontinued_Symbol", "Discontinue_Date"]
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.entrez_history = url
 
 	def parse(self):
 		reader = csv.DictReader(gzip_to_text(self._url),
@@ -126,8 +103,6 @@ class EntrezGeneHistoryParser(Parser):
 
 
 class HGNCParser(Parser):
-	resourceLocation = """http://resource.belframework.org/belframework/1.0/
-						  namespace/hgnc-approved-symbols.belns"""
 
 	def __init__(self, url):
 		super().__init__(url)
@@ -152,8 +127,6 @@ class HGNCParser(Parser):
 
 
 class MGIParser(Parser):
-	resourceLocation = """http://resource.belframework.org/belframework/1.0/
-						  namespace/mgi-approved-symbols.belns"""
 
 	def __init__(self, url):
 		super().__init__(url)
@@ -170,8 +143,6 @@ class MGIParser(Parser):
 
 
 class RGDParser(Parser):
-	resourceLocation = """http://resource.belframework.org/belframework/1.0/
-						  namespace/rgd-approved-symbols.belns"""
 
 	def __init__(self, url):
 		super().__init__(url)
@@ -200,14 +171,9 @@ class GeneTypeError(Exception):
 
 
 class SwissProtParser(Parser):
-	resourceLocation_accession_numbers = """http://resource.belframework.org/
-				belframework/1.0/namespace/swissprot-accession-numbers.belns"""
-	resourceLocation_entry_names = """http://resource.belframework.org/
-					  belframework/1.0/namespace/swissprot-entry-names.belns"""
 
 	def __init__(self, url):
 		super().__init__(url)
-		#self.sprot_file = url
 		self.entries = {}
 		self.accession_numbers = {}
 		self.gene_ids = {}
@@ -227,7 +193,6 @@ class SwissProtParser(Parser):
 	def parse(self):
 
 		with gzip.open(self._url) as f:
-#		 with open(self.sprot_file, 'rb') as sprotf:
 			ctx = etree.iterparse(f, tag=self.entry)
 
 			for ev, e in ctx:
@@ -348,17 +313,9 @@ def filter_plus_print(row):
 class AffyParser(Parser):
 
 	def __init__(self, url):
-		super(AffyParser, self).__init__(url)
-		#self.affy_file = url
+		super().__init__(url)
 
 	def parse(self):
-
-		# the arrays we are concerned with - moved to configuration.py
-#		array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
-#					   'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
-#					   'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',
-#					   'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 
-#						'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
 
 		from configuration import affy_array_names
 		urls = []
@@ -413,8 +370,7 @@ class AffyParser(Parser):
 class Gene2AccParser(Parser):
 
 	def __init__(self, url):
-	   super(Gene2AccParser, self).__init__(url)
-	   self.gene2acc_file = url
+	   super().__init__(url)
 
 	def parse(self):
 
@@ -432,7 +388,7 @@ class Gene2AccParser(Parser):
 						  'mature peptide accession.version',
 						  'mature peptide gi', 'Symbol']
 
-		g2a_reader = csv.DictReader(gzip_to_text(self.gene2acc_file), delimiter='\t',
+		g2a_reader = csv.DictReader(gzip_to_text(self._url), delimiter='\t',
 									fieldnames=column_headers)
 
 		for row in g2a_reader:
@@ -515,8 +471,7 @@ class BELAnnotationsParser(Parser):
 class CHEBIParser(Parser):
 
 	def __init__(self, url):
-		super(CHEBIParser, self).__init__(url)
-		self.chebi_file = url
+		super().__init__(url)
 		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
 		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
 		self.altId = '{http://purl.obolibrary.org/obo#}altId'
@@ -524,7 +479,7 @@ class CHEBIParser(Parser):
 
 	def parse(self):
 
-		with open(self.chebi_file, 'rb') as cf:
+		with open(self._url, 'rb') as cf:
 			tree = etree.iterparse(cf, tag=self.classy)
 			for event, elem in tree:
 				if len(elem.values()) != 0:
@@ -552,70 +507,6 @@ class CHEBIParser(Parser):
 		return 'CHEBI_Parser'
 
 
-class PubNamespaceParser(Parser):
-
-	def __init__(self, url):
-	   super(PubNamespaceParser, self).__init__(url)
-	   self.pub_file = url
-
-	def parse(self):
-		column_headers = ['pubchem_id', 'synonym']
-		pub_reader = csv.DictReader(gzip_to_text(self.pub_file), delimiter='\t',
-									fieldnames=column_headers)
-
-		with open(self.pub_file, 'r') as fp:
-			pub_reader = csv.DictReader(fp, delimiter='\t',
-										fieldnames=column_headers)
-
-		for row in pub_reader:
-			yield row
-
-	def __str__(self):
-		return 'PubNamespace_Parser'
-
-
-class PubEquivParser(Parser):
-
-	def __init__(self, url):
-	   super(PubEquivParser, self).__init__(url)
-	   self.cid_file = url
-
-	def parse(self):
-
-		column_headers = ['PubChem SID', 'Source', 'External ID', 'PubChem CID']
-		cid_reader = csv.DictReader(gzip_to_text(self.cid_file), delimiter='\t',
-									fieldnames=column_headers)
-
-		for row in cid_reader:
-			yield row
-
-	def __str__(self):
-		return 'PubEquiv_Parser'
-
-
-class SCHEMParser(Parser):
-
-	def __init__(self, url):
-		super(SCHEMParser, self).__init__(url)
-		self.schem_file = url
-
-	def parse(self):
-		isFalse = True
-		with open(self.schem_file, 'r') as fp:
-			for line in fp.readlines():
-				if '[Values]' not in line and isFalse:
-					continue
-				elif '[Values]' in line:
-					isFalse = False
-					continue
-				else:
-					schem_id = line.split('|')[0]
-					yield {'schem_id' : schem_id }
-
-	def __str__(self):
-		return 'SCHEM_Parser'
-
-
 class SDISParser(Parser):
 
 	def __init__(self, url):
@@ -637,64 +528,6 @@ class SDISParser(Parser):
 
 	def __str__(self):
 		return 'SDIS_Parser'
-
-class ComplexParser(Parser):
-
-	def __init__(self, url):
-		super(ComplexParser, self).__init__(url)
-		self.ns_file = url
-
-	def parse(self):
-		isFalse = True
-		with open(self.ns_file, 'r') as fp:
-			for line in fp.readlines():
-				if '[Values]' not in line and isFalse:
-					continue
-				elif '[Values]' in line:
-					isFalse = False
-					continue
-				else:
-					term = line.split('|')[0]
-					yield {'term' : term }
-
-	def __str__(self):
-		return 'Complex_Parser'
-
-class ComplexToGOParser(Parser):
-
-	def __init__(self, url):
-		super(ComplexToGOParser, self).__init__(url)
-		self.map_file = url
-
-	def parse(self):
-		
-		with open(self.map_file, 'r') as ctg:
-			ctg_csvr = csv.DictReader(ctg, delimiter = ',')
-			for row in ctg_csvr:
-				yield row
-	
-	def __str__(self):
-		return 'Complex_To_GO_Parser'
-
-
-class SCHEMtoCHEBIParser(Parser):
-
-	def __init__(self, url):
-		super(SCHEMtoCHEBIParser, self).__init__(url)
-		self.schem_to_chebi = url
-
-	def parse(self):
-
-		column_headers = ['SCHEM_term', 'CHEBIID', 'CHEBI_name']
-
-		with open(self.schem_to_chebi, 'r') as fp:
-			rdr = csv.DictReader(fp, delimiter='\t', fieldnames=column_headers)
-
-			for row in rdr:
-				yield row
-
-	def __str__(self):
-		return 'SCHEMtoCHEBI_Parser'
 
 
 class SDIStoDOParser(Parser):
@@ -789,8 +622,7 @@ class GOParser(Parser):
 class MESHParser(Parser):
 
 	def __init__(self, url):
-		super(MESHParser, self).__init__(url)
-		self.mesh_file = url
+		super().__init__(url)
 
 	def parse(self):
 
@@ -802,7 +634,7 @@ class MESHParser(Parser):
 		sts = set()
 		synonyms = set()
 		firstTime = True
-		with open(self.mesh_file, 'r') as fp:
+		with open(self._url, 'r') as fp:
 			for line in fp.readlines():
 				if line.startswith('MH ='):
 					mh = line.split('=')[1].strip()
@@ -934,8 +766,7 @@ class DeprecatedTermException(Exception):
 class DOParser(Parser):
 
 	def __init__(self, url):
-		super(DOParser, self).__init__(url)
-		self.do_file = url
+		super().__init__(url)
 		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
 		self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
 		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
@@ -945,7 +776,7 @@ class DOParser(Parser):
 
 	def parse(self):
 
-		with open(self.do_file, 'rb') as df:
+		with open(self._url, 'rb') as df:
 			tree = etree.iterparse(df, tag=self.classy)
 			for event, elem in tree:
 				do_dict = {}
@@ -984,8 +815,7 @@ class DOParser(Parser):
 class DODeprecatedParser(Parser):
 
 	def __init__(self, url):
-		super(DODeprecatedParser, self).__init__(url)
-		self.do_file = url
+		super().__init__(url)
 		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
 		self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
 		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
@@ -994,7 +824,7 @@ class DODeprecatedParser(Parser):
 
 	def parse(self):
 
-		with open(self.do_file, 'rb') as df:
+		with open(self._url, 'rb') as df:
 			tree = etree.iterparse(df, tag=self.classy)
 			for event, elem in tree:
 				do_dep_dict = {}
@@ -1022,15 +852,16 @@ class DODeprecatedParser(Parser):
 	def __str__(self):
 		return 'DODeprecated_Parser'
 
+#TODO - consolidate RGD parsers - file format is same
+# filtering of non-rat data can be done in parsed module
 class RGDObsoleteParser(Parser):
 
 	def __init__(self, url):
-		super(RGDObsoleteParser, self).__init__(url)
-		self.rgd_file = url
+		super().__init__(url)
 
 	def parse(self):
 
-		with open(self.rgd_file, 'r') as rgdo:
+		with open(self._url, 'r') as rgdo:
 			# skip comment lines
 			rgd_csvr = csv.DictReader(filter(lambda row:
 												not row[0].startswith('#'), rgdo), 

@@ -257,11 +257,7 @@ interval_time = time.time()
 if args.begin_phase > 2:
 	# need to reload some data into parsed objects since they are needed by eqiv:
 	#  - sdis_to_do     ...needs... sdis
-	#  - schem_to_chebi ...needs... schem
-	#  - nch            ...needs... ctg
 	parsed.sdis_to_do_data = object_dict.get('sdis_to_do_data')
-	parsed.schem_to_chebi_data = object_dict.get('schem_to_chebi_data')
-	parsed.ctg_data = object_dict.get('ctg_data')
 	#  - swiss          ...needs... hgnc, mgi, rgd
 	parsed.hgnc_data = object_dict.get('hgnc_data')
 	parsed.mgi_data = object_dict.get('mgi_data')

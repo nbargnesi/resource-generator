@@ -92,17 +92,9 @@ baseline_data['chebi.owl'] = (
 	parsers.CHEBIParser, chebi_data
 )
 
-schem_to_chebi_data = SCHEMtoCHEBIData()
-baseline_data['SCHEM_to_CHEBIID.txt'] = (
-	file_url + 'SCHEM_to_CHEBIID.txt',
-	parsers.SCHEMtoCHEBIParser, schem_to_chebi_data
-)
-
-schem_data = SCHEMData()
-baseline_data['schem'] = (
-	'http://resource.belframework.org/belframework/1.0/namespace/selventa-legacy-chemical-names.belns', 
-	parsers.SCHEMParser, schem_data
-)
+schem_data = StandardCustomData(name='selventa-legacy-chemical-names', prefix='schem')
+baseline_data['selventa-legacy-chemical-names.txt'] = (
+	file_url + 'selventa-legacy-chemical-names.txt', parsers.NamespaceParser, schem_data)
 
 sdis_to_do_data = SDIStoDOData()
 baseline_data['SDIS_to_DO.txt'] = (
@@ -116,11 +108,6 @@ baseline_data['sdis'] = (
 	parsers.SDISParser, sdis_data
 )
 
-#scomp_data = NCHData()
-#baseline_data['named_complex'] = (
-#	'http://resource.belframework.org/belframework/1.0/namespace/selventa-named-human-complexes.belns',
-#	parsers.ComplexParser, scomp_data
-#)
 scomp_data = StandardCustomData(name='selventa-named-complexes', prefix='scomp')
 baseline_data['selventa-named-complexes.txt'] = (
 	file_url + 'selventa-named-complexes.txt', parsers.NamespaceParser, scomp_data)
@@ -129,12 +116,6 @@ sfam_data = StandardCustomData(name='selventa-protein-families', prefix='sfam')
 baseline_data['selventa-protein-families.txt'] = (
 	file_url + 'selventa-protein-families.txt', parsers.NamespaceParser, sfam_data
 )
-
-#ctg_data = CTGData()
-#baseline_data['named_complexes_to_GOCC.csv'] = (
-#	file_url + 'named_complexes_to_GOCC.csv',
-#	parsers.ComplexToGOParser, ctg_data
-#)
 
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
@@ -165,8 +146,9 @@ affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 					   'Rat230_2', 'HT_HG-U133_Plus_PM', 'HT_MG-430A', 
 						'HT_Rat230_PM', 'MG_U74Av2', 'MG_U74Bv2', 'MG_U74Cv2']
 
-# location of info file used for each .belns/.beleq file
-#  - ONLY if different from the source file; used for common.get_citation_info
+# location of source file to be associated with each .belns/.beleq file
+#  - ONLY if different from the source file associated with the namespace data;
+#  used for common.get_citation_info
 data_file_info = {
 	'hgnc-approved-symbols.beleq' : 'entrez_info.gz',
 	'mesh-diseases.beleq' : 'doid.owl',

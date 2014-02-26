@@ -96,19 +96,19 @@ if not os.path.exists('datasets'):
 		print('Created datasets directory')
 # bring in some dependancies
 dep_files = []
-dep_files.append('SDIS_to_DO.txt')
-dep_files.append('SCHEM_to_CHEBIID.txt')
-#dep_files.append('named_complexes_to_GOCC.csv')
+dep_files.append('selventa-legacy-diseases.txt')
+dep_files.append('selventa-legacy-chemical-names.txt')
 dep_files.append('selventa-protein-families.txt')
 dep_files.append('selventa-named-complexes.txt')
 
-for df in dep_files:
-	if not os.path.exists(src_dir+'/datasets/'+df):
-		print('WARNING !!! Dependency file %s not found in %s/datasets/' % (df, src_dir))
-	else:
-		shutil.copy(src_dir+'/datasets/'+df, os.getcwd()+'/datasets')
-		if verbose:
-			print('Copying dependency file %s to %s/datasets/' % (df, os.getcwd()))
+if args.begin_phase <=1:
+	for df in dep_files:
+		if not os.path.exists(src_dir+'/datasets/'+df):
+			print('WARNING !!! Dependency file %s not found in %s/datasets/' % (df, src_dir))
+		else:
+			shutil.copy(src_dir+'/datasets/'+df, os.getcwd()+'/datasets')
+			if verbose:
+				print('Copying dependency file %s to %s/datasets/' % (df, os.getcwd()))
 
 # make templates directory
 if not os.path.exists('templates'):

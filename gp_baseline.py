@@ -160,14 +160,10 @@ if args.begin_phase <= 2:
 	object_dict = {}
 	for root, dirs, filenames in os.walk(working_dir):
 		for fn in filenames:
-			data_object =  None
 			if fn in baseline_data:
-				#if len(data_tuple) >= 3:
 				try:
 					data_tuple = baseline_data.get(fn)
 					data_object = data_tuple[2]
-					#import pdb
-					#pdb.set_trace()
 					parser = data_tuple[PARSER_TYPE]('datasets/'+fn)
 					if verbose:
 						parser.is_verbose()

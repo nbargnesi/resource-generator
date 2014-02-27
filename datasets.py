@@ -145,10 +145,7 @@ class StandardCustomData(NamespaceDataSet):
 		return label
 
 	def get_xrefs(self, term_id):
-		#xrefs = set()
-		#if self._dict.get(term_id).get('XREF'):
 		xrefs = self._dict.get(term_id).get('XREF').split('|')		
-		#xrefs.update(self._dict.get(term_id).get('XREF'))
 		return set(xrefs)
 	
 	def get_species(self, term_id):
@@ -161,7 +158,7 @@ class StandardCustomData(NamespaceDataSet):
 
 	def get_alt_names(self, term_id):
 		alt_names = self._dict.get(term_id).get('SYNONYMS')
-		return synonyms
+		return alt_names
 
 	
 

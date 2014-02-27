@@ -26,6 +26,11 @@ class DataSet():
 	def __str__(self):
 		return 'DataSet_Object'
 
+class OrthologyDataSet(DataSet):
+
+	def __init__(self, dictionary):
+		super().__init__(dictionary)
+
 class NamespaceDataSet(DataSet):
 
 	# Make .belns file containing ids/labels
@@ -131,7 +136,8 @@ class NamespaceDataSet(DataSet):
 class StandardCustomData(NamespaceDataSet):
 	
 	def __init__(self, dictionary={}, *, name, prefix):
-		super().__init__(dictionary, name, prefix)	
+		super().__init__(dictionary, name, prefix)
+		self._dict = {}		
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -157,8 +163,10 @@ class StandardCustomData(NamespaceDataSet):
 		return encoding
 
 	def get_alt_names(self, term_id):
-		alt_names = self._dict.get(term_id).get('SYNONYMS')
-		return alt_names
+		synonyms = set()
+		synonyms.update(self._dict.get(term_id).get('SYNONYMS').split('|'))
+		synonyms = {s for s in synonyms if s}
+		return synonyms
 
 	
 

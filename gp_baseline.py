@@ -33,7 +33,7 @@ import time
 import shutil
 import annotate
 from common import download
-from datasets import NamespaceDataSet
+from datasets import NamespaceDataSet, DataSet
 from constants import PARSER_TYPE, RES_LOCATION
 
 # collect paths needed for proper resource file location
@@ -160,14 +160,21 @@ if args.begin_phase <= 2:
 	object_dict = {}
 	for root, dirs, filenames in os.walk(working_dir):
 		for fn in filenames:
+			data_object =  None
 			if fn in baseline_data:
-				data_tuple = baseline_data.get(fn)
-				parser = data_tuple[PARSER_TYPE]('datasets/'+fn)
-				if verbose:
-					parser.is_verbose()
-					print('Running ' +str(parser))
-				if len(data_tuple) >= 3:
-					data_object = data_tuple[2]			
+				#if len(data_tuple) >= 3:
+				try:
+					data_tuple = baseline_data.get(fn)
+					data_object = data_tuple[2]
+					#import pdb
+					#pdb.set_trace()
+					parser = data_tuple[PARSER_TYPE]('datasets/'+fn)
+					if verbose:
+						parser.is_verbose()
+						print('Running {0} on file {1}'.format(str(parser), fn))
+				except:
+					print('WARNING - skipping {0}; file not properly configured'.format(fn))
+					continue			
 				for x in parser.parse():
 					parsed.build_data(x, str(parser), data_object)
 				# if data_tuple[2] is a list of objects, handle list
@@ -178,11 +185,12 @@ if args.begin_phase <= 2:
 							pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
 						object_dict[str(o) + '_data'] = o
 					continue
-				# if data_tuple[2] is a single object	
-				data_object.source_file = fn
-				with open(str(data_object) + '.' + args.parsed_pickle, 'wb') as f:
-					pickle.dump(data_object, f, pickle.HIGHEST_PROTOCOL)
-				object_dict[str(data_object) + '_data'] = data_object
+				# if data_tuple[2] is a single object
+				elif isinstance(data_object, DataSet):
+					data_object.source_file = fn
+					with open(str(data_object) + '.' + args.parsed_pickle, 'wb') as f:
+						pickle.dump(data_object, f, pickle.HIGHEST_PROTOCOL)
+					object_dict[str(data_object) + '_data'] = data_object
 	
 	print('Phase II ran in %.3f minutes' % ((time.time() - interval_time) / 60))
 	

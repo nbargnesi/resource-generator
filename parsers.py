@@ -49,7 +49,8 @@ class NamespaceParser(Parser):
 			reader = csv.DictReader(filter(lambda row: 
 								not row[0].startswith('#'), f), delimiter='\t')
 			for row in reader:
-				yield row
+				if row['ID'].strip() is not None:
+					yield row
 
 	def __str__(self):
 		return "NamespaceParser"

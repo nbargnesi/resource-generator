@@ -31,7 +31,8 @@ swiss_withdrawn_acc_data = SwissWithdrawnData(swiss_withdrawn_acc_dict)
 def build_data(entry, parser, data_object):
 
 	if parser == 'NamespaceParser':
-		data_object._dict[entry.get('ID')] = {
+		term_id = entry.get('ID')
+		data_object._dict[term_id] = {
 			'ALTIDS' : entry.get('ALTIDS'),
 			'LABEL' : entry.get('LABEL'),
 			'SYNONYMS' : entry.get('SYNONYMS'), 

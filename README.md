@@ -1,6 +1,8 @@
 # Project Overview
 Python modules to generate BEL resource documents.
 
+See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespace-datasets) for information about how to add new datasets.
+
 ## Resource Generator
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.

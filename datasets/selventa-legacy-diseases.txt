@@ -1,0 +1,452 @@
+#[Header]																	
+#Keyword=SDIS																	
+#NameString=Selventa Legacy Disease Names																	
+#DomainString=Biological Process																	
+#SpeciesString=all																	
+#DescriptionString=Selventa legacy names for diseases. It is not recommended that new BEL Documents include reference to any of these legacy namespaces.																	
+#VersionString=20140224																	
+#																	
+#[Values]																	
+ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN							
+D0003		Acidification	pH reduction		B		GOBP:0045851										
+D0168		activated t cell extravasation			B												
+D0169		activated t cell tethering / rolling			B												
+D0170		acute endotoxemia			O												
+D0171		acute lymphoblastic leukemia			O		DO:9952										
+D0172		acute myelogenous leukemia			O		DO:9119										
+D0004		Acute Myocardial Infarction			O		DO:9408										
+D0173		acute phase reaction			O												
+D0174		adenocarcinoma			O		DO:299										
+D0175		adenoma			O		DO:657										
+D0176		adipocyte lipid droplet			A												
+D0177		adipocyte lipolysis			B												
+D0178		adipose glucose import			B												
+D0179		adipose insulin receptor signaling pathway			B												
+D0005		Adult Liver Hematopoiesis			B		GOBP:0030097|MESHPP:D006410										
+D0180		advanced Adenocarcinoma			O												
+D0006		Alzheimers disease			O		DO:10652										
+D0181		amyotrophic lateral sclerosis			O		DO:332										
+D0182		anchorage-independent growth			B												
+D0007		Androgen independence			O												
+D0183		anemia			O		DO:2355										
+D0184		aneurysm formation			O		DO:2403										
+D0185		ankylosing spondylitis			O		DO:7147										
+D0001		APOB folding			B												
+D0186		arteritis			O												
+D0187		astrocytoma			O		DO:3069										
+D0008		Atherogenesis			O		DO:1936										
+D0009		Atherosclerotic lesion			O												
+D0002		ATP Depletion			O												
+D0188		atrial fibrillation			O												
+D0189		atrophy			O												
+D0190		autoimmunity			O		DO:417										
+D0010		B cell lymphoma			O		DO:707										
+D0011		B cell polarization	establishment of B cell polarity		B		GOBP:0001769										
+D0192		bacterial infection			O												
+D0193		barrett esophagus			O		DO:9206										
+D0194		basophil extravasation			B												
+D0191		b-cell migration			B												
+D0195		bile duct ligation			O		DO:4138										
+D0196		blood flow			B												
+D0197		bradycardia			O												
+D0198		breast cancer metastasis			O												
+D0199		burn injury			O												
+D0200		cachexia			O		MESHD:D002100										
+D0201		calcification			O												
+D0202		calpain activation			B												
+D0203		cancer			O		DO:162										
+D0015		Carcinoma of astrocyte			O												
+D0016		Carcinoma of bone			O												
+D0017		Carcinoma of brain			O		DO:1319										
+D0018		Carcinoma of breast			O		DO:3459										
+D0019		Carcinoma of endometrium			O		DO:2871										
+D0204		carcinoma of epithelium			O												
+D0020		Carcinoma of esophagus			O		DO:1107										
+D0021		Carcinoma of gastrointestinal tract			O		DO:3119										
+D0022		Carcinoma of germ cell			O		DO:2994										
+D0014		Carcinoma of Hepatocyte			O		DO:684										
+D0023		Carcinoma of intestine			O												
+D0024		Carcinoma of kidney			O		DO:4451										
+D0025		Carcinoma of large intestine			O		DO:5672										
+D0205		carcinoma of liver			O		DO:3571										
+D0206		carcinoma of lung			O		DO:3905										
+D0026		Carcinoma of lymphocyte			O												
+D0027		Carcinoma of melanocyte			O		DO:1909										
+D0028		Carcinoma of mouth			O		DO:8618										
+D0029		Carcinoma of muscle			O		DO:4045										
+D0030		Carcinoma of myeloid cell			O												
+D0031		Carcinoma of nasopharynx			O		DO:9261										
+D0032		Carcinoma of nervous system			O												
+D0033		Carcinoma of pancreas			O		DO:4905										
+D0207		carcinoma of prostate gland			O												
+D0034		Carcinoma of rectum			O		DO:1993										
+D0035		Carcinoma of skin			O		DO:3451										
+D0208		carcinoma of squamous cell			O												
+D0209		carcinoma of stomach			O		DO:5517										
+D0036		Carcinoma of t-cell			O												
+D0037		Carcinoma of thymus			O												
+D0038		Carcinoma of thyroid gland			O		DO:1781										
+D0039		Carcinoma of uterus			O												
+D0210		cardiac arrhythmia			O												
+D0211		cardiac pacemaker activity			O												
+D0212		cardiomyocyte hypertrophy			O												
+D0040		Cardiomyopathy			O		DO:0050700										
+D0213		castration			O												
+D0012		CD4+CD3+TCR+ naive T-cell differentiation			B												
+D0013		CD8+CD3+TCR+ naive T-cell differentiation			B												
+D0214		cell scattering			B												
+D0215		cell senescence			B												
+D0041		Cftr maturation			B												
+D0216		chondrogenesis			B												
+D0217		chronic myeloid leukemia			O		DO:8552										
+D0042		Chronic Obstructive Pulmonary Disease			O		DO:3083										
+D0043		Chylomicron secretion			O												
+D0218		cirrhosis			O		DO:5082										
+D0044		Cisplatin resistance			O												
+D0219		classical focal adhesion			A												
+D0220		clot formation			O												
+D0221		colitis			O		DO:8577										
+D0045		Collagen VI Mm			C		GOCC:0005589										
+D0046		Colonic Mucosal Wound Healing			O												
+D0222		colorectal adenoma			O		DO:9256										
+D0223		congestive heart failure			O		DO:6000										
+D0047		Crohn's Disease			O		DO:8778										
+D0224		cyclic stretch			B												
+D0225		cystic fibrosis			O		DO:1485										
+D0048		Cytotoxic T-cell activation			O												
+D0050		Deep Venous Thrombosis			O		MESHD:D020246										
+D0226		degranulation		cell degranulation	B		MESHPP:D015550										
+D0227		dendritic cell extravasation			B												
+D0228		dendritic cell migration to infection			B												
+D0229		dendritic cell tethering / rolling			B												
+D0230		denervation			O												
+D0051		Diabetes			O		DO:9351										
+D0231		dilatation			O												
+D0049		DNA polymerase a-primase Hs			C		GOCC:0005658										
+D0052		Down syndrome			O		DO:14250										
+D0053		Doxorubicin resistance			O												
+D0232		ductal carcinoma			O												
+D0233		edema			O												
+D0054		EGFR inhibitor resistance			O												
+D0234		eif2 complex mm			C												
+D0235		emphysema			O		DO:9675										
+D0055		ENaC Complex hs			C												
+D0060		Encephalopathy			O		DO:936										
+D0236		endothelial barrier function			B												
+D0237		eosinophil extravasation			B		GOBP:0072682										
+D0238		eosinophil migration to infection			O												
+D0239		epidermal stem cell homeostasis			O												
+D0240		epithelial barrier function			O												
+D0056		ER negative breast cancer			O		DO:0060076										
+D0057		ER positive breast cancer			O		DO:0060075										
+D0058		ERBB2 overexpressing breast cancer			O		DO:0060079										
+D0241		erectile dysfunction			O												
+D0059		ERK signaling cascade			B		GOBP:0070371										
+D0061		Erlotinib resistance			O												
+D0242		erythrocyte sedimentation rate			B												
+D0062		Esophageal Adenocarcinoma			O		DO:4914										
+D0063		Etoposide resistance			O												
+D0064		Exercise			B		MESHPP:D015444										
+D0243		exercise			B		MESHPP:D015444										
+D0244		fatty acid esterification			B												
+D0245		fatty acid import			B												
+D0246		fatty-acid synthesis			O												
+D0065		Fc-IgE receptor 1 Mm			C		GOBP:0032998										
+D0066		Fc-IgE receptor 1 Rn			C		GOBP:0032998										
+D0247		female fertility			B												
+D0248		fertility			B												
+D0067		Fetal Liver Hematopoiesis			B												
+D0249		fibrillar adhesion			O												
+D0250		fibronectin matrix assembly			O												
+D0251		fibrosis			O		DO:3770										
+D0252		focal adhesion disassembly			B												
+D0253		follicle formation			B												
+D0254		food intake	eating		B		MESHPP:D004435										
+D0068		G0 phase of mitotic cell cycle	G0 Phase		B		MESHPP:D016192										
+D0255		gallstones			O												
+D0256		gastric adenocarcinoma			O		DO:3717										
+D0069		Gastric Adenoma			O		DO:3717										
+D0257		glioblastoma			O		DO:3068										
+D0258		glioma			O		DO:3070										
+D0070		Glomerulogenesis			O												
+D0259		glomerulonephritis			O		DO:2921										
+D0260		glomerulosclerosis			O												
+D0261		glucose oxidation			B												
+D0262		granulocyte activation			B												
+D0263		haptotaxis			O												
+D0264		heart block			O												
+D0265		heart rate			B												
+D0266		hematocrit			O												
+D0267		hematopoiesis			O												
+D0071		Hemodialysis			O												
+D0268		hemorrhage			O												
+D0072		Hepatic Cirrhosis			O												
+D0269		hepatitis			O		DO:2237										
+D0073		Hepatitis B viral infection	hepatitis B		O		DO:2043										
+D0074		Hepatitis C viral infection	hepatitis C		O		DO:1883										
+D0270		hepatocellular carcinoma			O		DO:684										
+D0271		hepatocyte response to toxin			O												
+D0272		hereditary breast cancer			O												
+D0273		high-fat diet			O												
+D0274		hodgkins disease			O												
+D0075		Homoharringtonine resistance			O												
+D0275		hydrocephalus			O		DO:10908										
+D0276		hyperalgesia			O												
+D0277		hypercholesterolemia			O		DO:2487										
+D0278		hyperemia			O												
+D0076		Hyperinsulinemia			O		DO:2018										
+D0077		Hyperlipidemia			O												
+D0279		hyperoxia			O												
+D0280		hyperplasia			O												
+D0281		hyperplasia of breast tissue			O												
+D0282		hypertension			O		DO:10763										
+D0078		Hypertensive Heart Disease			O		DO:11516										
+D0283		hypertrophy			O												
+D0284		hypoglycemia			O		DO:9993										
+D0079		Hypoketonemia			O												
+D0080		I(CaL) L-type calcium channel current			B												
+D0081		I(CaT) T-type calcium channel current			B												
+D0082		"I(Cl, vol) volume-regulated outwardly rectifying chloride current"			B												
+D0083		"I(Cl,ATP) ATP-dependent chloride current"			B												
+D0084		"I(Cl,Ca) calcium-activated chloride current"			B												
+D0087		"I(Cl,ir) cell swelling-activated inwardly rectifying chloride current"			B												
+D0085		"I(Cl,PKA) PKA-dependent chloride current"			B												
+D0086		"I(Cl,PKC) PKC-dependent chloride current"			B												
+D0095		I(f) F-channel current			B												
+D0088		I(K ATP) ATP-dependent potassium channel current			B												
+D0089		I(K1) inward rectifier potassium channel current			B												
+D0090		I(KACh) acetylcholine-activated current			B												
+D0091		I(Kr) fast delayed rectifier potassium current			B												
+D0092		I(Ks) slow delayed rectifier potassium current			B												
+D0094		I(Na)  sodium channel current			B												
+D0093		I(NCX) sodium-calcium exchanger current			B												
+D0096		I(p) sodium-potassium pump current			B												
+D0097		I(st) St channel current			B												
+D0098		I(to) transient outward current			B												
+D0285		immortalization			O												
+D0286		immunoglobulin synthesis			O												
+D0287		impaired glucose tolerance			O												
+D0288		infection			O		MESHD:D007239										
+D0099		Inflammatory Bowel Disease			O		DO:0050589										
+D0100		Influenza A Virus Infection			O												
+D0101		"Influenza A Virus, H5N1 Subtype Infection"			O												
+D0102		Insulin Control Element activator Hs			A												
+D0289		insulin resistance			O												
+D0103		Insulin_signaling	insulin receptor signaling pathway		B		GOBP:0008286										
+D0290		integrin mediated cell adhesion			B												
+D0291		intestinal dysfunction			O												
+D0292		intrauterine growth retardation			O												
+D0293		invasive breast cancer			O												
+D0294		invasive cancer			O												
+D0295		inward rectifier potassium channel complex hs			C												
+D0104		Irinotecan resistance			O												
+D0105		JNK signaling pathway			B												
+D0296		ketoacidosis			O												
+D0110		Laminar shear stress			B												
+D0297		laminar shear stress			B												
+D0298		large cell carcinoma			O		DO:4552										
+D0107		LDL biosynthesis			B												
+D0108		LDL oxidation			B												
+D0109		LDL uptake			B												
+D0299		leakage of blood vessels			O												
+D0300		left ventricular systolic dysfunction			O												
+D0301		leiomyloid tumor			O												
+D0302		leiomyoma			O		DO:127										
+D0303		leptin activity			B												
+D0304		leukemia			O		DO:1240										
+D0305		leukemic infiltration			O												
+D0307		leukocyte migration to infection			O												
+D0306		leukocyte PAF secretion			O												
+D0111		Lipid Droplet			A												
+D0112		Lipid droplet	lipid particle		A		GOCC:0005811										
+D0308		lipid peroxidation			B												
+D0309		lipogenesis			B												
+D0310		liposome			A												
+D0311		liver fibrosis			O												
+D0312		liver glucose import			B												
+D0113		Liver Injury			O												
+D0313		liver insulin receptor signaling pathway			B												
+D0114		Liver Regeneration			B												
+D0315		local acute phase reaction			O												
+D0314		local Adenocarcinoma			O												
+D0316		long QT syndrome			O		DO:2843										
+D0317		long-chain peroxisomal fatty acid beta-oxidation			B												
+D0318		low pH			B												
+D0106		L-type calcium channel complex			C												
+D0319		lung adenocarcinoma			O		DO:3910										
+D0320		lung squamous cell carcinoma			O		DO:3907										
+D0321		lung surfactant secretion			B												
+D0322		lymphadenopathy			O												
+D0323		lymphoid hyperplasia			O												
+D0324		lymphoma			O		DO:0060058										
+D0325		lymphopenia			O		DO:614										
+D0326		macrophage IL1A secretion			B												
+D0327		macrophage IL6 secretion			B												
+D0328		macrophage IL8 secretion			B												
+D0329		macrophage TNF secretion			B												
+D0330		male fertility			B												
+D0332		mast cell histamine secretion			B												
+D0331		mast cell TNF secretion			B												
+D0333		mean arterial pressure			B												
+D0334		mechanical strain			B												
+D0335		mechanical stress			B												
+D0336		medulloblastoma			O		DO:3858										
+D0337		melanoma			O		DO:1909										
+D0338		membrane polarization			B												
+D0339		mesothelioma			O		DO:2645										
+D0340		metastasis			O												
+D0341		microvesicle			A												
+D0342		microvesicle lipid raft			A												
+D0115		Miller-Dieker syndrome			O												
+D0344		mitochondrial damage			O												
+D0343		mitochondrial DNA damage			O												
+D0345		mitochondrial membrane potential			B												
+D0116		Mitochondrial Uncoupling			B												
+D0346		monocyte adherence			B												
+D0347		monocyte diapadesis			O												
+D0348		monocyte extravasation			B		GOBP:0035696										
+D0349		monocyte migration to infection			B												
+D0350		monocyte tethering / rolling			B												
+D0351		motor neuron cell death			O												
+D0352		multiple myeloma			O		DO:9538										
+D0353		muscle glucose import			B												
+D0354		muscle insulin receptor signaling pathway			B												
+D0355		muscle stretch			B												
+D0356		muscular distrophy			O												
+D0357		mycobacterial infection			O												
+D0358		myelodysplastic syndromes			O		DO:4972										
+D0359		myeloproliferative disorder			O		DO:4960										
+D0117		Myoblast proliferation			B												
+D0360		myocardial contraction			O												
+D0361		myocardial infarction			O		DO:5844										
+D0118		Myopathy			O		DO:423										
+D0119		"Na,K-ATPase Rn"			C												
+D0362		nanovesicle			O												
+D0363		nanovesicle lipid raft			A												
+D0364		natural killer cell activation-dependent arrest			B												
+D0365		natural killer cell extravasation			B												
+D0366		natural killer cell migration to infection			O												
+D0367		neoplasia			O		DO:14566										
+D0120		Nephrogenesis			O												
+D0368		nephropathy			O												
+D0369		neuroblastoma			O		DO:769										
+D0370		neurodegeneration			O												
+D0371		neuron cell death			B												
+D0372		neuropathy			O		DO:870										
+D0374		neutrophil activation-dependent arrest			O												
+D0373		neutrophil ELA2 secretion			B												
+D0375		neutrophil extravasation			B		GOBP:0072672										
+D0376		neutrophil migration to infection			B												
+D0377		neutrophil polarization			B												
+D0378		neutrophil tethering / rolling			B												
+D0379		non-hodgkins lymphoma			O		DO:0060060										
+D0381		noninvasive breast cancer			O		DO:0060074										
+D0380		non-small cell lung carcinoma			O		DO:3908										
+D0382		obesity			O		DO:9970										
+D0121		Oedema			O												
+D0122		Oncogene induced senescence			B												
+D0383		oncogenic transformation			O												
+D0384		osteoarthritis			O		DO:8398										
+D0385		osteoclast activity			O												
+D0123		Osteopenia			O												
+D0386		osteopetrosis			O		DO:13533										
+D0387		osteoporosis			O		DO:11476										
+D0388		osteosarcoma			O		DO:3347										
+D0125		Paclitaxel resistance			O												
+D0389		pancreatic ductal carcinoma			O		DO:3587										
+D0126		Partial Pancreatectomy			O												
+D0390		peroxisomal fatty acid beta-oxidation			B												
+D0391		peroxisome proliferation			B												
+D0392		phosphatidylcholine excretion			B												
+D0393		phospholipid excretion			B												
+D0127		Photo-oxidative Stress			B												
+D0394		plaque destabilization			O		DO:1936										
+D0395		platelet activation-dependent arrest			O												
+D0396		platelet spreading			O												
+D0397		platelet tethering / rolling			B												
+D0398		polycystic kidney disease			O		DO:898										
+D0399		polycythemia			O		DO:8432										
+D0128		Positive-Pressure Respiration			B												
+D0124		PR positive breast cancer			O												
+D0400		prostate cancer			O		DO:10283										
+D0129		Proteasome assembly			B												
+D0401		psoriasis			O		DO:8893										
+D0402		rapid cell migration			B												
+D0403		regulatory t-cell differentiation			B												
+D0130		Renal Maturation			B												
+D0131		Renal Sclerosis			O		DO:11664										
+D0404		renal sodium ion reabsorption			B												
+D0405		renal water reabsorption			B												
+D0406		reperfusion injury			O												
+D0132		Respiratory Syncytial Virus Infection			O												
+D0407		response to shear stress			B												
+D0408		retinoblastoma			O		DO:768										
+D0133		Retinopathy			O												
+D0409		rhabdomyosarcoma			O		DO:3247										
+D0410		rheumatoid arthritis			O		DO:7148										
+D0134		Schizophrenia			O		DO:5419										
+D0135		Skeletal Muscle Disuse Atrophy			O												
+D0136		Skeletal Muscle Hypertrophy			O												
+D0411		skin lesion			O												
+D0412		small cell carcinoma			O		DO:0050685										
+D0413		sodium-calcium exchanger complex			C												
+D0414		splenomegaly			O												
+D0415		steatohepatitis			O		DO:9452										
+D0137		Steatosis			O												
+D0138		Steroidogenesis			O												
+D0416		stroke			O		DO:3455										
+D0139		Superimposed Alcoholic Hepatitus			O												
+D0417		systemic acute phase reaction			O												
+D0140		Systemic Lupus Erythematosus			O		DO:9074										
+D0418		t(4 14) translocation			O												
+D0419		tachycardia			O												
+D0141		T-cell apoptosis			B												
+D0142		T-cell leukemia			O		DO:715										
+D0143		T-cell migration			B												
+D0144		T-cell survival			B												
+D0153		Th1 cell activation			B												
+D0154		Th1 response			B												
+D0155		Th1:Th2 ratio			B												
+D0420		th2 cell activation			B												
+D0156		Th2 response			B												
+D0145		T-helper 17 cell activation			B												
+D0146		T-helper 2 cell proliferation			B												
+D0421		thermogenesis			B												
+D0422		thrombopoietin activity			B												
+D0423		tight junction formation			B												
+D0424		tight junction permeability			B												
+D0425		tissue damage			O												
+D0426		tissue repair			B												
+D0148		TLR signaling			B												
+D0149		TLR3 signaling			B												
+D0150		TLR4 signaling			B												
+D0151		TLR9 signaling			B												
+D0157		Triglyceride Synthesis			B												
+D0427		triple microtubule			O												
+D0152		TSLP activity			B												
+D0147		T-type calcium channel complex			C												
+D0428		tuberculosis			O		DO:399										
+D0429		tumor angiogenesis			O												
+D0430		tumor cell invasion			O												
+D0431		tumor growth			O												
+D0432		turbulent shear stress			B												
+D0158		Type I diabetes			O												
+D0159		Type II diabetes			O		DO:9352										
+D0160		Ulcerative Colitis			O		DO:8577										
+D0161		Urothelial Plaque			O												
+D0433		vascular dysfunction			O												
+D0434		vascular remodeling			B												
+D0435		vascular smooth muscle cell migration			B												
+D0436		vascular smooth muscle cell proliferation			B												
+D0437		vascular tissue damage			O												
+D0165		Vascular Wall Inflammation			O												
+D0438		vasculitis			O		DO:865										
+D0162		VCP Hexamer Mm			C												
+D0439		ventricular fibrillation			O												
+D0440		very-long-chain peroxisomal fatty acid beta-oxidation			O												
+D0166		Vincristine resistance			O												
+D0441		viral infection			O		DO:934										
+D0163		VLDL biosynthesis			B												
+D0164		VLDL secretion			B												
+D0167		Weibel-Palade body externalization			B												
+																	

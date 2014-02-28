@@ -68,6 +68,10 @@ baseline_data['rgd.txt'] = (
 	parsers.RGDParser, rgd_data
 )
 
+rgd_ortho_data = OrthologyData(prefix='rgd-ortho')
+baseline_data['RGD_ORTHOLOGS.txt'] = (
+	'ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt', parsers.RGDOrthologParser, rgd_ortho_data)
+
 sp_data = SwissProtData() 
 baseline_data['swiss.xml.gz'] = (
 	'ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz',

@@ -17,19 +17,30 @@ from collections import defaultdict
 
 class DataSet():
 	
-	def __init__(self, dictionary):
+	def __init__(self, dictionary={}, prefix='unnamed-data-object'):
 		self._dict = dictionary
+		self._prefix = prefix
 
 	def get_dictionary(self):
 		return self._dict
 
 	def __str__(self):
-		return 'DataSet_Object'
+		return self._prefix
 
-class OrthologyDataSet(DataSet):
+class OrthologyData(DataSet):
 
-	def __init__(self, dictionary):
-		super().__init__(dictionary)
+	def __init__(self, dictionary={},  prefix='unnamed-orthology-object'):
+		super().__init__(dictionary, prefix)
+	
+	def get_orthologs(self, term_id):
+		orthologs = set()
+		mapping = self._dict.get(term_id)
+		mouse_orthologs = mapping.get('mouse_ortholog_id').split('|')
+		orthologs.update(mouse_orthologs)
+		human_orthologs = mapping.get('human_ortholog_id').split('|')
+		human_orthologs = {'HGNC:' + ortho for ortho in human_orthologs}
+		orthologs.update(human_orthologs)
+		return orthologs
 
 class NamespaceDataSet(DataSet):
 
@@ -38,10 +49,10 @@ class NamespaceDataSet(DataSet):
 	ids = False
 	labels = True
 
-	def __init__(self, dictionary, name='namespace-name', prefix='namespace-prefix'):
+	def __init__(self, dictionary={}, name='namespace-name', prefix='namespace-prefix'):
 		self._name = name
-		self._prefix = prefix
-		super().__init__(dictionary)
+		#self._prefix = prefix
+		super().__init__(dictionary, prefix)
 
 	def get_values(self):
 		''' Get all non-obsolete primary ids in dataset dict.
@@ -244,14 +255,11 @@ class EntrezInfoData(NamespaceDataSet):
 
 class EntrezHistoryData(DataSet):
 	
-	def __init__(self, dictionary={}):
-		super().__init__(dictionary)
-
-	def __str__(self):
-		return 'entrez_history'
+	def __init__(self, dictionary={}, prefix='entrez-history'):
+		super().__init__(dictionary, prefix)
 
 
-class HGNCData(NamespaceDataSet):
+class HGNCData(NamespaceDataSet, OrthologyData):
 	
 	ENC = {
 		'gene with protein product' : 'GRP', 'RNA, cluster' : 'GR',
@@ -324,10 +332,11 @@ class HGNCData(NamespaceDataSet):
 	def get_orthologs(self, term_id):
 		orthologs = set()
 		mapping = self._dict.get(term_id)
-		orthologs.update(mapping.get('Mouse Ortholog'))
-		orthologs.update(mapping.get('Human Ortholog'))
+		mouse_orthologs = mapping.get('mouse_ortholog_id').split('|')
+		orthologs.update(mouse_orthologs)
+		rat_orthologs = mapping.get('rat_ortholog_id').split('|')
+		orthologs.update(rat_orthologs)
 		return orthologs
-		
 
 class MGIData(NamespaceDataSet):
 
@@ -558,8 +567,8 @@ class CHEBIData(NamespaceDataSet):
 
 class Gene2AccData(DataSet):
 
-	def __init__(self, dictionary={}):
-		super(Gene2AccData, self).__init__(dictionary)
+	def __init__(self, dictionary={}, prefix = 'gene2acc'):
+		super().__init__(dictionary, prefix)
 
 	def get_eq_values(self):
 		for entrez_gene in self._dict:
@@ -567,9 +576,6 @@ class Gene2AccData(DataSet):
 			status = mapping.get('status')
 			taxid = mapping.get('tax_id')
 			yield entrez_gene, status, taxid
-
-	def __str__(self):
-		return 'gene2acc'
 
 
 class GOData(NamespaceDataSet):
@@ -634,15 +640,12 @@ class MESHData(NamespaceDataSet):
 
 class SwissWithdrawnData(DataSet):
 
-	def __init__(self, dictionary={}):
-		super(SwissWithdrawnData, self).__init__(dictionary)
+	def __init__(self, dictionary={}, prefix='swiss-withdrawn'):
+		super().__init__(dictionary, prefix)
 
 	def get_withdrawn_accessions(self):
 		accessions = self._dict.get('accessions')
 		return accessions
-
-	def __str__(self):
-		return 'swiss-withdrawn'
 
 
 class DOData(NamespaceDataSet):

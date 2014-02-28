@@ -84,8 +84,8 @@ def build_data(entry, parser, data_object):
 		synonyms = entry.get('Synonyms')
 		name_synonyms = entry.get('Name Synonyms')
 		name = entry.get('Approved Name')
-		mouse_ortholog = entry.get('Mouse Genome Database ID (supplied by MGI)')
-		rat_ortholog = entry.get('Rat Genome Database ID (supplied by RGD)')
+		mouse_ortholog = entry.get('Mouse Genome Database ID(supplied by MGI)')
+		rat_ortholog = entry.get('Rat Genome Database ID(supplied by RGD)')
 
 		data_object._dict[hgnc_id] = {
 			'Locus Type' : loc_type,
@@ -95,8 +95,8 @@ def build_data(entry, parser, data_object):
 			'Synonyms' : synonyms,
 			'Name Synonyms' : name_synonyms,
 			'Approved Name' : name,
-			'Mouse Ortholog' : mouse_ortholog,
-			'Rat Ortholog' : rat_ortholog }
+			'mouse_ortholog_id' : mouse_ortholog,
+			'rat_ortholog_id' : rat_ortholog }
 
 	elif parser == 'MGI_Parser':
 		m_symbol = entry.get('Marker Symbol')
@@ -252,4 +252,11 @@ def build_data(entry, parser, data_object):
 			'name' : name,
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms }
-
+	
+	elif parser == 'RGDOrthologParser':
+		term_id = entry.get('RAT_GENE_RGD_ID')
+		data_object._dict[term_id] = {
+			'symbol' : entry.get('RAT_GENE_SYMBOL'),
+			'human_ortholog_id' : entry.get('HUMAN_ORTHOLOG_HGNC_ID'),
+			'mouse_ortholog_id' : entry.get('MOUSE_ORTHOLOG_MGI') }
+			

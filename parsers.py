@@ -37,6 +37,21 @@ class Parser(object):
 	def __str__(self):
 		return "Parser"
 
+class RGDOrthologParser(Parser):
+
+	def __init__(self, url):
+		super().__init__(url)
+
+	def parse(self):
+		with open(self._url, 'r') as f:
+			reader = csv.DictReader(filter(lambda row: 
+								not row[0].startswith('#'), f), delimiter='\t')
+			for row in reader:
+				yield row
+
+	def __str__(self):
+		return "RGDOrthologParser"
+
 class NamespaceParser(Parser):
 	''' Generic parser. Expects tab-delimited file - 
 	all rows prior to column header row should start with '#'.  '''

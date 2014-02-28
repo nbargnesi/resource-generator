@@ -68,7 +68,7 @@ baseline_data['rgd.txt'] = (
 	parsers.RGDParser, rgd_data
 )
 
-rgd_ortho_data = OrthologyData(prefix='rgd-ortho')
+rgd_ortho_data = OrthologyData(prefix='rgd')
 baseline_data['RGD_ORTHOLOGS.txt'] = (
 	'ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt', parsers.RGDOrthologParser, rgd_ortho_data)
 

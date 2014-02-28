@@ -12,24 +12,11 @@ from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD
 from urllib import parse
 
 namespace = Namespace("http://www.openbel.org/bel/namespace/")
-belv = Namespace("http://www.openbel.org/vocabulary/")
-
-# command line arguments - directory for pickled data objects
-parser = argparse.ArgumentParser(description="""Generate namespace and equivalence files
-for gene/protein datasets.""")
-
-parser.add_argument("-n", required=True, metavar="DIRECTORY",
-					help="directory to store the new namespace equivalence data")
-parser.add_argument("-d", required=False, action='append', help="dataset by prefix; if none specified, all datasets in directory will be run")
-args = parser.parse_args()
-if os.path.exists(args.n):
-    os.chdir(args.n)
-else:
-    print('data directory {0} not found!'.format(args.n))
+BELV = Namespace("http://www.openbel.org/vocabulary/")
 
 
 # loads parsed data from pickle file (after running phase 2 of gp_baseline.py)
-def make_rdf(d, g):
+def make_rdf(d, g, prefix_dict=None):
 	''' Given namepsace data object d and graph g,
 	adds to  namespace rdf graph. ''' 
 	# make namespace for data set (using data object attributes '_name' and '_prefix')
@@ -39,7 +26,7 @@ def make_rdf(d, g):
 	# bind namespace prefixes
 	g.bind("skos", SKOS)
 	g.bind("dcterms", DCTERMS)
-	g.bind("belv", belv)
+	g.bind("belv", BELV)
 	g.bind(d._prefix, n)
 
 	for term_id in d.get_values():
@@ -67,26 +54,26 @@ def make_rdf(d, g):
 		# add species (tax id as literal)
 		species = d.get_species(term_id)
 		if species:
-			g.add((term_uri, belv.fromSpecies, Literal(species)))
+			g.add((term_uri, BELV.fromSpecies, Literal(species)))
 
 		# use encoding information to determine concept types
 		encoding = d.get_encoding(term_id)
 		if 'G' in encoding:
-			g.add((term_uri, RDF.type, belv.GeneConcept))
+			g.add((term_uri, RDF.type, BELV.GeneConcept))
 		if 'R' in encoding:
-			g.add((term_uri, RDF.type, belv.RNAConcept))
+			g.add((term_uri, RDF.type, BELV.RNAConcept))
 		if 'M' in encoding:
-			g.add((term_uri, RDF.type, belv.MicroRNAConcept))
+			g.add((term_uri, RDF.type, BELV.MicroRNAConcept))
 		if 'P' in encoding:
-			g.add((term_uri, RDF.type, belv.ProteinConcept))
+			g.add((term_uri, RDF.type, BELV.ProteinConcept))
 		if 'A' in encoding:
-			g.add((term_uri, RDF.type, belv.AbundanceConcept))
+			g.add((term_uri, RDF.type, BELV.AbundanceConcept))
 		if 'B' in encoding:
-			g.add((term_uri, RDF.type, belv.BiologicalProcessConcept))
+			g.add((term_uri, RDF.type, BELV.BiologicalProcessConcept))
 		if 'C' in encoding:
-			g.add((term_uri, RDF.type, belv.ComplexConcept))
+			g.add((term_uri, RDF.type, BELV.ComplexConcept))
 		if 'O' in encoding:
-			g.add((term_uri, RDF.type, belv.PathologyConcept))
+			g.add((term_uri, RDF.type, BELV.PathologyConcept))
 
 		# get synonyms (alternative symbols and names)
 		alt_symbols = d.get_alt_symbols(term_id)
@@ -99,6 +86,9 @@ def make_rdf(d, g):
 				g.add((n[term_id], SKOS.altLabel, Literal(name)))
 
 		# get equivalences to other namespaces (must be in data set)
+		if prefix_dict == None:
+			print('Building required prefix dictionary ...')
+			prefix_dict = build_prefix_dict()
 		xrefs = d.get_xrefs(term_id)
 		if xrefs:
 			for x in xrefs:
@@ -120,22 +110,13 @@ def get_close_matches(concept_type, g):
 
 	print('gathering string matches for {0}s ...'.format(concept_type))
 	concept_dict = defaultdict(dict)
-	for c in g.subjects(RDF.type, belv[concept_type]):
+	for c in g.subjects(RDF.type, BELV[concept_type]):
 		labels = list(g.objects(c, SKOS["altLabel"]))
 		labels.extend(g.objects(c, SKOS["prefLabel"]))
 		labels = [l.casefold() for l in labels]
 		scheme =  set(g.objects(c, SKOS["inScheme"])).pop()
 		concept_dict[scheme][c] = set(labels)
 
-#	concepts = list(sorted(concept_dict.keys()))
-#	count = 0
-#	while len(concepts) > 0:
-#		concept = concepts.pop()
-#		synonyms = concept_dict.pop(concept)
-#		for concept2, synonyms2 in concept_dict.items():
-#			if len(synonyms.intersection(synonyms2)) > 0:
-#				g.add((concept, SKOS.closeMatch, concept2))
-#				count += 1
 	count = 0
 	for scheme, concept_map in concept_dict.items():
 		for concept, labels in concept_map.items():
@@ -151,10 +132,38 @@ def get_close_matches(concept_type, g):
 							count += 1 
 	print('\tadded {0} closeMatches for {1}s'.format(count, concept_type))
 
-if __name__=='__main__':	
-	g = Graph()
+def get_ortho_matches(d, g, prefix_dict=None):
+	''' Given an OrthologyData object and graph, adds orthologousMatch
+	relationships to graph. Prefixes for both the data object and 
+	orthologs must be in the prefix dictionary. If prefix_dict is
+	not provided, it will be generated from the namespace data objects
+	in the working directory. '''
 
-	# build dictionary of namespace prefixes to names (from dataset objects)
+	print('gathering orthology information from {0} ...'.format(str(d)))
+	if not isinstance(d, datasets.OrthologyData):
+		print('ERROR - {0} is not an OrthologyData object!'.format(str(d)))
+		return None
+	else:
+		if prefix_dict == None:
+			print('Building required prefix dictionary ...')
+			prefix_dict = build_prefix_dict()
+		n = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[d._prefix] + '/') 		
+		for term_id in d._dict.keys():
+			term_clean = parse.quote(term_id)
+			term_uri = URIRef(n[term_clean])
+			ortho = d.get_orthologs(term_id)
+			if ortho is not None:
+				for o in ortho:
+					if len(o.split(':')) == 2:
+						prefix, value = o.split(':')
+						if prefix.lower() in prefix_dict:
+							ortho_ns = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[prefix.lower()] + '/') 		
+							g.bind(prefix.lower(), ortho_ns)
+							ortho_uri = URIRef(ortho_ns[value])
+							g.add((term_uri, BELV.orthologousMatch, ortho_uri))
+
+def build_prefix_dict():
+	''' Build dictionary of namespace prefixes to names (from data set objects). '''
 	print('gathering namespace information ...')
 	prefix_dict = {}
 	for files in os.listdir("."):
@@ -164,15 +173,35 @@ if __name__=='__main__':
 			if isinstance(d, datasets.NamespaceDataSet):
 				prefix_dict[d._prefix] = d._name
 				print('\t{0} - {1}'.format(d._prefix, d._name))
+	return prefix_dict
+
+if __name__=='__main__':	
+	# command line arguments - directory for pickled data objects
+	parser = argparse.ArgumentParser(description="""Generate namespace and equivalence files
+	for gene/protein datasets.""")
+
+	parser.add_argument("-n", required=True, metavar="DIRECTORY",
+					help="directory to store the new namespace equivalence data")
+	parser.add_argument("-d", required=False, action='append', help="dataset by prefix; if none specified, all datasets in directory will be run")
+	args = parser.parse_args()
+	if os.path.exists(args.n):
+		os.chdir(args.n)
+	else:
+		print('data directory {0} not found!'.format(args.n))
+
+	g = Graph()
+
+	prefix_dict = build_prefix_dict()
 	
 	for files in os.listdir("."):
 		if files.endswith("parsed_data.pickle"):
 			with open(files,'rb') as f:
 				d = pickle.load(f)
-				if isinstance(d, datasets.NamespaceDataSet) and args.d == None:
-					make_rdf(d, g)
-				elif isinstance(d, datasets.NamespaceDataSet) and d._prefix in args.d:
-					make_rdf(d, g)
+				if args.d == None or str(d) in args.d:
+					if isinstance(d, datasets.NamespaceDataSet):
+						make_rdf(d, g, prefix_dict)
+					if isinstance(d, datasets.OrthologyData):
+						get_ortho_matches(d, g, prefix_dict)
 
 	get_close_matches('BiologicalProcessConcept', g)
 	get_close_matches('AbundanceConcept', g)

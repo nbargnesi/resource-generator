@@ -29,7 +29,7 @@ class DataSet():
 
 class OrthologyData(DataSet):
 
-	def __init__(self, dictionary={},  prefix='unnamed-orthology-object'):
+	def __init__(self, dictionary={},  prefix='use-index-term-prefix'):
 		super().__init__(dictionary, prefix)
 	
 	def get_orthologs(self, term_id):
@@ -42,6 +42,9 @@ class OrthologyData(DataSet):
 		orthologs.update(human_orthologs)
 		return orthologs
 
+	def __str__(self):
+		return self._prefix + '_ortho'
+
 class NamespaceDataSet(DataSet):
 
 	# Make .belns file containing ids/labels
@@ -51,7 +54,6 @@ class NamespaceDataSet(DataSet):
 
 	def __init__(self, dictionary={}, name='namespace-name', prefix='namespace-prefix'):
 		self._name = name
-		#self._prefix = prefix
 		super().__init__(dictionary, prefix)
 
 	def get_values(self):
@@ -148,7 +150,7 @@ class StandardCustomData(NamespaceDataSet):
 	
 	def __init__(self, dictionary={}, *, name, prefix):
 		super().__init__(dictionary, name, prefix)
-		self._dict = {}		
+		self._dict = {} # make unique dict for each instance of class		
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -668,8 +670,7 @@ class DOData(NamespaceDataSet):
 		return synonyms
 
 	def find_xref(self, ref):
-		'''Given an ID, returns xref DO ID.
-		Used in equiv.py module for MeSHD equivalences. '''
+		''' Used only in equiv module. '''
 		for term_id, mapping in self._dict.items():
 			dbxrefs = mapping.get('dbxrefs')
 			if ref in dbxrefs:

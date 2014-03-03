@@ -32,14 +32,19 @@ class OrthologyData(DataSet):
 	def __init__(self, dictionary={},  prefix='use-index-term-prefix'):
 		super().__init__(dictionary, prefix)
 	
+	def get_values(self):
+		for term_id in self._dict:
+			yield term_id
+
 	def get_orthologs(self, term_id):
 		orthologs = set()
 		mapping = self._dict.get(term_id)
 		mouse_orthologs = mapping.get('mouse_ortholog_id').split('|')
 		orthologs.update(mouse_orthologs)
-		human_orthologs = mapping.get('human_ortholog_id').split('|')
-		human_orthologs = {'HGNC:' + ortho for ortho in human_orthologs}
-		orthologs.update(human_orthologs)
+		if mapping.get('human_ortholog_id') is not '':
+			human_orthologs = mapping.get('human_ortholog_id').split('|')
+			human_orthologs = {'HGNC:' + ortho for ortho in human_orthologs}
+			orthologs.update(human_orthologs)
 		return orthologs
 
 	def __str__(self):
@@ -293,8 +298,12 @@ class HGNCData(NamespaceDataSet, OrthologyData):
 
 	def get_label(self, term_id):
 		''' Return preferred label associated with term id. '''
-		label = self._dict.get(term_id).get('Symbol')
-		return label
+		mapping = self._dict.get(term_id)
+		if mapping is None:
+			return None
+		else:
+			label = mapping.get('Symbol')
+			return label
 
 	def get_encoding(self, term_id):
 		mapping = self._dict.get(term_id)

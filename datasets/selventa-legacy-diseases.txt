@@ -151,8 +151,8 @@ D0243		exercise			B		MESHPP:D015444
 D0244		fatty acid esterification			B												
 D0245		fatty acid import			B												
 D0246		fatty-acid synthesis			O												
-D0065		Fc-IgE receptor 1 Mm			C		GOBP:0032998										
-D0066		Fc-IgE receptor 1 Rn			C		GOBP:0032998										
+D0065		Fc-IgE receptor 1 Mm			C		GOCC:0032998										
+D0066		Fc-IgE receptor 1 Rn			C		GOCC:0032998										
 D0247		female fertility			B												
 D0248		fertility			B												
 D0067		Fetal Liver Hematopoiesis			B												

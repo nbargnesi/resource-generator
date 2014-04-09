@@ -95,16 +95,26 @@ def make_rdf(d, g, prefix_dict=None):
 			prefix_dict = build_prefix_dict()
 		xrefs = d.get_xrefs(term_id)
 		if xrefs:
+			xref_dict = defaultdict(set)
 			for x in xrefs:
 				# xrefs are expected in format PREFIX:value
 				if len(x.split(':')) == 2:
 					prefix, value = x.split(':')
-					# NOTE - only xrefs with prefixes that match namespaces in the data set will be used	
-					if prefix.lower() in prefix_dict:
-						xrefns = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[prefix.lower()] + '/') 		
-						g.bind(prefix.lower(), xrefns)
-						xref_uri = URIRef(xrefns[value])
+					xref_dict[prefix].add(value)
+			for prefix, values in xref_dict.items():
+				# NOTE - only xrefs with prefixes that match namespaces in the data set will be used
+				# if term has multiple xrefs in same namespace, use closeMatch instead of exactMatch!	
+				if prefix.lower() in prefix_dict:
+					xrefns = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[prefix.lower()] + '/') 		
+					g.bind(prefix.lower(), xrefns)
+					if len(values) == 1:
+						xref_uri = URIRef(xrefns[values.pop()])
 						g.add((term_uri, SKOS.exactMatch, xref_uri))
+					elif len(values) > 1:
+						for value in values:
+							xref_uri = URIRef(xrefns[value])
+							g.add((term_uri, SKOS.closeMatch, xref_uri))
+						
 
 def get_close_matches(concept_type, g):
 	''' Given namespace concept type and graph, g, 

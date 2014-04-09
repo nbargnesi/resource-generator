@@ -28,6 +28,10 @@ def make_rdf(d, g, prefix_dict=None):
 	g.bind("dcterms", DCTERMS)
 	g.bind("belv", BELV)
 	g.bind(d._prefix, n)
+	
+	g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
+	g.add((namespace[d._name], SKOS.prefLabel, Literal(d._name)))
+	g.add((namespace[d._name], BELV.prefix, Literal(d._prefix)))
 
 	for term_id in d.get_values():
 		term_clean = parse.quote(term_id)

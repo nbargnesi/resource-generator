@@ -288,7 +288,7 @@ class HGNCData(NamespaceDataSet, OrthologyData):
 	
 	}
 
-	def __init__(self, dictionary={}, name='hgnc-approved-symbols', prefix='hgnc'):
+	def __init__(self, dictionary={}, name='hgnc-human-genes', prefix='hgnc'):
 		super().__init__(dictionary, name, prefix)
 
 	def get_values(self):
@@ -367,7 +367,7 @@ class MGIData(NamespaceDataSet):
 		'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'
 	}
 
-	def __init__(self, dictionary={}, name='mgi-approved-symbols', prefix='mgi'):
+	def __init__(self, dictionary={}, name='mgi-mouse-genes', prefix='mgi'):
 		super().__init__(dictionary, name, prefix)
 
 	def get_values(self):
@@ -416,7 +416,7 @@ class RGDData(NamespaceDataSet):
 		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
-	def __init__(self, dictionary={}, name='rgd-approved-symbols', prefix='rgd'):
+	def __init__(self, dictionary={}, name='rgd-rat-genes', prefix='rgd'):
 		super().__init__(dictionary, name, prefix)
 	
 	def get_species(self, term_id):

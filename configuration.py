@@ -116,7 +116,7 @@ baseline_data['selventa-protein-families.txt'] = (
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 gobp_dict, gocc_dict = {}, {}
-gobp_data = GOData(gobp_dict, name='go-biological-processes', prefix='gobp')
+gobp_data = GOData(gobp_dict, name='go-biological-process', prefix='gobp')
 gocc_data = GOData(gocc_dict, name='go-cellular-component', prefix='gocc')
 baseline_data['go.xml.gz'] = (go_file, parsers.GOParser, [gobp_data, gocc_data])
 
@@ -128,9 +128,9 @@ baseline_data['doid.owl'] = (
 
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
 meshcl_dict, meshd_dict, meshpp_dict = {}, {}, {}
-meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-locations', prefix='meshcl')
+meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs')
 meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd')
-meshpp_data = MESHData(meshpp_dict, name='mesh-biological-processes', prefix='meshpp')
+meshpp_data = MESHData(meshpp_dict, name='mesh-processes', prefix='meshpp')
 baseline_data['mesh.bin'] = (
 	mesh_file,
 	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data]

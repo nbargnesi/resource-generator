@@ -30,7 +30,8 @@ def make_rdf(d, g, prefix_dict=None):
 	g.bind(d._prefix, n)
 	
 	g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
-	g.add((namespace[d._name], SKOS.prefLabel, Literal(d._name)))
+	name = d._name.replace('-',' ').title()
+	g.add((namespace[d._name], SKOS.prefLabel, Literal(name)))
 	g.add((namespace[d._name], BELV.prefix, Literal(d._prefix)))
 
 	for term_id in d.get_values():

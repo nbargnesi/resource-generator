@@ -146,9 +146,9 @@ affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 #  - ONLY if different from the source file associated with the namespace data;
 #  used for common.get_citation_info
 data_file_info = {
-	'hgnc-approved-symbols.beleq' : 'entrez_info.gz',
+	'hgnc-human-genes.beleq' : 'entrez_info.gz',
 	'mesh-diseases.beleq' : 'doid.owl',
-	'mgi-approved-symbols.beleq' : 'entrez_info.gz',
-	'rgd-approved-symbols.beleq' : 'entrez_info.gz',
+	'mgi-mouse-genes.beleq' : 'entrez_info.gz',
+	'rgd-rat-genes.beleq' : 'entrez_info.gz',
 }
 

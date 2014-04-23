@@ -109,7 +109,7 @@ p_chebi_1 = re.compile('\<owl:versionIRI .*?\>(\d+)\<\/owl:versionIRI\>')
 p_chebi_2 = re.compile('\<dc:date .*?>(\d\d\d\d-\d\d-\d\d).*?\<\/dc:date\>')
 p_do_1 = re.compile('\<oboInOwl:date .*?>(\d\d:\d\d:\d\d\d\d).*?\<\/oboInOwl:date\>')
 
-p_go_1 = re.compile('\<data-version\>(\d\d\d\d-\d\d-\d\d)\<\/data-version\>')
+p_go_1 = re.compile('\<data-version\>.*?(\d\d\d\d-\d\d-\d\d)\<\/data-version\>')
 p_go_2 = re.compile('\<date\>(\d\d:\d\d:\d\d\d\d).*?\<\/date\>')
 
 p_rgd_1 = re.compile('# GENERATED-ON: (\d\d\d\d\/\d\d\/\d\d)')

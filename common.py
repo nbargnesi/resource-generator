@@ -107,7 +107,6 @@ p4 = re.compile('URL: ?(.*?)[\n|$]', re.M|re.S)
 
 p_chebi_1 = re.compile('\<owl:versionIRI .*?\>(\d+)\<\/owl:versionIRI\>')
 p_chebi_2 = re.compile('\<dc:date .*?>(\d\d\d\d-\d\d-\d\d).*?\<\/dc:date\>')
-p_do_1 = re.compile('\<oboInOwl:date .*?>(\d\d:\d\d:\d\d\d\d).*?\<\/oboInOwl:date\>')
 
 p_go_1 = re.compile('\<data-version\>.*?(\d\d\d\d-\d\d-\d\d)\<\/data-version\>')
 p_go_2 = re.compile('\<date\>(\d\d:\d\d:\d\d\d\d).*?\<\/date\>')
@@ -124,7 +123,7 @@ def get_citation_info(name, header, data_file):
 		<owl:versionIRI rdf:datatype="http://www.w3.org/2001/XMLSchema#string">109</owl:versionIRI>
 		<dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2013-11-01 17:17</dc:date>
 	+ do: (datasets/doid.owl)
-		<oboInOwl:date rdf:datatype="http://www.w3.org/2001/XMLSchema#string">05:11:2013 12:57</oboInOwl:date>
+        <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/doid/releases/2014-04-12/doid.owl"/>
 	+ go: (datasets/gobp.xml.gz)
 		<data-version>2013-09-28</data-version>
 		<date>27:09:2013 10:57</date>
@@ -192,12 +191,12 @@ def get_citation_info(name, header, data_file):
 		while 1:
 			line = f.readline().strip()
 			if not line: break
-			if line.find('oboInOwl:date') > 0:
-				pubdate = p_do_1.search(line).group(1)
-				d,m,y = pubdate.split(':')
-				pubdate = '-'.join([y,m,d])
-				pubver = pubdate
-				break
+			#if line.find('owl:versionIRI') > 0:
+			#	pubdate = p_do_1.search(line).group(1)
+			#	d,m,y = pubdate.split(':')
+			#	pubdate = '-'.join([y,m,d])
+			pubver = pubdate
+			break
 		f.close()
 	
 	elif data_file.find('go') >= 0 and data_file:

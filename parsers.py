@@ -744,37 +744,37 @@ class DOParser(Parser):
 		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
 		self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
 		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
-		self.id = '{http://www.geneontology.org/formats/oboInOwl#}id'
 		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
 		self.exactsynonym = '{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym'
+		about = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about'
 
 	def parse(self):
 
 		with open(self._url, 'rb') as df:
 			tree = etree.iterparse(df, tag=self.classy)
+			about = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about'
 			for event, elem in tree:
 				do_dict = {}
 				dbxrefs = []
 				synonyms = []
 				name = ''
-				id = ''
+				term_id = ''
 				try:
 					if len(elem.values()) != 0:
 						children = elem.getchildren()
 						if is_deprecated(children):
 							raise DeprecatedTermException(children)
 						else:
+							term_id = elem.get(about).split('/')[-1].strip('DOID_')
 							for child in children:
 								if child.tag == self.dbxref:
 									dbxrefs.append(child.text)
-								elif child.tag == self.id:
-									id = child.text.split(':')[1]
 								elif child.tag == self.label:
 									name = child.text
 								elif child.tag == self.exactsynonym:
 									synonyms.append(child.text)
 							do_dict['name'] = name
-							do_dict['id'] = id
+							do_dict['id'] = term_id
 							do_dict['dbxrefs'] = dbxrefs
 							do_dict['synonyms'] = synonyms
 							yield do_dict

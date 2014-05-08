@@ -43,3 +43,4 @@ changelog_data['replace2013.txt'] = \
 	(mesh_replace_file, parsers.MESHChangesParser)
 changelog_data['doid.owl'] = \
 	('http://purl.obolibrary.org/obo/doid.owl', parsers.DODeprecatedParser)
+# vim: ts=4 sts=4 sw=4 noexpandtab

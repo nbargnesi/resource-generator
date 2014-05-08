@@ -223,3 +223,4 @@ if __name__=='__main__':
 	
 	print('serializing RDF graph ...')
 	g.serialize("testfile.ttl", format='turtle')	
+# vim: ts=4 sts=4 sw=4 noexpandtab

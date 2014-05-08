@@ -847,3 +847,4 @@ class RGDObsoleteParser(Parser):
 	def __str__(self):
 		return "RGD_Obsolete_Parser"
 
+# vim: ts=4 sts=4 sw=4 noexpandtab

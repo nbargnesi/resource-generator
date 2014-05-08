@@ -152,3 +152,4 @@ data_file_info = {
 	'rgd-rat-genes.beleq' : 'entrez_info.gz',
 }
 
+# vim: ts=4 sts=4 sw=4 noexpandtab

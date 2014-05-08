@@ -159,3 +159,4 @@ for (species, url, ns) in datasets:
 			bel.write('{0} hasComponents list({1})\n'.format(k, ','.join(v)))
 			#bel.write(k + ' hasComponents list(' + ",".join(v) + ')')
 			#bel.write('\n')
+# vim: ts=4 sts=4 sw=4 noexpandtab

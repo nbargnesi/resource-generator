@@ -110,3 +110,4 @@ source_data['MESH'] = {'cname':'MeSH',
 	'sd':'MeSH (Medical Subject Headings) is a controlled vocabulary thesaurus created, maintained, and provided by the U.S. National Library of Medicine.',
 	'su':'http://www.nlm.nih.gov/mesh/meshhome.html'}
 
+# vim: ts=4 sts=4 sw=4 noexpandtab

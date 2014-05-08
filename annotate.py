@@ -34,3 +34,4 @@ def make_annotations(d):
 					if any(b in branch for b in branches):
 						mesha.write(delim.join((mh, ui))+'\n')
 						break
+# vim: ts=4 sts=4 sw=4 noexpandtab

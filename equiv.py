@@ -361,3 +361,4 @@ def resolve_entrez_id(d, verbose):
 		write_beleq(eq_name_dict, d._name, d.source_file)
 	return eq_id_dict, eq_name_dict
 	
+# vim: ts=4 sts=4 sw=4 noexpandtab

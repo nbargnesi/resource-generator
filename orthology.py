@@ -81,3 +81,4 @@ if __name__=='__main__':
 		ortho.write('SET Citation = {"Online Resource","RGD Orthology FTP file", "ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt"}\n')
 		for s in sorted(rgd_ortho_statements):
 			ortho.write(s + '\n')
+# vim: ts=4 sts=4 sw=4 noexpandtab

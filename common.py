@@ -258,3 +258,5 @@ def get_citation_info(name, header, data_file):
 	print('...%s : %s -- %s' % (name, pubdate, pubver))
 
 	return header
+# vim: ts=4 sts=4 sw=4 noexpandtab
+# vim: ts=4 sts=4 sw=4 noexpandtab

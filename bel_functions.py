@@ -12,3 +12,4 @@ def bel_term(value,ns,f):
 		s = Template('${f}(${ns}:${value})')
 	term = s.substitute(f=f, ns=ns, value=value)
 	return term
+# vim: ts=4 sts=4 sw=4 noexpandtab

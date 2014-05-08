@@ -692,3 +692,4 @@ class DOData(NamespaceDataSet):
 		xrefs.update(mapping.get('dbxrefs'))
 		xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
 		return xrefs
+# vim: ts=4 sts=4 sw=4 noexpandtab

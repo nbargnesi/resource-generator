@@ -216,3 +216,4 @@ for anno in mesh_anno_names:
 	annodef = annoheaders.annotation_definition(anno, version, crdate)
 	citation = '[Citation]\n' + annoheaders.citation_info('MESH', mesh_ver)
 	write_belanno(anno, annodef, citation, anno_dict)
+# vim: ts=4 sts=4 sw=4 noexpandtab

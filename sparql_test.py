@@ -78,3 +78,4 @@ if __name__ == '__main__':
 
 	print("prefLabel conflicts:")
 	print(dumps(query(PREFLABEL_CONFLICTS, endpoint_url), indent=4))
+# vim: ts=4 sts=4 sw=4 noexpandtab

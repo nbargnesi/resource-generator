@@ -260,3 +260,4 @@ def build_data(entry, parser, data_object):
 			'human_ortholog_id' : entry.get('HUMAN_ORTHOLOG_HGNC_ID'),
 			'mouse_ortholog_id' : entry.get('MOUSE_ORTHOLOG_MGI') }
 			
+# vim: ts=4 sts=4 sw=4 noexpandtab

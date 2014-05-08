@@ -34,3 +34,4 @@ NAME = 2
 
 MARKER_TYPE = 3
 RGD_ID = 3
+# vim: ts=4 sts=4 sw=4 noexpandtab

@@ -9,11 +9,17 @@ import datasets
 from collections import defaultdict
 from rdflib import URIRef, BNode, Literal, Namespace, Graph
 from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD
+from rdflib.term import bind
 from urllib import parse
 
 namespace = Namespace("http://www.openbel.org/bel/namespace/")
 BELV = Namespace("http://www.openbel.org/vocabulary/")
 
+def literal(obj):
+	if isinstance(obj, str):
+	    return Literal(str(obj), datatype=XSD.string)
+	else:
+		return Literal(obj)
 
 # loads parsed data from pickle file (after running phase 2 of gp_baseline.py)
 def make_rdf(d, g, prefix_dict=None):
@@ -31,35 +37,35 @@ def make_rdf(d, g, prefix_dict=None):
 	
 	g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
 	name = d._name.replace('-',' ').title()
-	g.add((namespace[d._name], SKOS.prefLabel, Literal(name)))
-	g.add((namespace[d._name], BELV.prefix, Literal(d._prefix)))
+	g.add((namespace[d._name], SKOS.prefLabel, literal(name)))
+	g.add((namespace[d._name], BELV.prefix, literal(d._prefix)))
 
 	for term_id in d.get_values():
 		term_clean = parse.quote(term_id)
 		term_uri = URIRef(n[term_clean])
 		# add primary identifier 
-		g.add((term_uri, DCTERMS.identifier, Literal(term_id)))
+		g.add((term_uri, DCTERMS.identifier, literal(term_id)))
 		# add secondary/alternative identifiers (alt_ids)
 		alt_ids = d.get_alt_ids(term_id)
 		if alt_ids:
 			for alt_id in alt_ids:
-				g.add((term_uri, DCTERMS.identifier, Literal(alt_id)))
+				g.add((term_uri, DCTERMS.identifier, literal(alt_id)))
 
 		# add official name (as title)
 		name = d.get_name(term_id)
 		if name:
-			g.add((term_uri, DCTERMS.title, Literal(name)))
+			g.add((term_uri, DCTERMS.title, literal(name)))
 
 		# link to to Concept Scheme
 		g.add((term_uri, SKOS.inScheme, namespace[d._name]))
 		pref_label = d.get_label(term_id)
 		if pref_label:
-			g.add((term_uri, SKOS.prefLabel, Literal(pref_label)))
+			g.add((term_uri, SKOS.prefLabel, literal(pref_label)))
 
 		# add species (tax id as literal)
 		species = d.get_species(term_id)
 		if species:
-			g.add((term_uri, BELV.fromSpecies, Literal(species)))
+			g.add((term_uri, BELV.fromSpecies, literal(species)))
 
 		# use encoding information to determine concept types
 		encoding = d.get_encoding(term_id)
@@ -84,11 +90,11 @@ def make_rdf(d, g, prefix_dict=None):
 		alt_symbols = d.get_alt_symbols(term_id)
 		if alt_symbols:
 			for symbol in alt_symbols:
-				g.add((term_uri, SKOS.altLabel, Literal(symbol)))
+				g.add((term_uri, SKOS.altLabel, literal(symbol)))
 		alt_names = d.get_alt_names(term_id)
 		if alt_names:
 			for name in alt_names:
-				g.add((n[term_id], SKOS.altLabel, Literal(name)))
+				g.add((n[term_id], SKOS.altLabel, literal(name)))
 
 		# get equivalences to other namespaces (must be in data set)
 		if prefix_dict == None:

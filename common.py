@@ -150,7 +150,31 @@ def get_citation_info(name, header, data_file):
 #		data_file = p3.search(info_text).group(1)
 #	except:
 #		data_file = None
-	pubver = 'NA'	
+	pubver = 'NA'
+	pubdate = time.strftime("%Y-%m-%d")
+
+	# parse version and date from info file
+	try:
+		pubdate = p1.search(info_text).group(1)
+	except:
+		try:
+			pubdate = p2.search(info_text).group(1)
+		except:
+			pass
+	if pubdate:
+		if re.match('^\d+$', pubdate):
+			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
+			#pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
+			pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
+		pubdate = pubdate.replace(' GMT', '')
+		if re.match('^[A-Za-z]{3}, \d\d [A-Za-z]{3} \d{4} \d\d:\d\d:\d\d$', pubdate):
+			tv = time.strptime(pubdate,"%a, %d %b %Y %H:%M:%S")
+		elif re.match('^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d', pubdate):
+			tv = time.strptime(pubdate,"%Y-%m-%d %H:%M:%S")
+		pubver = time.strftime("%a, %d %b %Y %H:%M:%S", tv)
+		pubdate = time.strftime("%Y-%m-%d", tv)
+
+	# parse version and date from dataset file
 	if data_file.find('chebi') >= 0:
 		f = open('./datasets/'+data_file, 'r')
 		while 1:
@@ -226,30 +250,7 @@ def get_citation_info(name, header, data_file):
 		if re.match('^\d+$', pubdate):
 			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
 			pubdate = time.strftime("%Y-%m-%d", tt)
-	else:
-	
-		try:
-			pubdate = p1.search(info_text).group(1)
-		except:
-			try:
-				pubdate = p2.search(info_text).group(1)
-			except:
-				pass
-		if pubdate:
-			if re.match('^\d+$', pubdate):
-				tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
-				#pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
-				pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
-			pubdate = pubdate.replace(' GMT', '')
-			if re.match('^[A-Za-z]{3}, \d\d [A-Za-z]{3} \d{4} \d\d:\d\d:\d\d$', pubdate):
-				tv = time.strptime(pubdate,"%a, %d %b %Y %H:%M:%S")
-			elif re.match('^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d', pubdate):
-				tv = time.strptime(pubdate,"%Y-%m-%d %H:%M:%S")
-			pubver = time.strftime("%a, %d %b %Y %H:%M:%S", tv)
-			pubdate = time.strftime("%Y-%m-%d", tv)
-		else:
-			pubdate = 'NA'
-		
+
 	header = header.replace('\nPublishedVersionString=[#VALUE#]',
 		'\nPublishedVersionString='+pubver)
 	header = header.replace('\nPublishedDate=[#VALUE#]',

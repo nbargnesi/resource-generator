@@ -449,4 +449,3 @@ D0441		viral infection			O		DO:934
 D0163		VLDL biosynthesis			B												
 D0164		VLDL secretion			B												
 D0167		Weibel-Palade body externalization			B												
-																	

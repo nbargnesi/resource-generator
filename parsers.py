@@ -64,7 +64,7 @@ class NamespaceParser(Parser):
 			reader = csv.DictReader(filter(lambda row: 
 								not row[0].startswith('#'), f), delimiter='\t')
 			for row in reader:
-				if row['ID'].strip() is not None:
+				if row['ID'].strip():
 					yield row
 
 	def __str__(self):
@@ -92,6 +92,7 @@ class EntrezGeneInfoParser(Parser):
 		for row in reader:
 			if row['tax_id'] in ('9606', '10090', '10116'):
 				yield row
+            #    continue     
 
 	def __str__(self):
 		return "EntrezGeneInfo_Parser"

@@ -216,7 +216,7 @@ def equiv(d, verbose):
 			eq_name_dict[name] = uid
 		write_beleq(eq_name_dict, d._name, d.source_file)
 
-	elif str(d) == 'meshcl':
+	elif str(d) == 'meshcs':
 		eq_name_dict = {}
 		gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
 

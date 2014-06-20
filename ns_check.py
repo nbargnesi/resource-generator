@@ -8,52 +8,52 @@ parser.add_argument('-p',required=False, help='path for .belns and .beleq file d
 args = parser.parse_args()
 path = args.p
 
-namespaces = ['selventa-legacy-chemical-names', 
+namespaces = ['selventa-legacy-chemicals', 
 		'selventa-legacy-diseases',
-				'selventa-named-complexes',
+		'selventa-named-complexes',
 		'disease-ontology-ids',
 		'disease-ontology',
-		'mesh-biological-processes',
+		'mesh-processes',
 		'mesh-diseases', 
-		'mesh-cellular-locations',
+		'mesh-cellular-structures',
 		'go-cellular-component',
 		'go-cellular-component-ids',
-		'go-biological-processes', 
-		'go-biological-processes-ids', 
+		'go-biological-process', 
+		'go-biological-process-ids', 
 		'chebi-ids',
 		'chebi',
 		'affy-probeset-ids',
 		'swissprot-ids',
 		'swissprot',
-		'rgd-approved-symbols',
-		'mgi-approved-symbols',
-		'hgnc-approved-symbols',
+		'rgd-rat-genes',
+		'mgi-mouse-genes',
+		'hgnc-human-genes',
 		'entrez-gene-ids']
 
 gp_root = 'entrez-gene-ids'
 disease_root = 'disease-ontology-ids'
 chemical_root = 'chebi'
-bp_root = 'go-biological-processes'
+bp_root = 'go-biological-process'
 cc_root = 'go-cellular-component'
 
 gp_namespaces = ['affy-probeset-ids',
 		'swissprot-ids',
 		'swissprot',
-		'rgd-approved-symbols',
-		'mgi-approved-symbols',
-		'hgnc-approved-symbols']
+		'rgd-rat-genes',
+		'mgi-mouse-genes',
+		'hgnc-human-genes']
 
 disease_namespaces = ['mesh-diseases', 
 		'selventa-legacy-diseases']
 
-chemical_namespaces = ['selventa-legacy-chemical-names', 'chebi-ids']
+chemical_namespaces = ['selventa-legacy-chemicals', 'chebi-ids']
 
 
-bp_namespaces = ['mesh-biological-processes', 'go-biological-processes-ids']
+bp_namespaces = ['mesh-processes', 'go-biological-process-ids']
 
-cc_namespaces = ['mesh-cellular-locations',
+cc_namespaces = ['mesh-cellular-structures',
 		'go-cellular-component-ids',
-				'selventa-named-complexes']
+		'selventa-named-complexes']
 
 def get_value_dict(f):
 	""" Return dictionary of values and encoding or uuids from a 

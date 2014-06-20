@@ -96,7 +96,7 @@ baseline_data['chebi.owl'] = (
 	parsers.CHEBIParser, chebi_data
 )
 
-schem_data = StandardCustomData(name='selventa-legacy-chemical-names', prefix='schem')
+schem_data = StandardCustomData(name='selventa-legacy-chemicals', prefix='schem')
 baseline_data['selventa-legacy-chemical-names.txt'] = (
 	file_url + 'selventa-legacy-chemical-names.txt', parsers.NamespaceParser, schem_data)
 

@@ -50,6 +50,21 @@ class OrthologyData(DataSet):
 	def __str__(self):
 		return self._prefix + '_ortho'
 
+class HistoryDataSet(DataSet):
+
+	def __init__(self, dictionary={}, prefix='use-index-term-prefix'):
+		super().__init__(dictionary, prefix)
+
+	def get_id_update(self, term_id):
+		''' given an id, return the current value or "withdrawn". '''
+		pass
+
+	def get_obsolete_ids(self):
+		''' return dict with all obsolete ids, and current value.'''
+
+	def __str__(self):
+		return self._prefix + '_history'
+
 class NamespaceDataSet(DataSet):
 
 	# Make .belns file containing ids/labels
@@ -151,7 +166,7 @@ class NamespaceDataSet(DataSet):
 	def __str__(self):
 		return self._prefix
 
-class StandardCustomData(NamespaceDataSet):
+class StandardCustomData(NamespaceDataSet, HistoryDataSet):
 	
 	def __init__(self, dictionary={}, *, name, prefix):
 		super().__init__(dictionary, name, prefix)
@@ -260,13 +275,13 @@ class EntrezInfoData(NamespaceDataSet):
 		return name
 	
 
-class EntrezHistoryData(DataSet):
+class EntrezHistoryData(HistoryDataSet):
 	
-	def __init__(self, dictionary={}, prefix='entrez-history'):
+	def __init__(self, dictionary={}, prefix='egid'):
 		super().__init__(dictionary, prefix)
 
 
-class HGNCData(NamespaceDataSet, OrthologyData):
+class HGNCData(NamespaceDataSet, OrthologyData, HistoryDataSet):
 	
 	ENC = {
 		'gene with protein product' : 'GRP', 'RNA, cluster' : 'GR',
@@ -295,6 +310,33 @@ class HGNCData(NamespaceDataSet, OrthologyData):
 		for term_id in self._dict:
 			if '~withdrawn' not in self._dict.get(term_id).get('Symbol'):
 				yield term_id
+
+	def get_id_update(self, term_id):
+		mapping = self._dict.get(term_id)
+		if mapping is None:
+			return None
+		else:
+			if mapping.get('Locus Type') == 'withdrawn':
+				name = self.get_name(term_id)
+				if 'entry withdrawn' in name:
+					return 'withdrawn'
+				elif 'symbol withdrawn' in name:
+					new_symbol = name.split('see ')[1]
+					new_id = None
+					for term_id in self._dict():
+						if new_symbol == self.get_label(term_id):
+							new_id = term_id
+							continue
+					return new_id
+				else:
+					return term_id
+					
+	def get_obsolete_ids(self):
+		obsolete = {}
+		for term_id in self._dict:
+			if 'withdrawn' in self.get_label(term_id):
+				obsolete[term_id] = self.get_id_update(term_id)		
+		return obsolete				
 
 	def get_label(self, term_id):
 		''' Return preferred label associated with term id. '''
@@ -349,7 +391,7 @@ class HGNCData(NamespaceDataSet, OrthologyData):
 		orthologs.update(rat_orthologs)
 		return orthologs
 
-class MGIData(NamespaceDataSet):
+class MGIData(NamespaceDataSet, HistoryDataSet):
 
 	ENC = {
 		'gene' : 'GRP', 'protein coding gene' : 'GRP',
@@ -589,7 +631,7 @@ class Gene2AccData(DataSet):
 			yield entrez_gene, status, taxid
 
 
-class GOData(NamespaceDataSet):
+class GOData(NamespaceDataSet, HistoryDataSet):
 
 	ids = True
 	# dictionary is required, since GO file parsed into multiple objects
@@ -602,6 +644,22 @@ class GOData(NamespaceDataSet):
 				continue
 			else:
 				yield term_id
+
+	def get_obsolete_ids(self):
+		obsolete = {}
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('is_obsolete'):
+				obsolete[term_id] = 'withdrawn'
+		return obsolete
+
+	def get_id_update(self, term_id):
+		if self._dict.get(term_id):
+			if self._dict.get(term_id).get('is_obsolete'):
+				return 'withdrawn'
+			else:
+				return term_id
+		else:
+			return None
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('termname')
@@ -649,14 +707,23 @@ class MESHData(NamespaceDataSet):
 		return synonyms	
 
 
-class SwissWithdrawnData(DataSet):
+class SwissWithdrawnData(HistoryDataSet):
 
-	def __init__(self, dictionary={}, prefix='swiss-withdrawn'):
+	def __init__(self, dictionary={}, prefix='sp'):
 		super().__init__(dictionary, prefix)
 
-	def get_withdrawn_accessions(self):
+	def get_obsolete_ids(self):
 		accessions = self._dict.get('accessions')
-		return accessions
+		obsolete = {}
+		for a in accessions:
+			obsolete[a] = 'withdrawn'
+		return obsolete
+
+	def get_id_update(self, term_id):
+		if term_id in self._dict.get('accessions'):
+			return 'withdrawn'
+		else:
+			return None
 
 
 class DOData(NamespaceDataSet):

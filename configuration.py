@@ -62,6 +62,13 @@ baseline_data['mgi.rpt'] = (
 	parsers.MGIParser, mgi_data
 )
 
+# need to create classes MGIHistoryData, MGIHistoryParser
+#mgi_history_data = MGIHistoryData()
+#baseline_data[mgi_history_index] = (
+#	'ftp://ftp.informatics.jax.org/pub/reports/archive/nomen/',
+#	parsers.MGIHistoryParser, mgi_history_data
+#)
+
 rgd_data = RGDData()
 baseline_data['rgd.txt'] = (
 	'ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt',

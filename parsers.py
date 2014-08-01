@@ -158,6 +158,16 @@ class MGIParser(Parser):
 	def __str__(self):
 		return "MGI_Parser"
 
+class MGIHistoryParser(Parser):
+
+	def __init__(self, url):
+		super().__init__(url)
+
+	def parse(self):
+		pass
+
+	def __str__(self):
+		return "MGI_History_Parser"
 
 class RGDParser(Parser):
 

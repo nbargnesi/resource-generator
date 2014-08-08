@@ -71,9 +71,17 @@ def build_data(entry, parser, data_object):
 	elif parser == 'EntrezGeneHistory_Parser':
 		gene_id = entry.get('GeneID')
 		discontinued_id = entry.get('Discontinued_GeneID')
-
-		data_object._dict[gene_id] = {
-			'Discontinued_GeneID' : discontinued_id }
+		new_id = None
+		if gene_id == '-':
+			status = 'withdrawn'
+		else:
+			status = 'retired'
+			new_id = gene_id
+			
+		data_object._dict[discontinued_id] = {
+			'status' : status,
+			'new_id' : new_id
+			 }
 
 	elif parser == 'HGNC_Parser':
 		app_symb = entry.get('Approved Symbol')
@@ -259,5 +267,11 @@ def build_data(entry, parser, data_object):
 			'symbol' : entry.get('RAT_GENE_SYMBOL'),
 			'human_ortholog_id' : entry.get('HUMAN_ORTHOLOG_HGNC_ID'),
 			'mouse_ortholog_id' : entry.get('MOUSE_ORTHOLOG_MGI') }
-			
+
+	elif parser == 'RGD_Obsolete_Parser':
+		term_id = entry.get('OLD_GENE_RGD_ID')
+		data_object._dict[term_id] = {
+			'status' : entry.get('OLD_GENE_STATUS'),
+			'new_id' : entry.get('NEW_GENE_RGD_ID'), 
+			'type' : entry.get('OLD_GENE_TYPE')	}					
 # vim: ts=4 sts=4 sw=4 noexpandtab

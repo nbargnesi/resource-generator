@@ -57,10 +57,27 @@ class HistoryDataSet(DataSet):
 
 	def get_id_update(self, term_id):
 		''' given an id, return the current value or "withdrawn". '''
-		pass
-
+		mapping = self._dict.get(term_id)
+		if mapping is not None:
+			if mapping.get('status') == 'withdrawn':
+				value = 'withdrawn'
+			else:
+				value = mapping.get('new_id')
+		else:
+			value = None
+		return value
+			
 	def get_obsolete_ids(self):
 		''' return dict with all obsolete ids, and current value.'''
+		value = None
+		replacement_dict = {}
+		for term_id in self._dict:
+			if term_id.get('status') == 'withdrawn' :
+				value = 'withdrawn'
+			else:
+				value = term_id.get('new_id')
+			replacement_dict[term_id] = value
+		return replacement_dict
 
 	def __str__(self):
 		return self._prefix + '_history'
@@ -391,7 +408,7 @@ class HGNCData(NamespaceDataSet, OrthologyData, HistoryDataSet):
 		orthologs.update(rat_orthologs)
 		return orthologs
 
-class MGIData(NamespaceDataSet, HistoryDataSet):
+class MGIData(NamespaceDataSet):
 
 	ENC = {
 		'gene' : 'GRP', 'protein coding gene' : 'GRP',
@@ -503,6 +520,12 @@ class RGDData(NamespaceDataSet):
 		synonyms = {s for s in synonyms if s}
 		return synonyms
 
+class RGDObsoleteData(HistoryDataSet):
+
+	def __init__(self, dictionary = {}, prefix = 'rgd'):
+		super().__init__(dictionary, name, prefix)
+
+	
 
 class SwissProtData(NamespaceDataSet):
 

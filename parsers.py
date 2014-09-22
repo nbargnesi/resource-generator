@@ -624,20 +624,6 @@ class MESHParser(Parser):
 				elif values[0] == 'PRINT ENTRY' or values[0] == 'ENTRY':
 					if '|EQV|' in values[1]:
 						entries = values[1].split('|')
-				#if line.startswith('MH ='):
-				#	mh = line.split('=')[1].strip()
-				#elif line.startswith('UI ='):
-				#	ui = line.split('=')[1].strip()
-				#elif line.startswith('MN ='):
-				#	mn = line.split('=')[1].strip()
-				#	mns.add(mn)
-				#elif line.startswith('ST ='):
-				#	st = line.split('=')[1].strip()
-				#	sts.add(st)
-				#elif line.startswith('PRINT ENTRY ='):
-				#	entry = line.split('=')[1].strip()
-					#if '|EQV|' in line:
-						#entries = entry.split('|')
 						last = entries[-1]
 						num_syns = last.count('a')
 						while num_syns > 0:
@@ -645,23 +631,8 @@ class MESHParser(Parser):
 							s = entries[num_syns]
 							synonyms.add(s.strip())
 					else:
-						#if '|' not in entry:
-						#	synonyms.add(entry)
 						if '|' not in values[1]:
 							synonyms.add(values[1])
-				#elif line.startswith('ENTRY ='):
-				#	entry = line.split('=')[1].strip()
-				#	if '|EQV|' in line:
-				#		entries = entry.split('|')
-				#		last = entries[-1]
-				#		num_syns = last.count('a')
-				#		while num_syns > 0:
-				#			num_syns = num_syns - 1
-				#			s = entries[num_syns]
-				#			synonyms.add(s.strip())
-				#	else:
-				#		if '|' not in entry:
-				#			synonyms.add(entry)
 				elif line.startswith('*NEWRECORD'):
 					# file begins with *NEWRECORD so skip that one (dont yield)
 					if firstTime:

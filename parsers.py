@@ -149,7 +149,7 @@ class MGIParser(Parser):
 		super().__init__(url)
 
 	def parse(self):
-		with open(self._url, "r") as f:
+		with open(self._url, "r", encoding='iso-8859-1') as f:
 			reader = csv.DictReader(f, delimiter='\t')
 
 			for row in reader:

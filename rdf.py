@@ -37,8 +37,13 @@ def make_rdf(d, g, prefix_dict=None):
 	
 	g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
 	name = d._name.replace('-',' ').title()
+	domain = d._domain
 	g.add((namespace[d._name], SKOS.prefLabel, literal(name)))
 	g.add((namespace[d._name], BELV.prefix, literal(d._prefix)))
+	# TODO consider updating domain to uri instead of literal
+	# domain is a list - a namespace can be associated with mulitple domains
+	for dom in domain:
+		g.add((namespace[d._name], BELV.domain, literal(dom)))
 
 	for term_id in d.get_values():
 		term_clean = parse.quote(term_id)

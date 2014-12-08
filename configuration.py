@@ -96,19 +96,19 @@ baseline_data['chebi.owl'] = (
 	parsers.CHEBIParser, chebi_data
 )
 
-schem_data = StandardCustomData(name='selventa-legacy-chemicals', prefix='schem')
+schem_data = StandardCustomData(name='selventa-legacy-chemicals', prefix='schem', domain=['chemical'])
 baseline_data['selventa-legacy-chemical-names.txt'] = (
 	file_url + 'selventa-legacy-chemical-names.txt', parsers.NamespaceParser, schem_data)
 
-sdis_data = StandardCustomData(name='selventa-legacy-diseases', prefix='sdis')
+sdis_data = StandardCustomData(name='selventa-legacy-diseases', prefix='sdis', domain=['chemical'])
 baseline_data['selventa-legacy-diseases.txt'] = (
 	file_url + 'selventa-legacy-diseases.txt', parsers.NamespaceParser, sdis_data)
 
-scomp_data = StandardCustomData(name='selventa-named-complexes', prefix='scomp')
+scomp_data = StandardCustomData(name='selventa-named-complexes', prefix='scomp', domain=['complex'])
 baseline_data['selventa-named-complexes.txt'] = (
 	file_url + 'selventa-named-complexes.txt', parsers.NamespaceParser, scomp_data)
 
-sfam_data = StandardCustomData(name='selventa-protein-families', prefix='sfam')
+sfam_data = StandardCustomData(name='selventa-protein-families', prefix='sfam', domain=['other'])
 baseline_data['selventa-protein-families.txt'] = (
 	file_url + 'selventa-protein-families.txt', parsers.NamespaceParser, sfam_data
 )
@@ -116,8 +116,8 @@ baseline_data['selventa-protein-families.txt'] = (
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 gobp_dict, gocc_dict = {}, {}
-gobp_data = GOData(gobp_dict, name='go-biological-process', prefix='gobp')
-gocc_data = GOData(gocc_dict, name='go-cellular-component', prefix='gocc')
+gobp_data = GOData(gobp_dict, name='go-biological-process', prefix='gobp', domain=['process'])
+gocc_data = GOData(gocc_dict, name='go-cellular-component', prefix='gocc', domain=['complex','location'])
 baseline_data['go.xml.gz'] = (go_file, parsers.GOParser, [gobp_data, gocc_data])
 
 do_data = DOData()
@@ -128,9 +128,9 @@ baseline_data['doid.owl'] = (
 
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
 meshcl_dict, meshd_dict, meshpp_dict = {}, {}, {}
-meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs')
-meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd')
-meshpp_data = MESHData(meshpp_dict, name='mesh-processes', prefix='meshpp')
+meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs', domain=['location'])
+meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd', domain=['disease'])
+meshpp_data = MESHData(meshpp_dict, name='mesh-processes', prefix='meshpp', domain=['process'])
 baseline_data['mesh.bin'] = (
 	mesh_file,
 	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data]

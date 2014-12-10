@@ -247,9 +247,11 @@ def build_data(entry, parser, data_object):
 					'synonyms' : synonyms }
 
 	elif parser == 'SwissWithdrawn_Parser':
-		acc = entry.get('accession')
+		term_id = entry.get('accession')
 
-		data_object._dict['accessions'].append(acc)
+		data_object._dict[term_id] = {
+			'status':'withdrawn'
+			}
 
 	elif str(parser) == 'DO_Parser':
 		name = entry.get('name')
@@ -271,7 +273,7 @@ def build_data(entry, parser, data_object):
 	elif parser == 'RGD_Obsolete_Parser':
 		term_id = entry.get('OLD_GENE_RGD_ID')
 		data_object._dict[term_id] = {
-			'status' : entry.get('OLD_GENE_STATUS'),
+			'status' : entry.get('OLD_GENE_STATUS').lower(),
 			'new_id' : entry.get('NEW_GENE_RGD_ID'), 
 			'type' : entry.get('OLD_GENE_TYPE')	}					
 # vim: ts=4 sts=4 sw=4 noexpandtab

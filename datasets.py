@@ -72,10 +72,11 @@ class HistoryDataSet(DataSet):
 		value = None
 		replacement_dict = {}
 		for term_id in self._dict:
-			if term_id.get('status') == 'withdrawn' :
+			mapping = self._dict.get(term_id)
+			if mapping.get('status') == 'withdrawn' :
 				value = 'withdrawn'
 			else:
-				value = term_id.get('new_id')
+				value = mapping.get('new_id')
 			replacement_dict[term_id] = value
 		return replacement_dict
 
@@ -341,7 +342,7 @@ class HGNCData(NamespaceDataSet, OrthologyData, HistoryDataSet):
 				elif 'symbol withdrawn' in name:
 					new_symbol = name.split('see ')[1]
 					new_id = None
-					for term_id in self._dict():
+					for term_id in self._dict:
 						if new_symbol == self.get_label(term_id):
 							new_id = term_id
 							continue
@@ -524,7 +525,7 @@ class RGDData(NamespaceDataSet):
 class RGDObsoleteData(HistoryDataSet):
 
 	def __init__(self, dictionary = {}, prefix = 'rgd'):
-		super().__init__(dictionary, name, prefix)
+		super().__init__(dictionary, prefix)
 
 	
 

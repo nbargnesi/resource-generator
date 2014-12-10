@@ -666,12 +666,11 @@ class MESHParser(Parser):
 class SwissWithdrawnParser(Parser):
 
 	def __init__(self, url):
-		super(SwissWithdrawnParser, self).__init__(url)
-		self.s_file = url
+		super().__init__(url)
 
 	def parse(self):
 
-		with open(self.s_file, 'r') as fp:
+		with open(self._url, 'r') as fp:
 			marker = False
 			for line in fp.readlines():
 				if '____' in line:

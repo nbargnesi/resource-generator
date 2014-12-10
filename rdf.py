@@ -188,6 +188,36 @@ def get_ortho_matches(d, g, prefix_dict=None):
 							ortho_uri = URIRef(ortho_ns[value])
 							g.add((term_uri, BELV.orthologousMatch, ortho_uri))
 
+def get_history_data(d, g, prefix_dict=None):
+	''' Given a HistoryData object and graph, add status and replacedBy replationships
+	 to graph.'''
+	
+	print('gathering history information from {0} ...'.format(str(d._prefix)))
+	if not isinstance(d, datasets.HistoryDataSet):
+		print('ERROR - {0} is not a HistoryDataSet object!'.format(str(d)))
+		return None
+
+	else:
+		if prefix_dict == None:
+			print('Building required prefix dictionsry ...')
+			prefix_dict = build_prefix_dict()
+		n = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[d._prefix] + '/')
+		obsolete = d.get_obsolete_ids()
+		for term_id, new_value in obsolete.items():
+			term_clean = parse.quote(term_id)
+			term_uri = URIRef(n[term_clean])
+			if new_value == 'withdrawn':
+				g.add((term_uri, BELV.status, literal('withdrawn')))
+			elif new_value is not None:
+				new_value_clean = parse.quote(new_value)
+				new_uri = URIRef(n[new_value_clean])
+				g.add((term_uri, BELV.status, literal('retired')))
+				g.add((new_uri, DCTERMS.replaces, term_uri))
+			else:
+				print('Check values for {0}: {1}'.format(str(d), term_id))
+				
+				
+
 def build_prefix_dict():
 	''' Build dictionary of namespace prefixes to names (from data set objects). '''
 	print('gathering namespace information ...')
@@ -228,6 +258,8 @@ if __name__=='__main__':
 						make_rdf(d, g, prefix_dict)
 					if isinstance(d, datasets.OrthologyData):
 						get_ortho_matches(d, g, prefix_dict)
+					if isinstance(d, datasets.HistoryDataSet):
+						get_history_data(d, g, prefix_dict)
 
 	get_close_matches('BiologicalProcessConcept', g)
 	get_close_matches('AbundanceConcept', g)

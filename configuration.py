@@ -75,6 +75,10 @@ baseline_data['rgd.txt'] = (
 	parsers.RGDParser, rgd_data
 )
 
+rgd_history_data = RGDObsoleteData()
+baseline_data['rgd_obsolete.txt'] = \
+	('ftp://rgd.mcw.edu/pub/data_release/GENES_OBSOLETE_IDS.txt', parsers.RGDObsoleteParser, rgd_history_data)
+
 rgd_ortho_data = OrthologyData(prefix='rgd')
 baseline_data['RGD_ORTHOLOGS.txt'] = (
 	'ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt', parsers.RGDOrthologParser, rgd_ortho_data)
@@ -84,6 +88,10 @@ baseline_data['swiss.xml.gz'] = (
 	'ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.xml.gz',
 	parsers.SwissProtParser, sp_data
 )
+
+sp_history_data = HistoryDataSet(prefix='sp')
+baseline_data['delac_sp.txt'] = \
+	('ftp://ftp.uniprot.org/pub/databases/uniprot/knowledgebase/docs/delac_sp.txt', parsers.SwissWithdrawnParser, sp_history_data)
 
 gene2acc_data = Gene2AccData()
 baseline_data['gene2acc.gz'] = (

@@ -626,6 +626,9 @@ class GOData(NamespaceDataSet):
 
 class MESHData(NamespaceDataSet):
 	# dictionary and other arguments are required since MeSH file parsed into mulitple objects
+
+	ids = True
+
 	def __init__(self, dictionary, *, name, prefix, domain):
 		super().__init__(dictionary, name, prefix, domain)
 

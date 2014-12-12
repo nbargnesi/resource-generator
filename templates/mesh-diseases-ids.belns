@@ -1,0 +1,28 @@
+[Namespace]
+NameString=MeSH Diseases (Identifiers)
+Keyword=MESHDID
+DomainString=Biological Process
+SpeciesString=all
+DescriptionString=Medical Subject Headings (MeSH) from the Diseases [C] branch. These headings may be used to specify pathologies.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=MeSH
+DescriptionString=MeSH (Medical Subject Headings) is a controlled vocabulary thesaurus created, maintained, and provided by the U.S. National Library of Medicine. 
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.nlm.nih.gov/mesh/meshhome.html
+
+[Processing]
+CaseSensitiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

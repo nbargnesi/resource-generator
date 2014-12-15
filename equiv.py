@@ -199,6 +199,7 @@ def equiv(d, verbose):
 
 	elif str(d) == 'meshpp':
 		eq_name_dict = {}
+		eq_id_dict = {}
 		gobp_eq_cf = {k.casefold():v for k, v in gobp_eq_dict.items()}
 
 		for term_id in d.get_values():
@@ -214,10 +215,15 @@ def equiv(d, verbose):
 			if uid is None:
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
-		write_beleq(eq_name_dict, d._name, d.source_file)
+			eq_id_dict[term_id] = uid
+		if d.ids == True:
+			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+		if d.labels == True:
+			write_beleq(eq_name_dict, d._name, d.source_file)
 
 	elif str(d) == 'meshcs':
 		eq_name_dict = {}
+		eq_id_dict = {}
 		gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
 
 		for term_id in d.get_values():
@@ -233,10 +239,15 @@ def equiv(d, verbose):
 			if uid is None:
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
-		write_beleq(eq_name_dict, d._name, d.source_file)
+			eq_id_dict[term_id] = uid
+		if d.ids == True:
+			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+		if d.labels == True:
+			write_beleq(eq_name_dict, d._name, d.source_file)
 
 	elif str(d) == 'meshd':
-		eq_name_dict = {}	
+		eq_name_dict = {}
+		eq_id_dict = {}	
 		do_data = parsed.do_data
 		for term_id in d.get_values():
 			name = d.get_label(term_id)
@@ -246,7 +257,11 @@ def equiv(d, verbose):
 			else:
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
-		write_beleq(eq_name_dict, d._name, d.source_file)
+			eq_id_dict[term_id] = uid
+		if d.ids == True:
+			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+		if d.labels == True:
+			write_beleq(eq_name_dict, d._name, d.source_file)
 
 	else:
 		write_root_beleq(d, verbose)

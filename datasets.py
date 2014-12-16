@@ -269,7 +269,11 @@ class EntrezInfoData(NamespaceDataSet):
 		xrefs = set()
 		mapping = self._dict.get(term_id)
 		xrefs.update(mapping.get('dbXrefs').split('|'))
+		# normalize xrefs with duplicated prefix
+		# e.g., HGNC:HGNC:5
+		xrefs = {x.split(':',x.count(':')-1)[-1] for x in xrefs}		
 		xrefs = {x for x in xrefs if x.startswith(targets)}
+		print(xrefs)
 		return xrefs
 			
 	def get_alt_symbols(self, gene_id):

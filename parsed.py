@@ -255,13 +255,14 @@ def build_data(entry, parser, data_object):
 
 	elif str(parser) == 'DO_Parser':
 		name = entry.get('name')
-		id = entry.get('id')
+		term_id = entry.get('id')
 		dbxrefs = entry.get('dbxrefs')
 		synonyms = entry.get('synonyms')
-		data_object._dict[id] = {
+		data_object._dict[term_id] = {
 			'name' : name,
 			'dbxrefs' : dbxrefs,
-			'synonyms' : synonyms }
+			'synonyms' : synonyms,
+			'is_obsolete' : entry.get('is_obsolete') }
 	
 	elif parser == 'RGDOrthologParser':
 		term_id = entry.get('RAT_GENE_RGD_ID')

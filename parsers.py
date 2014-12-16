@@ -92,7 +92,6 @@ class EntrezGeneInfoParser(Parser):
 		for row in reader:
 			if row['tax_id'] in ('9606', '10090', '10116'):
 				yield row
-            #    continue     
 
 	def __str__(self):
 		return "EntrezGeneInfo_Parser"
@@ -715,24 +714,6 @@ class MESHChangesParser(Parser):
 		return 'MESHChanges_Parser'
 
 
-def is_deprecated(child_list):
-	dep = False
-	deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
-	for child in child_list:
-		if child.tag == deprecated and child.text == 'true':
-			dep = True
-	return dep
-
-
-# custom exception to break out of the loop when an deprecated
-# term has been seen.
-class DeprecatedTermException(Exception):
-	def __init__(self, value):
-		self.value = value
-	def __str__(self):
-		return repr(self.value)
-
-# excludes deprecated terms which are not included in the namespace
 class DOParser(Parser):
 
 	def __init__(self, url):
@@ -755,75 +736,30 @@ class DOParser(Parser):
 				synonyms = []
 				name = ''
 				term_id = ''
-				try:
-					if len(elem.values()) != 0:
-						children = elem.getchildren()
-						if is_deprecated(children):
-							raise DeprecatedTermException(children)
-						else:
-							term_id = elem.get(about).split('/')[-1].strip('DOID_')
-							for child in children:
-								if child.tag == self.dbxref:
-									dbxrefs.append(child.text)
-								elif child.tag == self.label:
-									name = child.text
-								elif child.tag == self.exactsynonym:
-									synonyms.append(child.text)
-							do_dict['name'] = name
-							do_dict['id'] = term_id
-							do_dict['dbxrefs'] = dbxrefs
-							do_dict['synonyms'] = synonyms
-							yield do_dict
-				except DeprecatedTermException:
-					continue
+				obsolete = False
+				if len(elem.values()) != 0:
+					children = elem.getchildren()
+					term_id = elem.get(about).split('/')[-1].strip('DOID_')
+					for child in children:
+						if child.tag == self.dbxref:
+							dbxrefs.append(child.text)
+						elif child.tag == self.label:
+							name = child.text
+						elif child.tag == self.exactsynonym:
+							synonyms.append(child.text)
+						elif child.tag == self.deprecated:
+							obsolete = True
+					do_dict['name'] = name
+					do_dict['id'] = term_id
+					do_dict['dbxrefs'] = dbxrefs
+					do_dict['synonyms'] = synonyms
+					do_dict['is_obsolete'] = obsolete
+					yield do_dict
 
 	def __str__(self):
 		return 'DO_Parser'
 
 
-# includes deprecated terms (for change-log)
-class DODeprecatedParser(Parser):
-
-	def __init__(self, url):
-		super().__init__(url)
-		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
-		self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
-		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
-		self.id = '{http://www.geneontology.org/formats/oboInOwl#}id'
-		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
-
-	def parse(self):
-
-		with open(self._url, 'rb') as df:
-			tree = etree.iterparse(df, tag=self.classy)
-			for event, elem in tree:
-				do_dep_dict = {}
-				dbxrefs = []
-				name = ''
-				id = ''
-				dep = False
-				if len(elem.values()) != 0:
-					children = elem.getchildren()
-					for child in children:
-						if child.tag == self.dbxref:
-							dbxrefs.append(child.text)
-						elif child.tag == self.id:
-							id = child.text.split(':')[1]
-						elif child.tag == self.label:
-							name = child.text
-						elif child.tag == self.deprecated:
-							dep = True
-				do_dep_dict['name'] = name
-				do_dep_dict['id'] = id
-				do_dep_dict['dbxrefs'] = dbxrefs
-				do_dep_dict['deprecated'] = dep
-				yield do_dep_dict
-
-	def __str__(self):
-		return 'DODeprecated_Parser'
-
-#TODO - consolidate RGD parsers - file format is same
-# filtering of non-rat data can be done in parsed module
 class RGDObsoleteParser(Parser):
 
 	def __init__(self, url):

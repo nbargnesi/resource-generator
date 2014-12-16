@@ -99,7 +99,10 @@ class NamespaceDataSet(DataSet):
 		''' Get all non-obsolete primary ids in dataset dict.
 		Default is all keys. '''
 		for term_id in self._dict:
-			yield term_id
+			if self._dict.get(term_id).get('is_obsolete'):
+				continue
+			else:
+				yield term_id
 
 	def get_label(self, term_id):
 		''' Return the value to be used as the preferred
@@ -754,7 +757,7 @@ class SwissWithdrawnData(HistoryDataSet):
 			return None
 
 
-class DOData(NamespaceDataSet):
+class DOData(NamespaceDataSet,HistoryDataSet):
 
 	ids = True
 
@@ -787,4 +790,20 @@ class DOData(NamespaceDataSet):
 		xrefs.update(mapping.get('dbxrefs'))
 		xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
 		return xrefs
+
+	def get_obsolete_ids(self):
+		obsolete = {}
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('is_obsolete'):
+				obsolete[term_id] = 'withdrawn'
+		return obsolete
+
+	def get_id_update(self, term_id):
+		if self._dict.get(term_id):
+			if self._dict.get(term_id).get('is_obsolete'):
+				return 'withdrawn'
+			else:
+				return term_id
+		else:
+			return None
 # vim: ts=4 sts=4 sw=4 noexpandtab

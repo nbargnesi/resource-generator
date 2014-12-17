@@ -202,10 +202,12 @@ def get_history_data(d, g, prefix_dict=None):
 			print('Building required prefix dictionsry ...')
 			prefix_dict = build_prefix_dict()
 		n = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[d._prefix] + '/')
+		scheme = namespace[prefix_dict[d._prefix]]
 		obsolete = d.get_obsolete_ids()
 		for term_id, new_value in obsolete.items():
 			term_clean = parse.quote(term_id)
 			term_uri = URIRef(n[term_clean])
+			g.add((term_uri, SKOS.inScheme, scheme))
 			if new_value == 'withdrawn':
 				g.add((term_uri, BELV.status, literal('withdrawn')))
 			elif new_value is not None:

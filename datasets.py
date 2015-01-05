@@ -76,7 +76,7 @@ class HistoryDataSet(DataSet):
 			if mapping.get('status') == 'withdrawn' :
 				value = 'withdrawn'
 			else:
-				value = mapping.get('new_id')
+				value = self.get_id_update(term_id)
 			replacement_dict[term_id] = value
 		return replacement_dict
 
@@ -144,9 +144,9 @@ class NamespaceDataSet(DataSet):
 		unique.  '''
 		try:
 			alt_ids = self._dict.get(term_id).get('alt_ids')
-			return alt_ids
 		except:
-			return None
+			alt_ids = {}	
+		return alt_ids
 
 	def write_ns_values(self, dir):
 		data_names = {}
@@ -223,6 +223,17 @@ class StandardCustomData(NamespaceDataSet, HistoryDataSet):
 		synonyms = {s for s in synonyms if s}
 		return synonyms
 
+	def get_obsolete_ids(self):
+		''' return dict with all obsolete ids, and current value.'''
+		# TODO Add alt id handling, 
+		value = None
+		replacement_dict = {}
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('OBSOLETE') == 1:
+				mapping = self._dict.get(term_id)
+				value = 'withdrawn'
+				replacement_dict[term_id] = value
+		return replacement_dict
 	
 
 class EntrezInfoData(NamespaceDataSet):
@@ -273,7 +284,6 @@ class EntrezInfoData(NamespaceDataSet):
 		# e.g., HGNC:HGNC:5
 		xrefs = {x.split(':',x.count(':')-1)[-1] for x in xrefs}		
 		xrefs = {x for x in xrefs if x.startswith(targets)}
-		print(xrefs)
 		return xrefs
 			
 	def get_alt_symbols(self, gene_id):

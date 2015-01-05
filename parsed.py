@@ -262,6 +262,7 @@ def build_data(entry, parser, data_object):
 			'name' : name,
 			'dbxrefs' : dbxrefs,
 			'synonyms' : synonyms,
+			'alt_ids' : entry.get('alt_ids'),
 			'is_obsolete' : entry.get('is_obsolete') }
 	
 	elif parser == 'RGDOrthologParser':

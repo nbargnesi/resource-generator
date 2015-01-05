@@ -724,6 +724,7 @@ class DOParser(Parser):
 		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
 		self.exactsynonym = '{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym'
 		about = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about'
+		self.altid = '{http://www.geneontology.org/formats/oboInOwl#}hasAlternativeId'
 
 	def parse(self):
 
@@ -734,6 +735,7 @@ class DOParser(Parser):
 				do_dict = {}
 				dbxrefs = []
 				synonyms = []
+				alt_ids = set()
 				name = ''
 				term_id = ''
 				obsolete = False
@@ -749,11 +751,14 @@ class DOParser(Parser):
 							synonyms.append(child.text)
 						elif child.tag == self.deprecated:
 							obsolete = True
+						elif child.tag == self.altid:
+							alt_ids.add(child.text.replace('DOID:',''))
 					do_dict['name'] = name
 					do_dict['id'] = term_id
 					do_dict['dbxrefs'] = dbxrefs
 					do_dict['synonyms'] = synonyms
 					do_dict['is_obsolete'] = obsolete
+					do_dict['alt_ids'] = alt_ids
 					yield do_dict
 
 	def __str__(self):

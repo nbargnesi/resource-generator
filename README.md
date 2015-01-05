@@ -39,19 +39,10 @@ See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespa
 ## Change-Log
 
 1. **[change_log.py](https://github.com/OpenBEL/resource-generator/blob/master/change_log.py)** - a separate module from gp_baseline. This module will
-   download and parse the old .belns and .beleq files and compare
-   those results with the newly generated files that will be locally stored
-   from [gp_baseline.py](https://github.com/jhourani/openbel-contributions/blob/master/gp_baseline.py). Currently, change_log.py must be run
-   with the flag `-n <res_files>`. `res_files` being the directory in which the
-   newly generated resource files are located. The result of running change_log.py
-   will be a dictionary mapping all the old terms to either their replacement
+   download pickled data objects from [gp_baseline.py](https://github.com/jhourani/openbel-contributions/blob/master/gp_baseline.py). change_log.py
+   outputs a json dictionary mapping old terms to either their replacement
    terms or the string `withdrawn`. This dictionary can be consumed by an update
    script to resolve lost terms in older versioned BEL documents.
-2. **[changelog_config.py](https://github.com/OpenBEL/resource-generator/blob/master/changelog_config.py)** - the configuration file for change_log.py. Much like
-   configuration.py, this module maps which parsers will be needed, and the
-   corresponding datasets for those parsers.
-3. **[write_log.py](https://github.com/OpenBEL/resource-generator/blob/master/write_log.py)** - the only task for this module is to write the change-log
-   data out to a file using a `json` format.
 
 ## Dependencies
 

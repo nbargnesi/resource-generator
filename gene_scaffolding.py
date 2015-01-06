@@ -1,6 +1,8 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3
 import urllib.request
 import datetime
+import argparse
+import os
 from string import Template
 from bel_functions import bel_term
 
@@ -8,10 +10,10 @@ from bel_functions import bel_term
 Given the urls for gene/protein domain .belns files, uses the 
 encodings to generate transcribedTo and translatedTo BEL statements. """
 
-namespaces = {'HGNC': 'http://resource.belframework.org/belframework/testing/namespace/hgnc-approved-symbols.belns',
-		'MGI': 'http://resource.belframework.org/belframework/testing/namespace/mgi-approved-symbols.belns',
-		'RGD': 'http://resource.belframework.org/belframework/testing/namespace/rgd-approved-symbols.belns'}
-
+namespaces = {'HGNC': 'hgnc-human-genes.belns',
+		'MGI': 'mgi-mouse-genes.belns',
+		'RGD': 'rgd-rat-genes.belns'}
+base_url = 'http://resource.belframework.org/belframework/testing/namespace/'
 output_file = 'gene_scaffolding_document_9606_10090_10116.bel'
 
 
@@ -39,45 +41,58 @@ def micro_rna(value,ns):
 	s = Template('${source} transcribedTo ${target}').substitute(source=source, target=target)
 	return s
 
-def scaffold(belns_url):
-	""" Returns set of gene scaffolding statements from .belns url, 
+def scaffold(belns_filename, ns):
+	""" Returns set of gene scaffolding statements from .belns, 
 	along with species, name, and date values needed for annotations. """
 	field = ''
-	belns = urllib.request.urlopen(url)
 	statements = set()
-	for line in belns:
-		line = line.decode('ISO-8859-1')
-		if not line.strip():
-			continue
-		if line.startswith('['):
-			field = line.strip()
-			continue
-		elif '[Namespace]' in field:
-			if line.startswith('SpeciesString='):
-				species = line.split('=')[1].strip()
-			elif line.startswith('NameString='):
-				name = line.split('=')[1].strip()
-			elif line.startswith('CreatedDateTime'):
-				date = line.split('=')[1].strip()
-		elif '[Values]' in field:
-			(value, encoding) = line.split('|')
-			encoding = encoding.strip()
-			if encoding == 'G':
+	with open(belns_filename, 'r') as belns:
+		for line in iter(belns):
+			#line = line.decode('ISO-8859-1')
+			if not line.strip():
 				continue
-			elif encoding == 'GR':
-				statements.add(transcribed_to(value, ns))
-			elif encoding == 'GRM':
-				statements.add(micro_rna(value, ns))
-			elif encoding == 'GRP':
-				statements.add(transcribed_to(value, ns))
-				statements.add(translated_to(value, ns))
+			if line.startswith('['):
+				field = line.strip()
+				continue
+			elif '[Namespace]' in field:
+				if line.startswith('SpeciesString='):
+					species = line.split('=')[1].strip()
+				elif line.startswith('NameString='):
+					name = line.split('=')[1].strip()
+				elif line.startswith('CreatedDateTime'):
+					date = line.split('=')[1].strip()
+			elif '[Values]' in field:
+				(value, encoding) = line.split('|')
+				encoding = encoding.strip()
+				if encoding == 'G':
+					continue
+				elif encoding == 'GR':
+					statements.add(transcribed_to(value, ns))
+				elif encoding == 'GRM':
+					statements.add(micro_rna(value, ns))
+				elif encoding == 'GRP':
+					statements.add(transcribed_to(value, ns))
+					statements.add(translated_to(value, ns))
 	return statements, name, species, date
 
 annotations = {'Species': 'http://resource.belframework.org/belframework/testing/annotation/species-taxonomy-id.belanno'}
 today = datetime.date.today()
-version = str(today.year) + str(today.month) + str(today.day)
-
+version = today.strftime('%Y%m%d')
 separator = '#' * 50
+
+parser = argparse.ArgumentParser(description="""Gene scaffolding from HGNC, RGD, and MGI .belns files.""")
+
+parser.add_argument("-n", required=True, metavar="DIRECTORY",
+				help="directory with .belns files")
+args = parser.parse_args()
+	
+belns_dir = args.n
+
+if os.path.exists(args.n):
+	os.chdir(args.n)
+else:
+	print('Data directory {0} not found'.format(args.n))
+	exit()
 
 with open(output_file, 'w') as bel:
 	print('\nWriting file {0} ...'.format(output_file))
@@ -90,15 +105,15 @@ with open(output_file, 'w') as bel:
 	bel.write('SET DOCUMENT Authors = "OpenBEL"\n')
 	bel.write('\n'+separator+ '\n')
 	bel.write('# Definitions Section\n')
-	for ns, url in namespaces.items():
-		bel.write('DEFINE NAMESPACE {0} AS URL "{1}"\n'.format(ns, url))
+	for ns_prefix, ns_name in namespaces.items():
+		bel.write('DEFINE NAMESPACE {0} AS URL "{1}{2}"\n'.format(ns_prefix, base_url, ns_name))
 	bel.write('\n')
 	for anno, url in annotations.items():
 		bel.write('DEFINE ANNOTATION {0} AS URL "{1}"\n'.format(anno, url))
 	bel.write(separator + '\n')
 	bel.write('# Statements Section\n\n')
-	for ns, url in namespaces.items():
-		statements, name, species, date = scaffold(url)
+	for ns_prefix, ns_name in namespaces.items():
+		statements, name, species, date = scaffold(ns_name, ns_prefix)
 		bel.write('SET Species = {0}\n'.format(species))
 		bel.write('SET Citation = {3}"Online Resource", "{0}", "{1}", "{2}", "", ""{4}\n\n'.format(name, url, date, '{', '}'))
 		print('\n\tGenerated {0} scaffolding statements for {1}. '.format(str(len(statements)), name))

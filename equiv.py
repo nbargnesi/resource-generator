@@ -250,13 +250,14 @@ def equiv(d, verbose):
 		eq_id_dict = {}	
 		do_data = parsed.do_data
 		for term_id in d.get_values():
+			uid = None
 			name = d.get_label(term_id)
 			xref = do_data.find_xref('MSH:'+term_id)
 			if xref:
 				# test - check not obsolete
 				if xref in do_data.get_values():
 					uid = do_id_eq[xref]
-			else:
+			if uid is None:
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
 			eq_id_dict[term_id] = uid

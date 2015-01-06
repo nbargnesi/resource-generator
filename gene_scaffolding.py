@@ -115,7 +115,7 @@ with open(output_file, 'w') as bel:
 	for ns_prefix, ns_name in namespaces.items():
 		statements, name, species, date = scaffold(ns_name, ns_prefix)
 		bel.write('SET Species = {0}\n'.format(species))
-		bel.write('SET Citation = {3}"Online Resource", "{0}", "{1}", "{2}", "", ""{4}\n\n'.format(name, url, date, '{', '}'))
+		bel.write('SET Citation = {3}"Online Resource", "{0}", "{1}{5}", "{2}", "", ""{4}\n\n'.format(name, base_url, date, '{', '}', ns_name))
 		print('\n\tGenerated {0} scaffolding statements for {1}. '.format(str(len(statements)), name))
 		for s in sorted(statements):
 			bel.write(s + '\n')

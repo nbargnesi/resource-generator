@@ -517,7 +517,7 @@ class RGDData(NamespaceDataSet):
 		gene_type = self._dict.get(term_id).get('GENE_TYPE')
 		name = self.get_name(term_id)
 		encoding = RGDData.ENC.get(gene_type, 'G')
-		if gene_type == 'miscrna' and 'microRNA' in name:
+		if gene_type == 'miscrna' or gene_type == 'ncrna' and 'microRNA' in name:
 			encoding = 'GRM'
 		if gene_type not in RGDData.ENC:
 			print('WARNING ' + gene_type + ' not defined for RGD. G assigned as default encoding.')

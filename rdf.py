@@ -55,6 +55,13 @@ def make_rdf(d, g, prefix_dict=None):
 		if alt_ids:
 			for alt_id in alt_ids:
 				g.add((term_uri, DCTERMS.identifier, literal(alt_id)))
+				# adding history info (gives each alt_id a URI and links
+				# to primary id URI)
+				alt_id_clean = parse.quote(alt_id)
+				alt_uri = URIRef(n[alt_id_clean])
+				g.add((term_uri, DCTERMS.replaces, alt_uri))
+				g.add((alt_uri, BELV.status, literal('secondary')))
+				g.add((alt_uri, SKOS.inScheme, namespace[d._name]))
 
 		# add official name (as title)
 		name = d.get_name(term_id)
@@ -189,7 +196,7 @@ def get_ortho_matches(d, g, prefix_dict=None):
 							g.add((term_uri, BELV.orthologousMatch, ortho_uri))
 
 def get_history_data(d, g, prefix_dict=None):
-	''' Given a HistoryData object and graph, add status and replacedBy replationships
+	''' Given a HistoryData object and graph, add status and replaces replationships
 	 to graph.'''
 	
 	print('gathering history information from {0} ...'.format(str(d._prefix)))
@@ -218,8 +225,6 @@ def get_history_data(d, g, prefix_dict=None):
 			else:
 				print('Check values for {0}: {1}'.format(str(d), term_id))
 				
-				
-
 def build_prefix_dict():
 	''' Build dictionary of namespace prefixes to names (from data set objects). '''
 	print('gathering namespace information ...')

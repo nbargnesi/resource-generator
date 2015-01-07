@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python3
 from collections import OrderedDict
 from collections import defaultdict
 from operator import itemgetter
@@ -145,7 +145,7 @@ mesh_anno_names = ['cell-structure', 'mesh-diseases', 'mesh-anatomy']
 
 # MeSH sub-branches to imclude in mesh-anatomy
 anatomy_branches = ('A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08',
-	'A09', 'A10', 'A12', 'A14', 'A15', 'A16', 'A17')
+	'A09', 'A10','A11', 'A12', 'A14', 'A15', 'A16', 'A17')
 
 # information for parsing owl files
 owl = '{http://www.w3.org/2002/07/owl#}'

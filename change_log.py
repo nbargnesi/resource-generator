@@ -134,7 +134,13 @@ if __name__=='__main__':
 					if history_dict.get(prefix) and term_id in history_dict[prefix]:
 						new_id_value = history_dict.get(prefix).get(term_id)
 						if new_id_value == 'withdrawn':
-							new_label_value = 'withdrawn'
+							# handle case where label does not change but ID does?
+							# create warning, but do not designate label as 'withdrawn'
+							if label in new_ns_dict[prefix].values():
+								new_label_value = label
+								print('WARNING! Label {0} appears valid but is associated with withdrawn ID {1}:{2}'.format(label,label_prefix,term_id))
+							else:
+								new_label_value = 'withdrawn'
 						elif new_id_value == None:
 							new_label_value = 'unresolved'
 						else:

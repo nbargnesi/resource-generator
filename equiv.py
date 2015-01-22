@@ -30,6 +30,8 @@ entrez_eq = {}
 hgnc_id_eq, mgi_id_eq, rgd_id_eq = {}, {}, {}
 # need chebi id equivalence dict for schem
 chebi_id_eq = {}
+# need chebi name equivalence dict for meshc
+chebi_eq = {}
 # need GOBP names for equivalencing MESHPP by string match
 gobp_eq_dict = {}
 # need GOCC ids for equivalencing to SCOMP
@@ -174,6 +176,7 @@ def equiv(d, verbose):
 	elif str(d) == 'chebi':
 		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
 		chebi_id_eq.update(id_temp_dict)
+		chebi_eq.update(name_temp_dict)
 
 	elif str(d) == 'gobp':
 		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
@@ -198,6 +201,7 @@ def equiv(d, verbose):
 		resolve_xrefs(d, 'chebi', chebi_id_eq, verbose)
 
 	elif str(d) == 'meshpp':
+		# equivalence by case-insensitive string match of MeSH names and synonyms to GOBP
 		eq_name_dict = {}
 		eq_id_dict = {}
 		gobp_eq_cf = {k.casefold():v for k, v in gobp_eq_dict.items()}
@@ -222,6 +226,7 @@ def equiv(d, verbose):
 			write_beleq(eq_name_dict, d._name, d.source_file)
 
 	elif str(d) == 'meshcs':
+		# equivalence by case-insensitive string match of MeSH names and synonyms to GOCC
 		eq_name_dict = {}
 		eq_id_dict = {}
 		gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
@@ -236,6 +241,31 @@ def equiv(d, verbose):
 			for syn in synonyms:
 				if syn.casefold() in gocc_eq_cf:
 					uid = gocc_eq_cf.get(syn.casefold())
+			if uid is None:
+				uid = uuid.uuid4()
+			eq_name_dict[name] = uid
+			eq_id_dict[term_id] = uid
+		if d.ids == True:
+			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+		if d.labels == True:
+			write_beleq(eq_name_dict, d._name, d.source_file)
+
+	elif str(d) == 'meshc':
+		# equivalence by case-insensitive string match of MeSH names and synonyms to ChEBI
+		eq_name_dict = {}
+		eq_id_dict = {}
+		eq_cf = {k.casefold():v for k, v in chebi_eq.items()}
+
+		for term_id in d.get_values():
+			uid = None
+			# check MeSH synonyms for matches to GO
+			name = d.get_label(term_id)
+			synonyms = set()
+			synonyms.add(name)
+			synonyms.update(d.get_alt_names(term_id))
+			for syn in synonyms:
+				if syn.casefold() in eq_cf:
+					uid = eq_cf.get(syn.casefold())
 			if uid is None:
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
@@ -305,6 +335,7 @@ def write_beleq(eq_dict, filename, source_file):
 def resolve_xrefs(d, root_prefix, root_eq_dict, verbose):
 	""" Writes .beleq file for dataset d, given the prefix from the 'root' dataset
 	and the (already built) equivalence dictionary from the root dataset. """
+	# TODO use multiple (ordered) roots
 	count = 0
 	eq_name_dict = {}
 	eq_id_dict = {}

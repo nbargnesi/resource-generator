@@ -142,13 +142,20 @@ baseline_data['doid.owl'] = (
 )
 
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
-meshcl_dict, meshd_dict, meshpp_dict = {}, {}, {}
+meshcl_dict, meshd_dict, meshpp_dict, meshc_dict  = {}, {}, {}, {}
 meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs', domain=['location'])
 meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd', domain=['disease'])
 meshpp_data = MESHData(meshpp_dict, name='mesh-processes', prefix='meshpp', domain=['process'])
+meshc_data = MESHData(meshc_dict, name='mesh-chemicals', prefix='meshc', domain=['chemical'])
 baseline_data['mesh.bin'] = (
 	mesh_file,
-	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data]
+	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data, meshc_data]
+)
+mesh_sup_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'c2', '.bin') 
+# need to determine best way to merge supplementary concepts with main MeSH for chemicals - OK to use meshc_data twice?
+baseline_data['meshc.bin'] = (
+	mesh_sup_file,
+	parsers.MESHParser, [meshc_data]
 )
 
 affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',

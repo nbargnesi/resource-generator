@@ -224,6 +224,7 @@ def build_data(entry, parser, data_object):
 		mns = entry.get('mns')
 		sts = entry.get('sts')
 		synonyms = entry.get('synonyms')
+		rns = entry.get('rns')
 		
 		if any(branch.startswith('A11.284') for branch in mns):
 			meshcl_dict[ui] = {
@@ -245,6 +246,21 @@ def build_data(entry, parser, data_object):
 					'sts' : sts,
 					'mns' : mns,
 					'synonyms' : synonyms }
+		if any(branch.startswith('D') for branch in mns) or len(mns) == 0:
+			# filter by semantic type for chemicals - 
+			# see http://semanticnetwork.nlm.nih.gov/SemGroups/SemGroups.txt
+			chemicals = ('T116','T195','T123','T122','T118','T103','T120',
+				'T104','T200','T111','T196','T126','T131','T125','T129','T130',
+				'T197','T119','T124','T114','T109','T115','T121','T192','T110',
+				'T127')
+
+			if any(st in chemicals for st in sts):
+				meshc_dict[ui] = {
+					'mesh_header' : mh,
+					'sts' : sts,
+					'mns' : mns,
+					'synonyms' : synonyms }
+				
 
 	elif parser == 'SwissWithdrawn_Parser':
 		term_id = entry.get('accession')

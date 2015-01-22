@@ -28,7 +28,9 @@ namespaces = ['selventa-legacy-chemicals',
 		'rgd-rat-genes',
 		'mgi-mouse-genes',
 		'hgnc-human-genes',
-		'entrez-gene-ids']
+		'entrez-gene-ids',
+		'mesh-chemicals',
+		'mesh-chemicals-ids']
 
 gp_root = 'entrez-gene-ids'
 disease_root = 'disease-ontology-ids'
@@ -46,7 +48,7 @@ gp_namespaces = ['affy-probeset-ids',
 disease_namespaces = ['mesh-diseases', 
 		'selventa-legacy-diseases']
 
-chemical_namespaces = ['selventa-legacy-chemicals', 'chebi-ids']
+chemical_namespaces = ['selventa-legacy-chemicals', 'chebi-ids', 'mesh-chemicals-ids']
 
 
 bp_namespaces = ['mesh-processes', 'go-biological-process-ids']

@@ -141,14 +141,14 @@ def get_citation_info(name, header, data_file):
 		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 
 	new_data_file = data_file_info.get(name)
-	if new_data_file:
-		data_file = new_data_file  
-	info_file = data_file + '.info'
-	info_text = open('./datasets/'+info_file).read()
-#	try:
-#		data_file = p3.search(info_text).group(1)
-#	except:
-#		data_file = None
+	try:
+		# use alternative reference if exists
+		info_text = open('./datasets/'+new_data_file+'.info').read()
+	#if new_data_file:
+	#	data_file = new_data_file
+	except:  
+		info_file = data_file + '.info'
+		info_text = open('./datasets/'+info_file).read()
 	pubver = 'NA'
 	pubdate = time.strftime("%Y-%m-%d")
 
@@ -161,6 +161,7 @@ def get_citation_info(name, header, data_file):
 		except:
 			pass
 	if pubdate:
+		tv = None
 		if re.match('^\d+$', pubdate):
 			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
 			#pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
@@ -170,8 +171,11 @@ def get_citation_info(name, header, data_file):
 			tv = time.strptime(pubdate,"%a, %d %b %Y %H:%M:%S")
 		elif re.match('^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d', pubdate):
 			tv = time.strptime(pubdate,"%Y-%m-%d %H:%M:%S")
-		pubver = time.strftime("%a, %d %b %Y %H:%M:%S", tv)
-		pubdate = time.strftime("%Y-%m-%d", tv)
+		if tv:
+			pubver = time.strftime("%a, %d %b %Y %H:%M:%S", tv)
+			pubdate = time.strftime("%Y-%m-%d", tv)
+		else:
+			pass
 
 	# parse version and date from dataset file
 	if data_file.find('chebi') >= 0:

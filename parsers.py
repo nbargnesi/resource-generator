@@ -610,27 +610,31 @@ class MESHParser(Parser):
 
 	def parse(self):
 
-		# ui - unique identifier / mh - mesh header
-		# mn - tree # / st - semantic type
+		# ui - unique identifier / mh - mesh header / nm - name (for supplemental concepts)
+		# mn - tree # / st - semantic type/ rn = registry number
 		ui = ''
 		mh = ''
 		mns = set()
 		sts = set()
+		rns = set()
 		synonyms = set()
 		firstTime = True
-		with open(self._url, 'r') as fp:
+		with open(self._url, "r", encoding="iso-8859-1") as fp:
+		#with open(self._url, 'r') as fp:
 			for line in fp.readlines():
 				values = line.split('=', maxsplit=1)
 				values = [value.strip() for value in values]
-				if values[0] == 'MH':
+				if values[0] == 'MH' or values[0] == 'NM':
 					mh = values[1]
 				elif values[0] == 'UI':
 					ui = values[1]
 				elif values[0] == 'MN':
 					mns.add(values[1])
+				elif values[0] == 'RN':
+					rns.add(values[1])
 				elif values[0] == 'ST':
 					sts.add(values[1])
-				elif values[0] == 'PRINT ENTRY' or values[0] == 'ENTRY':
+				elif values[0] == 'PRINT ENTRY' or values[0] == 'ENTRY' or values[0] == 'SY':
 					if '|EQV|' in values[1]:
 						entries = values[1].split('|')
 						last = entries[-1]
@@ -651,12 +655,14 @@ class MESHParser(Parser):
 
 						yield { 'ui' : ui, 'mesh_header' : mh,
 								'mns' : mns, 'sts' : sts,
-								'synonyms' : synonyms }
+								'synonyms' : synonyms,
+								'rns' : rns }
 						ui = ''
 						mh = ''
 						mns = set()
 						sts = set()
 						synonyms = set()
+						rns = set()
 
 	def __str__(self):
 		return 'MESH_Parser'

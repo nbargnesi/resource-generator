@@ -3,7 +3,7 @@
 #NameString=Selventa Legacy Chemical Names										
 #DomainString=Chemical										
 #SpeciesString=all										
-"#DescriptionString=Selventa names for chemicals, drugs, and other molecule abundances. It is not recommended that new BEL Documents include reference to any of these legacy namespaces."										
+#DescriptionString=Selventa names for chemicals, drugs, and other molecule abundances. It is not recommended that new BEL Documents include reference to any of these legacy namespaces.										
 #VersionString=20140225										
 #[Values]										
 ID	ALTIDS	LABEL	SYNONYMS	DESCRIPTION	TYPE	SPECIES	XREF	OBSOLETE	PARENTS	CHILDREN

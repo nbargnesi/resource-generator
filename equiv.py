@@ -29,7 +29,7 @@ entrez_eq = {}
 # need hgnc, mgi, rgd id equivalence dicts for swissprot
 hgnc_id_eq, mgi_id_eq, rgd_id_eq = {}, {}, {}
 # need chebi id equivalence dict for schem
-chebi_id_eq = {}
+chebi_id_eq, meshc_id_eq = {},{}
 # need chebi name equivalence dict for meshc
 chebi_eq = {}
 # need GOBP names for equivalencing MESHPP by string match
@@ -192,13 +192,13 @@ def equiv(d, verbose):
 		do_id_eq.update(id_temp_dict)
 
 	elif str(d) == 'sdis':
-		resolve_xrefs(d, 'do', do_id_eq, verbose)
+		resolve_xrefs(d, ['do'], [do_id_eq], verbose)
 
 	elif str(d) == 'scomp':
-		resolve_xrefs(d, 'gocc', gocc_eq_dict, verbose) 
+		resolve_xrefs(d, ['gocc'], [gocc_eq_dict], verbose) 
 
 	elif str(d) == 'schem':
-		resolve_xrefs(d, 'chebi', chebi_id_eq, verbose)
+		resolve_xrefs(d, ['chebi','meshc'], [chebi_id_eq, meshc_id_eq], verbose)
 
 	elif str(d) == 'meshpp':
 		# equivalence by case-insensitive string match of MeSH names and synonyms to GOBP
@@ -270,6 +270,7 @@ def equiv(d, verbose):
 				uid = uuid.uuid4()
 			eq_name_dict[name] = uid
 			eq_id_dict[term_id] = uid
+		meshc_id_eq.update(eq_id_dict)
 		if d.ids == True:
 			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
 		if d.labels == True:
@@ -332,25 +333,35 @@ def write_beleq(eq_dict, filename, source_file):
 			for name, uid in sorted(eq_dict.items()):
 				f.write('|'.join((name,str(uid))) + '\n')
 
-def resolve_xrefs(d, root_prefix, root_eq_dict, verbose):
-	""" Writes .beleq file for dataset d, given the prefix from the 'root' dataset
-	and the (already built) equivalence dictionary from the root dataset. """
-	# TODO use multiple (ordered) roots
+def resolve_xrefs(d, root_prefixes, root_eq_dicts, verbose):
+	""" Writes .beleq file for dataset d, given lists of the prefix from the 'root' datasets
+	and the (already built) equivalence dictionaries from the root dataset. Root info is 
+	provided as an ordered list, and should be included in the root list for gp_baseline
+	to insure that the root_eq_dict is populated."""
+	
 	count = 0
 	eq_name_dict = {}
 	eq_id_dict = {}
-	prefix_string = root_prefix.upper() + ':'
+	prefix_strings = [prefix.upper() for prefix in root_prefixes]
+	roots = list(zip(prefix_strings, root_eq_dicts))
 	for term_id in d.get_values():
 		label = d.get_label(term_id)
 		uid = None
-		xref_id = d.get_xrefs(term_id)
-		xref_id = {i.replace(prefix_string,'') for i in xref_id if i.startswith(prefix_string)}
-		if xref_id:
-			if len(xref_id) == 1:
-				count += 1
-				xref_id = xref_id.pop()
-				uid = root_eq_dict.get(xref_id)
-		if uid is None:
+		xref_ids = d.get_xrefs(term_id)
+		for r in roots:
+			(root_prefix, root_eq_dict) = r
+			root_xref_ids = {x for x in xref_ids if root_prefix in x}
+			for xref_id in root_xref_ids:
+				(prefix, xid) = xref_id.split(':')
+				if prefix == root_prefix:
+					uid = root_eq_dict.get(xid)
+				if uid is not None:
+					break
+			if uid is not None:
+				break
+		if uid is not None:
+			count += 1
+		else:
 			uid = uuid.uuid4()
 		eq_name_dict[label] = uid
 		eq_id_dict[term_id] = uid
@@ -362,7 +373,7 @@ def resolve_xrefs(d, root_prefix, root_eq_dict, verbose):
 	if d.labels == True:
 		write_beleq(eq_name_dict, d._name, d.source_file)
 	if verbose:
-		print('Able to resolve {0} {1} terms to {2}.'.format(str(count), d._name, root_prefix.upper()))
+		print('Able to resolve {0} {1} terms to {2}.'.format(str(count), d._name, str(root_prefixes)))
 	return eq_id_dict	
 
 def write_root_beleq(d, verbose):

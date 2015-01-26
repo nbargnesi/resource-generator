@@ -206,8 +206,9 @@ class StandardCustomData(NamespaceDataSet, HistoryDataSet):
 		return label
 
 	def get_xrefs(self, term_id):
-		xrefs = self._dict.get(term_id).get('XREF').split('|')		
-		return set(xrefs)
+		xrefs = set(self._dict.get(term_id).get('XREF').split('|'))
+		xrefs = {x.strip() for x in xrefs if ':' in x}		
+		return xrefs
 	
 	def get_species(self, term_id):
 		species = self._dict.get(term_id).get('SPECIES')

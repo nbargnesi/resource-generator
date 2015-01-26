@@ -266,7 +266,7 @@ if args.begin_phase > 2:
 	parsed.gene2acc_data = object_dict.get('gene2acc_data')
 
 # equiv_root_data should include string names for each namespacedataset used as a 'root' for equivalence
-equiv_root_data = ['egid_data','hgnc_data', 'mgi_data', 'rgd_data', 'gobp_data', 'chebi_data', 'gocc_data', 'do_data']
+equiv_root_data = ['egid_data','hgnc_data', 'mgi_data', 'rgd_data', 'gobp_data', 'chebi_data', 'gocc_data', 'do_data', 'meshc_data']
 for data_name in equiv_root_data:
 	data = object_dict.get(data_name)
 	if data:

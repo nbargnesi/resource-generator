@@ -141,30 +141,35 @@ def get_citation_info(name, header, data_file):
 		'\nCopyrightString=Copyright (c) '+time.strftime("%Y"))
 
 	new_data_file = data_file_info.get(name)
-	try:
+	if new_data_file:
 		# use alternative reference if exists
-		info_text = open('./datasets/'+new_data_file+'.info').read()
-	#if new_data_file:
-	#	data_file = new_data_file
-	except:  
-		info_file = data_file + '.info'
+		data_file = new_data_file
+	info_file = data_file + '.info'
+	try:
 		info_text = open('./datasets/'+info_file).read()
+	except:
+		info_text = None
+		print('WARNING - could not open {0}'.format(info_file))	
+	# placeholders
 	pubver = 'NA'
 	pubdate = time.strftime("%Y-%m-%d")
 
 	# parse version and date from info file
 	try:
+		# Last modified from .info file
 		pubdate = p1.search(info_text).group(1)
 	except:
 		try:
+			# Downloaded at from .info file
 			pubdate = p2.search(info_text).group(1)
 		except:
+			# default above - today's date
 			pass
 	if pubdate:
 		tv = None
+		# if pubdate a string of digits, reformat it
 		if re.match('^\d+$', pubdate):
 			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
-			#pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
 			pubdate = time.strftime("%a, %d %b %Y %H:%M:%S", tt)
 		pubdate = pubdate.replace(' GMT', '')
 		if re.match('^[A-Za-z]{3}, \d\d [A-Za-z]{3} \d{4} \d\d:\d\d:\d\d$', pubdate):
@@ -175,6 +180,7 @@ def get_citation_info(name, header, data_file):
 			pubver = time.strftime("%a, %d %b %Y %H:%M:%S", tv)
 			pubdate = time.strftime("%Y-%m-%d", tv)
 		else:
+			# don't seem to hit this case
 			pass
 
 	# parse version and date from dataset file
@@ -245,14 +251,15 @@ def get_citation_info(name, header, data_file):
 						pubver = annofile.get('name').split('.')[1]
 				break
 	elif data_file.find('mesh') >= 0:
-		# get MeSH version from info file download URL, pubdate from last modified date
-		pubver = p4.search(info_text).group(1)
-		pubver = pubver.split('/')[-1]
-		pubver = pubver.lstrip('d').rstrip('.bin')
-		pubdate = p1.search(info_text).group(1)
-		if re.match('^\d+$', pubdate):
-			tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
-			pubdate = time.strftime("%Y-%m-%d", tt)
+		# get MeSH version from info file download URL
+		if info_text:
+			pubver = p4.search(info_text).group(1)
+			pubver = pubver.split('/')[-1]
+			pubver = pubver.lstrip('d').rstrip('.bin')
+			#pubdate = p1.search(info_text).group(1)
+		#if re.match('^\d+$', pubdate):
+			#tt = time.strptime(pubdate, '%Y%m%d%H%M%S')
+			#pubdate = time.strftime("%Y-%m-%d", tt)
 
 	header = header.replace('\nPublishedVersionString=[#VALUE#]',
 		'\nPublishedVersionString='+pubver)

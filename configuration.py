@@ -170,6 +170,7 @@ affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 data_file_info = {
 	'hgnc-human-genes.beleq' : 'entrez_info.gz',
 	'mesh-diseases.beleq' : 'doid.owl',
+	'mesh-diseases-ids.beleq' : 'doid.owl',
 	'mgi-mouse-genes.beleq' : 'entrez_info.gz',
 	'rgd-rat-genes.beleq' : 'entrez_info.gz',
 }

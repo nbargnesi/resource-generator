@@ -83,6 +83,21 @@ class HistoryDataSet(DataSet):
 	def __str__(self):
 		return self._prefix + '_history'
 
+class AnnotationDataSet(DataSet):
+	
+	def __init__(self, dictionary={}, prefix):
+		super().__init(dictionary, prefix)
+
+	def get_values():
+		#TODO - move up to base class
+		pass
+
+	def get_alt_names():
+		pass
+
+	def get_xrefs():
+		pass
+
 class NamespaceDataSet(DataSet):
 
 	# Make .belns file containing ids/labels

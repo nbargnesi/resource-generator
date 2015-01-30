@@ -4,10 +4,20 @@
 import argparse
 import os
 import pickle
-import time
+import datetime
 import datasets
 import bel_functions
 from collections import defaultdict
+
+# Info for BEL document header
+doc_name = "BEL Framework Orthologous Genes Document"
+description = "Gene orthology relationships from HGNC and RGD"
+namespaces = {'HGNC': 'hgnc-human-genes.belns',
+	'MGI': 'mgi-mouse-genes.belns',
+	'RGD': 'rgd-rat-genes.belns'}
+annotations = {}
+base_url = 'http://resource.belframework.org/belframework/testing/'
+
 
 if __name__=='__main__':	
 	# command line arguments - directory for pickled data objects
@@ -22,6 +32,7 @@ if __name__=='__main__':
 	else:
 		print('data directory {0} not found!'.format(args.n))
 
+	# access and load required data objects
 	data_list = ['rgd', 'hgnc', 'rgd_ortho', 'mgi']
 	data_dict = {}
 	for files in os.listdir("."):
@@ -34,6 +45,8 @@ if __name__=='__main__':
 		if data not in data_dict.keys():
 			print('missing required dependency {0}!'.format(data))
 
+	# Get ortho statements from HGNC data object
+	# MGI and RGD namespaceDataSet objects are required for translation of MGI and RGD Ids to labels
 	hgnc_ortho_statements = set()
 	for term_id in data_dict.get('hgnc').get_values():
 		term_label = data_dict.get('hgnc').get_label(term_id)
@@ -52,7 +65,9 @@ if __name__=='__main__':
 						continue
 					ortho_term = bel_functions.bel_term(o_label, prefix, 'g')
 					hgnc_ortho_statements.add('{0} orthologous {1}'.format(hgnc_term, ortho_term)) 
-			
+		
+	# Get ortho statements from RGD data object (Rat to Mouse only)
+	# requires HGNC and MGI Namespace DataSet onjects to translate HGNC and MGI Ids to labels	
 	rgd_ortho_statements = set()	
 	for term_id in data_dict.get('rgd_ortho').get_values():
 		term_label = data_dict.get('rgd').get_label(term_id)
@@ -64,8 +79,9 @@ if __name__=='__main__':
 				if len(o.split(':')) == 2:
 					prefix, value = o.split(':')
 					if prefix == 'HGNC':
-						o_label = data_dict.get('hgnc').get_label(value)
-					if prefix == 'MGI':
+						#o_label = data_dict.get('hgnc').get_label(value)
+						continue
+					elif prefix == 'MGI':
 						o_label = data_dict.get('mgi').get_label(value)
 					if o_label is None:
 						print('WARNING - {2} missing label for {0}, {1}'.format(prefix, value, rgd_term))
@@ -74,6 +90,7 @@ if __name__=='__main__':
 					rgd_ortho_statements.add('{0} orthologous {1}'.format(rgd_term, ortho_term)) 
 
 	with open('gene-orthology.bel', 'w') as ortho:
+		bel_functions.write_bel_header(ortho, doc_name=doc_name, description=description, namespaces=namespaces, annotations=annotations, base_url=base_url)
 		ortho.write('SET Citation = {"Online Resource", "HUGO Gene Nomenclature Committee data download", "ftp://ftp.ebi.ac.uk/pub/databases/genenames/hgnc_complete_set.txt.gz"}\n')
 		for s in sorted(hgnc_ortho_statements):
 			ortho.write(s + '\n')

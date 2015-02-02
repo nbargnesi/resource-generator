@@ -254,7 +254,7 @@ def build_data(entry, parser, data_object):
 				'T197','T119','T124','T114','T109','T115','T121','T192','T110',
 				'T127')
 
-			if any(st in chemicals for st in sts) or len(sts) == 0:
+			if ui.startswith('D') or any(st in chemicals for st in sts) or len(sts) == 0:
 				meshc_dict[ui] = {
 					'mesh_header' : mh,
 					'sts' : sts,

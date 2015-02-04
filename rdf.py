@@ -35,13 +35,17 @@ def make_rdf(d, g, prefix_dict=None):
 	g.bind("belv", BELV)
 	g.bind(d._prefix, n)
 	
-	g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
+	if 'ns' in d.scheme_type:	
+		g.add((namespace[d._name], RDF.type, BELV.NamespaceConceptScheme))
+	if 'anno' in d.scheme_type:
+		g.add((namespace[d._name], RDF.type, BELV.AnnotationConceptScheme))
+		
 	name = d._name.replace('-',' ').title()
 	domain = d._domain
 	g.add((namespace[d._name], SKOS.prefLabel, literal(name)))
 	g.add((namespace[d._name], BELV.prefix, literal(d._prefix)))
 	# TODO consider updating domain to uri instead of literal
-	# domain is a list - a namespace can be associated with mulitple domains
+	# domain is a list - a namespace can be associated with multiple domains
 	for dom in domain:
 		g.add((namespace[d._name], BELV.domain, literal(dom)))
 
@@ -80,23 +84,24 @@ def make_rdf(d, g, prefix_dict=None):
 			g.add((term_uri, BELV.fromSpecies, literal(species)))
 
 		# use encoding information to determine concept types
-		encoding = d.get_encoding(term_id)
-		if 'G' in encoding:
-			g.add((term_uri, RDF.type, BELV.GeneConcept))
-		if 'R' in encoding:
-			g.add((term_uri, RDF.type, BELV.RNAConcept))
-		if 'M' in encoding:
-			g.add((term_uri, RDF.type, BELV.MicroRNAConcept))
-		if 'P' in encoding:
-			g.add((term_uri, RDF.type, BELV.ProteinConcept))
-		if 'A' in encoding:
-			g.add((term_uri, RDF.type, BELV.AbundanceConcept))
-		if 'B' in encoding:
-			g.add((term_uri, RDF.type, BELV.BiologicalProcessConcept))
-		if 'C' in encoding:
-			g.add((term_uri, RDF.type, BELV.ComplexConcept))
-		if 'O' in encoding:
-			g.add((term_uri, RDF.type, BELV.PathologyConcept))
+		if 'ns' in d.scheme_type:
+			encoding = d.get_encoding(term_id)
+			if 'G' in encoding:
+				g.add((term_uri, RDF.type, BELV.GeneConcept))
+			if 'R' in encoding:
+				g.add((term_uri, RDF.type, BELV.RNAConcept))
+			if 'M' in encoding:
+				g.add((term_uri, RDF.type, BELV.MicroRNAConcept))
+			if 'P' in encoding:
+				g.add((term_uri, RDF.type, BELV.ProteinConcept))
+			if 'A' in encoding:
+				g.add((term_uri, RDF.type, BELV.AbundanceConcept))
+			if 'B' in encoding:
+				g.add((term_uri, RDF.type, BELV.BiologicalProcessConcept))
+			if 'C' in encoding:
+				g.add((term_uri, RDF.type, BELV.ComplexConcept))
+			if 'O' in encoding:
+				g.add((term_uri, RDF.type, BELV.PathologyConcept))
 
 		# get synonyms (alternative symbols and names)
 		alt_symbols = d.get_alt_symbols(term_id)

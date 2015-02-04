@@ -224,28 +224,23 @@ def build_data(entry, parser, data_object):
 		mns = entry.get('mns')
 		sts = entry.get('sts')
 		synonyms = entry.get('synonyms')
-		rns = entry.get('rns')
-		
+
+		mesh_dict = {}
+		mesh_dict['mesh_header'] = mh
+		mesh_dict['synonyms'] = synonyms
+
 		if any(branch.startswith('A11.284') for branch in mns):
-			meshcl_dict[ui] = {
-				'mesh_header' : mh,
-				'sts' : sts,
-				'mns' : mns,
-				'synonyms' : synonyms }
+			meshcl_dict[ui] = mesh_dict
+				
 		if any(branch.startswith('C') for branch in mns):
-			meshd_dict[ui] = {
-				'mesh_header' : mh,
-				'sts' : sts,
-				'mns' : mns,
-				'synonyms' : synonyms }
+			meshd_dict[ui] = mesh_dict
+		
 		if any(branch.startswith('G') for branch in mns):
+			branches = {branch for branch in mns if branch.startswith('G')}
 			excluded = ('G01', 'G15', 'G17')
-			if not all(branch.startswith(excluded) for branch in mns):	
-				meshpp_dict[ui] = {
-					'mesh_header' : mh,
-					'sts' : sts,
-					'mns' : mns,
-					'synonyms' : synonyms }
+			if not all(branch.startswith(excluded) for branch in branches):	
+				meshpp_dict[ui] = mesh_dict
+
 		if any(branch.startswith('D') for branch in mns) or ui.startswith('C'):
 			# filter by semantic type for chemicals, but allow all non-typed terms in 
 			# see http://semanticnetwork.nlm.nih.gov/SemGroups/SemGroups.txt
@@ -255,12 +250,14 @@ def build_data(entry, parser, data_object):
 				'T127')
 
 			if ui.startswith('D') or any(st in chemicals for st in sts) or len(sts) == 0:
-				meshc_dict[ui] = {
-					'mesh_header' : mh,
-					'sts' : sts,
-					'mns' : mns,
-					'synonyms' : synonyms }
-				
+				meshc_dict[ui] = mesh_dict
+
+		if any(branch.startswith('A') for branch in mns):
+			excluded = ('A13','A18', 'A19', 'A20', 'A21')
+			branches = {branch for branch in mns if branch.startswith('A')}
+			if not all(branch.startswith(excluded) for branch in branches):
+				mesha_dict[ui] = mesh_dict
+	
 
 	elif parser == 'SwissWithdrawn_Parser':
 		term_id = entry.get('accession')

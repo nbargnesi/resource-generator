@@ -21,8 +21,13 @@ class DataSet():
 		self._dict = dictionary
 		self._prefix = prefix
 
-	def get_dictionary(self):
-		return self._dict
+	def get_values(self):
+		''' Get all non-obsolete primary ids in dictionary.'''
+		for term_id in self._dict:
+			if self._dict.get(term_id).get('is_obsolete'):
+				continue
+			else:
+				yield term_id
 
 	def __str__(self):
 		return self._prefix
@@ -32,10 +37,6 @@ class OrthologyData(DataSet):
 	def __init__(self, dictionary={},  prefix='use-index-term-prefix'):
 		super().__init__(dictionary, prefix)
 	
-	def get_values(self):
-		for term_id in self._dict:
-			yield term_id
-
 	def get_orthologs(self, term_id):
 		orthologs = set()
 		mapping = self._dict.get(term_id)
@@ -83,20 +84,6 @@ class HistoryDataSet(DataSet):
 	def __str__(self):
 		return self._prefix + '_history'
 
-class AnnotationDataSet(DataSet):
-	
-	def __init__(self, dictionary={}, prefix):
-		super().__init(dictionary, prefix)
-
-	def get_values():
-		#TODO - move up to base class
-		pass
-
-	def get_alt_names():
-		pass
-
-	def get_xrefs():
-		pass
 
 class NamespaceDataSet(DataSet):
 
@@ -104,20 +91,13 @@ class NamespaceDataSet(DataSet):
 	# default is to make .belns file for labels, and not IDs
 	ids = False
 	labels = True
+	scheme_type = ['ns'] # namespace ('ns') and/or annotation ('anno') concept scheme
 
 	def __init__(self, dictionary={}, name='namespace-name', prefix='namespace-prefix', domain=['other']):
 		self._name = name
 		self._domain = domain
 		super().__init__(dictionary, prefix)
 
-	def get_values(self):
-		''' Get all non-obsolete primary ids in dataset dict.
-		Default is all keys. '''
-		for term_id in self._dict:
-			if self._dict.get(term_id).get('is_obsolete'):
-				continue
-			else:
-				yield term_id
 
 	def get_label(self, term_id):
 		''' Return the value to be used as the preferred
@@ -254,8 +234,6 @@ class StandardCustomData(NamespaceDataSet, HistoryDataSet):
 
 class EntrezInfoData(NamespaceDataSet):
 
-	labels = False
-	ids = True
 	ENC = {
 		'protein-coding' : 'GRP', 'miscRNA' : 'GR', 'ncRNA' : 'GR',
 		'snoRNA' : 'GR', 'snRNA' : 'GR', 'tRNA' : 'GR', 'scRNA' : 'GR',
@@ -264,8 +242,10 @@ class EntrezInfoData(NamespaceDataSet):
 	subject = "gene/RNA/protein"
 	description = "NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus."
 
-	def __init__(self, dictionary={}, name='entrez-gene', prefix='egid', domain=['gene and gene product']):
+	def __init__(self, dictionary={}, *, name='entrez-gene', prefix='egid', domain=['gene and gene product'], ids=True, labels=False):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
+		self.labels = labels
 
 	def get_label(self, term_id):
 		''' Return the value to be used as the preffered
@@ -355,7 +335,7 @@ class HGNCData(NamespaceDataSet, OrthologyData, HistoryDataSet):
 	
 	}
 
-	def __init__(self, dictionary={}, name='hgnc-human-genes', prefix='hgnc', domain=['gene and gene product']):
+	def __init__(self, dictionary={}, *, name='hgnc-human-genes', prefix='hgnc', domain=['gene and gene product']):
 		super().__init__(dictionary, name, prefix, domain)
 
 	def get_values(self):
@@ -461,7 +441,7 @@ class MGIData(NamespaceDataSet):
 		'pseudogenic gene segment' : 'GR', 'SRP RNA gene' : 'GR'
 	}
 
-	def __init__(self, dictionary={}, name='mgi-mouse-genes', prefix='mgi', domain=['gene and gene product']):
+	def __init__(self, dictionary={}, *, name='mgi-mouse-genes', prefix='mgi', domain=['gene and gene product']):
 		super().__init__(dictionary, name, prefix, domain)
 
 	def get_values(self):
@@ -510,7 +490,7 @@ class RGDData(NamespaceDataSet):
 		'trna' : 'GR', 'rrna' : 'GR', 'ncrna': 'GR'
 	}
 
-	def __init__(self, dictionary={}, name='rgd-rat-genes', prefix='rgd', domain=['gene and gene product']):
+	def __init__(self, dictionary={}, *, name='rgd-rat-genes', prefix='rgd', domain=['gene and gene product']):
 		super().__init__(dictionary, name, prefix, domain)
 	
 	def get_species(self, term_id):
@@ -564,10 +544,9 @@ class RGDObsoleteData(HistoryDataSet):
 
 class SwissProtData(NamespaceDataSet):
 
-	ids = True
-
-	def __init__(self, dictionary=defaultdict(list), name='swissprot', prefix='sp', domain=['gene and gene product']):
+	def __init__(self, dictionary=defaultdict(list), *,  name='swissprot', prefix='sp', domain=['gene and gene product'], ids=True):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
 
 	def get_encoding(self, term_id):
 		return 'GRP'
@@ -628,11 +607,10 @@ class SwissProtData(NamespaceDataSet):
 
 class AffyData(NamespaceDataSet):
 
-	labels = False
-	ids = True
-
-	def __init__(self, dictionary=defaultdict(list), name='affy-probeset', prefix='affx', domain=['gene and gene product']):
+	def __init__(self, dictionary=defaultdict(list), *, name='affy-probeset', prefix='affx', domain=['gene and gene product'], ids=True, labels=False):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
+		self.labels = labels
 
 	def get_species(self, term_id):
 		species = self._dict.get(term_id).get('Species')
@@ -658,10 +636,9 @@ class AffyData(NamespaceDataSet):
 
 class CHEBIData(NamespaceDataSet):
 
-	ids = True
-
-	def __init__(self, dictionary={}, name='chebi', prefix='chebi', domain=['gene and gene product']):
+	def __init__(self, dictionary={}, *, name='chebi', prefix='chebi', domain=['gene and gene product'], ids=True):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
 	
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')
@@ -691,10 +668,10 @@ class Gene2AccData(DataSet):
 
 class GOData(NamespaceDataSet, HistoryDataSet):
 
-	ids = True
 	# dictionary is required, since GO file parsed into multiple objects
-	def __init__(self, dictionary,  name, prefix, domain):
+	def __init__(self, dictionary, *, name, prefix, domain, ids=True):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
 
 	def get_values(self):
 		for term_id in self._dict:
@@ -742,19 +719,17 @@ class GOData(NamespaceDataSet, HistoryDataSet):
 class MESHData(NamespaceDataSet):
 	# dictionary and other arguments are required since MeSH file parsed into mulitple objects
 
-	ids = True
-
-	def __init__(self, dictionary, *, name, prefix, domain):
+	def __init__(self, dictionary, *, name, prefix, domain, ids=True, scheme_type=['ns']):
 		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
+		self.scheme_type = scheme_type
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('mesh_header')
 		return label
 
 	def get_encoding(self, term_id):
-		if self._prefix == 'meshcl':
-			return 'A'
-		elif self._prefix == 'meshd':
+		if self._prefix == 'meshd':
 			return 'O'
 		elif self._prefix == 'meshpp':
 			return 'B'
@@ -789,10 +764,10 @@ class SwissWithdrawnData(HistoryDataSet):
 
 class DOData(NamespaceDataSet,HistoryDataSet):
 
-	ids = True
-
-	def __init__(self, dictionary={}, name='disease-ontology', prefix ='do', domain=['disease']):
-		super(DOData, self).__init__(dictionary, name, prefix, domain)
+	def __init__(self, dictionary={}, *, name='disease-ontology', prefix ='do', domain=['disease'], ids=True, scheme_type=['ns','anno']):
+		super().__init__(dictionary, name, prefix, domain)
+		self.ids = ids
+		self.scheme_type = scheme_type
 
 	def get_label(self, term_id):
 		label = self._dict.get(term_id).get('name')

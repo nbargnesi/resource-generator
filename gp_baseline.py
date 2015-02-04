@@ -219,6 +219,8 @@ if args.begin_phase <= 3:
 	for dataset in object_dict.values():
 		if not isinstance(dataset, NamespaceDataSet):
 			continue
+		if not 'ns' in dataset.scheme_type:
+			continue # skip annotation 'anno' data sets
 		if verbose:
 			print('Generating namespace file for ' +str(dataset))
 		try:

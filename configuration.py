@@ -104,7 +104,6 @@ baseline_data['affy.xml'] = (
 	'http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
 	parsers.AffyParser, affx_data
 )
-
 chebi_data = CHEBIData()
 baseline_data['chebi.owl'] = (
 	'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
@@ -142,17 +141,17 @@ baseline_data['doid.owl'] = (
 )
 
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
-meshcl_dict, meshd_dict, meshpp_dict, meshc_dict  = {}, {}, {}, {}
-meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs', domain=['location'])
-meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd', domain=['disease'])
+meshcl_dict, meshd_dict, meshpp_dict, meshc_dict, mesha_dict  = {}, {}, {}, {}, {}
+meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs', domain=['location'], scheme_type=['ns','anno'])
+meshd_data = MESHData(meshd_dict, name='mesh-diseases', prefix='meshd', domain=['disease'], scheme_type=['ns','anno'])
 meshpp_data = MESHData(meshpp_dict, name='mesh-processes', prefix='meshpp', domain=['process'])
 meshc_data = MESHData(meshc_dict, name='mesh-chemicals', prefix='meshc', domain=['chemical'])
+mesha_data = MESHData(mesha_dict, name='mesh-anatomy', prefix='mesha', domain=['anatomy'], scheme_type=['anno'])
 baseline_data['mesh.bin'] = (
 	mesh_file,
-	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data, meshc_data]
+	parsers.MESHParser, [meshcl_data, meshd_data, meshpp_data, meshc_data, mesha_data]
 )
 mesh_sup_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'c2', '.bin') 
-# need to determine best way to merge supplementary concepts with main MeSH for chemicals - OK to use meshc_data twice?
 baseline_data['meshc.bin'] = (
 	mesh_sup_file,
 	parsers.MESHParser, [meshc_data]

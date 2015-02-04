@@ -15,6 +15,10 @@ from urllib import parse
 namespace = Namespace("http://www.openbel.org/bel/namespace/")
 BELV = Namespace("http://www.openbel.org/vocabulary/")
 
+annotation_concept_types = {'AnnotationConcept', 'AnatomyAnnotationConcept',
+	'CellLineAnnotationConcept', 'CellAnnotationConcept', 'DiseaseAnnotationConcept',
+	'LocationAnnotationConcept','SpeciesAnnotationConcept'}
+ 
 def literal(obj):
 	if isinstance(obj, str):
 	    return Literal(str(obj), datatype=XSD.string)
@@ -102,6 +106,14 @@ def make_rdf(d, g, prefix_dict=None):
 				g.add((term_uri, RDF.type, BELV.ComplexConcept))
 			if 'O' in encoding:
 				g.add((term_uri, RDF.type, BELV.PathologyConcept))
+		# add conceptType (for now, just annotations)
+		concept_types = d.get_concept_type(term_id)
+		if concept_types:
+			for c in concept_types:
+				if c in annotation_concept_types:
+					g.add((term_uri, RDF.type, BELV[c]))
+				else:
+					print('WARNING - {0} not a BELV AnnotationConcept'.format(c))
 
 		# get synonyms (alternative symbols and names)
 		alt_symbols = d.get_alt_symbols(term_id)
@@ -157,14 +169,17 @@ def get_close_matches(concept_type, g):
 
 	count = 0
 	for scheme, concept_map in concept_dict.items():
+		domains = set(g.objects(scheme, BELV["domain"]))
 		for concept, labels in concept_map.items():
 			# iterate concept_dict a 2nd time, skipping items in same scheme
 			for scheme2 in concept_dict.keys():
+				domains2 = set(g.objects(scheme2, BELV["domain"]))
 				if scheme2 == scheme:
+					continue
+				if domains.isdisjoint(domains2): # skip if no domain matches for scheme and scheme2
 					continue
 				else:
 					for concept2, labels2 in concept_dict[scheme2].items():
-					#for concept2, labels2 in concept_map2.items():
 						if len(labels.intersection(labels2)) > 0:
 							g.add((concept, SKOS.closeMatch, concept2))
 							count += 1 

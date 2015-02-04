@@ -87,10 +87,8 @@ class HistoryDataSet(DataSet):
 
 class NamespaceDataSet(DataSet):
 
-	# Make .belns file containing ids/labels
-	# default is to make .belns file for labels, and not IDs
-	ids = False
-	labels = True
+	ids = False # make .belns file containing labels (default = False)
+	labels = True # make .bels file containing ids (default = True)
 	scheme_type = ['ns'] # namespace ('ns') and/or annotation ('anno') concept scheme
 
 	def __init__(self, dictionary={}, name='namespace-name', prefix='namespace-prefix', domain=['other']):
@@ -126,6 +124,15 @@ class NamespaceDataSet(DataSet):
 		Default = 'A' (Abundance). '''
 		return 'A'
 
+	def get_concept_type(self, term_id):
+		# TODO - merge with get_encoding
+		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
+		Default = 'AnnotationConcept' (parent class) '''
+		if 'anno' not in self.scheme_type:
+			return None
+		else:
+			return {'AnnotationConcept'}
+		
 	def get_alt_symbols(self, term_id):
 		''' Return set of symbol synonyms. Default = None. '''
 		return None
@@ -717,7 +724,7 @@ class GOData(NamespaceDataSet, HistoryDataSet):
 
 
 class MESHData(NamespaceDataSet):
-	# dictionary and other arguments are required since MeSH file parsed into mulitple objects
+	# NOTE dictionary and other arguments are required since MeSH file parsed into multiple objects
 
 	def __init__(self, dictionary, *, name, prefix, domain, ids=True, scheme_type=['ns']):
 		super().__init__(dictionary, name, prefix, domain)
@@ -735,6 +742,22 @@ class MESHData(NamespaceDataSet):
 			return 'B'
 		else:
 			return 'A'	
+
+	def get_concept_type(self, term_id):
+		# TODO - merge with get_encoding
+		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
+		Default = 'AnnotationConcept' (parent class) '''
+		if 'anno' not in self.scheme_type:
+			return None
+		else:
+			if self._prefix == 'meshd':
+				return {'DiseaseAnnotationConcept'}
+			elif self._prefix == 'mesha':
+				return {'AnatomyAnnotationConcept'}
+			elif self._prefix == 'meshcs':
+				return {'LocationAnnotationConcept'}
+			else:
+				return None
 
 	def get_alt_names(self, term_id):
 		synonyms = set()
@@ -775,6 +798,15 @@ class DOData(NamespaceDataSet,HistoryDataSet):
 
 	def get_encoding(self, term_id):
 		return 'O'
+
+	def get_concept_type(self, term_id):
+		# TODO - merge with get_encoding
+		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
+		Default = 'AnnotationConcept' (parent class) '''
+		if 'anno' not in self.scheme_type:
+			return None
+		else:
+			return {'DiseaseAnnotationConcept'}
 
 	def get_alt_names(self,term_id):
 		mapping = self._dict.get(term_id)

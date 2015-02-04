@@ -770,7 +770,37 @@ class DOParser(Parser):
 	def __str__(self):
 		return 'DO_Parser'
 
+class OwlParser(Parser):
 
+	owl = '{http://www.w3.org/2002/07/owl#}'
+	rdf = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}'
+	rdfs = '{http://www.w3.org/2000/01/rdf-schema#}'
+	oboInOwl = '{http://www.geneontology.org/formats/oboInOwl#}'
+	dc = '{http://purl.org/dc/elements/1.1/}'
+
+	date = "".join([dc, 'date'])
+	about = "".join([rdf,'about'])
+	label = "".join([rdfs,'label'])
+	hasDbXref = "".join([oboInOwl, 'hasDbXref'])
+	obsolete = "".join([owl,'deprecated'])
+	versionIRI = "".join([owl, 'versionIRI'])
+	versionInfo = "".join([owl, 'versionInfo'])
+	resource = "".join([rdf, 'resource'])
+	subClassOf = "".join([rdfs, 'subClassOf'])
+	comment = "".join([rdfs, 'comment'])
+	classy = "".join([owl, 'Class'])
+
+	def __init__(self, url):
+		super().__init__(url)
+
+	def parse(self)
+		with open(self._url, 'rb') as owl:
+			tree = etree.iterparse(owl)
+			for event, elem in tree:
+
+	def __str__(self):
+		return 'Owl_Parser'
+	
 class RGDObsoleteParser(Parser):
 
 	def __init__(self, url):

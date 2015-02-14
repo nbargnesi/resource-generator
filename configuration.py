@@ -157,6 +157,18 @@ baseline_data['meshc.bin'] = (
 	parsers.MESHParser, [meshc_data]
 )
 
+efo_data = OWLData(prefix='efo', name='experimental-factor-ontology', domain=['cell-line'], scheme_type=['anno'])
+baseline_data['efo.owl'] = ('http://www.ebi.ac.uk/efo/efo.owl', parsers.OwlParser, efo_data)
+
+cl_data = OWLData(name='cell-ontology', prefix='cl', domain=['cell'], scheme_type=['anno'])
+baseline_data['cl.owl'] = ('http://purl.obolibrary.org/obo/cl.owl', parsers.OwlParser, cl_data)
+
+clo_data = OWLData(prefix='clo', name='cell-line-ontology', domain=['cell-line'], scheme_type=['anno'])
+baseline_data['clo.owl'] = ('http://purl.obolibrary.org/obo/clo.owl', parsers.OwlParser, clo_data)
+
+uberon_data = OWLData(name='uberon', prefix='uberon', domain=['anatomy'], scheme_type=['anno'])
+baseline_data['uberon.owl'] = ('http://purl.obolibrary.org/obo/uberon.owl', parsers.OwlParser, uberon_data)
+
 affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 					   'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',
 					   'Mouse430A_2', 'Mouse430_2', 'RAE230A', 'RAE230B',

@@ -277,6 +277,24 @@ def build_data(entry, parser, data_object):
 			'synonyms' : synonyms,
 			'alt_ids' : entry.get('alt_ids'),
 			'is_obsolete' : entry.get('is_obsolete') }
+
+	elif parser == 'Owl_Parser':
+		term_id = entry.get('id')
+		prefix = data_object._prefix.upper()
+		term_type = entry.get('term_type')
+		if prefix == 'EFO' and term_type is None:
+			pass
+		elif term_id.startswith(prefix):
+			term_id = term_id.lstrip(prefix + '_')
+			term_id = term_id.lstrip(prefix + 'ID_')
+			data_object._dict[term_id] = {
+				'name' : entry.get('name'),
+				'dbxrefs' : entry.get('dbxrefs'),
+				'synonyms' : entry.get('synonyms'),
+				'alt_ids' : entry.get('alt_ids'),
+				'is_obsolete' :entry.get('is_obsolete')}
+			if term_type:
+				data_object._dict[term_id]['term_type'] = term_type
 	
 	elif parser == 'RGDOrthologParser':
 		term_id = entry.get('RAT_GENE_RGD_ID')

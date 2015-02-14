@@ -782,21 +782,75 @@ class OwlParser(Parser):
 	about = "".join([rdf,'about'])
 	label = "".join([rdfs,'label'])
 	hasDbXref = "".join([oboInOwl, 'hasDbXref'])
-	obsolete = "".join([owl,'deprecated'])
+	deprecated = "".join([owl,'deprecated'])
 	versionIRI = "".join([owl, 'versionIRI'])
 	versionInfo = "".join([owl, 'versionInfo'])
 	resource = "".join([rdf, 'resource'])
 	subClassOf = "".join([rdfs, 'subClassOf'])
 	comment = "".join([rdfs, 'comment'])
 	classy = "".join([owl, 'Class'])
+	exactSynonym = "".join([oboInOwl,'hasExactSynonym'])
+	altid = "".join([oboInOwl,'hasAlternativeId'])
 
 	def __init__(self, url):
 		super().__init__(url)
 
-	def parse(self)
+	def parse(self):
 		with open(self._url, 'rb') as owl:
-			tree = etree.iterparse(owl)
+			tree = etree.iterparse(owl, tag=self.classy)
 			for event, elem in tree:
+				term_dict = {}
+				pref_label = None
+				term_id = None
+				alt_ids = set() 
+				dbxrefs = []
+				synonyms = []
+				obsolete = False
+				term_type = None
+
+				if elem.get(self.about) is not None:
+					term_type = self.check_elem_type(elem)
+					term_id = elem.get(self.about).split('/')[-1]
+				#if elem.find(label) is not None:
+				#	pref_label = elem.find(label).text.strip()
+					for child in elem.getchildren():
+						if child.tag == self.label:
+							pref_label = child.text.strip()
+						elif child.tag == self.hasDbXref and child.text is not None:
+							dbxrefs.append(child.text)
+						elif child.tag == self.exactSynonym:
+							synonyms.append(child.text)
+						elif child.tag == self.deprecated:
+							obsolete = True
+						elif child.tag == self.altid:
+							# TODO - get prefix in here somehow
+							#alt_ids.add(child.text.replace('DOID:',''))
+							alt_ids.add(child.text)
+					term_dict['name'] = pref_label
+					term_dict['id'] = term_id
+					term_dict['dbxrefs'] = dbxrefs
+					term_dict['synonyms'] = synonyms
+					term_dict['is_obsolete'] = obsolete
+					term_dict['alt_ids'] = alt_ids
+					if term_type:
+						term_dict['term_type'] = term_type
+					yield term_dict
+
+	def check_elem_type(self, elem):
+		type_dict = {
+				'EFO_0000322':'CellLine'
+				}
+		types = set()
+		for tag in elem.findall(self.subClassOf):
+			if tag.get(self.resource) is not None:
+				for k,v in type_dict.items():
+					if tag.get(self.resource).split('/')[-1] == k:
+						types.add(v)
+						break
+			if len(types) > 0:
+				return types
+			else:
+				return None
 
 	def __str__(self):
 		return 'Owl_Parser'

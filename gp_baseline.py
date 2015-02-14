@@ -280,7 +280,7 @@ for data_name, data in object_dict.items():
 	# skip equiv root datasets handled above
 	if data_name in equiv_root_data:
 		continue
-	elif isinstance(data, NamespaceDataSet):
+	elif isinstance(data, NamespaceDataSet) and 'ns' in data.scheme_type:
 		if verbose:
 			print('Generating equivalence file for ' + str(data))
 		equiv.equiv(data, verbose)

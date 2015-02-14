@@ -308,5 +308,14 @@ def build_data(entry, parser, data_object):
 		data_object._dict[term_id] = {
 			'status' : entry.get('OLD_GENE_STATUS').lower(),
 			'new_id' : entry.get('NEW_GENE_RGD_ID'), 
-			'type' : entry.get('OLD_GENE_TYPE')	}					
+			'type' : entry.get('OLD_GENE_TYPE')	}
+
+	elif parser == 'NCBI_Taxonomy_Parser':
+		term_id = entry.get('term_id')
+		data_object._dict[term_id] = {
+			'name' : entry.get('name'),
+			'synonyms' : entry.get('synonyms')}
+
+
+					
 # vim: ts=4 sts=4 sw=4 noexpandtab

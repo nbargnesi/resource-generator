@@ -910,4 +910,20 @@ class OWLData(NamespaceDataSet,HistoryDataSet):
 				return term_id
 		else:
 			return None
+
+class NCBITaxonomyData(NamespaceDataSet):
+
+	def __init__(self, dictionary={}, *, name, prefix, domain, ids=True, scheme_type):
+		super().__init__(dictionary, name, prefix, domain)
+		self.scheme_type = scheme_type
+
+	def get_label(self, term_id):
+		label = self._dict.get(term_id).get('name')
+		return label
+
+	def get_alt_names(self, term_id):
+		mapping = self._dict.get(term_id)
+		synonyms  = set(mapping.get('synonyms'))
+		return synonyms
+		
 # vim: ts=4 sts=4 sw=4 noexpandtab

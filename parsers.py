@@ -874,4 +874,34 @@ class RGDObsoleteParser(Parser):
 	def __str__(self):
 		return "RGD_Obsolete_Parser"
 
+class NCBITaxonomyParser(Parser):
+
+	def __init__(self, url):
+		super().__init__(url)
+
+	def parse(self):
+		with open(self._url, 'r') as f:
+			term_id, pref_label, synonyms = None, None, set()
+			for line in iter(f):
+				values = line.split('|')
+				values = [v.strip() for v in values]
+				if term_id is not None and values[0] != term_id:
+					yield self.build_term_dict(term_id, pref_label, synonyms)
+					term_id, pref_label, synonyms = None, None, set()
+				term_id = values[0]
+				if values[3] == 'scientific name':
+					pref_label = values[1] 
+				elif 'common name' in values[3]:
+					synonyms.add(values[1])
+		yield self.build_term_dict(term_id, pref_label, synonyms)
+					
+	def build_term_dict(self, term_id, pref_label, synonyms):
+		term_dict = {}	
+		term_dict['term_id'] = term_id
+		term_dict['name'] = pref_label
+		term_dict['synonyms'] = synonyms
+		return term_dict
+
+	def __str__(self):
+		return "NCBI_Taxonomy_Parser"
 # vim: ts=4 sts=4 sw=4 noexpandtab

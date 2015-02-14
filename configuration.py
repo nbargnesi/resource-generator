@@ -127,6 +127,9 @@ baseline_data['selventa-protein-families.txt'] = (
 	file_url + 'selventa-protein-families.txt', parsers.NamespaceParser, sfam_data
 )
 
+tax_data = NCBITaxonomyData(name='ncbi-taxonomy', prefix='taxon', domain=['species'], scheme_type=['anno'])
+baseline_data['taxnames_9606_10090_10116.dmp'] = (file_url + 'taxnames_9606_10090_10116.dmp', parsers.NCBITaxonomyParser, tax_data)
+
 # - get the latest GO archive file name and URL
 go_file = get_latest_GO_filename('http://archive.geneontology.org/latest-full')
 gobp_dict, gocc_dict = {}, {}

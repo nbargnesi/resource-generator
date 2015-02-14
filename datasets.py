@@ -926,4 +926,12 @@ class NCBITaxonomyData(NamespaceDataSet):
 		synonyms  = set(mapping.get('synonyms'))
 		return synonyms
 		
+	def get_concept_type(self, term_id):
+		# TODO - merge with get_encoding
+		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
+		Default = 'AnnotationConcept' (parent class) '''
+		if 'anno' not in self.scheme_type:
+			return None
+		else:
+			return {'SpeciesAnnotationConcept'}
 # vim: ts=4 sts=4 sw=4 noexpandtab

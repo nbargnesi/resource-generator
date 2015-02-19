@@ -788,64 +788,6 @@ class SwissWithdrawnData(HistoryDataSet):
 			return None
 
 
-class DOData(NamespaceDataSet,HistoryDataSet):
-
-	def __init__(self, dictionary={}, *, name='disease-ontology', prefix ='do', domain=['disease'], ids=True, scheme_type=['ns','anno']):
-		super().__init__(dictionary, name, prefix, domain)
-		self.ids = ids
-		self.scheme_type = scheme_type
-
-	def get_label(self, term_id):
-		label = self._dict.get(term_id).get('name')
-		return label
-
-	def get_encoding(self, term_id):
-		return 'O'
-
-	def get_concept_type(self, term_id):
-		# TODO - merge with get_encoding
-		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
-		Default = 'AnnotationConcept' (parent class) '''
-		if 'anno' not in self.scheme_type:
-			return None
-		else:
-			return {'DiseaseAnnotationConcept'}
-
-	def get_alt_names(self,term_id):
-		mapping = self._dict.get(term_id)
-		synonyms  = set(mapping.get('synonyms'))
-		return synonyms
-
-	def find_xref(self, ref):
-		''' Used only in equiv module. '''
-		for term_id, mapping in self._dict.items():
-			dbxrefs = mapping.get('dbxrefs')
-			if ref in dbxrefs:
-				return term_id
-
-	def get_xrefs(self, term_id):
-		''' Returns MeSH (MSH) xrefs for a given DO ID . '''
-		xrefs = set()
-		mapping = self._dict.get(term_id)
-		xrefs.update(mapping.get('dbxrefs'))
-		xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
-		return xrefs
-
-	def get_obsolete_ids(self):
-		obsolete = {}
-		for term_id in self._dict:
-			if self._dict.get(term_id).get('is_obsolete'):
-				obsolete[term_id] = 'withdrawn'
-		return obsolete
-
-	def get_id_update(self, term_id):
-		if self._dict.get(term_id):
-			if self._dict.get(term_id).get('is_obsolete'):
-				return 'withdrawn'
-			else:
-				return term_id
-		else:
-			return None
 
 class OWLData(NamespaceDataSet,HistoryDataSet):
 

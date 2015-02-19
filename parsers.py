@@ -720,55 +720,6 @@ class MESHChangesParser(Parser):
 		return 'MESHChanges_Parser'
 
 
-class DOParser(Parser):
-
-	def __init__(self, url):
-		super().__init__(url)
-		self.classy = '{http://www.w3.org/2002/07/owl#}Class'
-		self.deprecated = '{http://www.w3.org/2002/07/owl#}deprecated'
-		self.dbxref = '{http://www.geneontology.org/formats/oboInOwl#}hasDbXref'
-		self.label = '{http://www.w3.org/2000/01/rdf-schema#}label'
-		self.exactsynonym = '{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym'
-		about = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about'
-		self.altid = '{http://www.geneontology.org/formats/oboInOwl#}hasAlternativeId'
-
-	def parse(self):
-
-		with open(self._url, 'rb') as df:
-			tree = etree.iterparse(df, tag=self.classy)
-			about = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about'
-			for event, elem in tree:
-				do_dict = {}
-				dbxrefs = []
-				synonyms = []
-				alt_ids = set()
-				name = ''
-				term_id = ''
-				obsolete = False
-				if len(elem.values()) != 0:
-					children = elem.getchildren()
-					term_id = elem.get(about).split('/')[-1].strip('DOID_')
-					for child in children:
-						if child.tag == self.dbxref:
-							dbxrefs.append(child.text)
-						elif child.tag == self.label:
-							name = child.text
-						elif child.tag == self.exactsynonym:
-							synonyms.append(child.text)
-						elif child.tag == self.deprecated:
-							obsolete = True
-						elif child.tag == self.altid:
-							alt_ids.add(child.text.replace('DOID:',''))
-					do_dict['name'] = name
-					do_dict['id'] = term_id
-					do_dict['dbxrefs'] = dbxrefs
-					do_dict['synonyms'] = synonyms
-					do_dict['is_obsolete'] = obsolete
-					do_dict['alt_ids'] = alt_ids
-					yield do_dict
-
-	def __str__(self):
-		return 'DO_Parser'
 
 class OwlParser(Parser):
 

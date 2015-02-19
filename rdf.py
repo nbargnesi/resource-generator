@@ -267,7 +267,8 @@ if __name__=='__main__':
 
 	parser.add_argument("-n", required=True, metavar="DIRECTORY",
 					help="directory to store the new namespace equivalence data")
-	parser.add_argument("-d", required=False, action='append', help="dataset by prefix; if none specified, all datasets in directory will be run")
+	parser.add_argument("-d", required=False, action="append", help="dataset by prefix; if none specified, all datasets in directory will be run")
+	parser.add_argument("-C", "--disable_close_matches", required=False, action="store_true", help="disable close matches", default=False)
 	args = parser.parse_args()
 	if os.path.exists(args.n):
 		os.chdir(args.n)
@@ -290,8 +291,9 @@ if __name__=='__main__':
 					if isinstance(d, datasets.HistoryDataSet):
 						get_history_data(d, g, prefix_dict)
 
-	get_close_matches('BiologicalProcessConcept', g)
-	get_close_matches('AbundanceConcept', g)
+	if not args.disable_close_matches:
+		get_close_matches('BiologicalProcessConcept', g)
+		get_close_matches('AbundanceConcept', g)
 	
 	print('serializing RDF graph ...')
 	g.serialize("testfile.ttl", format='turtle')	

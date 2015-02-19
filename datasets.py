@@ -1,4 +1,4 @@
-# coding: utf-8
+
 
 '''
  datasets.py
@@ -147,7 +147,10 @@ class NamespaceDataSet(DataSet):
 		try:
 			alt_ids = self._dict.get(term_id).get('alt_ids')
 		except:
-			alt_ids = {}	
+			alt_ids = set()
+		if alt_ids:
+			alt_ids = {a.lstrip(self._prefix.upper() + ':') for a in alt_ids}
+			alt_ids = {a.lstrip(self._prefix.upper() + 'ID:') for a in alt_ids}
 		return alt_ids
 
 	def write_ns_values(self, dir):
@@ -848,6 +851,7 @@ class OWLData(NamespaceDataSet,HistoryDataSet):
 
 	def __init__(self, dictionary={}, *, name, prefix, domain, ids=True, scheme_type):
 		super().__init__(dictionary, name, prefix, domain)
+		self._dict = {} # make unique dict for each instance of class		
 		self.ids = ids
 		self.scheme_type = scheme_type
 
@@ -862,17 +866,19 @@ class OWLData(NamespaceDataSet,HistoryDataSet):
 		# TODO - merge with get_encoding
 		''' For Annotation Concept Schemes, return set of AnnotationConcept types. 
 		Default = 'AnnotationConcept' (parent class) '''
+		concept_type = set()
 		if 'anno' not in self.scheme_type:
 			return None
 		elif self._prefix == 'clo':
-			concept_type = {'CellLineAnnotationConcept'}
+			 concept_type = {'CellLine'}
 		elif self._prefix == 'cl':
-			concept_type = {'CellAnnotationConcept'}
+			concept_type = {'Cell'}
 		elif self._prefix == 'uberon':
-			concept_type =  {'AnatomyAnnotationConcept'}
+			concept_type =  {'Anatomy'}
 		elif self._prefix == 'efo':
-			if self._dict.get(term_id) is not None:
-				concept_type=self._dict.get(term_id).get("concept_type")
+			concept_type=self._dict.get(term_id).get("term_type")
+		elif self._prefix == 'do':
+			concept_type = {'Disease'}
 		return concept_type
 
 	def get_alt_names(self,term_id):
@@ -892,7 +898,8 @@ class OWLData(NamespaceDataSet,HistoryDataSet):
 		xrefs = set()
 		mapping = self._dict.get(term_id)
 		xrefs.update(mapping.get('dbxrefs'))
-		#xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
+		if self._prefix == 'do':
+			xrefs = {x.replace('MSH:','MESHD:') for x in xrefs if x.startswith('MSH:')}
 		return xrefs
 
 	def get_obsolete_ids(self):

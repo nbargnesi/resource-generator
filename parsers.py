@@ -535,7 +535,7 @@ class CHEBIParser(Parser):
 
 
 class GOParser(Parser):
-	# TODO - build obsolete methods into data set
+
 	def __init__(self, url):
 		super().__init__(url)
 
@@ -809,10 +809,7 @@ class OwlParser(Parser):
 				term_type = None
 
 				if elem.get(self.about) is not None:
-					term_type = self.check_elem_type(elem)
 					term_id = elem.get(self.about).split('/')[-1]
-				#if elem.find(label) is not None:
-				#	pref_label = elem.find(label).text.strip()
 					for child in elem.getchildren():
 						if child.tag == self.label:
 							pref_label = child.text.strip()
@@ -823,9 +820,8 @@ class OwlParser(Parser):
 						elif child.tag == self.deprecated:
 							obsolete = True
 						elif child.tag == self.altid:
-							# TODO - get prefix in here somehow
-							#alt_ids.add(child.text.replace('DOID:',''))
-							alt_ids.add(child.text)
+							alt_ids.add(child.text) # prefixes removed in datasets.get_alt_ids
+					term_type = self.check_elem_type(elem)
 					term_dict['name'] = pref_label
 					term_dict['id'] = term_id
 					term_dict['dbxrefs'] = dbxrefs
@@ -837,10 +833,17 @@ class OwlParser(Parser):
 					yield term_dict
 
 	def check_elem_type(self, elem):
+		# currently looks at parent term (single level up) to identify the EFO terms which are cell lines
+		# TODO - search further to use for other ontologies to assign type
 		type_dict = {
 				'EFO_0000322':'CellLine'
+				#'DOID_4':'Disease',
+				#'CLO_0000031':'CellLine',
+				#'GO_0005623':'Cell',
+				#'UBERON_0001062':'Anatomy'
 				}
 		types = set()
+
 		for tag in elem.findall(self.subClassOf):
 			if tag.get(self.resource) is not None:
 				for k,v in type_dict.items():

@@ -108,7 +108,9 @@ def make_rdf(d, g, prefix_dict=None):
 				g.add((term_uri, RDF.type, BELV.PathologyConcept))
 		# add conceptType (for now, just annotations)
 		concept_types = d.get_concept_type(term_id)
-		if concept_types:
+		
+		if 'anno' in d.scheme_type:
+			concept_types = {c + 'AnnotationConcept' for c in concept_types}
 			for c in concept_types:
 				if c in annotation_concept_types:
 					g.add((term_uri, RDF.type, BELV[c]))

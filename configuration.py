@@ -137,12 +137,6 @@ gobp_data = GOData(gobp_dict, name='go-biological-process', prefix='gobp', domai
 gocc_data = GOData(gocc_dict, name='go-cellular-component', prefix='gocc', domain=['complex','location'])
 baseline_data['go.xml.gz'] = (go_file, parsers.GOParser, [gobp_data, gocc_data])
 
-do_data = DOData()
-baseline_data['doid.owl'] = (
-	'http://purl.obolibrary.org/obo/doid.owl',
-	parsers.DOParser, do_data
-)
-
 mesh_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/.asciimesh/', 'd', '.bin')
 meshcl_dict, meshd_dict, meshpp_dict, meshc_dict, mesha_dict  = {}, {}, {}, {}, {}
 meshcl_data = MESHData(meshcl_dict, name='mesh-cellular-structures', prefix='meshcs', domain=['location'], scheme_type=['ns','anno'])
@@ -158,6 +152,12 @@ mesh_sup_file = get_latest_MeSH_filename('ftp://nlmpubs.nlm.nih.gov/online/mesh/
 baseline_data['meshc.bin'] = (
 	mesh_sup_file,
 	parsers.MESHParser, [meshc_data]
+)
+
+do_data = OWLData(name='disease-ontology', prefix='do', domain=['disease'], scheme_type=['ns','anno'])
+baseline_data['doid.owl'] = (
+	'http://purl.obolibrary.org/obo/doid.owl',
+	parsers.OwlParser, do_data
 )
 
 efo_data = OWLData(prefix='efo', name='experimental-factor-ontology', domain=['cell-line'], scheme_type=['anno'])

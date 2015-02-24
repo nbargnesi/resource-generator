@@ -754,11 +754,11 @@ class MESHData(NamespaceDataSet):
 			return None
 		else:
 			if self._prefix == 'meshd':
-				return {'DiseaseAnnotationConcept'}
+				return {'Disease'}
 			elif self._prefix == 'mesha':
-				return {'AnatomyAnnotationConcept'}
+				return {'Anatomy'}
 			elif self._prefix == 'meshcs':
-				return {'LocationAnnotationConcept'}
+				return {'Location'}
 			else:
 				return None
 

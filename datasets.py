@@ -882,5 +882,5 @@ class NCBITaxonomyData(NamespaceDataSet):
 		if 'anno' not in self.scheme_type:
 			return None
 		else:
-			return {'SpeciesAnnotationConcept'}
+			return {'Species'}
 # vim: ts=4 sts=4 sw=4 noexpandtab

@@ -52,7 +52,7 @@ baseline_data['entrez_history.gz'] = (
 
 hgnc_data = HGNCData()
 baseline_data['hgnc.tsv'] = (
-	'ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/hgnc_complete_set.txt',
+	'ftp://ftp.ebi.ac.uk/pub/databases/genenames/hgnc_complete_set.txt.gz',
 	parsers.HGNCParser, hgnc_data
 )
 

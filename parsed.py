@@ -84,16 +84,16 @@ def build_data(entry, parser, data_object):
 			 }
 
 	elif parser == 'HGNC_Parser':
-		app_symb = entry.get('symbol')
-		loc_type = entry.get('locus_type')
-		hgnc_id = entry.get('hgnc_id').replace('HGNC:','')
-		old_symbols = entry.get('prev_symbol')
-		old_names = entry.get('prev_name')
-		synonyms = entry.get('alias_symbol')
-		name_synonyms = entry.get('alias_name')
-		name = entry.get('name')
-		mouse_ortholog = entry.get('mgd_id')
-		rat_ortholog = entry.get('rgd_id')
+		app_symb = entry.get('Approved Symbol')
+		loc_type = entry.get('Locus Type')
+		hgnc_id = entry.get('HGNC ID').replace('HGNC:','')
+		old_symbols = entry.get('Previous Symbols')
+		old_names = entry.get('Previous Names')
+		synonyms = entry.get('Synonyms')
+		name_synonyms = entry.get('Name Synonyms')
+		name = entry.get('Approved Name')
+		mouse_ortholog = entry.get('Mouse Genome Database ID(supplied by MGI)')
+		rat_ortholog = entry.get('Rat Genome Database ID(supplied by RGD)')
 
 		data_object._dict[hgnc_id] = {
 			'Locus Type' : loc_type,

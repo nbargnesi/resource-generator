@@ -52,7 +52,7 @@ baseline_data['entrez_history.gz'] = (
 
 hgnc_data = HGNCData()
 baseline_data['hgnc.tsv'] = (
-	'http://www.genenames.org/cgi-bin/hgnc_downloads?title=HGNC+output+data&hgnc_dbtag=on&preset=all&status=Approved&status=Entry+Withdrawn&status_opt=2&level=pri&=on&where=&order_by=gd_app_sym_sort&limit=&format=text&submit=submit&.cgifields=&.cgifields=level&.cgifields=chr&.cgifields=status&.cgifields=hgnc_dbtag',
+	'ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/hgnc_complete_set.txt',
 	parsers.HGNCParser, hgnc_data
 )
 

@@ -57,7 +57,7 @@ def download(url, fileName=None):
 				info.write("Last modified: " + r.info()['Last-Modified'].strip("\"'") + "\n")
 			info.write("Downloaded at: " + time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
 
-def gzip_to_text(gzip_file, encoding="ascii"):
+def gzip_to_text(gzip_file, encoding="iso-8859-1"):
 	with gzip.open(gzip_file) as gzf:
 		for line in gzf:
 			yield str(line, encoding)

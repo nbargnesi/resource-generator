@@ -92,8 +92,8 @@ def build_data(entry, parser, data_object):
 		synonyms = entry.get('Synonyms')
 		name_synonyms = entry.get('Name Synonyms')
 		name = entry.get('Approved Name')
-		mouse_ortholog = entry.get('Mouse Genome Database ID(supplied by MGI)')
-		rat_ortholog = entry.get('Rat Genome Database ID(supplied by RGD)')
+		mouse_ortholog = entry.get('Mouse Genome Database ID (supplied by MGI)')
+		rat_ortholog = entry.get('Rat Genome Database ID (supplied by RGD)')
 
 		data_object._dict[hgnc_id] = {
 			'Locus Type' : loc_type,

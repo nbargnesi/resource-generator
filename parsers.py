@@ -126,18 +126,12 @@ class HGNCParser(Parser):
 	def parse(self):
 
 		# use iso-8859-1 as default encoding.
-		#with open(self._url, "r", encoding="iso-8859-1") as hgncf:
-
-			# Note that HGNC uses TWO columns named the same thing for Entrez
-			# Gene ID. Currently we are not using these columns and it is not a
-			# big deal, but in the future we could account for this by using
-			# custom headers (like EntrezGeneInfo_Parser), or resolving to the
-			# SECOND of the Entrez Gene ID columns.
-			#reader = csv.DictReader(hgncf, delimiter='\t')
-
+		try:
 			reader = csv.DictReader(gzip_to_text(self._url), delimiter='\t')
-			for row in reader:
-				yield row
+		except:
+			reader = csv.DictReader(open(self._url,"r", encoding="iso-8859-1"), delimiter='\t')
+		for row in reader:
+			yield row
 
 	def __str__(self):
 		return "HGNC_Parser"

@@ -38,11 +38,51 @@ def get_prefixes(directory):
 				d = pickle.load(f)
 			if isinstance(d, datasets.NamespaceDataSet):
 				if d.ids:
-					prefixes.add(d._prefix.upper() + 'ID')
+					if d._prefix.endswith('id'):
+						prefixes.add(d._prefix.upper())
+					else:	
+						prefixes.add(d._prefix.upper() + 'ID')
 				if d.labels:
 					prefixes.add(d._prefix.upper())
 	os.chdir(cwd)
 	return prefixes
+
+def get_info(directory):
+	''' Get set of namespace and annotation prefixes (from data set objects).
+	data set objects include information about whether label and/or names are used
+	in .belns files and whether the data set is for namespace values and/or annotations.'''
+	print('gathering information from data pickle files...')
+	prefixes = set()
+	ns_dict = {}
+	anno_dict = {}
+	cwd = os.getcwd()
+	if os.path.exists(directory):
+		os.chdir(directory)
+	for files in os.listdir("."):
+		if files.endswith("parsed_data.pickle"):
+			with open(files, 'rb') as f:
+				d = pickle.load(f)
+			if not isinstance(d, datasets.NamespaceDataSet):
+				continue
+			if 'anno' in d.scheme_type:
+				name = d._name + '.belanno'
+				prefix = d._prefix.upper()
+				prefixes.add(prefix)
+				anno_dict[prefix] = name
+			if 'ns' in d.scheme_type:
+				if d.ids:
+					id_name = d._name + '-ids.belns'
+					id_prefix = d._prefix.upper() + 'ID'
+					id_prefix = id_prefix.replace('IDID','ID')
+					prefixes.add(id_prefix)
+					ns_dict[id_prefix] = id_name
+				if d.labels:
+					label_name = d._name + '.belns'
+					label_prefix = d._prefix.upper()
+					prefixes.add(label_prefix)
+					ns_dict[label_prefix] = label_name
+	os.chdir(cwd)
+	return prefixes, ns_dict, anno_dict
 
 def get_ns_data(directory):
 	cwd = os.getcwd()
@@ -98,20 +138,46 @@ if __name__=='__main__':
 	.""")
 
 	parser.add_argument("-n", required=True, metavar="NEWDIRECTORY",
-					help="directory with new namespace equivalence data")
+					help="directory with new resource data")
 	parser.add_argument("-o", required=True, metavar="OLDDIRECTORY",
-					help="directory with old namespace equivalence data")
+					help="directory with old resource data")
+	parser.add_argument("--new_version", metavar="NEWVERSION", default="testing",
+					help="version for new resource data")
+	parser.add_argument("--old_version", metavar="OLDVERSION", default="latest",
+					help="version for old resource data")
+	parser.add_argument("--base_url", metavar="BASEURL", default="http://resource.belframework.org/belframework/",
+					help="base url for belns and belanno files")
 	args = parser.parse_args()
 	
+
 	old_ns_dict = get_ns_data(args.o)
 	new_ns_dict = get_ns_data(args.n)
 	history_dict = get_history_data(args.n)
-	prefixes = get_prefixes(args.n)
+	#prefixes = get_prefixes(args.n)
+	prefixes, ns_info, anno_info = get_info(args.n)
 	change_log = {}
+	redefine = {}
+	redefine['namespaces'] = {}
+	redefine['annotations'] = {}
+	for prefix, filename in ns_info.items():
+		redefine['namespaces'][prefix] = {
+			'old_url':args.base_url + args.old_version + '/' + filename,
+			'new_url':args.base_url + args.new_version + '/' + filename,
+			'new_keyword':prefix}
+	for prefix, filename in anno_info.items():
+		redefine['annotations'][prefix] = {
+			'old_url':args.base_url + args.old_version + '/' + filename,
+			'new_url':args.base_url + args.new_version + '/' + filename,
+			'new_keyword':prefix}
+	change_log['redefine'] = redefine	
+
 
 	for prefix in old_ns_dict.keys():
 		label_prefix = prefix.upper()
-		id_prefix = prefix.upper() + 'ID'
+		if prefix.endswith('id'):
+			id_prefix = prefix.upper()
+		else:
+			id_prefix = prefix.upper() + 'ID'
 		label_log = {}
 		id_log = {}	
 		if prefix not in new_ns_dict.keys():

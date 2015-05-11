@@ -25,27 +25,6 @@ import time
 import datasets
 import json
 
-def get_prefixes(directory):
-	''' Get set of namespace prefixes for belns files (from data set objects). '''
-	print('gathering namespace information ...')
-	prefixes = set()
-	cwd = os.getcwd()
-	if os.path.exists(directory):
-		os.chdir(directory)
-	for files in os.listdir("."):
-		if files.endswith("parsed_data.pickle"):
-			with open(files, 'rb') as f:
-				d = pickle.load(f)
-			if isinstance(d, datasets.NamespaceDataSet):
-				if d.ids:
-					if d._prefix.endswith('id'):
-						prefixes.add(d._prefix.upper())
-					else:	
-						prefixes.add(d._prefix.upper() + 'ID')
-				if d.labels:
-					prefixes.add(d._prefix.upper())
-	os.chdir(cwd)
-	return prefixes
 
 def get_info(directory):
 	''' Get set of namespace and annotation prefixes (from data set objects).
@@ -73,7 +52,8 @@ def get_info(directory):
 				if d.ids:
 					id_name = d._name + '-ids.belns'
 					id_prefix = d._prefix.upper() + 'ID'
-					id_prefix = id_prefix.replace('IDID','ID')
+					id_prefix = id_prefix.replace('IDID','ID') # catch EGID exception
+					id_prefix = id_prefix.replace('AFFXID', 'AFFX') # catch AFFX exception
 					prefixes.add(id_prefix)
 					ns_dict[id_prefix] = id_name
 				if d.labels:
@@ -143,7 +123,7 @@ if __name__=='__main__':
 					help="directory with old resource data")
 	parser.add_argument("--new_version", metavar="NEWVERSION", default="testing",
 					help="version for new resource data")
-	parser.add_argument("--old_version", metavar="OLDVERSION", default="latest",
+	parser.add_argument("--old_version", metavar="OLDVERSION", default="latest-release",
 					help="version for old resource data")
 	parser.add_argument("--base_url", metavar="BASEURL", default="http://resource.belframework.org/belframework/",
 					help="base url for belns and belanno files")
@@ -161,13 +141,13 @@ if __name__=='__main__':
 	redefine['annotations'] = {}
 	for prefix, filename in ns_info.items():
 		redefine['namespaces'][prefix] = {
-			'old_url':args.base_url + args.old_version + '/' + filename,
-			'new_url':args.base_url + args.new_version + '/' + filename,
+			'old_url':args.base_url + args.old_version + '/namespace/' + filename,
+			'new_url':args.base_url + args.new_version + '/namespace/' + filename,
 			'new_keyword':prefix}
 	for prefix, filename in anno_info.items():
 		redefine['annotations'][prefix] = {
-			'old_url':args.base_url + args.old_version + '/' + filename,
-			'new_url':args.base_url + args.new_version + '/' + filename,
+			'old_url':args.base_url + args.old_version + '/annotation/' + filename,
+			'new_url':args.base_url + args.new_version + '/annotation/' + filename,
 			'new_keyword':prefix}
 	change_log['redefine'] = redefine	
 

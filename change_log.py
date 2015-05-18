@@ -25,6 +25,18 @@ import time
 import datasets
 import json
 
+# mapping of anno data set names to .belanno file names
+# do not currently match
+anno_match = True # use dict annotation_name_to_file to remap anno dataset names to belanno file names
+annotation_name_to_file = {
+		'uberon':'anatomy',
+		'disease-ontology':'disease',
+		'cell-line-ontology':'cell-line',
+		'experimental-factor-ontology':'cell-line',
+		'cell-ontology':'cell',
+		'mesh-cell-structure':'cell-structure',
+		'ncbi-taxonomy':'species-taxonomy-id'
+		}
 
 def get_info(directory):
 	''' Get set of namespace and annotation prefixes (from data set objects).
@@ -44,7 +56,14 @@ def get_info(directory):
 			if not isinstance(d, datasets.NamespaceDataSet):
 				continue
 			if 'anno' in d.scheme_type:
-				name = d._name + '.belanno'
+				if anno_match:
+					try:
+						name = annotation_name_to_file[d._name]
+					except:
+						name = d._name
+				else:
+					name = d._name
+				name = name + '.belanno'
 				prefix = d._prefix.upper()
 				prefixes.add(prefix)
 				anno_dict[prefix] = name

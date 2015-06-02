@@ -34,7 +34,7 @@ annotation_name_to_file = {
 		'cell-line-ontology':'cell-line',
 		'experimental-factor-ontology':'cell-line',
 		'cell-ontology':'cell',
-		'mesh-cell-structure':'cell-structure',
+		'mesh-cellular-structures':'cell-structure',
 		'ncbi-taxonomy':'species-taxonomy-id'
 		}
 

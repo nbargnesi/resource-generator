@@ -103,9 +103,10 @@ def get_ns_data(directory):
 				for term_id in d.get_values():
 					name = d.get_label(term_id)
 					ns_dict[d._prefix][term_id] = name
-					if d.get_alt_ids(term_id):
-						for alt_id in d.get_alt_ids(term_id):
-							ns_dict[d._prefix][alt_id] = name
+					if directory == args.n: #get alt_id information ONLY for new namespace
+						if d.get_alt_ids(term_id):
+							for alt_id in d.get_alt_ids(term_id):
+								ns_dict[d._prefix][alt_id] = name
 	os.chdir(cwd)
 	return ns_dict
 					
@@ -152,7 +153,6 @@ if __name__=='__main__':
 	old_ns_dict = get_ns_data(args.o)
 	new_ns_dict = get_ns_data(args.n)
 	history_dict = get_history_data(args.n)
-	#prefixes = get_prefixes(args.n)
 	prefixes, ns_info, anno_info = get_info(args.n)
 	change_log = {}
 	redefine = {}
@@ -177,8 +177,8 @@ if __name__=='__main__':
 			id_prefix = prefix.upper()
 		else:
 			id_prefix = prefix.upper() + 'ID'
-		label_log = {}
-		id_log = {}	
+		label_log = None
+		id_log = None	
 		if prefix not in new_ns_dict.keys():
 			print("WARNING - Namespace {0} missing from new data".format(prefix))
 			continue
@@ -190,33 +190,39 @@ if __name__=='__main__':
 				change_log[label_prefix] = {}
 				label_log = change_log.get(label_prefix)
 			for term_id, label in old_ns_dict[prefix].items():
+				new_id_value = None
+				new_label_value = None
 				# handle case where label changes, but ID is same
 				if term_id in new_ns_dict[prefix]:
 					new_label_value = new_ns_dict[prefix].get(term_id)
 					new_id_value = term_id
-				# handle case where ID changes (and presumably label)
-				else:
+				# handle cases where ID changes and/or is withdrawn
+				else: 
+					# handle case where label does not change but ID does?
+					# create warning, but do not designate label as 'withdrawn'
+					if label in new_ns_dict[prefix].values():
+						new_label_value = label
+						print('WARNING! Label {0} appears valid but is associated with withdrawn/unresolved ID {1}:{2}'.format(label,label_prefix,term_id))
 					if history_dict.get(prefix) and term_id in history_dict[prefix]:
 						new_id_value = history_dict.get(prefix).get(term_id)
-						if new_id_value == 'withdrawn':
-							# handle case where label does not change but ID does?
-							# create warning, but do not designate label as 'withdrawn'
-							if label in new_ns_dict[prefix].values():
-								new_label_value = label
-								print('WARNING! Label {0} appears valid but is associated with withdrawn ID {1}:{2}'.format(label,label_prefix,term_id))
-							else:
-								new_label_value = 'withdrawn'
-						elif new_id_value == None:
-							new_label_value = 'unresolved'
-						else:
-							try:
-								new_label_value = new_ns_dict.get(prefix).get(new_id_value)
-							except:
-								print('No label found for {0}:{1}'.format(prefix.upper(),new_id_value))
-								new_label_value = 'unresolved'
+						if new_id_value is None:
+							new_id_value = 'unresolved'
+						elif new_id_value == 'withdrawn':
+							pass
+						elif new_id_value not in new_ns_dict[prefix].keys(): #confirm new_id_value is valid
+							new_id_value = 'unresolved'
+						else: # if valid new_id_value from history
+							new_label_value = new_ns_dict.get(prefix).get(new_id_value)
+
 					else:
 						new_id_value = 'unresolved'
+
+				if new_label_value is None:
+					if new_id_value == 'withdrawn':
+						new_label_value = 'withdrawn'
+					else:	
 						new_label_value = 'unresolved'
+
 
 				# add data to change_log
 				if new_label_value != label and label_log is not None:

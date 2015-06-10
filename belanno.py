@@ -12,6 +12,10 @@ import os
 import argparse
 import annoheaders
 from common import get_latest_MeSH_filename
+from rdflib import URIRef, BNode, Literal, Namespace, Graph
+from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD, DC
+from rdflib.term import bind
+
 
 def get_data(url):
 	""" From url, get data, download and save locally. """
@@ -46,53 +50,44 @@ def parse_owl(url, id, annotype):
 		os.mkdir('source-data')
 	os.chdir('source-data')
 	anno_dict = {}
-	owl = etree.iterparse(get_data(url))
-	ver = ''
-	for action, elem in owl:
-		if elem.tag.endswith('Ontology'):
-			if elem.find(versionIRI) is not None:
-				# probably want to clean up version info
-				ver = elem.find(versionIRI).get(resource)
-				pub_date = ver.split('/')[-2]
-			elif elem.find(versionInfo) is not None:
-				ver = elem.find(versionInfo).text
-				if elem.find(date) is None:
-					for tag in elem.findall(comment):
-						if tag.text.startswith('Date'):
-							pub_date = tag.text.split(':')[-1].strip()
-							pub_date = datetime.datetime.strptime(pub_date,'%dth %B %Y')
-							pub_date = pub_date.strftime('%Y-%m-%d')
-				else:
-					pub_date = elem.find(date).text
-			print(ver)
-			print(pub_date)
-		if elem.tag.endswith('Class'):
-			if elem.get(about) is not None:
-				term = elem.get(about).split('/')[-1]
-			if elem.find(label) is not None\
-				and term.startswith(id)\
-				and elem.find(obsolete) is None:
-				val = elem.find(label).text.strip()
-				if id == 'EFO' and not check_elem_type(elem,annotype):
-					continue
-				else:
-					anno_dict[term] = val
-	# return to resource_dir
+	version = None
+	owl = Graph()
+	owl.parse(get_data(url))
+	try:
+		ontology = [s for s in owl.subjects(RDF.type, OWL.Ontology)][0]
+	except:
+		print("No Ontology URI for {0}".format(url))
+	ver = owl.value(ontology, OWL.versionIRI)
+	if ver: # 1st try getting version and date from versionIRI
+		version = str(ver)
+		pub_date = version.split('/')[-2]
+	if not version: # 2nd try getting version from versionInfo
+		ver = owl.value(ontology, OWL.versionInfo)
+		if ver:
+			version = str(ver[0])
+		pub_date = owl.value(ontology, DC.date)
+	if not pub_date: # last try getting date from Ontology comments
+		for o in owl.objects(ontology, RDFS.comment):
+			if str(o).startswith('Date:'):
+				pub_date = str(o).split(':')[-1].strip()
+				pub_date = datetime.datetime.strptime(pub_date,'%dth %B %Y')
+				pub_date = pub_date.strftime('%Y-%m-%d')
+
+	print(version)
+	print(pub_date)
+	if id == 'EFO': # only using cell_lines from EFO, make list of Classes
+		cell_lines = [q[0] for q in owl.query('SELECT * WHERE {?s rdfs:subClassOf+ <http://www.ebi.ac.uk/efo/EFO_0000322>}')]
+	for s in owl.subjects(RDF.type, OWL.Class):
+		val = owl.label(s)
+		term = str(s).split('/')[-1]
+		obsolete = owl.value(s, OWL.deprecated)
+		if val and term.startswith(id) and not obsolete:
+			if id == 'EFO' and s not in cell_lines:
+				continue
+			else:
+				anno_dict[term] = val
 	os.chdir(os.pardir)
 	return anno_dict, ver, pub_date
-
-def check_elem_type(elem, annotype):
-	""" Determine if an element from the EFO owl file is a specified type. """
-	type_dict = {
-				'cell-line':'EFO_0000322'
-				}
-	for tag in elem.findall(subClassOf):
-		if tag.get(resource) is not None:
-			if tag.get(resource).split('/')[-1] == type_dict.get(annotype):
-				return True
-				break
-		else:
-			return False
 
 def parse_mesh(mesh_url):
 	""" Download and parse MeSH file, and return dictionary with
@@ -128,7 +123,7 @@ def parse_mesh(mesh_url):
 
 # data is dictionary key = name, value = list of tuples with source url and id
 owl_data = { 
-		'anatomy':[('http://purl.obolibrary.org/obo/uberon.owl', 'UBERON')],
+	'anatomy':[('http://purl.obolibrary.org/obo/uberon.owl', 'UBERON')],
 	'disease':[('http://purl.obolibrary.org/obo/doid.owl', 'DOID')],
 	'cell':[('http://purl.obolibrary.org/obo/cl.owl', 'CL')], 
 	'cell-line':[('http://purl.obolibrary.org/obo/clo.owl','CLO'),
@@ -146,24 +141,6 @@ mesh_anno_names = ['cell-structure', 'mesh-diseases', 'mesh-anatomy']
 # MeSH sub-branches to imclude in mesh-anatomy
 anatomy_branches = ('A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08',
 	'A09', 'A10','A11', 'A12', 'A14', 'A15', 'A16', 'A17')
-
-# information for parsing owl files
-owl = '{http://www.w3.org/2002/07/owl#}'
-rdf = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}'
-rdfs = '{http://www.w3.org/2000/01/rdf-schema#}'
-oboInOwl = '{http://www.geneontology.org/formats/oboInOwl#}'
-dc = '{http://purl.org/dc/elements/1.1/}'
-
-date = "".join([dc, 'date'])
-about = "".join([rdf,'about'])
-label = "".join([rdfs,'label'])
-hasDbXref = "".join([oboInOwl, 'hasDbXref'])
-obsolete = "".join([owl,'deprecated'])
-versionIRI = "".join([owl, 'versionIRI'])
-versionInfo = "".join([owl, 'versionInfo'])
-resource = "".join([rdf, 'resource'])
-subClassOf = "".join([rdfs, 'subClassOf'])
-comment = "".join([rdfs, 'comment'])
 
 # command line argument
 parser = argparse.ArgumentParser(description="""Generate BEL annotation files. """)

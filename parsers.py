@@ -17,6 +17,9 @@ import gzip
 import urllib.request
 import zipfile
 import io
+from rdflib import URIRef, BNode, Literal, Namespace, Graph
+from rdflib.namespace import RDF, RDFS, SKOS, DCTERMS, OWL, XSD, DC
+from rdflib.plugins import sparql
 
 class Parser(object):
 	''' Generic/parent parser. '''
@@ -718,88 +721,58 @@ class MESHChangesParser(Parser):
 
 class OwlParser(Parser):
 
-	owl = '{http://www.w3.org/2002/07/owl#}'
-	rdf = '{http://www.w3.org/1999/02/22-rdf-syntax-ns#}'
-	rdfs = '{http://www.w3.org/2000/01/rdf-schema#}'
-	oboInOwl = '{http://www.geneontology.org/formats/oboInOwl#}'
-	dc = '{http://purl.org/dc/elements/1.1/}'
-
-	date = "".join([dc, 'date'])
-	about = "".join([rdf,'about'])
-	label = "".join([rdfs,'label'])
-	hasDbXref = "".join([oboInOwl, 'hasDbXref'])
-	deprecated = "".join([owl,'deprecated'])
-	versionIRI = "".join([owl, 'versionIRI'])
-	versionInfo = "".join([owl, 'versionInfo'])
-	resource = "".join([rdf, 'resource'])
-	subClassOf = "".join([rdfs, 'subClassOf'])
-	comment = "".join([rdfs, 'comment'])
-	classy = "".join([owl, 'Class'])
-	exactSynonym = "".join([oboInOwl,'hasExactSynonym'])
-	altid = "".join([oboInOwl,'hasAlternativeId'])
-
 	def __init__(self, url):
 		super().__init__(url)
 
 	def parse(self):
-		with open(self._url, 'rb') as owl:
-			tree = etree.iterparse(owl, tag=self.classy)
-			for event, elem in tree:
-				term_dict = {}
-				pref_label = None
-				term_id = None
-				alt_ids = set() 
-				dbxrefs = []
-				synonyms = []
-				obsolete = False
-				term_type = None
+		oboInOwl = Namespace('http://www.geneontology.org/formats/oboInOwl#')
+		owl = Graph()
+		owl.parse(self._url)
+		for s in owl.subjects(RDF.type, OWL.Class):
+			term_dict = {}
+			pref_label = owl.label(s)
+			term_id = str(s).split('/')[-1]
+			dbxrefs = {str(x) for x in owl.objects(s, oboInOwl.hasDbXref)}
+			synonyms = {x for x in owl.objects(s, oboInOwl.hasExactSynonym)}
+			obsolete = owl.value(s, OWL.deprecated)
+			alt_ids = {str(x) for x in owl.objects(s, oboInOwl.hasAlternativeId)}
+			term_type = self.check_elem_type(s,owl)
+			term_dict['name'] = pref_label
+			term_dict['id'] = term_id
+			term_dict['dbxrefs'] = dbxrefs
+			term_dict['synonyms'] = synonyms
+			term_dict['is_obsolete'] = obsolete
+			term_dict['alt_ids'] = alt_ids
+			if term_type:
+				term_dict['term_type'] = term_type
+			yield term_dict
 
-				if elem.get(self.about) is not None:
-					term_id = elem.get(self.about).split('/')[-1]
-					for child in elem.getchildren():
-						if child.tag == self.label:
-							pref_label = child.text.strip()
-						elif child.tag == self.hasDbXref and child.text is not None:
-							dbxrefs.append(child.text)
-						elif child.tag == self.exactSynonym:
-							synonyms.append(child.text)
-						elif child.tag == self.deprecated:
-							obsolete = True
-						elif child.tag == self.altid:
-							alt_ids.add(child.text) # prefixes removed in datasets.get_alt_ids
-					term_type = self.check_elem_type(elem)
-					term_dict['name'] = pref_label
-					term_dict['id'] = term_id
-					term_dict['dbxrefs'] = dbxrefs
-					term_dict['synonyms'] = synonyms
-					term_dict['is_obsolete'] = obsolete
-					term_dict['alt_ids'] = alt_ids
-					if term_type:
-						term_dict['term_type'] = term_type
-					yield term_dict
-
-	def check_elem_type(self, elem):
-		# currently looks at parent term (single level up) to identify the EFO terms which are cell lines
+	def check_elem_type(self, elem, owl):
+		# currently looks at parent term to identify the EFO terms which are cell lines
 		# TODO - search further to use for other ontologies to assign type
 		type_dict = {
-				'EFO_0000322':'CellLine'
-				#'DOID_4':'Disease',
+				'http://www.ebi.ac.uk/efo/EFO_0000322':'CellLine',
+				#'http://purl.obolibrary.org/obo/DOID_4':'Disease',
 				#'CLO_0000031':'CellLine',
 				#'GO_0005623':'Cell',
 				#'UBERON_0001062':'Anatomy'
 				}
 		types = set()
+		q = sparql.prepareQuery(
+				'ASK {?s rdfs:subClassOf+ ?class}',
+				initNs = { 'rdfs':RDFS } 
+				)
 
-		for tag in elem.findall(self.subClassOf):
-			if tag.get(self.resource) is not None:
-				for k,v in type_dict.items():
-					if tag.get(self.resource).split('/')[-1] == k:
-						types.add(v)
-						break
-			if len(types) > 0:
-				return types
-			else:
-				return None
+		for k,v in type_dict.items():
+			k = URIRef(k)
+			# ASK query to determine if elem is a subClass of the Class k (corresponding to type v)
+			if [r for r in owl.query(q, initBindings={'s':elem, 'class':k})][0]:
+				types.add(v)
+
+		if len(types) > 0:
+			return types
+		else:
+			return None
 
 	def __str__(self):
 		return 'Owl_Parser'

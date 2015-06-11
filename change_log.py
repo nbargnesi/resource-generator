@@ -101,7 +101,7 @@ def get_ns_data(directory):
 				ns_dict[d._prefix] = {}
 				print('\t{0} - {1}'.format(d._prefix, d._name))
 				for term_id in d.get_values():
-					name = d.get_label(term_id)
+					name = str(d.get_label(term_id))
 					ns_dict[d._prefix][term_id] = name
 					if directory == args.n: #get alt_id information ONLY for new namespace
 						if d.get_alt_ids(term_id):

@@ -691,12 +691,11 @@ class SwissWithdrawnParser(Parser):
 class MESHChangesParser(Parser):
 
 	def __init__(self, url):
-		super(MESHChangesParser, self).__init__(url)
-		self.mesh_file = url
+		super().__init__(url)
 
 	def parse(self):
 
-		with open(self.mesh_file, 'r') as fp:
+		with open(self._url, 'r') as fp:
 			for line in fp.readlines():
 				if 'MH OLD =' in line:
 					mh_old = line.split('= ')[1]
@@ -723,6 +722,10 @@ class OwlParser(Parser):
 
 	def __init__(self, url):
 		super().__init__(url)
+		self.q = sparql.prepareQuery(
+				'ASK {?s rdfs:subClassOf+ ?class}',
+				initNs = { 'rdfs':RDFS } 
+				)
 
 	def parse(self):
 		oboInOwl = Namespace('http://www.geneontology.org/formats/oboInOwl#')
@@ -749,7 +752,7 @@ class OwlParser(Parser):
 
 	def check_elem_type(self, elem, owl):
 		# currently looks at parent term to identify the EFO terms which are cell lines
-		# TODO - search further to use for other ontologies to assign type
+		# TODO - implement for other ontologies to assign type
 		type_dict = {
 				'http://www.ebi.ac.uk/efo/EFO_0000322':'CellLine',
 				#'http://purl.obolibrary.org/obo/DOID_4':'Disease',
@@ -757,16 +760,24 @@ class OwlParser(Parser):
 				#'GO_0005623':'Cell',
 				#'UBERON_0001062':'Anatomy'
 				}
-		types = set()
-		q = sparql.prepareQuery(
-				'ASK {?s rdfs:subClassOf+ ?class}',
-				initNs = { 'rdfs':RDFS } 
-				)
 
+		def check_parent(term, parent):
+			'''Given a term URIRef, returns True if the term is a subClass of the 
+			given parent.'''
+			parent = URIRef(parent)
+			if [row for row in owl.query(self.q, initBindings={'s':term, 'class':parent})][0]:
+				return True
+			else:
+				return False
+
+		types = set()
+
+		#for k,v in type_dict.items():
+		#	k = URIRef(k)
+		#	# ASK query to determine if elem is a subClass of the Class k (corresponding to type v)
+		#	if [r for r in owl.query(self.q, initBindings={'s':elem, 'class':k})][0]:
 		for k,v in type_dict.items():
-			k = URIRef(k)
-			# ASK query to determine if elem is a subClass of the Class k (corresponding to type v)
-			if [r for r in owl.query(q, initBindings={'s':elem, 'class':k})][0]:
+			if check_parent(elem,k):
 				types.add(v)
 
 		if len(types) > 0:

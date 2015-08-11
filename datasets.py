@@ -646,7 +646,7 @@ class AffyData(NamespaceDataSet):
 
 class CHEBIData(NamespaceDataSet):
 
-	def __init__(self, dictionary={}, *, name='chebi', prefix='chebi', domain=['gene and gene product'], ids=True):
+	def __init__(self, dictionary={}, *, name='chebi', prefix='chebi', domain=['chemical'], ids=True):
 		super().__init__(dictionary, name, prefix, domain)
 		self.ids = ids
 	

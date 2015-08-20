@@ -120,7 +120,26 @@ class EntrezGeneHistoryParser(Parser):
 	def __str__(self):
 		return "EntrezGeneHistory_Parser"
 
+class HomologeneParser(Parser):
 
+	headers = ["HID", "tax_id", "GeneID", "GeneSymbol", "ProteinGi", "ProteinAccession"]
+
+	def __init__(self, url):
+		super().__init__(url)
+		
+	def parse(self):
+		with open(self._url, "r") as f:
+			reader = csv.DictReader(f,
+						  delimiter='\t',
+						  fieldnames=self.headers)
+
+			for row in reader:
+				if row['tax_id'] in ("9606", "10090", "10116"):
+					yield row
+
+	def __str__(self):
+		return "Homologene_Parser"
+		
 class HGNCParser(Parser):
 
 	def __init__(self, url):

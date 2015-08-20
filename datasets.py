@@ -51,6 +51,33 @@ class OrthologyData(DataSet):
 	def __str__(self):
 		return self._prefix + '_ortho'
 
+class HomologeneData(OrthologyData):
+
+
+	def __init__(self, dictionary={}, prefix='egid'):
+		super().__init__(dictionary, prefix)
+
+	def get_values(self):
+		for term_id in self._dict['gene_ids']:
+			yield term_id
+
+	def get_orthologs(self, term_id):
+		orthologs = set()
+		mapping = self._dict.get('gene_ids').get(term_id)
+		group = mapping.get('homologene_group')
+		species = mapping.get('tax_id')
+		for k,v in self._dict['homologene_groups'][group].items():
+			if k == species and len(v) >1:
+				return set() # stop here, don't return any orthologs since homologene group contains paralog
+			elif k == species:
+				next
+			elif k != species and len(v) == 1:
+				orthologs.update(v)
+			else:
+				print("WARNING! Missed case {0} - {1} - {2}".format(term_id, k, v))
+		orthologs = {'EGID:'+ o for o in orthologs}
+		return orthologs
+
 class HistoryDataSet(DataSet):
 
 	def __init__(self, dictionary={}, prefix='use-index-term-prefix'):

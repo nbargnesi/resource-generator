@@ -99,6 +99,7 @@ baseline_data['gene2acc.gz'] = (
 	parsers.Gene2AccParser, gene2acc_data
 )
 
+
 affx_data = AffyData()
 baseline_data['affy.xml'] = (
 	'http://www.affymetrix.com/analysis/downloads/netaffxapi/GetFileList.jsp?licence=OPENBEL2013&user=jhourani@selventa.com&password=OPENBEL2013',
@@ -171,6 +172,13 @@ baseline_data['clo.owl'] = ('http://purl.obolibrary.org/obo/clo.owl', parsers.Ow
 
 uberon_data = OWLData(name='uberon', prefix='uberon', domain=['anatomy'], scheme_type=['anno'])
 baseline_data['uberon.owl'] = ('http://purl.obolibrary.org/obo/uberon.owl', parsers.OwlParser, uberon_data)
+###
+homologene_ortho_data = HomologeneData()
+baseline_data['homologene.data'] = (
+	'ftp://ftp.ncbi.nlm.nih.gov/pub/HomoloGene/current/homologene.data',
+	parsers.HomologeneParser,
+	homologene_ortho_data
+	)
 
 affy_array_names = ['HG-U133A', 'HG-U133B', 'HG-U133_Plus_2', 'HG_U95Av2',
 					   'MG_U74A', 'MG_U74B', 'MG_U74C', 'MOE430A', 'MOE430B',

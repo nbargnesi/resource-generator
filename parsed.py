@@ -83,6 +83,22 @@ def build_data(entry, parser, data_object):
 			'new_id' : new_id
 			 }
 
+	elif parser == 'Homologene_Parser':
+		gene_id = entry.get('GeneID')
+		tax_id = entry.get('tax_id')
+		hid = entry.get('HID')
+		# build dict to enable lookups by homologene group id OR gene ID
+		data_object._dict['gene_ids'] = data_object._dict.get('gene_ids',{}) 
+		data_object._dict['gene_ids'][gene_id] = {
+			'homologene_group' : hid,
+			'tax_id' :  tax_id
+			}
+		data_object._dict['homologene_groups'] = data_object._dict.get('homologene_groups',{}) 
+		data_object._dict['homologene_groups'][hid] = data_object._dict.get('homologene_groups').get(hid,{}) 
+		data_object._dict['homologene_groups'][hid][tax_id] = data_object._dict.get(tax_id, set())
+		data_object._dict['homologene_groups'][hid][tax_id].add(gene_id)
+
+
 	elif parser == 'HGNC_Parser':
 		app_symb = entry.get('Approved Symbol')
 		loc_type = entry.get('Locus Type')

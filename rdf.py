@@ -203,7 +203,8 @@ def get_ortho_matches(d, g, prefix_dict=None):
 			print('Building required prefix dictionary ...')
 			prefix_dict = build_prefix_dict()
 		n = Namespace("http://www.openbel.org/bel/namespace/" + prefix_dict[d._prefix] + '/') 		
-		for term_id in d._dict.keys():
+		#for term_id in d._dict.keys():
+		for term_id in d.get_values():
 			term_clean = parse.quote(term_id)
 			term_uri = URIRef(n[term_clean])
 			ortho = d.get_orthologs(term_id)

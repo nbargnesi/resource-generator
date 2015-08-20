@@ -11,10 +11,11 @@ from collections import defaultdict
 
 # Info for BEL document header
 doc_name = "BEL Framework Orthologous Genes Document"
-description = "Gene orthology relationships from HGNC and RGD"
+description = "Gene orthology relationships from HGNC, RGD, and Homologene"
 namespaces = {'HGNC': 'hgnc-human-genes.belns',
 	'MGI': 'mgi-mouse-genes.belns',
-	'RGD': 'rgd-rat-genes.belns'}
+	'RGD': 'rgd-rat-genes.belns',
+	'EGID': 'entrez-gene-ids.belns'}
 annotations = {}
 base_url = 'http://resource.belframework.org/belframework/testing/'
 
@@ -33,7 +34,7 @@ if __name__=='__main__':
 		print('data directory {0} not found!'.format(args.n))
 
 	# access and load required data objects
-	data_list = ['rgd', 'hgnc', 'rgd_ortho', 'mgi']
+	data_list = ['rgd', 'hgnc', 'rgd_ortho', 'mgi', 'egid_ortho']
 	data_dict = {}
 	for files in os.listdir("."):
 		if files.endswith("parsed_data.pickle"):
@@ -89,6 +90,21 @@ if __name__=='__main__':
 					ortho_term = bel_functions.bel_term(o_label, prefix, 'g')
 					rgd_ortho_statements.add('{0} orthologous {1}'.format(rgd_term, ortho_term)) 
 
+	# Get ortho statements from Homologene (egid_ortho) data object 
+	egid_ortho_statements = set()	
+	for term_id in data_dict.get('egid_ortho').get_values():
+		term_label = term_id
+		egid_term = bel_functions.bel_term(term_label, 'EGID', 'g')
+		orthos = data_dict.get('egid_ortho').get_orthologs(term_id)
+		print(orthos)
+		if orthos is not None:
+			for o in orthos:
+				prefix = ''
+				if len(o.split(':')) == 2:
+					prefix, value = o.split(':')
+					ortho_term = bel_functions.bel_term(value, prefix, 'g')
+					egid_ortho_statements.add('{0} orthologous {1}'.format(egid_term, ortho_term)) 
+
 	with open('gene-orthology.bel', 'w') as ortho:
 		bel_functions.write_bel_header(ortho, doc_name=doc_name, description=description, namespaces=namespaces, annotations=annotations, base_url=base_url)
 		ortho.write('SET Citation = {"Online Resource", "HUGO Gene Nomenclature Committee data download", "ftp://ftp.ebi.ac.uk/pub/databases/genenames/hgnc_complete_set.txt.gz"}\n')
@@ -97,5 +113,9 @@ if __name__=='__main__':
 		ortho.write('\n')
 		ortho.write('SET Citation = {"Online Resource","RGD Orthology FTP file", "ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt"}\n')
 		for s in sorted(rgd_ortho_statements):
+			ortho.write(s + '\n')
+		ortho.write('\n')
+		ortho.write('SET Citation = {"Online Resource","NCBI Homologene FTP file", "ftp://ftp.ncbi.nih.gov/pub/HomoloGene/current"}\n')
+		for s in sorted(egid_ortho_statements):
 			ortho.write(s + '\n')
 # vim: ts=4 sts=4 sw=4 noexpandtab

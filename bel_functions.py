@@ -41,6 +41,7 @@ def write_bel_header(f, *, authors='OpenBEL', contact_info=None, doc_name="Docum
 		f.write('SET Document ContactInfo = {0}\n'.format(contact_info))
 	f.write('\n' + separator + '# Definitions Section\n')
 	for ns_prefix, ns_name in namespaces.items():
+		base_url = base_url.rstrip('/')
 		f.write('DEFINE NAMESPACE {0} AS URL "{1}/namespace/{2}"\n'.format(ns_prefix, base_url, ns_name))
 	f.write('\n')
 	for anno, url in annotations.items():

@@ -96,7 +96,6 @@ if __name__=='__main__':
 		term_label = term_id
 		egid_term = bel_functions.bel_term(term_label, 'EGID', 'g')
 		orthos = data_dict.get('egid_ortho').get_orthologs(term_id)
-		print(orthos)
 		if orthos is not None:
 			for o in orthos:
 				prefix = ''

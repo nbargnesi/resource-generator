@@ -19,6 +19,10 @@ namespaces = {'HGNC': 'hgnc-human-genes.belns',
 annotations = {}
 base_url = 'http://resource.belframework.org/belframework/testing/'
 
+def get_egid_status(egid):
+	''' Check egid for update or withdrawal. '''
+	status = data_dict.get('egid_history').get_id_update(term_id)
+	return status
 
 if __name__=='__main__':	
 	# command line arguments - directory for pickled data objects
@@ -34,7 +38,7 @@ if __name__=='__main__':
 		print('data directory {0} not found!'.format(args.n))
 
 	# access and load required data objects
-	data_list = ['rgd', 'hgnc', 'rgd_ortho', 'mgi', 'egid_ortho']
+	data_list = ['rgd', 'hgnc', 'rgd_ortho', 'mgi', 'egid_ortho', 'egid_history']
 	data_dict = {}
 	for files in os.listdir("."):
 		if files.endswith("parsed_data.pickle"):
@@ -93,14 +97,23 @@ if __name__=='__main__':
 	# Get ortho statements from Homologene (egid_ortho) data object 
 	egid_ortho_statements = set()	
 	for term_id in data_dict.get('egid_ortho').get_values():
-		term_label = term_id
-		egid_term = bel_functions.bel_term(term_label, 'EGID', 'g')
 		orthos = data_dict.get('egid_ortho').get_orthologs(term_id)
+		status = data_dict.get('egid_history').get_id_update(term_id)
+		if status == 'withdrawn':
+			continue
+		elif status is not None:
+			term_id = status # if replacement egid available, use it
+		egid_term = bel_functions.bel_term(term_id, 'EGID', 'g')
 		if orthos is not None:
 			for o in orthos:
 				prefix = ''
 				if len(o.split(':')) == 2:
 					prefix, value = o.split(':')
+					status = data_dict.get('egid_history').get_id_update(value)
+					if status == 'withdrawn':
+						continue
+					elif status is not None:
+						value = status # if replacement egid value availble from history, use it
 					ortho_term = bel_functions.bel_term(value, prefix, 'g')
 					egid_ortho_statements.add('{0} orthologous {1}'.format(egid_term, ortho_term)) 
 

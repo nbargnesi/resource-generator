@@ -247,8 +247,9 @@ def build_data(entry, parser, data_object):
 
 		if any(branch.startswith('A11.284') for branch in mns):
 			meshcl_dict[ui] = mesh_dict
-				
-		if any(branch.startswith('C') for branch in mns):
+			
+		disease_branches = ('C', 'F03')
+		if any(branch.startswith(disease_branches) for branch in mns):
 			meshd_dict[ui] = mesh_dict
 		
 		if any(branch.startswith('G') for branch in mns):

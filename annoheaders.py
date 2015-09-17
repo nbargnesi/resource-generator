@@ -77,7 +77,7 @@ header_dict['cell-structure'] = {'kw':'CellStructure',
 	}
 	
 header_dict['mesh-diseases'] = {'kw':'MeSHDisease',
-	'ad':'Disease terms from the [C] branch of Medical Subject Headings (MeSH).',
+	'ad':'Disease terms from the [C] and [F03] branches of Medical Subject Headings (MeSH).',
 	'us':'Use to annotate a statement demonstrated in the context of a specific disease.',
 	}
 

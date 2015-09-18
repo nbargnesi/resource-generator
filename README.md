@@ -3,9 +3,20 @@ Python modules to generate BEL resource documents.
 
 See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespace-datasets) for information about dataset objects and how to add new datasets.
 
-The resource
-
 ## Resource Generator
+
+To run:
+'./gp_baseline.py -n [dir]'
+'[dir]' is the working directory to which data will be downloaded and new files generated.
+
+ [gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py) runs in several phases:
+ 1. data download
+ 2. data parse (and save as pickled objects)
+ 3. build .belns (namespace) files
+ 4. -removed-
+ 5. build .beleq (equivalence) files
+  
+ The pipeline can be started and stopped at any phase using the '-b' and '-e' options. This enables re-rerunning the pipeline on stored data downloads and pickled data objects.
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.
 2. **[configuration.py](https://github.com/OpenBEL/resource-generator/blob/master/configuration.py)** - Configures the datasets to be included in the resource-generation pipeline, including initialization of the [dataset](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py) objects, specification of a download url, and association with a [parser](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)

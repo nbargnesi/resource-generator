@@ -3,16 +3,12 @@ Python modules to generate BEL resource documents.
 
 See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespace-datasets) for information about dataset objects and how to add new datasets.
 
+The resource
+
 ## Resource Generator
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.
-   This module uses [configuration.py](https://github.com/jhourani/openbel-contributions/blob/master/configuration.py) to determine which parsers to run
-   over which datasets. After parsing and storing the data in a usable
-   form, gp_baseline calls out to equiv.py
-   to generate the new .belns and .beleq files.
-2. **[configuration.py](https://github.com/OpenBEL/resource-generator/blob/master/configuration.py)** - matches each dataset to the proper parser. This
-   module can be used to customize which parsers to run. To run/not run a
-   particular parser, simply uncomment/comment it.
+2. **[configuration.py](https://github.com/OpenBEL/resource-generator/blob/master/configuration.py)** - Configures the datasets to be included in the resource-generation pipeline, including initialization of the [dataset](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py) objects, specification of a download url, and association with a [parser](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)
 3. **[parsers.py](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)** - contains parsers for each dataset. 
 4. **[parsed.py](https://github.com/OpenBEL/resource-generator/blob/master/parsed.py)** - acts as a storage module. Takes the data handed to it by
    the parser and stores it in a DataObject. Currently all of the data being

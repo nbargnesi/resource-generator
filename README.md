@@ -13,7 +13,7 @@ To run:
  1. data download
  2. data parse (and save as pickled objects)
  3. build .belns (namespace) files
- 4. -removed-
+ 4. removed
  5. build .beleq (equivalence) files
   
  The pipeline can be started and stopped at any phase using the '-b' and '-e' options. This enables re-rerunning the pipeline on stored data downloads and pickled data objects.

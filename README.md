@@ -16,7 +16,7 @@ To run:
  4. removed
  5. build .beleq (equivalence) files
   
- The pipeline can be started and stopped at any phase using the '-b' and '-e' options. This enables re-rerunning the pipeline on stored data downloads and pickled data objects.
+The pipeline can be started and stopped at any phase using the '-b' and '-e' options. This enables re-rerunning the pipeline on stored data downloads and pickled data objects.
 
 1. **[gp_baseline.py](https://github.com/OpenBEL/resource-generator/blob/master/gp_baseline.py)** - acts as the driver for the resource-generator.
 2. **[configuration.py](https://github.com/OpenBEL/resource-generator/blob/master/configuration.py)** - Configures the datasets to be included in the resource-generation pipeline, including initialization of the [dataset](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py) objects, specification of a download url, and association with a [parser](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)

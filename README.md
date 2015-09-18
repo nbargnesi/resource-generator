@@ -1,7 +1,7 @@
 # Project Overview
 Python modules to generate BEL resource documents.
 
-See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespace-datasets) for information about how to add new datasets.
+See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespace-datasets) for information about dataset objects and how to add new datasets.
 
 ## Resource Generator
 
@@ -9,24 +9,18 @@ See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Adding-new-Namespa
    This module uses [configuration.py](https://github.com/jhourani/openbel-contributions/blob/master/configuration.py) to determine which parsers to run
    over which datasets. After parsing and storing the data in a usable
    form, gp_baseline calls out to equiv.py
-   to generate the new .belns, .belanno, and .beleq files.
+   to generate the new .belns and .beleq files.
 2. **[configuration.py](https://github.com/OpenBEL/resource-generator/blob/master/configuration.py)** - matches each dataset to the proper parser. This
    module can be used to customize which parsers to run. To run/not run a
    particular parser, simply uncomment/comment it.
-3. **[parsers.py](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)** - contains parsers for each dataset, and in some cases
-   mutiple parsers over the same data. This is mainly due to the fact that
-   in some cases *withdrawn* or *deprecated* terms are not included during
-   resource generation, but are needed for resolving lost terms in the
-   change log. 
+3. **[parsers.py](https://github.com/OpenBEL/resource-generator/blob/master/parsers.py)** - contains parsers for each dataset. 
 4. **[parsed.py](https://github.com/OpenBEL/resource-generator/blob/master/parsed.py)** - acts as a storage module. Takes the data handed to it by
    the parser and stores it in a DataObject. Currently all of the data being
    used in this module is being kept in memory. See bug tracker about a
    possible solution to this memory constraint.
-5. **[datasets.py](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py)** - each DataObject that holds a particular dataset is
-   defined in this module. These objects act as an interface to the underlying
-   dictionaries, and do various manipulations over the data to assist in
-   generating the BEL resource files.
-6. **[equiv.py](https://github.com/OpenBEL/resource-generator/blob/master/equiv.py)** - the main function in this module will take a DataObject as
+5. **[datasets.py](https://github.com/OpenBEL/resource-generator/blob/master/datasets.py)** - each DataObject class  
+is defined in this module. See [wiki](https://github.com/OpenBEL/resource-generator/wiki/Dataset-Objects) for     information about DataObject classes, methods, and attributes.
+6. **[equiv.py](https://github.com/OpenBEL/resource-generator/blob/master/equiv.py)** - this module will take a DataObject as
    a parameter, and use that object's defined functions to generate the new
    .beleq files.
 7.  **[common.py](https://github.com/OpenBEL/resource-generator/blob/master/common.py)** - defines some common functions used throughout the program,

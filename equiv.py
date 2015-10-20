@@ -12,11 +12,8 @@
 '''
 
 import uuid
-import csv
 import parsed
-import configuration
 import os
-import time
 from collections import defaultdict
 from common import get_citation_info
 
@@ -29,7 +26,7 @@ entrez_eq = {}
 # need hgnc, mgi, rgd id equivalence dicts for swissprot
 hgnc_id_eq, mgi_id_eq, rgd_id_eq = {}, {}, {}
 # need chebi id equivalence dict for schem
-chebi_id_eq, meshc_id_eq = {},{}
+chebi_id_eq, meshc_id_eq = {}, {}
 # need chebi name equivalence dict for meshc
 chebi_eq = {}
 # need GOBP names for equivalencing MESHPP by string match
@@ -40,385 +37,404 @@ gocc_eq_dict, gocc_names_eq = {}, {}
 # need DO ids for equivalencing to MESHD
 do_id_eq = {}
 
+
 def equiv(d, verbose):
-	if str(d) == 'egid':
-		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
-		entrez_eq.update(id_temp_dict)
-		# Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI, RGD
-		for term_id in d.get_values():
-			dbXrefs = d.get_xrefs(term_id)
-			for dbXref in dbXrefs:
-				entrez_converter[dbXref] = term_id
+    if str(d) == 'egid':
+        id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+        entrez_eq.update(id_temp_dict)
+        # Make entrez_converter equivalence dictionary for Entrez to HGNC, MGI,
+        # RGD
+        for term_id in d.get_values():
+            dbXrefs = d.get_xrefs(term_id)
+            for dbXref in dbXrefs:
+                entrez_converter[dbXref] = term_id
 
-	elif str(d) == 'hgnc':
-		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
-		hgnc_id_eq.update(id_temp_dict)
-	
-	elif str(d) == 'mgi':
-		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
-		mgi_id_eq.update(id_temp_dict)
+    elif str(d) == 'hgnc':
+        id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+        hgnc_id_eq.update(id_temp_dict)
 
-	elif str(d) == 'rgd':
-		id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
-		rgd_id_eq.update(id_temp_dict)
+    elif str(d) == 'mgi':
+        id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+        mgi_id_eq.update(id_temp_dict)
 
-	elif str(d) == 'sp':
-		acc_helper_dict = defaultdict(list)
-		eq_name_dict, eq_id_dict = {}, {}	
-		for term_id in d.get_values():
-			uid = None
-			name = d.get_label(term_id)
-			dbrefs = d.get_xrefs(term_id)
-			egids = [x for x in dbrefs if x.startswith('EGID:')]
-			if len(egids) == 1:
-				uid = entrez_eq.get(egids[0].replace('EGID:', ''))
-			elif len(egids) > 1:
-				uid = None
-			elif len(egids) == 0:
-				if len(dbrefs) > 1:
-					uid = None
-				elif len(dbrefs) == 1:
-					prefix, xref = dbrefs.pop().split(':')
-					if prefix == 'HGNC':	
-						uid = hgnc_id_eq.get(xref)
-					if prefix == 'MGI':
-						uid = mgi_id_eq.get(xref)
-					if prefix == 'RGD':
-						uid = rgd_id_eq.get(xref)
-									
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_name_dict[name] = uid
-			eq_id_dict[term_id] = uid
-			# build dictionary of  secondary accessions 
-			# to identify those that map to multiple primary accessions/entry names
-			accessions = d.get_alt_ids(term_id)
-			for a in accessions:
-				acc_helper_dict[a].append(term_id)	
+    elif str(d) == 'rgd':
+        id_temp_dict, name_temp_dict = resolve_entrez_id(d, verbose)
+        rgd_id_eq.update(id_temp_dict)
 
-		for sec_acc_id, v in acc_helper_dict.items():
-			uid = None
-		# only maps to one primary accession, same uuid
-			if len(v) == 1:
-				uid = eq_id_dict.get(v[0])
-		# maps to > 1 primary accession, give it a new uuid.
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_id_dict[sec_acc_id] = uid
-		if d.ids == True:
-			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-		if d.labels == True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
-	
-	elif str(d) == 'affx':
-		affy_eq = {}
-		if parsed.gene2acc_data is None or len(parsed.gene2acc_data._dict) == 0:
-			print('Missing required dependency data gene2acc_data')
-			refseq = {}
-		else:
-			refseq = build_refseq(parsed.gene2acc_data)
+    elif str(d) == 'sp':
+        acc_helper_dict = defaultdict(list)
+        eq_name_dict, eq_id_dict = {}, {}
+        for term_id in d.get_values():
+            uid = None
+            name = d.get_label(term_id)
+            dbrefs = d.get_xrefs(term_id)
+            egids = [x for x in dbrefs if x.startswith('EGID:')]
+            if len(egids) == 1:
+                uid = entrez_eq.get(egids[0].replace('EGID:', ''))
+            elif len(egids) > 1:
+                uid = None
+            elif len(egids) == 0:
+                if len(dbrefs) > 1:
+                    uid = None
+                elif len(dbrefs) == 1:
+                    prefix, xref = dbrefs.pop().split(':')
+                    if prefix == 'HGNC':
+                        uid = hgnc_id_eq.get(xref)
+                    if prefix == 'MGI':
+                        uid = mgi_id_eq.get(xref)
+                    if prefix == 'RGD':
+                        uid = rgd_id_eq.get(xref)
 
-		ref_status = {'REVIEWED' : 0,
-			  'VALIDATED' : 1,
-			  'PROVISIONAL' : 2,
-			  'PREDICTED' : 3,
-			  'MODEL' : 4,
-			  'INFERRED' : 5,
-			  '-' : 6}
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_name_dict[name] = uid
+            eq_id_dict[term_id] = uid
+            # build dictionary of  secondary accessions
+            # to identify those that map to multiple primary accessions/entry
+            # names
+            accessions = d.get_alt_ids(term_id)
+            for a in accessions:
+                acc_helper_dict[a].append(term_id)
 
-		for term_id in d.get_values():
-			uid = None
-			entrez_ids = d.get_xrefs(term_id)
-			if entrez_ids:
-				entrez_ids = [eid.replace('EGID:', '') for eid in entrez_ids]
-			else: 
-				entrez_ids = []
-			# for 1 entrez mapping, use the entrez gene uuid
-			if len(entrez_ids) == 1:
-				uid = entrez_eq.get(entrez_ids.pop())
-			# if > 1 entrez mapping, resolve to one, prioritizing by refseq status and lowest ID#.
-			elif len(entrez_ids) > 1:
-				adjacent_list = []
-				for entrez_gene in entrez_ids:
-					refstatus = refseq.get(entrez_gene)
-					adjacent_list.append(ref_status.get(refstatus))
-					# zipping yields a list of tuples like [('5307',0), ('104',2), ('3043',None)]
-					# i.e. [(entrez_id, refseq_status)]
-					list_of_tuples = list(zip(entrez_ids, adjacent_list))
+        for sec_acc_id, v in acc_helper_dict.items():
+            uid = None
+        # only maps to one primary accession, same uuid
+            if len(v) == 1:
+                uid = eq_id_dict.get(v[0])
+        # maps to > 1 primary accession, give it a new uuid.
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_id_dict[sec_acc_id] = uid
+        if d.ids:
+            write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+        if d.labels:
+            write_beleq(eq_name_dict, d._name, d.source_file)
 
-					# get rid of all 'None' tuples (No entrez mapping)
-					list_of_tuples = [tup for tup in list_of_tuples if tup[1] is not None]
+    elif str(d) == 'affx':
+        affy_eq = {}
+        if parsed.gene2acc_data is None or len(
+                parsed.gene2acc_data._dict) == 0:
+            print('Missing required dependency data gene2acc_data')
+            refseq = {}
+        else:
+            refseq = build_refseq(parsed.gene2acc_data)
 
-					# no mapping
-					if len(list_of_tuples) == 0:
-						uid = None
+        ref_status = {'REVIEWED': 0,
+                      'VALIDATED': 1,
+                      'PROVISIONAL': 2,
+                      'PREDICTED': 3,
+                      'MODEL': 4,
+                      'INFERRED': 5,
+                      '-': 6}
 
-					# multiple entrez, resolve by refseq status
-					else:
-						# min tuple is highest refseq status (0 the best)
-						min_tuple = min(list_of_tuples, key=lambda x: x[1])
-						min_refseq = min_tuple[1]
-						lowest_tuples = []
+        for term_id in d.get_values():
+            uid = None
+            entrez_ids = d.get_xrefs(term_id)
+            if entrez_ids:
+                entrez_ids = [eid.replace('EGID:', '') for eid in entrez_ids]
+            else:
+                entrez_ids = []
+            # for 1 entrez mapping, use the entrez gene uuid
+            if len(entrez_ids) == 1:
+                uid = entrez_eq.get(entrez_ids.pop())
+            # if > 1 entrez mapping, resolve to one, prioritizing by refseq
+            # status and lowest ID#.
+            elif len(entrez_ids) > 1:
+                adjacent_list = []
+                for entrez_gene in entrez_ids:
+                    refstatus = refseq.get(entrez_gene)
+                    adjacent_list.append(ref_status.get(refstatus))
+                    # zipping yields a list of tuples like [('5307',0), ('104',2), ('3043',None)]
+                    # i.e. [(entrez_id, refseq_status)]
+                    list_of_tuples = list(zip(entrez_ids, adjacent_list))
 
-						for item in list_of_tuples:
-							if item[1] == min_refseq:
-								lowest_tuples.append(item)
+                    # get rid of all 'None' tuples (No entrez mapping)
+                    list_of_tuples = [
+                        tup for tup in list_of_tuples if tup[1] is not None]
 
-						# if mutiple genes with same refseq, resolve by lowest gene #
-						target_tuple = min(lowest_tuples)
-						uid = entrez_eq.get(target_tuple[0])
-			# no entrez mapping, create a new uuid
-			if uid == None:
-				uid = uuid.uuid4()
-			affy_eq[term_id] = uid
-		write_beleq(affy_eq, d._name+'-ids', d.source_file) 
+                    # no mapping
+                    if len(list_of_tuples) == 0:
+                        uid = None
 
-	elif str(d) == 'chebi':
-		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
-		chebi_id_eq.update(id_temp_dict)
-		chebi_eq.update(name_temp_dict)
+                    # multiple entrez, resolve by refseq status
+                    else:
+                        # min tuple is highest refseq status (0 the best)
+                        min_tuple = min(list_of_tuples, key=lambda x: x[1])
+                        min_refseq = min_tuple[1]
+                        lowest_tuples = []
 
-	elif str(d) == 'gobp':
-		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
-		gobp_eq_dict.update(name_temp_dict)
+                        for item in list_of_tuples:
+                            if item[1] == min_refseq:
+                                lowest_tuples.append(item)
 
-	elif str(d) == 'gocc':
-		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
-		gocc_eq_dict.update(id_temp_dict)
-		gocc_names_eq.update(name_temp_dict)
+                        # if mutiple genes with same refseq, resolve by lowest
+                        # gene #
+                        target_tuple = min(lowest_tuples)
+                        uid = entrez_eq.get(target_tuple[0])
+            # no entrez mapping, create a new uuid
+            if uid is None:
+                uid = uuid.uuid4()
+            affy_eq[term_id] = uid
+        write_beleq(affy_eq, d._name + '-ids', d.source_file)
 
-	elif str(d) == 'do':
-		id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
-		do_id_eq.update(id_temp_dict)
+    elif str(d) == 'chebi':
+        id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+        chebi_id_eq.update(id_temp_dict)
+        chebi_eq.update(name_temp_dict)
 
-	elif str(d) == 'sdis':
-		resolve_xrefs(d, ['do'], [do_id_eq], verbose)
+    elif str(d) == 'gobp':
+        id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+        gobp_eq_dict.update(name_temp_dict)
 
-	elif str(d) == 'scomp':
-		resolve_xrefs(d, ['gocc'], [gocc_eq_dict], verbose) 
+    elif str(d) == 'gocc':
+        id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+        gocc_eq_dict.update(id_temp_dict)
+        gocc_names_eq.update(name_temp_dict)
 
-	elif str(d) == 'schem':
-		resolve_xrefs(d, ['chebi','meshc'], [chebi_id_eq, meshc_id_eq], verbose)
+    elif str(d) == 'do':
+        id_temp_dict, name_temp_dict = write_root_beleq(d, verbose)
+        do_id_eq.update(id_temp_dict)
 
-	elif str(d) == 'meshpp':
-		# equivalence by case-insensitive string match of MeSH names and synonyms to GOBP
-		eq_name_dict = {}
-		eq_id_dict = {}
-		gobp_eq_cf = {k.casefold():v for k, v in gobp_eq_dict.items()}
+    elif str(d) == 'sdis':
+        resolve_xrefs(d, ['do'], [do_id_eq], verbose)
 
-		for term_id in d.get_values():
-			uid = None
-			# check MeSH synonyms for matches to GO
-			name = d.get_label(term_id)
-			synonyms = set()
-			synonyms.add(name)
-			synonyms.update(d.get_alt_names(term_id))
-			for syn in synonyms:
-				if syn.casefold() in gobp_eq_cf:
-					uid = gobp_eq_cf.get(syn.casefold())
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_name_dict[name] = uid
-			eq_id_dict[term_id] = uid
-		if d.ids == True:
-			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-		if d.labels == True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
+    elif str(d) == 'scomp':
+        resolve_xrefs(d, ['gocc'], [gocc_eq_dict], verbose)
 
-	elif str(d) == 'meshcs':
-		# equivalence by case-insensitive string match of MeSH names and synonyms to GOCC
-		eq_name_dict = {}
-		eq_id_dict = {}
-		gocc_eq_cf = {k.casefold():v for k, v in gocc_names_eq.items()}
+    elif str(d) == 'schem':
+        resolve_xrefs(d, ['chebi', 'meshc'], [
+                      chebi_id_eq, meshc_id_eq], verbose)
 
-		for term_id in d.get_values():
-			uid = None
-			# check MeSH synonyms for matches to GO
-			name = d.get_label(term_id)
-			synonyms = set()
-			synonyms.add(name)
-			synonyms.update(d.get_alt_names(term_id))
-			for syn in synonyms:
-				if syn.casefold() in gocc_eq_cf:
-					uid = gocc_eq_cf.get(syn.casefold())
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_name_dict[name] = uid
-			eq_id_dict[term_id] = uid
-		if d.ids == True:
-			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-		if d.labels == True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
+    elif str(d) == 'meshpp':
+        # equivalence by case-insensitive string match of MeSH names and
+        # synonyms to GOBP
+        eq_name_dict = {}
+        eq_id_dict = {}
+        gobp_eq_cf = {k.casefold(): v for k, v in gobp_eq_dict.items()}
 
-	elif str(d) == 'meshc':
-		# equivalence by case-insensitive string match of MeSH names and synonyms to ChEBI
-		eq_name_dict = {}
-		eq_id_dict = {}
-		eq_cf = {k.casefold():v for k, v in chebi_eq.items()}
+        for term_id in d.get_values():
+            uid = None
+            # check MeSH synonyms for matches to GO
+            name = d.get_label(term_id)
+            synonyms = set()
+            synonyms.add(name)
+            synonyms.update(d.get_alt_names(term_id))
+            for syn in synonyms:
+                if syn.casefold() in gobp_eq_cf:
+                    uid = gobp_eq_cf.get(syn.casefold())
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_name_dict[name] = uid
+            eq_id_dict[term_id] = uid
+        if d.ids:
+            write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+        if d.labels:
+            write_beleq(eq_name_dict, d._name, d.source_file)
 
-		for term_id in d.get_values():
-			uid = None
-			# check MeSH synonyms for matches to GO
-			name = d.get_label(term_id)
-			synonyms = set()
-			synonyms.add(name)
-			synonyms.update(d.get_alt_names(term_id))
-			for syn in synonyms:
-				if syn.casefold() in eq_cf:
-					uid = eq_cf.get(syn.casefold())
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_name_dict[name] = uid
-			eq_id_dict[term_id] = uid
-		meshc_id_eq.update(eq_id_dict)
-		if d.ids == True:
-			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-		if d.labels == True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
+    elif str(d) == 'meshcs':
+        # equivalence by case-insensitive string match of MeSH names and
+        # synonyms to GOCC
+        eq_name_dict = {}
+        eq_id_dict = {}
+        gocc_eq_cf = {k.casefold(): v for k, v in gocc_names_eq.items()}
 
-	elif str(d) == 'meshd':
-		eq_name_dict = {}
-		eq_id_dict = {}	
-		do_data = parsed.do_data
-		for term_id in d.get_values():
-			uid = None
-			name = d.get_label(term_id)
-			xref = do_data.find_xref('MSH:'+term_id)
-			if xref:
-				# test - check not obsolete
-				if xref in do_data.get_values():
-					uid = do_id_eq[xref]
-			if uid is None:
-				uid = uuid.uuid4()
-			eq_name_dict[name] = uid
-			eq_id_dict[term_id] = uid
-		if d.ids == True:
-			write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-		if d.labels == True:
-			write_beleq(eq_name_dict, d._name, d.source_file)
+        for term_id in d.get_values():
+            uid = None
+            # check MeSH synonyms for matches to GO
+            name = d.get_label(term_id)
+            synonyms = set()
+            synonyms.add(name)
+            synonyms.update(d.get_alt_names(term_id))
+            for syn in synonyms:
+                if syn.casefold() in gocc_eq_cf:
+                    uid = gocc_eq_cf.get(syn.casefold())
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_name_dict[name] = uid
+            eq_id_dict[term_id] = uid
+        if d.ids:
+            write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+        if d.labels:
+            write_beleq(eq_name_dict, d._name, d.source_file)
 
-	else:
-		write_root_beleq(d, verbose)
+    elif str(d) == 'meshc':
+        # equivalence by case-insensitive string match of MeSH names and
+        # synonyms to ChEBI
+        eq_name_dict = {}
+        eq_id_dict = {}
+        eq_cf = {k.casefold(): v for k, v in chebi_eq.items()}
+
+        for term_id in d.get_values():
+            uid = None
+            # check MeSH synonyms for matches to GO
+            name = d.get_label(term_id)
+            synonyms = set()
+            synonyms.add(name)
+            synonyms.update(d.get_alt_names(term_id))
+            for syn in synonyms:
+                if syn.casefold() in eq_cf:
+                    uid = eq_cf.get(syn.casefold())
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_name_dict[name] = uid
+            eq_id_dict[term_id] = uid
+        meshc_id_eq.update(eq_id_dict)
+        if d.ids:
+            write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+        if d.labels:
+            write_beleq(eq_name_dict, d._name, d.source_file)
+
+    elif str(d) == 'meshd':
+        eq_name_dict = {}
+        eq_id_dict = {}
+        do_data = parsed.do_data
+        for term_id in d.get_values():
+            uid = None
+            name = d.get_label(term_id)
+            xref = do_data.find_xref('MSH:' + term_id)
+            if xref:
+                # test - check not obsolete
+                if xref in do_data.get_values():
+                    uid = do_id_eq[xref]
+            if uid is None:
+                uid = uuid.uuid4()
+            eq_name_dict[name] = uid
+            eq_id_dict[term_id] = uid
+        if d.ids:
+            write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+        if d.labels:
+            write_beleq(eq_name_dict, d._name, d.source_file)
+
+    else:
+        write_root_beleq(d, verbose)
+
 
 def build_refseq(d):
-	""" Uses parsed gene2acc file to build dict mapping (entrez_gene -> refseq status). """
-	refseq = {}
-	for entrez_gene, status, taxid in d.get_eq_values():
-		target_pool = ['9606', '10116', '10090']
-		valid_status = ['REVIEWED', 'VALIDATED', 'PROVISIONAL', 'PREDICTED',
-						'MODEL', 'INFERRED']
+    """ Uses parsed gene2acc file to build dict mapping (entrez_gene -> refseq status). """
+    refseq = {}
+    for entrez_gene, status, taxid in d.get_eq_values():
+        target_pool = ['9606', '10116', '10090']
+        valid_status = ['REVIEWED', 'VALIDATED', 'PROVISIONAL', 'PREDICTED',
+                        'MODEL', 'INFERRED']
 
-		if taxid in target_pool and status in valid_status:
-			refseq[entrez_gene] = status
-	return refseq
+        if taxid in target_pool and status in valid_status:
+            refseq[entrez_gene] = status
+    return refseq
+
 
 def write_beleq(eq_dict, filename, source_file):
-	""" Writes values and uuids from equivalence dictionary to .beleq file. """
-	fullname = '.'.join((filename, 'beleq'))
-	if len(eq_dict) == 0:
-		print('	   WARNING: skipping writing ' + fullname + '; no equivalence data found.')
-	else:
-		with open(fullname, 'w') as f:
-			# insert header chunk
-			if os.path.exists('./templates/'+fullname):
-				tf = open('./templates/'+fullname, encoding="utf-8")
-				header = tf.read().rstrip()
-				tf.close()
-				# add Namespace and Author values
-				header = get_citation_info(fullname, header, source_file)
-			else:
-				header = '[Values]'
-			f.write(header+'\n')
-			# write data
-			for name, uid in sorted(eq_dict.items()):
-				f.write('|'.join((name,str(uid))) + '\n')
+    """ Writes values and uuids from equivalence dictionary to .beleq file. """
+    fullname = '.'.join((filename, 'beleq'))
+    if len(eq_dict) == 0:
+        print(
+            '	   WARNING: skipping writing ' +
+            fullname +
+            '; no equivalence data found.')
+    else:
+        with open(fullname, 'w') as f:
+            # insert header chunk
+            if os.path.exists('./templates/' + fullname):
+                tf = open('./templates/' + fullname, encoding="utf-8")
+                header = tf.read().rstrip()
+                tf.close()
+                # add Namespace and Author values
+                header = get_citation_info(fullname, header, source_file)
+            else:
+                header = '[Values]'
+            f.write(header + '\n')
+            # write data
+            for name, uid in sorted(eq_dict.items()):
+                f.write('|'.join((name, str(uid))) + '\n')
+
 
 def resolve_xrefs(d, root_prefixes, root_eq_dicts, verbose):
-	""" Writes .beleq file for dataset d, given lists of the prefix from the 'root' datasets
-	and the (already built) equivalence dictionaries from the root dataset. Root info is 
-	provided as an ordered list, and should be included in the root list for gp_baseline
-	to insure that the root_eq_dict is populated."""
-	
-	count = 0
-	eq_name_dict = {}
-	eq_id_dict = {}
-	prefix_strings = [prefix.upper() for prefix in root_prefixes]
-	roots = list(zip(prefix_strings, root_eq_dicts))
-	for term_id in d.get_values():
-		label = d.get_label(term_id)
-		uid = None
-		xref_ids = d.get_xrefs(term_id)
-		for r in roots:
-			(root_prefix, root_eq_dict) = r
-			root_xref_ids = {x for x in xref_ids if root_prefix in x}
-			for xref_id in root_xref_ids:
-				(prefix, xid) = xref_id.split(':')
-				if prefix == root_prefix:
-					uid = root_eq_dict.get(xid)
-				if uid is not None:
-					break
-			if uid is not None:
-				break
-		if uid is not None:
-			count += 1
-		else:
-			uid = uuid.uuid4()
-		eq_name_dict[label] = uid
-		eq_id_dict[term_id] = uid
-		if d.get_alt_ids(term_id):
-			for alt_id in d.get_alt_ids(term_id):
-				eq_id_dict[alt_id] = uid
-	if d.ids == True:
-		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-	if d.labels == True:
-		write_beleq(eq_name_dict, d._name, d.source_file)
-	if verbose:
-		print('Able to resolve {0} {1} terms to {2}.'.format(str(count), d._name, str(root_prefixes)))
-	return eq_id_dict	
+    """ Writes .beleq file for dataset d, given lists of the prefix from the 'root' datasets
+    and the (already built) equivalence dictionaries from the root dataset. Root info is
+    provided as an ordered list, and should be included in the root list for gp_baseline
+    to insure that the root_eq_dict is populated."""
+
+    count = 0
+    eq_name_dict = {}
+    eq_id_dict = {}
+    prefix_strings = [prefix.upper() for prefix in root_prefixes]
+    roots = list(zip(prefix_strings, root_eq_dicts))
+    for term_id in d.get_values():
+        label = d.get_label(term_id)
+        uid = None
+        xref_ids = d.get_xrefs(term_id)
+        for r in roots:
+            (root_prefix, root_eq_dict) = r
+            root_xref_ids = {x for x in xref_ids if root_prefix in x}
+            for xref_id in root_xref_ids:
+                (prefix, xid) = xref_id.split(':')
+                if prefix == root_prefix:
+                    uid = root_eq_dict.get(xid)
+                if uid is not None:
+                    break
+            if uid is not None:
+                break
+        if uid is not None:
+            count += 1
+        else:
+            uid = uuid.uuid4()
+        eq_name_dict[label] = uid
+        eq_id_dict[term_id] = uid
+        if d.get_alt_ids(term_id):
+            for alt_id in d.get_alt_ids(term_id):
+                eq_id_dict[alt_id] = uid
+    if d.ids:
+        write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+    if d.labels:
+        write_beleq(eq_name_dict, d._name, d.source_file)
+    if verbose:
+        print('Able to resolve {0} {1} terms to {2}.'.format(
+            str(count), d._name, str(root_prefixes)))
+    return eq_id_dict
+
 
 def write_root_beleq(d, verbose):
-	""" Writes .beleq file for data sets to be used as a 'root' or datasets
-	that will not be equivalenced. Returns ID equivalence dictionary. """
-	eq_name_dict = {}
-	eq_id_dict = {}
-	for term_id in d.get_values():
-		name = d.get_label(term_id)
-		uid = uuid.uuid4()
-		eq_name_dict[name] = uid
-		eq_id_dict[term_id] = uid
-		if d.get_alt_ids(term_id):
-			for alt_id in d.get_alt_ids(term_id):
-				eq_id_dict[alt_id] = uid
-	if d.ids == True:
-		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-	if d.labels == True:
-		write_beleq(eq_name_dict, d._name, d.source_file)
-	return eq_id_dict, eq_name_dict
+    """ Writes .beleq file for data sets to be used as a 'root' or datasets
+    that will not be equivalenced. Returns ID equivalence dictionary. """
+    eq_name_dict = {}
+    eq_id_dict = {}
+    for term_id in d.get_values():
+        name = d.get_label(term_id)
+        uid = uuid.uuid4()
+        eq_name_dict[name] = uid
+        eq_id_dict[term_id] = uid
+        if d.get_alt_ids(term_id):
+            for alt_id in d.get_alt_ids(term_id):
+                eq_id_dict[alt_id] = uid
+    if d.ids:
+        write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+    if d.labels:
+        write_beleq(eq_name_dict, d._name, d.source_file)
+    return eq_id_dict, eq_name_dict
+
 
 def resolve_entrez_id(d, verbose):
-	""" For HGNC, MGI, RGD, writes .beleq file(s) using equivalences 
-	from Entrez Gene, stored in entrez_converter dictionary. Returns
-	equivalence dictionaries. """
-	prefix_string = d._prefix.upper() + ':'
-	eq_name_dict = {}
-	eq_id_dict = {}
-	for term_id in d.get_values():
-		uid = None
-		name = d.get_label(term_id)
-		entrez_id = entrez_converter.get(prefix_string + term_id)
-		if entrez_id:
-			uid = entrez_eq.get(entrez_id)
-		if uid is None:
-			uid = uuid.uuid4()
-		eq_name_dict[name] = uid
-		eq_id_dict[term_id] = uid
-		if d.get_alt_ids(term_id):
-			for alt_id in d.get_alt_ids(term_id):
-				eq_id_dict[alt_id] = uid
-	if d.ids == True:
-		write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
-	if d.labels == True:
-		write_beleq(eq_name_dict, d._name, d.source_file)
-	return eq_id_dict, eq_name_dict
-	
-# vim: ts=4 sts=4 sw=4 noexpandtab
+    """ For HGNC, MGI, RGD, writes .beleq file(s) using equivalences
+    from Entrez Gene, stored in entrez_converter dictionary. Returns
+    equivalence dictionaries. """
+    prefix_string = d._prefix.upper() + ':'
+    eq_name_dict = {}
+    eq_id_dict = {}
+    for term_id in d.get_values():
+        uid = None
+        name = d.get_label(term_id)
+        entrez_id = entrez_converter.get(prefix_string + term_id)
+        if entrez_id:
+            uid = entrez_eq.get(entrez_id)
+        if uid is None:
+            uid = uuid.uuid4()
+        eq_name_dict[name] = uid
+        eq_id_dict[term_id] = uid
+        if d.get_alt_ids(term_id):
+            for alt_id in d.get_alt_ids(term_id):
+                eq_id_dict[alt_id] = uid
+    if d.ids:
+        write_beleq(eq_id_dict, d._name + '-ids', d.source_file)
+    if d.labels:
+        write_beleq(eq_name_dict, d._name, d.source_file)
+    return eq_id_dict, eq_name_dict
+

@@ -10,8 +10,16 @@
 
 import json
 
+
 def write(change_log):
 
-	with open('change_log.json', 'w') as fp:
-		json.dump(change_log, fp, sort_keys=True, indent=4, separators=(', ', ':'))
-# vim: ts=4 sts=4 sw=4 noexpandtab
+    with open('change_log.json', 'w') as fp:
+        json.dump(
+            change_log,
+            fp,
+            sort_keys=True,
+            indent=4,
+            separators=(
+                ', ',
+                ':'))
+

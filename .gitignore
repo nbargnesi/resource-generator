@@ -1,7 +1,26 @@
+#
+# THE ONLY IGNORED ITEMS THAT BELONG IN THIS FILE ARE *GLOBALLY* IGNORED PATHS
+# AND PATTERNS (LIKE COMPILED FILES). ALL OTHER IGNORED ITEMS SHOULD GO IN
+# THE DIRECTORIES WHERE THEY OCCUR.
+#
+
+# compiled stuff
 __pycache__/
-cache/
-outfiles*
-*.pyc
-*.json
-*~
-*#*
+*.egg-info/
+*.egg
+*.py[cod]
+*.so
+
+# artifacts and their directories
+/build
+/dist
+/.coverage
+
+# tox
+.tox
+
+# developer env.sh.custom
+env.sh.custom
+
+# go shell history
+.goshhst

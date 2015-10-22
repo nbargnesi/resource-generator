@@ -16,4 +16,3 @@ class TestReggie(unittest.TestCase):
 
     def test___main__(self):
         reggie.__main__
-

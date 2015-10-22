@@ -23,9 +23,8 @@ def main():
         'copyright': reggie.__copyright__
     }
     print(info.format(**kwargs) % (len(reggie.__credits__)))
-    
+
 
 if __name__ == '__main__':
     a = 'foo'
     main()
-

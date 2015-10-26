@@ -23,7 +23,26 @@ __all__ = [
     'core',
     'converters'
 ]
+import os
+import sys
+dyn_imports_env_var = 'REGGIE_DYN_IMPORTS'
+
+def _outf(msg):
+    '''Writes to then flushes stdout.'''
+    sys.stdout.write(msg)
+    sys.stdout.flush()
 
 
 def main():
-    print('reggie main - currently empty')
+    _outf('Checking for dynamic imports... ')
+    dyn_imports = os.getenv(dyn_imports_env_var)
+    if dyn_imports is None:
+        print(dyn_imports_env_var + ' is not set')
+    else:
+        print(dyn_imports_env_var + ' is set')
+        print('Processing dynamic imports.')
+        mods = dyn_imports.split(',')
+        for mod in mods:
+            _outf('\t' + mod + '... ')
+            rslt = __import__(mod)
+            print(rslt)

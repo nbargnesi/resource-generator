@@ -3,3 +3,6 @@
 
 reggie.converters
 '''
+import reggie.converters.openbel
+import reggie.converters.third_party
+import reggie.converters.private

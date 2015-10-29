@@ -9,7 +9,7 @@ echo "Running pep8 check."
 PEP8_OPTS+="--show-source "
 PEP8_OPTS+="--count "
 
-pys=($(find src tests -name "*.py"))
+pys=($(find src tests tools -name "*.py"))
 pys+=('setup.py')
 pep8 $PEP8_OPTS ${pys[@]}
 

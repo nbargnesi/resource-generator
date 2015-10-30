@@ -13,8 +13,9 @@ default RG_SCRIPTS      "$RG_DIR"/scripts
 
 ### PATHS ###
 default RG_TOOLS        "$RG_DIR"/tools
-default RG_QUERY_LOOP   "$RG_TOOLS"/query-loop
 default RG_PYTHON_ENVS  "$RG_DIR"/.envs
+default RG_QUERY_LOOP   "$RG_TOOLS"/query-loop
+default RG_RDF_EXTRACT  "$RG_TOOLS"/rdf-extract
 
 ### RDF ###
 default RG_RDF_SPARQL_URL   "http://localhost:3030/openbel"

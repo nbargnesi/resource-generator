@@ -62,9 +62,10 @@ def main():
     def do_query(query):
         t0 = dt.now()
         try:
-            for x in g.query(query, initNs=NSs):
-                print(x)
+            results = [x for x in g.query(query, initNs=NSs)]
             t1 = dt.now()
+            for x in results:
+                print(x)
             print('(query time: %s seconds)' % (round((t1 - t0).total_seconds(), 2)))
         except Exception as e:
             print(e)

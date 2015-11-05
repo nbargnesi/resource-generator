@@ -11,14 +11,8 @@ __pycache__/
 *.py[cod]
 *.so
 
-# artifacts and their directories
-/build
-/dist
-/.coverage
-/.envs
-
-# tox
-.tox
+# IDE stuff
+*.iml
 
 # developer env.sh.custom
 env.sh.custom

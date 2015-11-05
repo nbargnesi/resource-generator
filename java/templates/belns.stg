@@ -1,0 +1,65 @@
+namespace-block(name, keyword, domain, species, description, version,
+                createdDateTime, queryValueURL) ::= <<
+<! required !>
+NameString=<name>
+<! required !>
+Keyword=<keyword>
+<! required !>
+DomainString=<domain>
+<! optional !>
+<if(species)>SpeciesString=<species><endif>
+<! optional !>
+<if(description)>DescriptionString=<description><endif>
+<! optional !>
+<if(version)>VersionString=<version><endif>
+<! required !>
+CreatedDateTime=<createdDateTime>
+<! optional !>
+<if(queryValueURL)>QueryValueURL=<queryValueURL><endif>
+>>
+
+author-block(name, copyright, contactInfo) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(copyright)>CopyrightString=<copyright><endif>
+<! optional !>
+<if(contactInfo)>ContactInfoString=<contactInfo><endif>
+>>
+
+citation-block(name, description, publishedVersion, publishedDate,
+               referenceURL) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(description)>DescriptionString=<description><endif>
+<! optional !>
+<if(publishedVersion)>PublishedVersionString=<publishedVersion><endif>
+<! optional !>
+<if(publishedDate)>PublishedDate=<publishedDate><endif>
+<! optional !>
+<if(referenceURL)>ReferenceURL=<referenceURL><endif>
+>>
+
+processing-block(caseSensitiveFlag, delimiter, cacheableFlag) ::= <<
+CaseSensitiveFlag=<caseSensitiveFlag>
+DelimiterString=<delimiterString>
+CacheableFlag=<cacheableFlag>
+>>
+
+belns(nsblock, authblock, citblock, procblock) ::= <<
+[Namespace]
+<nsblock>
+
+[Author]
+<authblock>
+
+[Citation]
+<citblock>
+
+[Processing]
+<procblock>
+
+[Values]
+
+>>

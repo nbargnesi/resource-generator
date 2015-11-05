@@ -1,0 +1,11 @@
+# artifacts and their directories
+/build
+/dist
+/.coverage
+/.envs
+
+# tox
+.tox
+
+# go shell history
+.goshhst

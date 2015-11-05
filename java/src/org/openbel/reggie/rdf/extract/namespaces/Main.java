@@ -26,6 +26,7 @@ public class Main {
     public Main(String tdbdata) {
         // connect to the existing data
         this.dataset = TDBFactory.createDataset(tdbdata);
+        Model defaultModel = this.dataset.getDefaultModel();
 
         // start a read transaction
         //dataset.begin(ReadWrite.READ);

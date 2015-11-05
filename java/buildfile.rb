@@ -28,7 +28,8 @@ JENA_CORE = 'org.apache.jena:jena-core:jar:3.0.0'
 JENA_ARQ = 'org.apache.jena:jena-arq:jar:3.0.0'
 JENA_TDB = 'org.apache.jena:jena-tdb:jar:3.0.0'
 JENA = [JENA_CORE, JENA_ARQ, JENA_TDB]
-LOG4J = 'org.apache.logging.log4j:log4j-core:jar:2.4.1'
+ST4 = 'org.antlr:ST4:jar:4.0.8'
+LOG4J = ['org.apache.logging.log4j:log4j-1.2-api:jar:2.4.1', 'log4j:log4j:jar:1.2.17']
 
 # Project layout
 layout = Layout.new
@@ -43,7 +44,7 @@ define 'bel-resource-generator', :layout => layout do
   project.group = GROUP
   package :jar
 
-  compile.with JENA, LOG4J
+  compile.with JENA, LOG4J, ST4
 end
 
 # vim:ts=2:sw=2

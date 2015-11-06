@@ -2,8 +2,10 @@
 #
 # Executes flake8 check.
 #
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../../
 cd "${DIR}" || exit 1
+. "$DIR"/env.sh
+cd "$RG_PYTHON" || exit 1
 echo "Running pyflakes check."
 
 pys=($(find src tests tools -name "*.py"))

@@ -2,8 +2,9 @@
 #
 # Executes nosetests.
 #
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../
-cd "${DIR}" || exit 1
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../../
+. "$DIR"/env.sh
+cd "$RG_PYTHON" || exit 1
 
 NOSE_OPTS+="--with-coverage "
 NOSE_OPTS+="--cover-package=reggie "

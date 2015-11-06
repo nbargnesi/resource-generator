@@ -1,0 +1,61 @@
+annotation-definition-block(keyword, type, description, usage, version,
+                            createdDateTime) ::= <<
+<! required !>
+Keyword=<keyword>
+<! required !>
+TypeString=<type>
+<! required !>
+DescriptionString=<description>
+<! required !>
+UsageString=<usage>
+<! optional !>
+<if(version)>VersionString=<version><endif>
+<! required !>
+CreatedDateTime=<createdDateTime>
+>>
+
+author-block(name, copyright, contactInfo) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(copyright)>CopyrightString=<copyright><endif>
+<! optional !>
+<if(contactInfo)>ContactInfoString=<contactInfo><endif>
+>>
+
+citation-block(name, description, publishedVersion, publishedDate,
+               referenceURL) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(description)>DescriptionString=<description><endif>
+<! optional !>
+<if(publishedVersion)>PublishedVersionString=<publishedVersion><endif>
+<! optional !>
+<if(publishedDate)>PublishedDate=<publishedDate><endif>
+<! optional !>
+<if(referenceURL)>ReferenceURL=<referenceURL><endif>
+>>
+
+processing-block(caseSensitiveFlag, delimiter, cacheableFlag) ::= <<
+CaseSensitiveFlag=<caseSensitiveFlag>
+DelimiterString=<delimiterString>
+CacheableFlag=<cacheableFlag>
+>>
+
+belanno(annodefblock, authblock, citblock, procblock) ::= <<
+[AnnotationDefinition]
+<annodefblock>
+
+[Author]
+<authblock>
+
+[Citation]
+<citblock>
+
+[Processing]
+<procblock>
+
+[Values]
+
+>>

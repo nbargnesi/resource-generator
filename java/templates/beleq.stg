@@ -1,0 +1,66 @@
+equivalence-block(name, description, version, createdDateTime) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(description)>DescriptionString=<description><endif>
+<! optional !>
+<if(version)>VersionString=<version><endif>
+<! required !>
+CreatedDateTime=<createdDateTime>
+>>
+
+namespace-reference-block(name, version) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(version)>VersionString=<version><endif>
+>>
+
+author-block(name, copyright, contactInfo) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(copyright)>CopyrightString=<copyright><endif>
+<! optional !>
+<if(contactInfo)>ContactInfoString=<contactInfo><endif>
+>>
+
+citation-block(name, description, publishedVersion, publishedDate,
+               referenceURL) ::= <<
+<! required !>
+NameString=<name>
+<! optional !>
+<if(description)>DescriptionString=<description><endif>
+<! optional !>
+<if(publishedVersion)>PublishedVersionString=<publishedVersion><endif>
+<! optional !>
+<if(publishedDate)>PublishedDate=<publishedDate><endif>
+<! optional !>
+<if(referenceURL)>ReferenceURL=<referenceURL><endif>
+>>
+
+processing-block(caseSensitiveFlag, delimiter, cacheableFlag) ::= <<
+CaseSensitiveFlag=<caseSensitiveFlag>
+DelimiterString=<delimiterString>
+CacheableFlag=<cacheableFlag>
+>>
+
+beleq(eqblock, nsrefblock, authblock, citblock, procblock) ::= <<
+[Equivalence]
+<eqblock>
+
+[NamespaceReference]
+<nsrefblock>
+
+[Author]
+<authblock>
+
+[Citation]
+<citblock>
+
+[Processing]
+<procblock>
+
+[Values]
+
+>>

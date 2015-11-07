@@ -1,15 +1,29 @@
 package org.openbel.reggie.rdf.extract.namespaces;
 
-import org.apache.jena.graph.Triple;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ModelFactory.*;
+import static org.apache.jena.reasoner.ReasonerRegistry.*;
+
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.SKOS;
 import org.apache.log4j.*;
 import static org.openbel.reggie.rdf.Constants.*;
 import org.openbel.reggie.rdf.Q;
 import org.openbel.reggie.rdf.QuerySolutions;
-import org.stringtemplate.v4.ST;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -22,11 +36,12 @@ import static java.lang.System.*;
 public class Main {
 
     private Dataset dataset;
+    private Q q;
 
     public Main(String tdbdata) {
         // connect to the existing data
         this.dataset = TDBFactory.createDataset(tdbdata);
-        Model defaultModel = this.dataset.getDefaultModel();
+        q = new Q(this.dataset);
 
         // start a read transaction
         //dataset.begin(ReadWrite.READ);
@@ -67,13 +82,13 @@ public class Main {
      * @return {@link List} of {@link String strings}
      */
     List<String> getNamespaces() {
-        List<RDFNode> namespaces = Q.getNamespaces(dataset);
-
         List<String> ret = new ArrayList<>();
-        for (RDFNode rdfn : namespaces) {
-            String nsurl = rdfn.asResource().getURI();
-            out.println(nsurl);
-            ret.add(nsurl);
+        try (QuerySolutions QS = q.namespaces()) {
+            for (QuerySolution ns : QS) {
+                RDFNode subject = ns.get("subject");
+                String uri = subject.asResource().getURI();
+                ret.add(uri);
+            }
         }
         return ret;
     }
@@ -176,15 +191,72 @@ public class Main {
         out.println(queries + " in " + (t1 - t0) + " milliseconds");
     }
 
-    public static void main(String... args) {
+    public static void main(String... args) throws Exception {
         initLogging();
         final String tdbdata = getenv("RG_TDB_DATA");
         if (tdbdata == null) {
-            err.println("tdbdata is null");
+            err.println("RG_TDB_DATA is not set");
             exit(1);
         }
         Main m = new Main(tdbdata);
-        m.run();
+        m.tryReasoning();
+        //m.run();
+    }
+
+    private void tryReasoning() throws IOException {
+        Model defaultModel = this.dataset.getDefaultModel();
+        String SKOSEM = SKOS.exactMatch.getURI();
+        String transitiveEM = "[TEM: (?a " + SKOSEM + " ?b) (?b " + SKOSEM + " ?c) -> (?a " + SKOSEM + " ?c)]";
+        Rule rule = Rule.parseRule(transitiveEM);
+        List<Rule> rules = Arrays.asList(new Rule[] { rule });
+        Reasoner r = new GenericRuleReasoner(rules);
+
+        defaultModel.add(SKOS.exactMatch, RDF.type, OWL.TransitiveProperty);
+        //Reasoner OR = getOWLReasoner();
+        InfModel inferredModel = createInfModel(r, defaultModel);
+
+        /*
+        String truleSrc = "[rule1: (?a eg:p ?b) (?b eg:p ?c) -> (?a eg:p ?c)]";
+        List rules = Rule.parseRules(ruleSrc);
+        Reasoner reasoner = new GenericRuleReasoner(rules);
+        */
+
+
+        out.println("Inferred model statement count:");
+        out.println(count(inferredModel.listStatements()));
+        out.println("Default model statement count:");
+        out.println(count(defaultModel.listStatements()));
+
+        //out.println("writing");
+        //inferredModel.write(new FileWriter("somefile.ttl"), "TURTLE");
+        //out.println("written");
+
+        /*
+        QueryExecution qe = QueryExecutionFactory.create("select ?s ?p ?o where { <http://www.openbel.org/bel/namespace/entrez-gene/24086> ?p ?o }", inferredModel);
+        ResultSet resultSet = qe.execSelect();
+        while (resultSet.hasNext()) {
+            i += 1;
+            out.println(i);
+        }
+        out.println(i);
+        */
+
+        /*
+        stream(iterable(defaultModel.listStatements()).spliterator(), false).count();
+        iterable(defaultModel.listStatements()).spliterator().
+
+        for (Statement stmt : iterable(inferredmdl.listStatements())) {
+            Resource subject = stmt.getSubject();
+            Property predicate = stmt.getPredicate();
+            RDFNode object = stmt.getObject();
+            out.print(subject);
+            out.print("\t");
+            out.print(predicate);
+            out.print("\t");
+            out.print(object);
+            out.println();
+        }
+        */
     }
 
     private void run() {
@@ -253,6 +325,19 @@ public class Main {
 
         //mapNamespaces(namespaces);
         //values(namespaces);
+    }
+
+    static <T> Iterable<T> iterable(Iterator<T> iter) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return iter;
+            }
+        };
+    }
+
+    static <T> long count(Iterator<T> iter) {
+        return stream(iterable(iter).spliterator(), false).count();
     }
 
     static <T> Stream<T> asDistinctStream(Iterator<T> iter) {

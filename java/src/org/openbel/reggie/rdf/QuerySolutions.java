@@ -7,15 +7,9 @@ import java.util.Iterator;
 
 /**
  * {@link QuerySolution} iterator.
- * Starts iterating the query solutions in a read transaction on construction,
- * and ends the transaction when closed.
  * <p>
- *     <code>
- *         try (QuerySolutions qs = new QuerySolutions(dataset, query)) {
- *             // read transaction begins
- *         }
- *         // read transaction ends
- *     </code>
+ *     This class uses applies SPARQL {@code limit} and {@code offset} clauses
+ *     to page through results until closed.
  * </p>
  */
 public class QuerySolutions implements Iterable<QuerySolution>, AutoCloseable {
@@ -23,15 +17,27 @@ public class QuerySolutions implements Iterable<QuerySolution>, AutoCloseable {
     //private ResultSetIterator iterator;
     private PagingIterator iterator;
 
+    /**
+     *
+     * @param dataset
+     * @param query
+     */
     public QuerySolutions(Dataset dataset, String query) {
         iterator = new PagingIterator(dataset, query);
     }
 
+    /**
+     *
+     */
     @Override
     public void close() {
         iterator.close();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Iterator<QuerySolution> iterator() {
         return iterator;

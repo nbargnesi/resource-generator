@@ -1,0 +1,28 @@
+[Equivalence]
+NameString=ChEMBL: Bioactive data for drug discovery
+DescriptionString=An open data resource of binding, functional and ADMET bioactivity data.
+VersionString=[#VALUE#]
+CreatedDateTime=[#VALUE#]
+
+[NamespaceReference]
+NameString=ChEMBL: Bioactive data for drug discovery
+VersionString=[#VALUE#]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) [#VALUE#], OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=ChEMBL
+DescriptionString=ChEMBL RDF
+PublishedVersionString=[#VALUE#]
+PublishedDate=[#VALUE#]
+ReferenceURL=http://www.ebi.ac.uk/chembl/
+
+[Processing]
+CaseSensistiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

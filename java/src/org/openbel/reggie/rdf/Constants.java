@@ -38,7 +38,9 @@ public class Constants {
         BELV_SPECIES_ANNOTATION_CONCEPT = "belv:SpeciesAnnotationConcept";
         BELV_STATUS = "belv:status";
 
+        SKOS_IN_SCHEME = "skos:inScheme";
         SKOS_EXACT_MATCH = "skos:exactMatch";
+        SKOS_PREF_LABEL = "skos:prefLabel";
     }
 
     /**
@@ -168,6 +170,17 @@ public class Constants {
      * Transitive property indicating two concepts are linked interchangeably.
      */
     public static final String SKOS_EXACT_MATCH;
+
+    /**
+     * Indicates a concept exists in an aggregation of one or more concepts.
+     */
+    public static final String SKOS_IN_SCHEME;
+
+    /**
+     * Preferred label.
+     */
+    public static final String SKOS_PREF_LABEL;
+
 
 }
 

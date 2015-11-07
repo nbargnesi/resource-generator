@@ -1,0 +1,29 @@
+mgi-mouse-genes-belns(createdDateTime) ::= <<
+[Namespace]
+NameString=MGI Approved Gene Symbols
+Keyword=MGI
+DomainString=Gene and Gene Products
+SpeciesString=10090
+DescriptionString=Mouse Genome Informatics (MGI) approved gene symbols. These symbols may be used to specify mouse gene, RNA, microRNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
+VersionString=20150611
+CreatedDateTime=<createdDateTime>
+QueryValueURL=http://www.informatics.jax.org/searchtool/Search.do?query=[VALUE]
+
+[Author]
+NameString=OpenBEL
+CopyrightString=Copyright (c) 2015, OpenBEL Project. This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+ContactInfoString=info@openbel.org
+
+[Citation]
+NameString=Mouse Genome Database (MGD) at the Mouse Genome Informatics website, The Jackson Laboratory, Bar Harbor, Maine
+DescriptionString=The Mouse Genome Informatics (MGI) database approved gene symbols for mouse.
+PublishedVersionString=Mon, 08 Jun 2015 08:05:43
+PublishedDate=2015-06-08
+ReferenceURL=http://www.informatics.jax.org
+
+[Processing]
+CaseSensitiveFlag=yes
+DelimiterString=|
+CacheableFlag=yes
+
+[Values]

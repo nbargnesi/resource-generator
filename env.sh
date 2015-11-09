@@ -12,6 +12,7 @@ default CUSTOM_ENV_SH       "$RG_DIR/env.sh.custom"
 default RG_SCRIPTS          "$RG_DIR"/scripts
 default RG_PYTHON           "$RG_DIR"/python
 default RG_JAVA             "$RG_DIR"/java
+default RG_JAVA_OUTPUT      "$RG_JAVA"/output
 default RG_PYTHON_SCRIPTS   "$RG_PYTHON"/scripts
 default RG_JAVA_SCRIPTS     "$RG_JAVA"/scripts
 default RG_PYTHON_TOOLS     "$RG_PYTHON"/tools

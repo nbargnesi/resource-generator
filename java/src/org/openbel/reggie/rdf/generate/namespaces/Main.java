@@ -1,3 +1,19 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
 package org.openbel.reggie.rdf.generate.namespaces;
 
 import org.apache.jena.query.*;
@@ -17,6 +33,7 @@ import static org.openbel.reggie.rdf.Constants.*;
 import org.openbel.reggie.rdf.Q;
 import org.openbel.reggie.rdf.QuerySolutions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
@@ -28,45 +45,24 @@ import static java.util.Spliterators.*;
 import static java.lang.System.*;
 
 /**
- * Extra
+ * Generates BEL namespaces from the RDF.
  */
 public class Main {
 
     private Dataset dataset;
+    private final File templateDir;
+    private final File outputDir;
+    private Logger log;
     private Q q;
 
-    public Main(String tdbdata) {
+    public Main(Dataset dataset, File templateDir, File outputDir) {
         // connect to the existing data
-        this.dataset = TDBFactory.createDataset(tdbdata);
+        this.dataset = dataset;
+        // where the templates are located
+        this.templateDir = templateDir;
+        // where the generated output goes
+        this.outputDir = outputDir;
         q = new Q(this.dataset);
-
-        // start a read transaction
-        //dataset.begin(ReadWrite.READ);
-
-        /*
-        String q = "select * { ?s <http://xmlns.com/foaf/0.1/name> ?name }";
-        QuerySolutionMap initBinding = new QuerySolutionMap();
-        initBinding.add("name", personResource);
-        QueryExecutionFactory.create(q, dataset, initBinding);
-        */
-
-
-        /*
-        String q = "select * { ?subject ?predicate ?object }";
-        q = Constants.RDF_PROLOGUE;
-        q += "select ?subject where { ?subject a belv:NamespaceConceptScheme}";
-        QueryExecution qe = QueryExecutionFactory.create(q, dataset);
-        ResultSet rs = qe.execSelect();
-        //Stream<QuerySolution> solutions = asDistinctStream(rs);
-        while (rs.hasNext()) {
-            QuerySolution qs = rs.next();
-            RDFNode s = qs.get("subject");
-            out.println(s);
-        }
-
-        // end the read transaction
-        dataset.end();
-        */
     }
 
     /**
@@ -195,9 +191,24 @@ public class Main {
             err.println("RG_TDB_DATA is not set");
             exit(1);
         }
-        Main m = new Main(tdbdata);
-        m.tryReasoning();
-        //m.run();
+
+        final String templateDir = getenv("RG_JAVA_TEMPLATES");
+        if (templateDir == null) {
+            err.println("RG_JAVA_TEMPLATES is not set");
+            exit(1);
+        }
+
+        final String outputDir = getenv("RG_JAVA_OUTPUT");
+        if (outputDir == null) {
+            err.println("RG_JAVA_TEMPLATES is not set");
+            exit(1);
+        }
+
+        File templateDirFile = new File(templateDir);
+        File outputDirFile = new File(outputDir);
+
+        Dataset dataset = TDBFactory.createDataset(tdbdata);
+        Main m = new Main(dataset, templateDirFile, outputDirFile);
     }
 
     private void tryReasoning() throws IOException {

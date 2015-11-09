@@ -1,28 +1,22 @@
-package org.openbel.reggie.rdf.extract.namespaces;
+package org.openbel.reggie.rdf.generate.namespaces;
 
-import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+
 import static org.apache.jena.rdf.model.ModelFactory.*;
-import static org.apache.jena.reasoner.ReasonerRegistry.*;
 
 import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
 import org.apache.log4j.*;
 import static org.openbel.reggie.rdf.Constants.*;
 import org.openbel.reggie.rdf.Q;
 import org.openbel.reggie.rdf.QuerySolutions;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
@@ -33,6 +27,9 @@ import static java.util.Spliterators.*;
 
 import static java.lang.System.*;
 
+/**
+ * Extra
+ */
 public class Main {
 
     private Dataset dataset;

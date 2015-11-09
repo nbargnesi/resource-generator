@@ -1,15 +1,10 @@
-package org.openbel.reggie.rdf.extract.namespaces;
+package org.openbel.reggie.rdf.generate.namespaces;
 
 import org.stringtemplate.v4.*;
 
 import static java.lang.System.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 

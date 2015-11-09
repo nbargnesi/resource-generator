@@ -14,45 +14,22 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-package org.openbel.reggie.rdf.extract;
+package org.openbel.reggie.rdf.generate;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.jena.ontology.OntClass;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.Reasoner;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
-import static org.apache.jena.rdf.model.ModelFactory.*;
-import static org.apache.jena.reasoner.ReasonerRegistry.*;
 
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
-import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.vocabulary.OWL;
-import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
-import org.apache.jena.vocabulary.SKOS;
-import org.apache.log4j.*;
-import static org.openbel.reggie.rdf.Constants.*;
 import org.openbel.reggie.rdf.Q;
 import org.openbel.reggie.rdf.QuerySolutions;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.StreamSupport.*;
-
-import static java.util.Spliterators.*;
 
 import static java.lang.System.*;
 

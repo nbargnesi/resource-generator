@@ -1,11 +1,11 @@
-mesh-cellular-structures-ids-belns(createdDateTime) ::= <<
+mesh-cellular-structures-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=MeSH Cellular Structures (Identifiers)
 Keyword=MESHCSID
 DomainString=Cell Components and Complexes
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for cellular locations [branch A11.284].
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
 

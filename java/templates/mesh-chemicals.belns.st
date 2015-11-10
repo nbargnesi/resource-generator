@@ -1,11 +1,11 @@
-mesh-chemicals-belns(createdDateTime) ::= <<
+mesh-chemicals-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=MeSH Chemicals (Names)
 Keyword=MESHC
 DomainString=Chemicals
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for Chemicals [branch D and Supplementary Concepts].
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
 

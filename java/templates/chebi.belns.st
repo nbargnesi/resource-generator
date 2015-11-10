@@ -1,11 +1,11 @@
-chebi-belns(createdDateTime) ::= <<
+chebi-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=Chemicals of Biological Interest (Names)
 Keyword=CHEBI
 DomainString=Chemical
 SpeciesString=all
 DescriptionString=Chemical Entities of Biological Interest (ChEBI) unique names. The values used are the ChEBI ASCII Names. These names may be used to specify abundances.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.ebi.ac.uk/chebi/searchFreeText.do?searchString=[VALUE]
 

@@ -1,11 +1,11 @@
-entrez-gene-ids-belns(createdDateTime) ::= <<
+entrez-gene-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=Entrez Gene Identifiers
 Keyword=EGID
 DomainString=Gene and Gene Products
 SpeciesString=9606, 10090, 10116
 DescriptionString=NCBI Entrez Gene identifiers for Homo sapiens, Mus musculus, and Rattus norvegicus. These identifiers may be used to specify gene, RNA, microRNA, or protein abundances. Single character encoding following each value specify which abundance types are valid.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.ncbi.nlm.nih.gov/gene/[VALUE]
 

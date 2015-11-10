@@ -1,11 +1,11 @@
-rgd-rat-genes-belns(createdDateTime) ::= <<
+rgd-rat-genes-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=RGD Approved Gene Symbols
 Keyword=RGD
 DomainString=Gene and Gene Products
 SpeciesString=10116
 DescriptionString=Rat Genome Database (RGD) approved gene symbols. These symbols may be used to specify rat gene, RNA, microRNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://rgd.mcw.edu/rgdweb/search/genes.html?term=[VALUE]&speciesType=3
 

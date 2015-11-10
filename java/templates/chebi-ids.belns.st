@@ -1,11 +1,11 @@
-chebi-ids-belns(createdDateTime) ::= <<
+chebi-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=Chemicals of Biological Interest (Identifiers)
 Keyword=CHEBIID
 DomainString=Chemical
 SpeciesString=all
 DescriptionString=Chemical Entities of Biological Interest (ChEBI) unique identifiers. These identifiers may be used to specify abundances.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.ebi.ac.uk/chebi/searchId.do?chebiId=[VALUE]
 

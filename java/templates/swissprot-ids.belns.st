@@ -1,11 +1,11 @@
-swissprot-ids-belns(createdDateTime) ::= <<
+swissprot-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=Swiss-Prot Accession Numbers
 Keyword=SPID
 DomainString=Gene and Gene Products
 SpeciesString=9606, 10090, 10116
 DescriptionString=Swiss-Prot database accession numbers for Homo sapiens, Mus musculus, and Rattus norvegicus. These may be used to specify gene, RNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.uniprot.org/uniprot/[VALUE]
 

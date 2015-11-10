@@ -1,11 +1,11 @@
-selventa-named-complexes-belns(createdDateTime) ::= <<
+selventa-named-complexes-belns(version, createdDateTime) ::= <<
 [Namespace]
 Keyword=SCOMP
 NameString=Selventa Named Complexes
 DomainString=Gene/Protein
 SpeciesString=9606, 10090, 10116
 DescriptionString=List of named complexes that are frequently used and/or are well characterized such as the NFKB Complex.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 
 [Author]

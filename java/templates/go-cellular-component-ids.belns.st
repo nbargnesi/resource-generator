@@ -1,11 +1,11 @@
-go-cellular-component-ids-belns(createdDateTime) ::= <<
+go-cellular-component-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=GO Cellular Components (Identifiers)
 Keyword=GOCCID
 DomainString=Cell Components and Complexes
 SpeciesString=all
 DescriptionString=Gene Ontology (GO) cellular component identifiers. These terms may be used to represent cellular components as well as complex abundances.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:[VALUE]
 

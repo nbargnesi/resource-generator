@@ -1,11 +1,11 @@
-disease-ontology-ids-belns(createdDateTime) ::= <<
+disease-ontology-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=Disease Ontology Identifiers
 Keyword=DOID
 DomainString=Biological Process
 SpeciesString=all
 DescriptionString=Disease names from the Disease Ontology (DO). These names may be used to specify pathologies.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 
 [Author]

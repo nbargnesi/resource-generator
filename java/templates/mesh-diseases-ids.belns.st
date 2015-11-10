@@ -1,11 +1,11 @@
-mesh-diseases-ids-belns(createdDateTime) ::= <<
+mesh-diseases-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=MeSH Diseases (Identifiers)
 Keyword=MESHDID
 DomainString=Biological Process
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) from the Diseases [C] branch. These headings may be used to specify pathologies.
-VersionString=20150611
+VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
 

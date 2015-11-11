@@ -2,6 +2,7 @@ package org.openbel.reggie.rdf;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.QuerySolution;
+import org.apache.log4j.Logger;
 
 import java.util.Iterator;
 
@@ -16,13 +17,15 @@ public class QuerySolutions implements Iterable<QuerySolution>, AutoCloseable {
 
     //private ResultSetIterator iterator;
     private PagingIterator iterator;
+    private Logger log;
 
     /**
-     *
      * @param dataset
      * @param query
      */
     public QuerySolutions(Dataset dataset, String query) {
+        log = Logger.getRootLogger();
+        log.debug("new query: " + query);
         iterator = new PagingIterator(dataset, query);
     }
 

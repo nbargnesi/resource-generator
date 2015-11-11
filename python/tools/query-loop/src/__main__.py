@@ -6,6 +6,7 @@ input is received.
 '''
 import os
 import sys
+from tabulate import tabulate
 import rdflib as rl
 from datetime import datetime as dt
 
@@ -55,6 +56,15 @@ def main():
     NSs['xml'] = 'http://www.w3.org/XML/1998/namespace'
     NSs['xsd'] = 'http://www.w3.org/2001/XMLSchema#'
 
+    PREFIXs = {v: k for k, v in NSs.items()}
+
+    def prefixr(x):
+        for key in PREFIXs.keys():
+            if x.startswith(key):
+                value = PREFIXs.get(key)
+                return x.replace(key, value + ':')
+        return x
+
     g = rl.ConjunctiveGraph('SPARQLStore')
     url = url + 'query'
     g.open(url)
@@ -64,8 +74,9 @@ def main():
         try:
             results = [x for x in g.query(query, initNs=NSs)]
             t1 = dt.now()
-            for x in results:
-                print(x)
+            results = [[str(y) for y in x] for x in results]
+            results = [[prefixr(y) for y in x] for x in results]
+            print(tabulate(results))
             print('(query time: %s seconds)' % (round((t1 - t0).total_seconds(), 2)))
         except Exception as e:
             print(e)

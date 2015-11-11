@@ -1,2 +1,4 @@
 rdflib==4.1.1
 sparqlwrapper==1.6.4
+tabulate==0.7.5
+

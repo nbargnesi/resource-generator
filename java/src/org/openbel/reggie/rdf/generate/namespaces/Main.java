@@ -65,7 +65,7 @@ public class Main {
             RDFNode node = first(consume(qs, "label"));
             String nsPrefLabel = node.asLiteral().getLexicalForm();
 
-            File[] templates = templates(nsPrefLabel);
+            File[] templates = namespaceTemplates(nsPrefLabel);
 
             generate(nsConceptIter, templates);
         }

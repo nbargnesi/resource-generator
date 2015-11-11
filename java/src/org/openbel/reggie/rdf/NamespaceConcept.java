@@ -26,6 +26,7 @@ import org.apache.jena.vocabulary.SKOS;
 
 import static org.openbel.reggie.rdf.Functions.*;
 
+import static java.util.Arrays.sort;
 import java.util.Collection;
 
 /**
@@ -167,6 +168,7 @@ public class NamespaceConcept {
         for (int i = 0; i < carr.length; i++) {
             carr[i] = chariter.next();
         }
+        sort(carr);
         this.encoding = new String(carr);
     }
 }

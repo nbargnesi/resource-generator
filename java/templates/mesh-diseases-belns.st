@@ -1,7 +1,7 @@
-mesh-diseases-ids-belns(version, createdDateTime) ::= <<
+mesh-diseases-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=MeSH Diseases (Identifiers)
-Keyword=MESHDID
+NameString=MeSH Diseases (Names)
+Keyword=MESHD
 DomainString=Biological Process
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) from the Diseases [C] branch. These headings may be used to specify pathologies.
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

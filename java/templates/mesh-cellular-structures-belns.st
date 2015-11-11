@@ -1,10 +1,10 @@
-mesh-processes-ids-belns(version, createdDateTime) ::= <<
+mesh-cellular-structures-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=MeSH Phenomena and Processes (Identifiers)
-Keyword=MESHPPID
-DomainString=Biological Process
+NameString=MeSH Cellular Structures (Names)
+Keyword=MESHCS
+DomainString=Cell Components and Complexes
 SpeciesString=all
-DescriptionString=Medical Subject Headings (MeSH) from the Phenomena and Processes [G] branch, excluding the [G01], [G15], and [G17] sub-branches. These headings may be used to specify biological processes.
+DescriptionString=Medical Subject Headings (MeSH) names for cellular locations [branch A11.284].
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

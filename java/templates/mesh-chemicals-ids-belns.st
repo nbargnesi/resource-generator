@@ -1,7 +1,7 @@
-mesh-chemicals-belns(version, createdDateTime) ::= <<
+mesh-chemical-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=MeSH Chemicals (Names)
-Keyword=MESHC
+NameString=MeSH Chemicals (Ids)
+Keyword=MESHCID
 DomainString=Chemicals
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for Chemicals [branch D and Supplementary Concepts].
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

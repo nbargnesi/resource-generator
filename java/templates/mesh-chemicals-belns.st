@@ -1,10 +1,10 @@
-mesh-processes-belns(version, createdDateTime) ::= <<
+mesh-chemicals-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=MeSH Phenomena and Processes (Names)
-Keyword=MESHPP
-DomainString=Biological Process
+NameString=MeSH Chemicals (Names)
+Keyword=MESHC
+DomainString=Chemicals
 SpeciesString=all
-DescriptionString=Medical Subject Headings (MeSH) from the Phenomena and Processes [G] branch, excluding the [G01], [G15], and [G17] sub-branches. These headings may be used to specify biological processes.
+DescriptionString=Medical Subject Headings (MeSH) names for Chemicals [branch D and Supplementary Concepts].
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

@@ -1,7 +1,7 @@
-mesh-cellular-structures-belns(version, createdDateTime) ::= <<
+mesh-cellular-structures-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=MeSH Cellular Structures (Names)
-Keyword=MESHCS
+NameString=MeSH Cellular Structures (Identifiers)
+Keyword=MESHCSID
 DomainString=Cell Components and Complexes
 SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for cellular locations [branch A11.284].
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

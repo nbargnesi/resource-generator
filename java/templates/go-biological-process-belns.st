@@ -1,13 +1,13 @@
-go-cellular-component-ids-belns(version, createdDateTime) ::= <<
+go-biological-process-belns(version, createdDateTime) ::= <<
 [Namespace]
-NameString=GO Cellular Components (Identifiers)
-Keyword=GOCCID
-DomainString=Cell Components and Complexes
+NameString=GO Biological Process Names
+Keyword=GOBP
+DomainString=Biological Process
 SpeciesString=all
-DescriptionString=Gene Ontology (GO) cellular component identifiers. These terms may be used to represent cellular components as well as complex abundances.
+DescriptionString=The Gene Ontology (GO) names for biological process. These names may be used to represent biological processes.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
-QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:[VALUE]
+QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/search.cgi?search_query=[VALUE]&search_constraint=term&exact_match=1&action=new-search
 
 [Author]
 NameString=OpenBEL
@@ -27,3 +27,5 @@ DelimiterString=|
 CacheableFlag=yes
 
 [Values]
+
+>>

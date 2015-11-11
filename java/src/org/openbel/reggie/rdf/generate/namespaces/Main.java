@@ -18,30 +18,16 @@ package org.openbel.reggie.rdf.generate.namespaces;
 
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.Reasoner;
 
-import static org.apache.jena.rdf.model.ModelFactory.*;
-
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
-import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.vocabulary.OWL;
-import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.SKOS;
 import org.apache.log4j.*;
-import static org.openbel.reggie.rdf.Constants.*;
+
 import static org.openbel.reggie.rdf.Functions.*;
 
 import org.openbel.reggie.rdf.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.stream.StreamSupport.*;
-
-import static java.util.Spliterators.*;
 
 import static java.lang.System.*;
 
@@ -50,7 +36,6 @@ import static java.lang.System.*;
  */
 public class Main {
 
-    private Dataset dataset;
     private Logger log;
     private Q q;
 
@@ -58,14 +43,15 @@ public class Main {
      * @param dataset {@link Dataset}
      */
     public Main(Dataset dataset) {
-        // connect to the existing data
-        this.dataset = dataset;
-        q = new Q(this.dataset);
+        log = Logger.getRootLogger();
+        q = new Q(dataset);
     }
 
     void generate() {
+        log.info("Started");
         QuerySolutions nsSchemeIter = q.namespaces();
         generate(nsSchemeIter);
+        log.info("Completed");
         exit(0);
     }
 
@@ -86,9 +72,10 @@ public class Main {
     }
 
     void generate(QuerySolutions nsConceptIter, File[] templates) {
-        for (File template: templates) {
-            NamespaceTemplate nsTemplate = new NamespaceTemplate(template);
-            generate(nsConceptIter, nsTemplate);
+        for (File FT : templates) {
+            try (NamespaceTemplate NST = new NamespaceTemplate(FT)) {
+                generate(nsConceptIter, NST);
+            }
         }
     }
 
@@ -139,7 +126,13 @@ public class Main {
             exit(1);
         }
         File f = new File(env);
-        if (!f.exists()) { f.mkdirs(); }
+        if (!f.exists()) {
+            boolean rslt = f.mkdirs();
+            if (!rslt && !f.exists()) {
+                err.println("error creating namespace output path " + env);
+                exit(1);
+            }
+        }
 
         env = getenv("RG_RESOURCE_VERSION");
         if (env == null) {
@@ -151,10 +144,6 @@ public class Main {
             err.println("RG_RESOURCE_DT is not set");
             exit(1);
         }
-
-
-        File templateDirFile = new File(templateDir);
-        File outputDirFile = new File(outputDir);
 
         Dataset dataset = TDBFactory.createDataset(tdbdata);
         Main m = new Main(dataset);

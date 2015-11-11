@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroupDir;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,18 +27,25 @@ import java.io.IOException;
 import static java.lang.System.*;
 import static java.lang.String.format;
 
-public class NamespaceTemplate {
+/**
+ * BEL namespace template.
+ */
+public class NamespaceTemplate implements AutoCloseable {
 
     private final String version;
     private final String createdDateTime;
     private final File templateFile;
     private final String templateName;
-    private final File nsOutputDir;
-    private final File nsOutputFile;
     private final Logger log;
-    private final String absPath;
     private boolean ids = false;
+    private File outputFile;
+    private FileWriter writer;
 
+    /**
+     * Create a namespace template associated with the indicated {@link File template file}.
+     *
+     * @param templateFile {@link File}
+     */
     public NamespaceTemplate(File templateFile) {
         log = Logger.getRootLogger();
         if (!templateFile.canRead()) {
@@ -50,15 +56,15 @@ public class NamespaceTemplate {
         this.templateFile = templateFile;
         version = getenv("RG_RESOURCE_VERSION");
         createdDateTime = getenv("RG_RESOURCE_DT");
-        nsOutputDir = new File(getenv("RG_NS_OUTPUT"));
+        File nsOutputDir = new File(getenv("RG_NS_OUTPUT"));
         String name = templateFile.getName();
         if (name.contains("-ids")) ids = true;
         String outputFileName = name.replace("-belns.st", ".belns");
         templateName = name.replace(".st", "");
-        nsOutputFile = new File(nsOutputDir, outputFileName);
-        absPath = nsOutputFile.getAbsolutePath();
+        File outputFile = new File(nsOutputDir, outputFileName);
+        String absPath = outputFile.getAbsolutePath();
 
-        if (nsOutputFile.exists()) {
+        if (outputFile.exists()) {
             log.info("Overwriting namespace: " + absPath);
         } else {
             log.info("Creating namespace: " + absPath);
@@ -66,16 +72,27 @@ public class NamespaceTemplate {
 
         if (ids) log.debug("Identifier-based namespace detected: " + absPath);
         else log.debug("Name-based namespace detected: " + absPath);
+
+        try {
+            writer = new FileWriter(outputFile);
+        } catch (IOException ioex) {
+            log.fatal("error writing namespace header", ioex);
+            ioex.printStackTrace();
+            exit(1);
+        }
     }
 
+    /**
+     * Write the namespace header to the template.
+     */
     public void writeHeader() {
         STGroupDir group = new STGroupDir(templateFile.getParent());
         ST st = group.getInstanceOf(templateName);
         st.add("version", version);
         st.add("createdDateTime", createdDateTime);
         String hdr = st.render();
-        try (FileWriter fw = new FileWriter(nsOutputFile)) {
-            fw.write(hdr);
+        try {
+            writer.write(hdr);
         } catch (IOException ioex) {
             log.fatal("error writing namespace header", ioex);
             ioex.printStackTrace();
@@ -88,17 +105,41 @@ public class NamespaceTemplate {
         String discriminator;
         if (ids) discriminator = concept.getIdentifier();
         else discriminator = concept.getPreferredLabel();
+
+        // return null if the concept is not complete
+        if (discriminator == null || encoding == null) return null;
         return discriminator + "|" + encoding + "\n";
     }
 
+    /**
+     * Write a {@link NamespaceConcept namespace concept} to the template.
+     *
+     * @param concept {@link NamespaceConcept}
+     */
     public void writeValue(NamespaceConcept concept) {
-        try (FileWriter fw = new FileWriter(nsOutputFile, true)) {
-            fw.write(renderConcept(concept));
+        String conceptstr = renderConcept(concept);
+        if (conceptstr == null) return;
+        try {
+            writer.write(conceptstr);
         } catch (IOException ioex) {
-            log.fatal("error writing namespace header", ioex);
+            log.fatal("error writing namespace value", ioex);
             ioex.printStackTrace();
             exit(1);
         }
+    }
 
+    /**
+     * Closes the template file.
+     */
+    @Override
+    public void close() {
+        try {
+            writer.close();
+        } catch (IOException ioex) {
+            String path = outputFile.getAbsolutePath();
+            log.fatal("error closing template " + path, ioex);
+            ioex.printStackTrace();
+            exit(1);
+        }
     }
 }

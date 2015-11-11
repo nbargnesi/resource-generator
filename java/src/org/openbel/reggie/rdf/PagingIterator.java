@@ -33,7 +33,7 @@ class PagingIterator implements Iterator<QuerySolution>, AutoCloseable {
     private String query;
     private QuerySolution[] solutions;
     private int offset = 0;
-    private final static int limit = 100;
+    private final static int limit = 1000;
     private int current;
 
     public PagingIterator(Dataset dataset, String query) {
@@ -92,7 +92,7 @@ class PagingIterator implements Iterator<QuerySolution>, AutoCloseable {
                 i += 1;
             }
         }
-        offset = i;
+        offset += limit;
     }
 
     /**

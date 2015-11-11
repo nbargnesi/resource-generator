@@ -71,10 +71,10 @@ public class IntegrityCheck {
     boolean haveTemplate(String nslabel) {
         String belns = nslabel + ".belns.st";
         File template1 = new File(templateDir, belns);
-        boolean t1 = template1.exists();
+        boolean t1 = template1.canRead();
         String ids = nslabel + "-ids.belns.st";
         File template2 = new File(templateDir, ids);
-        boolean t2 = template2.exists();
+        boolean t2 = template2.canRead();
 
         String p1 = template1.getAbsolutePath();
         String p2 = template2.getAbsolutePath();

@@ -20,6 +20,17 @@ default RG_PYTHON_ENVS      "$RG_PYTHON"/.envs
 default RG_QUERY_LOOP       "$RG_PYTHON_TOOLS"/query-loop
 default RG_RDF_EXTRACT      "$RG_PYTHON_TOOLS"/rdf-extract
 default RG_JAVA_TEMPLATES   "$RG_JAVA"/templates
+default RG_NS_OUTPUT        "$RG_JAVA_OUTPUT"/namespace
+default RG_EQ_OUTPUT        "$RG_JAVA_OUTPUT"/equivalence
+default RG_ANNO_OUTPUT      "$RG_JAVA_OUTPUT"/annotation
+
+### SETTINGS ###
+# Set the default log level.
+#default RG_JAVA_LOG_LEVEL   "info"
+# Default resource version to YYYYMMDD.
+default RG_RESOURCE_VERSION $(date +"%Y%m%d")
+# Default resource date-time to YYYY-MM-DDTHH:MM:SSZ.
+default RG_RESOURCE_DT      $(date +"%Y-%m-%dT%H:%M:%SZ")
 
 ### RDF ###
 default RG_RDF_SPARQL_URL   "http://localhost:3030/openbel"

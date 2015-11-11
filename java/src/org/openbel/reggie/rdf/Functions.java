@@ -86,12 +86,12 @@ public class Functions {
     }
 
     /**
-     * Get the file templates for a preferred label.
+     * Get the namespace file templates for a preferred label.
      *
      * @param preferredLabel {@link String}
      * @return File[]
      */
-    public static File[] templates(String preferredLabel) {
+    public static File[] namespaceTemplates(String preferredLabel) {
         final String templateDir = getenv("RG_JAVA_TEMPLATES");
         preferredLabel = preferredLabel.replace(' ', '-');
         preferredLabel = preferredLabel.toLowerCase();
@@ -105,6 +105,24 @@ public class Functions {
         template = new File(templateDir, ids);
         if (template.canRead()) files.add(template);
         return files.toArray(new File[0]);
+    }
+
+    /**
+     * Get the annotation file template for a preferred label.
+     *
+     * @param preferredLabel {@link String}
+     * @return File
+     */
+    public static File annotationTemplate(String preferredLabel) {
+        final String templateDir = getenv("RG_JAVA_TEMPLATES");
+        preferredLabel = preferredLabel.replace(' ', '-');
+        preferredLabel = preferredLabel.toLowerCase();
+        String belanno = preferredLabel + "-belanno.st";
+
+        File template;
+        template = new File(templateDir, belanno);
+        if (template.canRead()) return template;
+        return null;
     }
 
     /**

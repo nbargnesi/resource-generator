@@ -290,12 +290,85 @@ public class Q {
         QueryStr qs = qs();
         // select ?value where {
         qs.add(select).add("?value").add(where, lbrace);
-        // ?s a belv:NamespaceConcept .
-        //qs.add("?value").add(is_a).add(BELV_NAMESPACE_CONCEPT).add(dot);
         // ?s skos:inScheme
         qs.add("?value").add(Constants.SKOS_IN_SCHEME);
         // <concept> . }
         qs.addi(concept).add(dot, rbrace);
+        return q(qs);
+    }
+
+    /**
+     * BEL annotations bound to {@code "subject"}.
+     * <p>
+     * <code>
+     * try (QuerySolutions QS = annotations()) {
+     *     for (QuerySolution qs : QS) {
+     *         RDFNode s = qs.get("subject");
+     *     }
+     * }
+     * </code>
+     * </p>
+     *
+     * @return {@link QuerySolutions} Iterable query solutions
+     */
+    public QuerySolutions annotations() {
+        return subjectIsA(BELV_ANNOTATION_CONCEPT_SCHEME);
+    }
+
+    /**
+     * BEL annotation values bound to {@code "subject"}.
+     * <p>
+     * <code>
+     * try (QuerySolutions QS = annotationValues()) {
+     *     for (QuerySolution qs : QS) {
+     *         RDFNode s = qs.get("subject");
+     *     }
+     * }
+     * </code>
+     * </p>
+     *
+     * @return {@link QuerySolutions} Iterable query solutions
+     */
+    public QuerySolutions annotationValues() {
+        return subjectIsA(BELV_ANNOTATION_CONCEPT);
+    }
+
+    /**
+     * BEL annotation values bound to {@code "value"} and constrained to
+     * <i>concept</i> (i.e., <i>skos:inScheme</i> of <i>concept</i>).
+     * @param concept {@link String}
+     * @return {@link QuerySolutions} Iterable query solutions
+     */
+    public QuerySolutions annotationValues(String concept) {
+        QueryStr qs = qs();
+        // select ?value where {
+        qs.add(select).add("?value").add(where, lbrace);
+        // ?s skos:inScheme
+        qs.add("?value").add(Constants.SKOS_IN_SCHEME);
+        // <concept> . }
+        qs.addi(concept).add(dot, rbrace);
+        return q(qs);
+    }
+
+    /**
+     * BEL annotation pref labels bound to {@code "label"}.
+     *
+     * @return {@link QuerySolutions} Iterable query solutions
+     */
+    public QuerySolutions annotationPrefLabels() {
+        QueryStr qs = qs();
+        // select ?label where {
+        qs.add(select).add("?label").add(where, lbrace);
+        // ?s a belv:NamespaceConceptScheme .
+        qs.add(s, is_a).add(BELV_ANNOTATION_CONCEPT_SCHEME).add(dot);
+        // ?s
+        qs.add(s);
+        // skos:prefLabel
+        qs.add(Constants.SKOS_PREF_LABEL);
+        // ?label
+        qs.add("?label");
+        // . }
+        qs.add(dot, rbrace);
         return q(qs);
     }
 

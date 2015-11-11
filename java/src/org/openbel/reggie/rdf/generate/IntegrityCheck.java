@@ -26,8 +26,6 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.tdb.TDBFactory;
 import org.openbel.reggie.rdf.Q;
 import org.openbel.reggie.rdf.QuerySolutions;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupDir;
 
 import java.io.File;
 
@@ -38,17 +36,14 @@ import static java.lang.System.*;
  */
 public class IntegrityCheck {
 
-    private Dataset dataset;
     private String templateDir;
     private Q q;
-    private STGroup group;
     private Logger log;
 
     IntegrityCheck(String tdbdata, String templateDir) {
-        this.dataset = TDBFactory.createDataset(tdbdata);
+        Dataset dataset = TDBFactory.createDataset(tdbdata);
         this.templateDir = templateDir;
-        this.group = new STGroupDir(templateDir);
-        q = new Q(this.dataset);
+        q = new Q(dataset);
         log = Logger.getRootLogger();
         String level = getenv("RG_JAVA_LOG_LEVEL");
         if (level != null) {
@@ -57,22 +52,37 @@ public class IntegrityCheck {
     }
 
     void run() {
+        boolean missing = false;
         try (QuerySolutions QS = q.namespacePrefLabels()) {
             for (QuerySolution nsPL : QS) {
                 RDFNode node = nsPL.get("label");
                 String pl = node.asLiteral().getString();
                 pl = pl.replace(' ', '-');
                 pl = pl.toLowerCase();
-                boolean haveOne = haveTemplate(pl);
+                boolean haveOne = haveNSTemplate(pl);
+                if (!haveOne) missing = true;
+
             }
         }
+        try (QuerySolutions QS = q.annotationPrefLabels()) {
+            for (QuerySolution annoPL : QS) {
+                RDFNode node = annoPL.get("label");
+                String pl = node.asLiteral().getString();
+                pl = pl.replace(' ', '-');
+                pl = pl.toLowerCase();
+                boolean have = haveAnnoTemplate(pl);
+                if (!have) missing = true;
+            }
+        }
+        if (missing) log.warn("WARNING: Missing templates reported!");
+        else log.info("SUCCESS: Templates exist for all resources.");
     }
 
-    boolean haveTemplate(String nslabel) {
-        String belns = nslabel + ".belns.st";
+    boolean haveNSTemplate(String nslabel) {
+        String belns = nslabel + "-belns.st";
         File template1 = new File(templateDir, belns);
         boolean t1 = template1.canRead();
-        String ids = nslabel + "-ids.belns.st";
+        String ids = nslabel + "-ids-belns.st";
         File template2 = new File(templateDir, ids);
         boolean t2 = template2.canRead();
 
@@ -92,6 +102,20 @@ public class IntegrityCheck {
         if (!t2) {
             log.debug("Missing id template for namespace: " + nslabel);
             log.debug("missing template: " + p2);
+        }
+        return true;
+    }
+
+    boolean haveAnnoTemplate(String annolabel) {
+        String belanno = annolabel + "-belanno.st";
+        File template = new File(templateDir, belanno);
+        boolean t = template.canRead();
+        String p = template.getAbsolutePath();
+
+        if (!t) {
+            log.warn("Missing template for annotation: " + annolabel);
+            log.warn("missing template: " + p);
+            return false;
         }
         return true;
     }

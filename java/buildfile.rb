@@ -49,6 +49,8 @@ COMMONS_LANG = 'org.apache.commons:commons-lang3:jar:3.3.2'
 ANTLR = 'org.antlr:antlr-runtime:jar:3.5.1'
 REGGIE_DEPS = [ST4, TROVE, COMMONS_LANG, ANTLR]
 
+DEPS = [JENA, LOGGING, REGGIE_DEPS]
+
 # Project layout
 layout = Layout.new
 layout[:source, :main, :java] = 'src'
@@ -57,14 +59,40 @@ layout[:source, :main, :resources] = 'resources'
 layout[:source, :test, :resources] = 'test'
 layout[:target, :main, :classes] = 'build'
 
+def create_lib
+  puts 'Pulling dependencies into lib/.'
+  FileUtils.rm_rf 'lib'
+  FileUtils.mkdir_p 'lib'
+  artifacts(DEPS).each { |x|
+    FileUtils.cp x.to_s, 'lib'
+  }
+end
+
+def have_libs
+  return false unless File.directory? 'lib'
+  libtime = File::Stat.new('lib')
+  btime = File::Stat.new(__FILE__)
+  if libtime.ctime < btime.ctime
+    puts 'Dependencies out-of-date.'
+    return false
+  end
+  return true
+end
+
+create_lib unless have_libs
+LIB_JARS = *Dir.glob(File.join('lib', '**', '*.jar'))
+
 define 'bel-resource-generator', :layout => layout do
   project.version = VERSION_NUMBER
   project.group = GROUP
-  package :jar
-
   run.using :main=>'org.openbel.reggie.rdf.generate.namespaces.Main'
+  compile.with LIB_JARS
 
-  compile.with JENA, LOGGING, REGGIE_DEPS
-
+  package do
+    Dir.glob(File.join('lib', '**', '*.jar')).each { |x|
+      puts x
+      unzip(x)
+    }
+  end
 end
 # vim:ts=2:sw=2

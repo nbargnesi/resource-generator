@@ -1,3 +1,5 @@
 # ignore Java build output
 /build
-
+/target
+# ignore Java lib dependencies
+/lib

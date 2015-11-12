@@ -24,16 +24,30 @@ repositories.remote << 'http://repo1.maven.org/maven2'
 repositories.remote << 'http://www.ibiblio.org/maven2'
 
 # Dependencies
+JENA_BASE = 'org.apache.jena:jena-base:jar:3.0.0'
 JENA_CORE = 'org.apache.jena:jena-core:jar:3.0.0'
 JENA_ARQ = 'org.apache.jena:jena-arq:jar:3.0.0'
 JENA_TDB = 'org.apache.jena:jena-tdb:jar:3.0.0'
-JENA_BASE = 'org.apache.jena:jena-base:jar:3.0.0'
-JENA = [JENA_BASE, JENA_CORE, JENA_ARQ, JENA_TDB, 'xerces:xercesImpl:jar:2.11.0', 'xml-apis:xml-apis:jar:1.4.01', 'org.apache.jena:jena-shaded-guava:jar:3.0.0', 'org.apache.jena:jena-iri:jar:3.0.0']
+JENA_IRI = 'org.apache.jena:jena-iri:jar:3.0.0'
+JENA_GUAVA = 'org.apache.jena:jena-shaded-guava:jar:3.0.0'
+XERCES = 'xerces:xercesImpl:jar:2.11.0'
+XML = 'xml-apis:xml-apis:jar:1.4.01'
+JENA_DEPS = [XERCES, XML, JENA_GUAVA]
+JENA = [JENA_BASE, JENA_CORE, JENA_ARQ, JENA_TDB, JENA_IRI, JENA_DEPS]
+
+LOG4J = 'log4j:log4j:jar:1.2.17'
+LOG4J_12_API = 'org.apache.logging.log4j:log4j-1.2-api:jar:2.4.1'
+LOG4J_API = 'org.apache.logging.log4j:log4j-api:jar:2.4.1'
+LOG4J_CORE = 'org.apache.logging.log4j:log4j-core:jar:2.4.1'
+SLF4J_API = 'org.slf4j:slf4j-api:jar:1.7.13'
+SLF4J_NOP = 'org.slf4j:slf4j-nop:jar:1.7.13'
+LOGGING = [LOG4J, LOG4J_12_API, LOG4J_API, LOG4J_CORE, SLF4J_API, SLF4J_NOP]
+
 ST4 = 'org.antlr:ST4:jar:4.0.8'
-LOG4J = ['org.apache.logging.log4j:log4j-1.2-api:jar:2.4.1', 'log4j:log4j:jar:1.2.17', 'org.apache.logging.log4j:log4j-core:jar:2.4.1', 'org.apache.logging.log4j:log4j-api:jar:2.4.1', 'org.slf4j:slf4j-api:jar:1.7.13', 'org.slf4j:slf4j-nop:jar:1.7.13']
 TROVE = 'net.sf.trove4j:trove4j:jar:3.0.3'
 COMMONS_LANG = 'org.apache.commons:commons-lang3:jar:3.3.2'
 ANTLR = 'org.antlr:antlr-runtime:jar:3.5.1'
+REGGIE_DEPS = [ST4, TROVE, COMMONS_LANG, ANTLR]
 
 # Project layout
 layout = Layout.new
@@ -50,8 +64,7 @@ define 'bel-resource-generator', :layout => layout do
 
   run.using :main=>'org.openbel.reggie.rdf.generate.namespaces.Main'
 
-  compile.with JENA, LOG4J, ST4, TROVE, COMMONS_LANG, ANTLR
+  compile.with JENA, LOGGING, REGGIE_DEPS
 
 end
-
 # vim:ts=2:sw=2

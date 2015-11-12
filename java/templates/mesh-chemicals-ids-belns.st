@@ -1,4 +1,4 @@
-mesh-chemical-ids-belns(version, createdDateTime) ::= <<
+mesh-chemicals-ids-belns(version, createdDateTime) ::= <<
 [Namespace]
 NameString=MeSH Chemicals (Ids)
 Keyword=MESHCID

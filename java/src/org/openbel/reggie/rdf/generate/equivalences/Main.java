@@ -66,14 +66,16 @@ public class Main {
             RDFNode node = first(consume(qs, "label"));
             String nsPrefLabel = node.asLiteral().getLexicalForm();
 
-            File template = equivalenceTemplate(nsPrefLabel);
-            generate(nsConceptIter, template);
+            File[] templates = equivalenceTemplate(nsPrefLabel);
+            generate(nsConceptIter, templates);
         }
     }
 
-    void generate(QuerySolutions nsConceptIter, File template) {
-        try (EquivalenceTemplate ET = new EquivalenceTemplate(template)) {
-            generate(nsConceptIter, ET);
+    void generate(QuerySolutions nsConceptIter, File[] templates) {
+        for (File FT : templates) {
+            try (EquivalenceTemplate ET = new EquivalenceTemplate(FT)) {
+                generate(nsConceptIter, ET);
+            }
         }
     }
 

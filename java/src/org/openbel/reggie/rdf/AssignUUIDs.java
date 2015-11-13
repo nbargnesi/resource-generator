@@ -79,7 +79,8 @@ public class AssignUUIDs {
     }
 
     void assign() throws Exception {
-        log.info("Started");
+        log.info("Started Generating UUID Assignments");
+        log.info("Writing triples to: " + output.getAbsolutePath());
         StringBuilder bldr = new StringBuilder();
         bldr.append(BEL_UUID_CONCEPT_SCHEME + " ");
         bldr.append("<" + RDF.type.getURI() + "> ");
@@ -123,7 +124,7 @@ public class AssignUUIDs {
 
         }
 
-        log.info("Completed");
+        log.info("Completed Generating UUID Assignments");
         writer.close();
         exit(0);
     }

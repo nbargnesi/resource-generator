@@ -1,0 +1,14 @@
+# Overview
+
+Generates BEL resources using RDF data and Apache Jena.
+
+# Quick Start Instructions
+
+1. Load RDF 
+   footnote:[BEL biological concepts RDF data: http://build.openbel.org/browse/OR-REAS/latestSuccessful/artifact]
+   footnote:[ChEMBL RDF data: http://build.openbel.org/browse/OR-CBRN/latestSuccessful/artifact]
+   into Apache Jena.
+1. Optionally run the integrity checker.
+1. Generate UUID assignments and load the RDF output into Apache Jena.
+1. Run the resource generator.
+

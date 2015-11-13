@@ -126,21 +126,25 @@ public class Functions {
     }
 
     /**
-     * Get the equivalence file template for a preferred label.
+     * Get the equivalence file templates for a preferred label.
      *
      * @param preferredLabel {@link String}
-     * @return File
+     * @return File[]
      */
-    public static File equivalenceTemplate(String preferredLabel) {
+    public static File[] equivalenceTemplate(String preferredLabel) {
         final String templateDir = getenv("RG_JAVA_TEMPLATES");
         preferredLabel = preferredLabel.replace(' ', '-');
         preferredLabel = preferredLabel.toLowerCase();
-        String belanno = preferredLabel + "-beleq.st";
+        String beleq = preferredLabel + "-beleq.st";
+        String ids = preferredLabel + "-ids-beleq.st";
 
+        List<File> files = new LinkedList<>();
         File template;
-        template = new File(templateDir, belanno);
-        if (template.canRead()) return template;
-        return null;
+        template = new File(templateDir, beleq);
+        if (template.canRead()) files.add(template);
+        template = new File(templateDir, ids);
+        if (template.canRead()) files.add(template);
+        return files.toArray(new File[0]);
     }
 
     /**

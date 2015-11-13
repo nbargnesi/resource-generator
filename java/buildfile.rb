@@ -50,6 +50,7 @@ ANTLR = 'org.antlr:antlr-runtime:jar:3.5.1'
 REGGIE_DEPS = [ST4, TROVE, COMMONS_LANG, ANTLR]
 
 DEPS = [JENA, LOGGING, REGGIE_DEPS]
+artifacts(DEPS).each(&:invoke)
 
 # Project layout
 layout = Layout.new

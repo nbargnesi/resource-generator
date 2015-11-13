@@ -63,8 +63,9 @@ public class EquivalenceConcept {
             } else if (predicateURI.equals(SKOS_IN_SCHEME_URI)) {
                 RDFNode object = triple.getRight();
                 if (!object.isResource()) continue;
-                String uuidIRI = object.asResource().getURI();
-                String[] tokens = uuidIRI.split("/");
+                String uri = object.asResource().getURI();
+                if (!uri.contains("uuid")) continue;
+                String[] tokens = uri.split("/");
                 this.uuid = tokens[tokens.length - 1];
             }
         }

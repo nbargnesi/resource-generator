@@ -59,7 +59,7 @@ public class AssignUUIDs {
         q = new Q(dataset);
         String outputDir = getenv("RG_JAVA_OUTPUT");
         output = new File(outputDir, "uuids.nt");
-        writer = new FileWriter(output, true);
+        writer = new FileWriter(output, false);
     }
 
     String uuidIRI(String uuid) {

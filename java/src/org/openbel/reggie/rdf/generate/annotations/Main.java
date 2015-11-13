@@ -47,11 +47,11 @@ public class Main {
         q = new Q(dataset);
     }
 
-    void generate() {
-        log.info("Started");
+    public void generate() {
+        log.info("Started Generating Annotations");
         QuerySolutions anSchemeIter = q.annotations();
         generate(anSchemeIter);
-        log.info("Completed");
+        log.info("Completed Generating Annotations");
         exit(0);
     }
 

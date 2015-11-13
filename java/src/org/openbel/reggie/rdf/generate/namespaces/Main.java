@@ -47,11 +47,11 @@ public class Main {
         q = new Q(dataset);
     }
 
-    void generate() {
-        log.info("Started");
+    public void generate() {
+        log.info("Started Generating Namespaces");
         QuerySolutions nsSchemeIter = q.namespaces();
         generate(nsSchemeIter);
-        log.info("Completed");
+        log.info("Completed Generating Namespaces");
         exit(0);
     }
 

@@ -127,7 +127,7 @@ public class IntegrityCheck {
         boolean t = template.canRead();
         String p = template.getAbsolutePath();
 
-        if (t) {
+        if (!t) {
             log.warn("Missing templates for equivalence: " + nslabel);
             log.warn("missing template: " + p);
             return false;

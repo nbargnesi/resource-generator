@@ -20,8 +20,13 @@ import org.apache.jena.query.*;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.SKOS;
 import org.apache.log4j.*;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.UUID;
 
 import static java.lang.System.*;
@@ -35,29 +40,60 @@ public class AssignUUIDs {
     private I i;
     private Q q;
     private Dataset dataset;
+    private final static String BEL_UUID_CONCEPT_SCHEME;
+    private final static String BEL_UUID_CONCEPT;
+    private File output;
+    private FileWriter writer;
+    static {
+        BEL_UUID_CONCEPT_SCHEME = "<http://www.openbel.org/vocabulary/UUIDConceptScheme>";
+        BEL_UUID_CONCEPT = "<http://www.openbel.org/vocabulary/UUIDConcept>";
+    }
 
     /**
      * @param dataset {@link Dataset}
      */
-    public AssignUUIDs(Dataset dataset) {
+    public AssignUUIDs(Dataset dataset) throws Exception {
         log = Logger.getRootLogger();
         this.dataset = dataset;
         i = new I(dataset);
         q = new Q(dataset);
+        String outputDir = getenv("RG_JAVA_OUTPUT");
+        output = new File(outputDir, "uuids.nt");
+        writer = new FileWriter(output, true);
     }
 
     String uuidIRI(String uuid) {
         return "<http://www.openbel.org/bel/uuid/".concat(uuid).concat(">");
     }
 
-    void assign() {
+    String belNamespace(String path) {
+        return "<http://www.openbel.org/bel/namespace/".concat(path).concat(">");
+    }
+
+    String rdfs(String path) {
+        return "<http://www.w3.org/2000/01/rdf-schema#".concat(path).concat(">");
+    }
+
+    String skos(String path) {
+        return "<http://www.w3.org/2004/02/skos/core#".concat(path).concat(">");
+    }
+
+    void assign() throws Exception {
         log.info("Started");
         StringBuilder bldr = new StringBuilder();
-        bldr.append("belv:UUIDConceptScheme a rdfs:Class . ");
-        bldr.append("belv:UUIDConceptScheme a rdfs:Resource . ");
-        bldr.append("belv:UUIDConceptScheme rdfs:subClassOf belv:UUIDConceptScheme . ");
-        bldr.append("belv:UUIDConceptScheme rdfs:subClassOf skos:ConceptScheme . ");
-        i.insert(bldr.toString());
+        bldr.append(BEL_UUID_CONCEPT_SCHEME + " ");
+        bldr.append("<" + RDF.type.getURI() + "> ");
+        bldr.append("<" + RDFS.Class.getURI() + "> .\n");
+        bldr.append(BEL_UUID_CONCEPT_SCHEME + " ");
+        bldr.append("<" + RDF.type.getURI() + "> ");
+        bldr.append("<" + RDFS.Resource.getURI() + "> .\n");
+        bldr.append(BEL_UUID_CONCEPT_SCHEME + " ");
+        bldr.append("<" + RDFS.subClassOf.getURI() + "> ");
+        bldr.append(BEL_UUID_CONCEPT_SCHEME + " .\n");
+        bldr.append(BEL_UUID_CONCEPT_SCHEME + " ");
+        bldr.append("<" + RDFS.subClassOf.getURI() + "> ");
+        bldr.append("<" + SKOS.ConceptScheme.getURI() + "> .\n");
+        writer.write(bldr.toString());
 
         QuerySolutions nsConceptIter = q.namespaceValues();
         for (QuerySolution nsConcept : nsConceptIter) {
@@ -65,32 +101,30 @@ public class AssignUUIDs {
             String conceptIRI = subject.asResource().getURI();
             QuerySolutions eqConceptIter = q.equivalentConcepts(conceptIRI);
 
-            dataset.begin(ReadWrite.WRITE);
-
             String uuid = UUID.randomUUID().toString();
             String uuidIRI = uuidIRI(uuid);
             bldr.setLength(0);
             bldr.append(uuidIRI);
-            bldr.append(" a belv:UUIDConceptScheme . ");
+            bldr.append(" <" + RDF.type.getURI() + "> " + BEL_UUID_CONCEPT_SCHEME + " .\n");
             bldr.append(uuidIRI);
-            bldr.append(" a skos:ConceptScheme . ");
-            i.insert(bldr.toString());
+            bldr.append(" <" + RDF.type.getURI() + "> <" + SKOS.ConceptScheme.getURI() + "> .\n");
+            writer.write(bldr.toString());
 
             for (QuerySolution eqConcept : eqConceptIter) {
                 RDFNode eq = eqConcept.get("eq");
                 String eqConceptIRI = eq.asResource().getURI();
                 bldr.setLength(0);
-                bldr.append("<".concat(eqConceptIRI).concat(">"));
-                bldr.append(" skos:inScheme ");
-                bldr.append(uuidIRI);
-                bldr.append(" . ");
-                i.insert(bldr.toString());
+                bldr.append("<".concat(eqConceptIRI).concat("> "));
+                bldr.append(" <" + SKOS.inScheme.getURI() + "> " + uuidIRI + " .\n");
+                bldr.append("<".concat(eqConceptIRI).concat("> "));
+                bldr.append(" <" + RDF.type.getURI() + "> " + BEL_UUID_CONCEPT + " .\n");
+                writer.write(bldr.toString());
             }
 
-            dataset.end();
         }
 
         log.info("Completed");
+        writer.close();
         exit(0);
     }
 
@@ -99,6 +133,11 @@ public class AssignUUIDs {
         final String tdbdata = getenv("RG_TDB_DATA");
         if (tdbdata == null) {
             err.println("RG_TDB_DATA is not set");
+            exit(1);
+        }
+        final String env = getenv("RG_JAVA_OUTPUT");
+        if (env == null) {
+            err.println("RG_JAVA_OUTPUT is not set");
             exit(1);
         }
 

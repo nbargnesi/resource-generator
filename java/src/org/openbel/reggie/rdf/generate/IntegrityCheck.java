@@ -61,7 +61,8 @@ public class IntegrityCheck {
                 pl = pl.toLowerCase();
                 boolean haveOne = haveNSTemplate(pl);
                 if (!haveOne) missing = true;
-
+                boolean haveEQ = haveEQTemplate(pl);
+                if (!haveEQ) missing = true;
             }
         }
         try (QuerySolutions QS = q.annotationPrefLabels()) {
@@ -114,6 +115,20 @@ public class IntegrityCheck {
 
         if (!t) {
             log.warn("Missing template for annotation: " + annolabel);
+            log.warn("missing template: " + p);
+            return false;
+        }
+        return true;
+    }
+
+    boolean haveEQTemplate(String nslabel) {
+        String beleq = nslabel + "-beleq.st";
+        File template = new File(templateDir, beleq);
+        boolean t = template.canRead();
+        String p = template.getAbsolutePath();
+
+        if (t) {
+            log.warn("Missing templates for equivalence: " + nslabel);
             log.warn("missing template: " + p);
             return false;
         }

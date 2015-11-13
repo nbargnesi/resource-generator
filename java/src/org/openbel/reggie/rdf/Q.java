@@ -42,7 +42,7 @@ public class Q {
         ORDER_BY, LIMIT, OFFSET, DISTINCT, REDUCED,
         FROM, FROM_NAMED, WHERE,
         GRAPH, OPTIONAL, UNION, FILTER, A,
-        STR, LANG, LANGMATCHES, DATATYPE, BOUND, SAMETERM,
+        STR, LANG, LANGMATCHES, NOT, EXISTS, DATATYPE, BOUND, SAMETERM,
         ISURI, ISIRI, ISLITERAL, REGEX, TRUE, FALSE,
 
         // common syntax
@@ -94,6 +94,8 @@ public class Q {
     private static final SPARQL_Atom dot;
     private static final SPARQL_Atom lt;
     private static final SPARQL_Atom gt;
+    private static final SPARQL_Atom not;
+    private static final SPARQL_Atom exists;
 
     static {
         base = SPARQL_Atom.BASE;
@@ -137,6 +139,8 @@ public class Q {
         dot = SPARQL_Atom.DOT;
         lt = SPARQL_Atom.START_IRI_REF;
         gt = SPARQL_Atom.END_IRI_REF;
+        not = SPARQL_Atom.NOT;
+        exists = SPARQL_Atom.EXISTS;
     }
 
     /**
@@ -297,6 +301,29 @@ public class Q {
         return q(qs);
     }
 
+    public QuerySolutions equivalentConcepts(String concept, boolean UUIDs) {
+        QueryStr qs = qs();
+        // select ?eq where {
+        qs.add(select).add("?eq").add(where, lbrace);
+        // <concept> skos:exactMatch ?eq .
+        qs.addi(concept).add(Constants.SKOS_EXACT_MATCH).add("?eq").add(dot);
+        // ?eq a belv:NamespaceConcept .
+        qs.add("?eq").is_a().add(BELV_NAMESPACE_CONCEPT).add(dot);
+        if (!UUIDs) {
+            // FILTER NOT EXISTS {
+            qs.add(filter, not, exists, lbrace);
+            // <concept> a belv:UUIDConcept } .
+            qs.addi(concept).is_a().add(BELV_UUID_CONCEPT).add(rbrace, dot);
+        }
+        // }
+        qs.add(rbrace);
+        return q(qs);
+    }
+
+    public QuerySolutions equivalentConcepts(String concept) {
+        return equivalentConcepts(concept, false);
+    }
+
     /**
      * BEL annotations bound to {@code "subject"}.
      * <p>
@@ -392,7 +419,7 @@ public class Q {
      */
     public static QuerySolutions subjectsInScheme(Dataset ds, String concept) {
         StringBuilder bldr = new StringBuilder();
-        bldr.append(RDF_QUERY_PROLOGUE);
+        bldr.append(RDF_PROLOGUE);
         bldr.append("select ?subject where { ?subject skos:inScheme <");
         bldr.append(concept);
         bldr.append("> }");
@@ -421,7 +448,7 @@ public class Q {
      */
     public static QuerySolutions forSubject(Dataset ds, String subject) {
         StringBuilder bldr = new StringBuilder();
-        bldr.append(RDF_QUERY_PROLOGUE);
+        bldr.append(RDF_PROLOGUE);
         bldr.append("select ?predicate ?object where { <");
         bldr.append(subject);
         bldr.append("> ?predicate ?object }");
@@ -451,7 +478,7 @@ public class Q {
     public static QuerySolutions objects(Dataset ds, String subject,
                                          String predicate) {
         StringBuilder bldr = new StringBuilder();
-        bldr.append(RDF_QUERY_PROLOGUE);
+        bldr.append(RDF_PROLOGUE);
         bldr.append("select ?object where { <");
         bldr.append(subject);
         bldr.append("> <");
@@ -479,7 +506,7 @@ public class Q {
     }
 
     private QuerySolutions q(String query) {
-        query = Constants.RDF_QUERY_PROLOGUE + query;
+        query = Constants.RDF_PROLOGUE + query;
         return new QuerySolutions(this.dataset, query);
     }
 
@@ -738,6 +765,10 @@ public class Q {
                 return "true";
             case FALSE:
                 return "false";
+            case NOT:
+                return "NOT";
+            case EXISTS:
+                return "EXISTS";
 
             // common syntax
             case SUBJECT:

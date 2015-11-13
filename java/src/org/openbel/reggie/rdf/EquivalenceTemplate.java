@@ -28,9 +28,9 @@ import static java.lang.System.*;
 import static java.lang.String.format;
 
 /**
- * BEL annotation template.
+ * BEL equivalence template.
  */
-public class AnnotationTemplate implements AutoCloseable {
+public class EquivalenceTemplate implements AutoCloseable {
 
     private final String version;
     private final String createdDateTime;
@@ -42,11 +42,11 @@ public class AnnotationTemplate implements AutoCloseable {
     private FileWriter writer;
 
     /**
-     * Create a annotation template associated with the indicated {@link File template file}.
+     * Create an equivalence template associated with the indicated {@link File template file}.
      *
      * @param templateFile {@link File}
      */
-    public AnnotationTemplate(File templateFile) {
+    public EquivalenceTemplate(File templateFile) {
         log = Logger.getRootLogger();
         if (!templateFile.canRead()) {
             final String fmt = "%s: can't read template";
@@ -56,34 +56,34 @@ public class AnnotationTemplate implements AutoCloseable {
         this.templateFile = templateFile;
         version = getenv("RG_RESOURCE_VERSION");
         createdDateTime = getenv("RG_RESOURCE_DT");
-        File nsOutputDir = new File(getenv("RG_ANNO_OUTPUT"));
+        File eqOutputDir = new File(getenv("RG_EQ_OUTPUT"));
         String name = templateFile.getName();
         if (name.contains("-ids")) ids = true;
-        String outputFileName = name.replace("-belanno.st", ".belanno");
+        String outputFileName = name.replace("-beleq.st", ".beleq");
         templateName = name.replace(".st", "");
-        outputFile = new File(nsOutputDir, outputFileName);
+        outputFile = new File(eqOutputDir, outputFileName);
         String absPath = outputFile.getAbsolutePath();
 
         if (outputFile.exists()) {
-            log.info("Overwriting annotation: " + absPath);
+            log.info("Overwriting equivalence: " + absPath);
         } else {
-            log.info("Creating annotation: " + absPath);
+            log.info("Creating equivalence: " + absPath);
         }
 
-        if (ids) log.debug("Identifier-based annotation detected: " + absPath);
-        else log.debug("Name-based annotation detected: " + absPath);
+        if (ids) log.debug("Identifier-based namespace detected: " + absPath);
+        else log.debug("Name-based namespace detected: " + absPath);
 
         try {
             writer = new FileWriter(outputFile);
         } catch (IOException ioex) {
-            log.fatal("error writing annotation header", ioex);
+            log.fatal("error writing equivalence header", ioex);
             ioex.printStackTrace();
             exit(1);
         }
     }
 
     /**
-     * Write the annotation header to the template.
+     * Write the equivalence header to the template.
      */
     public void writeHeader() {
         STGroupDir group = new STGroupDir(templateFile.getParent());
@@ -94,33 +94,35 @@ public class AnnotationTemplate implements AutoCloseable {
         try {
             writer.write(hdr);
         } catch (IOException ioex) {
-            log.fatal("error writing annotation header", ioex);
+            log.fatal("error writing equivalence header", ioex);
             ioex.printStackTrace();
             exit(1);
         }
     }
 
-    private String renderConcept(AnnotationConcept concept) {
-        String label = concept.getPreferredLabel();
-        String id = concept.getIdentifier();
+    private String renderConcept(EquivalenceConcept concept) {
+        String uuid = concept.getUUID();
+        String discriminator;
+        if (ids) discriminator = concept.getIdentifier();
+        else discriminator = concept.getPreferredLabel();
 
         // return null if the concept is not complete
-        if (label == null || id == null) return null;
-        return label + "|" + id + "\n";
+        if (discriminator == null || uuid == null) return null;
+        return discriminator + "|" + uuid + "\n";
     }
 
     /**
-     * Write a {@link AnnotationConcept annotation concept} to the template.
+     * Write a {@link EquivalenceConcept namespace concept} to the template.
      *
-     * @param concept {@link AnnotationConcept}
+     * @param concept {@link EquivalenceConcept}
      */
-    public void writeValue(AnnotationConcept concept) {
+    public void writeValue(EquivalenceConcept concept) {
         String conceptstr = renderConcept(concept);
         if (conceptstr == null) return;
         try {
             writer.write(conceptstr);
         } catch (IOException ioex) {
-            log.fatal("error writing annotation value", ioex);
+            log.fatal("error writing equivalence value", ioex);
             ioex.printStackTrace();
             exit(1);
         }

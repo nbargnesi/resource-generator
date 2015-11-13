@@ -61,7 +61,7 @@ public class NamespaceTemplate implements AutoCloseable {
         if (name.contains("-ids")) ids = true;
         String outputFileName = name.replace("-belns.st", ".belns");
         templateName = name.replace(".st", "");
-        File outputFile = new File(nsOutputDir, outputFileName);
+        outputFile = new File(nsOutputDir, outputFileName);
         String absPath = outputFile.getAbsolutePath();
 
         if (outputFile.exists()) {

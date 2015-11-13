@@ -126,6 +126,24 @@ public class Functions {
     }
 
     /**
+     * Get the equivalence file template for a preferred label.
+     *
+     * @param preferredLabel {@link String}
+     * @return File
+     */
+    public static File equivalenceTemplate(String preferredLabel) {
+        final String templateDir = getenv("RG_JAVA_TEMPLATES");
+        preferredLabel = preferredLabel.replace(' ', '-');
+        preferredLabel = preferredLabel.toLowerCase();
+        String belanno = preferredLabel + "-beleq.st";
+
+        File template;
+        template = new File(templateDir, belanno);
+        if (template.canRead()) return template;
+        return null;
+    }
+
+    /**
      * Consume all {@link QuerySolution query solutions} from the solutions and
      * return it in its entirety.
      * <p>
@@ -214,4 +232,5 @@ public class Functions {
     public static <T> T first(List<T> list) {
         return list.get(0);
     }
+
 }

@@ -6,7 +6,7 @@ package org.openbel.reggie.rdf;
 public class Constants {
 
     static {
-        RDF_QUERY_PROLOGUE =
+        RDF_PROLOGUE =
             "PREFIX belv: <http://www.openbel.org/vocabulary/>\n" +
             "PREFIX dcterms: <http://purl.org/dc/terms/>\n" +
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
@@ -37,6 +37,8 @@ public class Constants {
         BELV_RNA_CONCEPT = "belv:RNAConcept";
         BELV_SPECIES_ANNOTATION_CONCEPT = "belv:SpeciesAnnotationConcept";
         BELV_STATUS = "belv:status";
+        BELV_UUID_CONCEPT = "belv:UUIDConcept";
+        BELV_UUID_CONCEPT_SCHEME = "belv:UUIDConceptScheme";
 
         SKOS_IN_SCHEME = "skos:inScheme";
         SKOS_EXACT_MATCH = "skos:exactMatch";
@@ -44,11 +46,11 @@ public class Constants {
     }
 
     /**
-     * RDF query prologue. Contains prefixes for the BEL vocabulary (belv),
+     * RDF prologue. Contains prefixes for the BEL vocabulary (belv),
      * Dublin Core (dcterms), RDF (rdf), RDF schema (rdfs), Simple Knowledge
      * Organization System (skos), and XML schema definition (xsd).
      */
-    public static final String RDF_QUERY_PROLOGUE;
+    public static final String RDF_PROLOGUE;
 
     /**
      * The concept of an abundance in the BEL vocabulary.
@@ -165,6 +167,16 @@ public class Constants {
      * The concept of status in the BEL vocabulary.
      */
     public static final String BELV_STATUS;
+
+    /**
+     * The concept of UUID in the BEL vocabulary.
+     */
+    public static final String BELV_UUID_CONCEPT;
+
+    /**
+     * The scheme encompassing all UUID concepts in the BEL vocabulary.
+     */
+    public static final String BELV_UUID_CONCEPT_SCHEME;
 
     /**
      * Transitive property indicating two concepts are linked interchangeably.

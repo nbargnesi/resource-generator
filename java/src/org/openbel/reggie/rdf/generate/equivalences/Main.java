@@ -53,7 +53,6 @@ public class Main {
         QuerySolutions nsSchemeIter = q.namespaces();
         generate(nsSchemeIter);
         log.info("Completed Generating Equivalences");
-        exit(0);
     }
 
     void generate(QuerySolutions nsSchemeIter) {
@@ -148,6 +147,7 @@ public class Main {
         Dataset dataset = TDBFactory.createDataset(tdbdata);
         Main m = new Main(dataset);
         m.generate();
+        exit(0);
     }
 
     static void initLogging() {

@@ -52,7 +52,6 @@ public class Main {
         QuerySolutions anSchemeIter = q.annotations();
         generate(anSchemeIter);
         log.info("Completed Generating Annotations");
-        exit(0);
     }
 
     void generate(QuerySolutions anSchemeIter) {
@@ -145,6 +144,7 @@ public class Main {
         Dataset dataset = TDBFactory.createDataset(tdbdata);
         Main m = new Main(dataset);
         m.generate();
+        exit(0);
     }
 
     static void initLogging() {

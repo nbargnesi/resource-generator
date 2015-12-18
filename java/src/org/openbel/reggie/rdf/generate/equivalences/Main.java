@@ -79,7 +79,10 @@ public class Main {
     }
 
     void generate(QuerySolutions nsConceptIter, EquivalenceTemplate template) {
+        if (!nsConceptIter.more()) return;
+        template.open();
         template.writeHeader();
+
         for (QuerySolution nsConcept : nsConceptIter) {
             RDFNode node = nsConcept.get("value");
             String valueConcept = node.asResource().getURI();

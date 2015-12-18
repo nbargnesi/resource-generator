@@ -40,6 +40,7 @@ public class AnnotationTemplate implements AutoCloseable {
     private boolean ids = false;
     private File outputFile;
     private FileWriter writer;
+    private boolean opened = false;
 
     /**
      * Create a annotation template associated with the indicated {@link File template file}.
@@ -72,14 +73,20 @@ public class AnnotationTemplate implements AutoCloseable {
 
         if (ids) log.debug("Identifier-based annotation detected: " + absPath);
         else log.debug("Name-based annotation detected: " + absPath);
+    }
 
+    /**
+     * Open the template in preparation of writing.
+     */
+    public void open() {
         try {
             writer = new FileWriter(outputFile);
         } catch (IOException ioex) {
-            log.fatal("error writing annotation header", ioex);
+            log.fatal("error opening annotation template output file", ioex);
             ioex.printStackTrace();
             exit(1);
         }
+        opened = true;
     }
 
     /**
@@ -131,6 +138,7 @@ public class AnnotationTemplate implements AutoCloseable {
      */
     @Override
     public void close() {
+        if (!opened) return;
         try {
             writer.close();
         } catch (IOException ioex) {

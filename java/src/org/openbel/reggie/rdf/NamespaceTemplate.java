@@ -40,6 +40,7 @@ public class NamespaceTemplate implements AutoCloseable {
     private boolean ids = false;
     private File outputFile;
     private FileWriter writer;
+    private boolean opened = false;
 
     /**
      * Create a namespace template associated with the indicated {@link File template file}.
@@ -72,14 +73,20 @@ public class NamespaceTemplate implements AutoCloseable {
 
         if (ids) log.debug("Identifier-based namespace detected: " + absPath);
         else log.debug("Name-based namespace detected: " + absPath);
+    }
 
+    /**
+     * Open the template in preparation of writing.
+     */
+    public void open() {
         try {
             writer = new FileWriter(outputFile);
         } catch (IOException ioex) {
-            log.fatal("error writing namespace header", ioex);
+            log.fatal("error opening namespace template output file", ioex);
             ioex.printStackTrace();
             exit(1);
         }
+        opened = true;
     }
 
     /**
@@ -133,6 +140,7 @@ public class NamespaceTemplate implements AutoCloseable {
      */
     @Override
     public void close() {
+        if (!opened) return;
         try {
             writer.close();
         } catch (IOException ioex) {

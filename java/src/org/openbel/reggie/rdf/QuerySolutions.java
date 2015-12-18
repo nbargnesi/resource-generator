@@ -38,6 +38,14 @@ public class QuerySolutions implements Iterable<QuerySolution>, AutoCloseable {
     }
 
     /**
+     * True if more solutions exist, false otherwise.
+     * @return boolean
+     */
+    public boolean more() {
+        return iterator.hasNext();
+    }
+
+    /**
      *
      * @return
      */

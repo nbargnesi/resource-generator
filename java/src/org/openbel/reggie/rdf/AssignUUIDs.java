@@ -109,6 +109,10 @@ public class AssignUUIDs {
             bldr.append(" <" + RDF.type.getURI() + "> " + BEL_UUID_CONCEPT_SCHEME + " .\n");
             bldr.append(uuidIRI);
             bldr.append(" <" + RDF.type.getURI() + "> <" + SKOS.ConceptScheme.getURI() + "> .\n");
+            bldr.append("<".concat(conceptIRI).concat("> "));
+            bldr.append(" <" + SKOS.inScheme.getURI() + "> " + uuidIRI + " .\n");
+            bldr.append("<".concat(conceptIRI).concat("> "));
+            bldr.append(" <" + RDF.type.getURI() + "> " + BEL_UUID_CONCEPT + " .\n");
             writer.write(bldr.toString());
 
             for (QuerySolution eqConcept : eqConceptIter) {

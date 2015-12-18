@@ -76,7 +76,10 @@ public class Main {
     }
 
     void generate(QuerySolutions anConceptIter, AnnotationTemplate template) {
+        if (!anConceptIter.more()) return;
+        template.open();
         template.writeHeader();
+
         for (QuerySolution anConcept : anConceptIter) {
             RDFNode node = anConcept.get("value");
             String valueConcept = node.asResource().getURI();

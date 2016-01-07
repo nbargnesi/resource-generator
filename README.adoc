@@ -1,8 +1,56 @@
-# Overview
+= Resource Generator - Guide
+:toc:
 
-Generates BEL resources using RDF data and Apache Jena.
+== What is it?
 
-# Quick Start Instructions
+This project generates listings for biological identifiers that can be used in http://wiki.openbel.org/display/BLVD[OpenBEL] scripts. Biological identifiers may be from online databases (e.g. Entrez Gene, Uniprot) or custom databases read from CSV files.
+
+It generates four types of files:
+
+* BEL Namespace
+** A listing of biological identifiers from the same database (e.g. GO, Entrez Gene). Identifiers code for specific types of biological concepts http://wiki.openbel.org/display/BELNA/Assignment+of+Encoding+%28Allowed+Functions%29+for+BEL+Namespaces[with OpenBEL].
+** Files end with a .belns extension.
+* BEL Equivalence
+** A listing of equivalent namespace identfiers spanned across multiple sources. These files reference UUID values that join equivalent namespace identifiers across multiple sources. For example equivalence relationships can be made across Uniprot, Entrez Gene, and HGNC for the AKT1 human protein.
+* BEL Annotation
+** A listing of biological annotations used in describe biological interactions. For example NCBI Taxonomy can be used to annotate species or Disease Ontology can be used to annotate a diseased state.
+* RDF format (unified)
+** An https://en.wikipedia.org/wiki/Resource_Description_Framework[RDF] file that unifies namespaces, annotations, and equivalence. This output represents the complete set of identifiers and equivalence relationships.
+
+== When is this useful?
+
+The goal of the resource generator is to aggregate many sources of biological identifiers to provide:
+
+* Identifiers, Names, and Synonyms for biological entities or annotations.
+* Exact biological identifiers matches (e.g. EntrezGene:207 is the same as HGNC:AKT1).
+* Close biological identifiers (e.g. DiseaseOntology:"hemophagocytic lymphohistiocytosis" is a close match to Mesh:"Hemophagocytic lymphohistiocytosis, familial, 2").
+* Orthologous biological identifier matches (e.g. HGNC:AKT1 is orthologous to RGD:Akt1).
+
+The BEL Namespace, BEL Equivalence, and BEL Annotation files are then used by the legacy https://github.com/OpenBEL/openbel-framework[OpenBEL Framework].
+
+The RDF format includes all of the above data elements in a single file. This RDF data can be used with the next generation suite named *OpenBEL Platform*. Currently the *OpenBEL Platform* provides https://github.com/OpenBEL/bel.rb[bel.rb] and https://github.com/OpenBEL/openbel-api[OpenBEL API] tools which can use the RDF data directly.
+
+== How often should the resource-generator be run?
+
+The resource generator should be run frequently to:
+
+* Keep up with upstream changes from online databases
+* Correctly map biological identifiers from new research
+* Reflect changes in your custom databases
+
+You may decide that *weekly*, *montly*, or *as needed* is appropriate for you.
+
+== Installation
+
+=== System Requirements
+
+* Linux
+* Java 8
+* Python 3
+
+=== Instructions
+
+*Quick Start*
 
 1. Load RDF 
    footnote:[BEL biological concepts RDF data: http://build.openbel.org/browse/OR-REAS/latestSuccessful/artifact]
@@ -11,4 +59,91 @@ Generates BEL resources using RDF data and Apache Jena.
 1. Optionally run the integrity checker.
 1. Generate UUID assignments and load the RDF output into Apache Jena.
 1. Run the resource generator.
+
+==== Setup Resource Generator
+
+1. Download the https://github.com/OpenBEL/resource-generator/releases[BEL Resource Generator].
+2. Extract download with `tar xzf Java-BEL-Resource-Generator-v0.1.2.tar.gz`.
+
+==== Setup Apache Jena
+
+1. Download Apache Jena.
+** http://www.us.apache.org/dist/jena/binaries/apache-jena-3.0.1.tar.gz[Direct link (US)]
+** http://www.eu.apache.org/dist/jena/binaries/apache-jena-3.0.1.tar.gz[Direct link (EU)]
+** http://jena.apache.org/download/index.cgi[Mirror download]
+
+2. Extract Apache Jena with `tar xzf apache-jena-MAJOR.MINOR.PATCH.tar.gz`.
+
+==== Setup BEL RDF Artifacts
+
+1. Download BEL RDF Artifacts
+* http://build.openbel.org/browse/OR-CBRN/latestSuccessful/artifact[ChEMBL BEL RDF]
+* http://build.openbel.org/browse/OR-REAS/latestSuccessful/artifact[Resource RDF with Inferences]
+
+2. Extract BEL RDF Artifacts	
+* `bunzip2 biological-concepts-rdf.ttl.bz2`
+* `bunzip2 bel_chembl.ttl.bz2`
+
+==== Set Environment Variables
+
+....
+mkdir tdb-data output
+export RG_TDB_DATA=$(pwd)/tdb-data
+export RG_JAVA_OUTPUT=$(pwd)/output
+export RG_JAVA_TEMPLATES=$(pwd)/templates
+....
+
+==== Load BEL RDF artifacts into Apache Jena
+
+Note the first command uses Apache Jena's `tdbloader2`:
+
+`./apache-jena-3.0.0/bin/tdbloader2 --loc $RG_TDB_DATA biological-concepts-rdf.ttl`
+
+The second command uses Apache Jena's `tdbloader`:
+
+`./apache-jena-3.0.0/bin/tdbloader --loc $RG_TDB_DATA bel_chembl.ttl`
+
+Load custom RDF artifacts into Apache Jena:
+
+....
+for x in custom/results/*.ttl; do
+    ./apache-jena-3.0.0/bin/tdbloader --loc $RG_TDB_DATA "$x"
+done
+....
+
+At this point, the size of the Apache Jena TDB data should be approximately 3.1 GB.
+
+`du -sh $RG_TDB_DATA`
+
+==== Copy BEL Resource Templates
+
+`cp Java-BEL-Resource-Generator-v0.1.2/java/templates/* $RG_JAVA_TEMPLATES`
+
+==== Check the integrity of the RDF Resources
+
+This process takes several seconds. It can be run at anytime without impacting the generated data.
+
+`./Java-BEL-Resource-Generator-v0.1.2/java/scripts/integrity-check.sh`
+
+==== Assign UUIDs to BEL Terms
+
+This process takes approximately 10 minutes on modern hardware.
+
+`./Java-BEL-Resource-Generator-v0.1.2/java/scripts/assign-uuids.sh`
+
+==== Load the UUID into Apache Jena
+
+This process takes approximately 2 minutes on modern hardware.
+
+`./apache-jena-3.0.1/bin/tdbloader --loc $RG_TDB_DATA $RG_JAVA_OUTPUT/uuids.nt`
+
+At this point, the size of the Apache Jena TDB data should be approximately 4.4 GB.
+
+==== Run the Resource Generator
+
+This process takes approximately an hour on modern hardware.
+
+`./Java-BEL-Resource-Generator-v0.1.2/java/scripts/generate.sh`
+
+All BEL namespaces, equivalences, and annotations will be ready for use at the end of the generation.
 

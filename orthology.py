@@ -147,7 +147,7 @@ if __name__ == '__main__':
             ortho.write(s + '\n')
         ortho.write('\n')
         ortho.write(
-            'SET Citation = {"Online Resource","RGD Orthology FTP file", "ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt"}\n')
+            'SET Citation = {"Online Resource","RGD Orthology FTP file", "ftp://ftp.rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt"}\n')
         for s in sorted(rgd_ortho_statements):
             ortho.write(s + '\n')
         ortho.write('\n')

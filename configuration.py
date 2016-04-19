@@ -71,19 +71,19 @@ baseline_data['mgi.rpt'] = (
 
 rgd_data = RGDData()
 baseline_data['rgd.txt'] = (
-    'ftp://rgd.mcw.edu/pub/data_release/GENES_RAT.txt',
+    'ftp://ftp.rgd.mcw.edu/pub/data_release/GENES_RAT.txt',
     parsers.RGDParser, rgd_data
 )
 
 rgd_history_data = RGDObsoleteData()
 baseline_data['rgd_obsolete.txt'] = (
-    'ftp://rgd.mcw.edu/pub/data_release/GENES_OBSOLETE_IDS.txt',
+    'ftp://ftp.rgd.mcw.edu/pub/data_release/GENES_OBSOLETE_IDS.txt',
     parsers.RGDObsoleteParser,
     rgd_history_data)
 
 rgd_ortho_data = OrthologyData(prefix='rgd')
 baseline_data['RGD_ORTHOLOGS.txt'] = (
-    'ftp://rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt',
+    'ftp://ftp.rgd.mcw.edu/pub/data_release/RGD_ORTHOLOGS.txt',
     parsers.RGDOrthologParser,
     rgd_ortho_data)
 

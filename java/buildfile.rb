@@ -24,12 +24,12 @@ repositories.remote << 'http://repo1.maven.org/maven2'
 repositories.remote << 'http://www.ibiblio.org/maven2'
 
 # Dependencies
-JENA_BASE = 'org.apache.jena:jena-base:jar:3.0.0'
-JENA_CORE = 'org.apache.jena:jena-core:jar:3.0.0'
-JENA_ARQ = 'org.apache.jena:jena-arq:jar:3.0.0'
-JENA_TDB = 'org.apache.jena:jena-tdb:jar:3.0.0'
-JENA_IRI = 'org.apache.jena:jena-iri:jar:3.0.0'
-JENA_GUAVA = 'org.apache.jena:jena-shaded-guava:jar:3.0.0'
+JENA_BASE = 'org.apache.jena:jena-base:jar:3.1.0'
+JENA_CORE = 'org.apache.jena:jena-core:jar:3.1.0'
+JENA_ARQ = 'org.apache.jena:jena-arq:jar:3.1.0'
+JENA_TDB = 'org.apache.jena:jena-tdb:jar:3.1.0'
+JENA_IRI = 'org.apache.jena:jena-iri:jar:3.1.0'
+JENA_GUAVA = 'org.apache.jena:jena-shaded-guava:jar:3.1.0'
 XERCES = 'xerces:xercesImpl:jar:2.11.0'
 XML = 'xml-apis:xml-apis:jar:1.4.01'
 JENA_DEPS = [XERCES, XML, JENA_GUAVA]
@@ -45,8 +45,8 @@ LOGGING = [LOG4J, LOG4J_12_API, LOG4J_API, LOG4J_CORE, SLF4J_API, SLF4J_NOP]
 
 ST4 = 'org.antlr:ST4:jar:4.0.8'
 TROVE = 'net.sf.trove4j:trove4j:jar:3.0.3'
-COMMONS_LANG = 'org.apache.commons:commons-lang3:jar:3.3.2'
-ANTLR = 'org.antlr:antlr-runtime:jar:3.5.1'
+COMMONS_LANG = 'org.apache.commons:commons-lang3:jar:3.4'
+ANTLR = 'org.antlr:antlr4-runtime:jar:4.5.3'
 REGGIE_DEPS = [ST4, TROVE, COMMONS_LANG, ANTLR]
 
 DEPS = [JENA, LOGGING, REGGIE_DEPS]

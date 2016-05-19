@@ -26,6 +26,7 @@ default RG_NS_OUTPUT        "$RG_JAVA_OUTPUT"/namespace
 default RG_EQ_OUTPUT        "$RG_JAVA_OUTPUT"/equivalence
 default RG_ANNO_OUTPUT      "$RG_JAVA_OUTPUT"/annotation
 default RG_JAVA_BUILD       "$RG_JAVA"/build/lib
+default RG_TDB_DATA         "$RG_JAVA_OUTPUT"/tdb-data
 
 ### SETTINGS ###
 # Set the default log level.

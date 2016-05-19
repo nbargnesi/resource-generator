@@ -2,7 +2,7 @@
 
 # The next three lines are for the go shell.
 export SCRIPT_NAME="test"
-export SCRIPT_HELP="Runs buildr test."
+export SCRIPT_HELP="Runs gradle test."
 [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
 # Normal script execution starts here.

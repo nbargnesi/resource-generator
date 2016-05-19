@@ -2,7 +2,7 @@
 
 # The next three lines are for the go shell.
 export SCRIPT_NAME="run"
-export SCRIPT_HELP="Invokes buildr run."
+export SCRIPT_HELP="Invokes run.sh."
 [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
 # Normal script execution starts here.

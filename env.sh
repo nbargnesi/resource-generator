@@ -13,7 +13,7 @@ default RG_SCRIPTS          "$RG_DIR"/scripts
 default RG_PYTHON           "$RG_DIR"/python
 default RG_JAVA             "$RG_DIR"/java
 default RG_ARTIFACTS        "$RG_DIR"/artifacts
-default RG_RDF_ARTIFACTS	"$RG_ARTIFACTS"/rdf
+default RG_RDF_ARTIFACTS    "$RG_ARTIFACTS"/rdf
 default RG_JAVA_OUTPUT      "$RG_JAVA"/output
 default RG_PYTHON_SCRIPTS   "$RG_PYTHON"/scripts
 default RG_JAVA_SCRIPTS     "$RG_JAVA"/scripts
@@ -25,6 +25,7 @@ default RG_JAVA_TEMPLATES   "$RG_JAVA"/templates
 default RG_NS_OUTPUT        "$RG_JAVA_OUTPUT"/namespace
 default RG_EQ_OUTPUT        "$RG_JAVA_OUTPUT"/equivalence
 default RG_ANNO_OUTPUT      "$RG_JAVA_OUTPUT"/annotation
+default RG_JAVA_BUILD       "$RG_JAVA"/build/lib
 
 ### SETTINGS ###
 # Set the default log level.

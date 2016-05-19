@@ -22,3 +22,6 @@ env.sh.custom
 
 # top-level artifacts directory
 /artifacts
+
+# OS junk
+.DS_Store

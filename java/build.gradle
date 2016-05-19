@@ -13,6 +13,13 @@ task integrityCheckScripts(type: CreateStartScripts) {
   classpath = files('build/libs/java-all.jar')
 }
 
+task assignUUIDsScripts(type: CreateStartScripts) {
+  outputDir = file('build/lib')
+  mainClassName = 'org.openbel.reggie.rdf.AssignUUIDs'
+  applicationName = 'assign-uuids'
+  classpath = files('build/libs/java-all.jar')
+}
+
 task runScripts(type: CreateStartScripts) {
   outputDir = file('build/lib')
   mainClassName = 'org.openbel.reggie.rdf.generate.All'

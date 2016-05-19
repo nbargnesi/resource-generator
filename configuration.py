@@ -113,9 +113,9 @@ baseline_data['affy.xml'] = (
     affx_data)
 chebi_data = CHEBIData()
 baseline_data['chebi.owl'] = (
-    'ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.owl',
-    parsers.CHEBIParser, chebi_data
-)
+    file_url + 'chebi.owl',
+    parsers.CHEBIParser,
+    chebi_data)
 
 schem_data = StandardCustomData(
     name='selventa-legacy-chemicals',

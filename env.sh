@@ -17,6 +17,7 @@ default RG_RDF_ARTIFACTS    "$RG_ARTIFACTS"/rdf
 default RG_JAVA_OUTPUT      "$RG_JAVA"/output
 default RG_PYTHON_SCRIPTS   "$RG_PYTHON"/scripts
 default RG_JAVA_SCRIPTS     "$RG_JAVA"/scripts
+default RG_JAVA_DIST        "$RG_JAVA"/dist
 default RG_PYTHON_TOOLS     "$RG_PYTHON"/tools
 default RG_PYTHON_ENVS      "$RG_PYTHON"/.envs
 default RG_QUERY_LOOP       "$RG_PYTHON_TOOLS"/query-loop

@@ -161,6 +161,8 @@ public class IntegrityCheck {
             err.println("RG_JAVA_TEMPLATES is not set");
             exit(1);
         }
+        // Apache Jena 3.1 generates a NPE w/out this (2016-05-21)
+        ARQ.init();
         IntegrityCheck check = new IntegrityCheck(tdbdata, templateDir);
         check.run();
     }

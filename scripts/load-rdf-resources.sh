@@ -17,12 +17,12 @@ echo -e "Starting $0"
 shopt -s nullglob
 
 for x in *.bz2; do
-    echo -e "Uncompressing $x... "
+    echo -n "Uncompressing $x... "
     bunzip2 "$x"
     echo "done."
 done
 for x in *.gz; do
-    echo -e "Uncompressing $x... "
+    echo -n "Uncompressing $x... "
     gunzip "$x"
     echo "done."
 done

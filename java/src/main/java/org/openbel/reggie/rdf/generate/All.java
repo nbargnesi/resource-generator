@@ -19,6 +19,7 @@ package org.openbel.reggie.rdf.generate;
 import static java.lang.System.*;
 
 import org.apache.jena.ext.com.google.common.collect.LinkedListMultimap;
+import org.apache.jena.query.ARQ;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.tdb.TDBFactory;
 import org.apache.log4j.ConsoleAppender;
@@ -106,6 +107,8 @@ public class All {
         paths.add(assertOrExit("RG_EQ_OUTPUT"));
         paths.forEach(All::assertDir);
 
+        // Apache Jena 3.1 generates a NPE w/out this (2016-05-21)
+        ARQ.init();
         Dataset dataset = TDBFactory.createDataset(tdbdata);
         All all = new All(dataset);
         all.generate();

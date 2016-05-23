@@ -147,6 +147,8 @@ public class Main {
             exit(1);
         }
 
+        // Apache Jena 3.1 generates a NPE w/out this (2016-05-21)
+        ARQ.init();
         Dataset dataset = TDBFactory.createDataset(tdbdata);
         Main m = new Main(dataset);
         m.generate();

@@ -49,6 +49,13 @@ task namespacesScripts(type: CreateStartScripts) {
   classpath = files('build/libs/java-all.jar')
 }
 
+task showNamespacesScripts(type: CreateStartScripts) {
+  outputDir = file('build/lib')
+  mainClassName = 'org.openbel.reggie.rdf.generate.ShowNamespaces'
+  applicationName = 'show-namespaces'
+  classpath = files('build/libs/java-all.jar')
+}
+
 dependencies {
     compile 'org.apache.jena:jena-base:3.1.0'
     compile 'org.apache.jena:jena-core:3.1.0'

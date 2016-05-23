@@ -12,7 +12,8 @@ gradle clean \
         runScripts \
         annotationsScripts \
         equivalencesScripts \
-        namespacesScripts
+        namespacesScripts \
+        showNamespacesScripts
 
 rm -fr "$RG_JAVA_DIST" && mkdir "$RG_JAVA_DIST"
 cp -a "$RG_JAVA_BUILD" "$RG_JAVA_DIST"

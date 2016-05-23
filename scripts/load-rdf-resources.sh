@@ -35,18 +35,8 @@ fi
 # ls all files in RG_RDF_ARTIFACTS, largest first
 rdf_artifacts=($(ls -S "$RG_RDF_ARTIFACTS"))
 
-# Use tdbloader2 for largest artifact
-artifact="${rdf_artifacts[0]}"
-echo "Loading $artifact."
-tdbloader2 --loc "$RG_TDB_DATA" $artifact
-echo "Done loading $artifact."
-
-# Use tdbloader to load the remaining artifacts
-rdf_artifacts=("${rdf_artifacts[@]:1}")
-for artifact in "${rdf_artifacts[@]}"; do
-    echo "Loading $artifact."
-    tdbloader --loc "$RG_TDB_DATA" $artifact
-    echo "Done loading $artifact."
-done
+echo "Loading ${#rdf_artifacts[@]} artifacts."
+tdbloader2 --loc "$RG_TDB_DATA" ${rdf_artifacts[@]}
+echo "Done loading artifacts."
 
 echo -e "Finished $0"

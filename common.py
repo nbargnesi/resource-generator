@@ -124,8 +124,9 @@ p2 = re.compile('Downloaded at: ?(.*?)[\n|$]', re.M | re.S)
 p3 = re.compile('Filename: ?(.*?)[\n|$]', re.M | re.S)
 p4 = re.compile('URL: ?(.*?)[\n|$]', re.M | re.S)
 
-p_chebi_1 = re.compile('\<owl:versionIRI .*?\>(\d+)\<\/owl:versionIRI\>')
-p_chebi_2 = re.compile('\<dc:date .*?>(\d\d\d\d-\d\d-\d\d).*?\<\/dc:date\>')
+p_chebi_1 = re.compile('ChEBI Release version \d+')
+# XX:XX:XXXX XX:XX
+p_chebi_2 = re.compile('\d{2}:\d{2}:\d{4} \d{2}:\d{2}')
 
 p_go_1 = re.compile(
     '\<data-version\>.*?(\d\d\d\d-\d\d-\d\d)\<\/data-version\>')
@@ -213,15 +214,21 @@ def get_citation_info(name, header, data_file):
     # parse version and date from dataset file
     if data_file.find('chebi') >= 0:
         f = open('./datasets/' + data_file, 'r')
+        # break loop on 0 value
+        sentinel = 2
         while True:
             line = f.readline().strip()
             if not line:
                 break
-            if line.find('owl:versionIRI') > 0:
-                pubver = p_chebi_1.search(line).group(1)
-            elif line.find('dc:date') > 0:
-                pubdate = p_chebi_2.search(line).group(1)
+            if line.find('ChEBI Release version') > 0:
+                pubver = p_chebi_1.search(line).group(0)
+                sentinel -= 1
+            elif line.find('oboInOwl:date') > 0:
+                pubdate = p_chebi_2.search(line).group(0)
+                sentinel -= 1
+            if sentinel == 0:
                 break
+
         f.close()
 
     elif data_file.find('doid') >= 0:

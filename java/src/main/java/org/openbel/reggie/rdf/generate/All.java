@@ -18,7 +18,6 @@ package org.openbel.reggie.rdf.generate;
 
 import static java.lang.System.*;
 
-import org.apache.jena.ext.com.google.common.collect.LinkedListMultimap;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.tdb.TDBFactory;

@@ -114,6 +114,12 @@ public class BEL {
     /** BEL RNA concepts. */
     public static final Property RNA_CONCEPT;
     public static final String RNA_CONCEPT_URI;
+    /** BEL activity concepts. */
+    public static final Property MOLECULAR_ACTIVITY_CONCEPT;
+    public static final String MOLECULAR_ACTIVITY_CONCEPT_URI;
+    /** BEL protein modification concepts. */
+    public static final Property PROTEIN_MODIFICATION_CONCEPT;
+    public static final String PROTEIN_MODIFICATION_CONCEPT_URI;
     /** BEL species annotation concepts. */
     public static final Property SPECIES_ANNOTATION_CONCEPT;
     public static final String SPECIES_ANNOTATION_CONCEPT_URI;
@@ -123,6 +129,7 @@ public class BEL {
 
     static {
         ABUNDANCE_CONCEPT = createProperty("AbundanceConcept");
+        MOLECULAR_ACTIVITY_CONCEPT = createProperty("MolecularActivityConcept");
         ANATOMY_ANNOTATION_CONCEPT = createProperty("AnatomyAnnotationConcept");
         ANNOTATION_CONCEPT = createProperty("AnnotationConcept");
         ANNOTATION_CONCEPT_SCHEME = createProperty("AnnotationConceptScheme");
@@ -140,6 +147,7 @@ public class BEL {
         NAMESPACE_CONCEPT_SCHEME = createProperty("NamespaceConceptScheme");
         ORTHOLOGOUS_MATCH = createProperty("orthologousMatch");
         PATHOLOGY_CONCEPT = createProperty("PathologyConcept");
+        PROTEIN_MODIFICATION_CONCEPT = createProperty("ProteinModificationConcept");
         PREFIX = createProperty("prefix");
         PROTEIN_CONCEPT = createProperty("ProteinConcept");
         RNA_CONCEPT = createProperty("RNAConcept");
@@ -147,6 +155,7 @@ public class BEL {
         STATUS = createProperty("status");
 
         ABUNDANCE_CONCEPT_URI = ABUNDANCE_CONCEPT.getURI();
+        MOLECULAR_ACTIVITY_CONCEPT_URI = MOLECULAR_ACTIVITY_CONCEPT.getURI();
         ANATOMY_ANNOTATION_CONCEPT_URI = ANATOMY_ANNOTATION_CONCEPT.getURI();
         ANNOTATION_CONCEPT_URI = ANNOTATION_CONCEPT.getURI();
         ANNOTATION_CONCEPT_SCHEME_URI = ANNOTATION_CONCEPT_SCHEME.getURI();
@@ -164,6 +173,7 @@ public class BEL {
         NAMESPACE_CONCEPT_SCHEME_URI = NAMESPACE_CONCEPT_SCHEME.getURI();
         ORTHOLOGOUS_MATCH_URI = ORTHOLOGOUS_MATCH.getURI();
         PATHOLOGY_CONCEPT_URI = PATHOLOGY_CONCEPT.getURI();
+        PROTEIN_MODIFICATION_CONCEPT_URI = PROTEIN_MODIFICATION_CONCEPT.getURI();
         PREFIX_URI = PREFIX.getURI();
         PROTEIN_CONCEPT_URI = PROTEIN_CONCEPT.getURI();
         RNA_CONCEPT_URI = RNA_CONCEPT.getURI();

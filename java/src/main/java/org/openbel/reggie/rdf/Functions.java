@@ -58,6 +58,10 @@ public class Functions {
             return 'P';
         } else if (BEL.RNA_CONCEPT_URI.equals(conceptURI)) {
             return 'R';
+        } else if (BEL.MOLECULAR_ACTIVITY_CONCEPT_URI.equals(conceptURI)) {
+            return 'T';
+        } else if (BEL.PROTEIN_MODIFICATION_CONCEPT_URI.equals(conceptURI)) {
+            return 'E';
         }
         return DOES_NOT_CODE;
     }

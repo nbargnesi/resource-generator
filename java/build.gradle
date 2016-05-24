@@ -56,6 +56,13 @@ task showNamespacesScripts(type: CreateStartScripts) {
   classpath = files('build/libs/java-all.jar')
 }
 
+task exportTurtleScripts(type: CreateStartScripts) {
+  outputDir = file('build/lib')
+  mainClassName = 'org.openbel.reggie.rdf.generate.ExportTurtle'
+  applicationName = 'export-turtle'
+  classpath = files('build/libs/java-all.jar')
+}
+
 dependencies {
     compile 'org.apache.jena:jena-base:3.1.0'
     compile 'org.apache.jena:jena-core:3.1.0'

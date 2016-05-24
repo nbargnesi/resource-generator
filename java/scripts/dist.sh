@@ -13,7 +13,8 @@ gradle clean \
         annotationsScripts \
         equivalencesScripts \
         namespacesScripts \
-        showNamespacesScripts
+        showNamespacesScripts \
+        exportTurtleScripts
 
 rm -fr "$RG_JAVA_DIST" && mkdir "$RG_JAVA_DIST"
 cp -a "$RG_JAVA_BUILD" "$RG_JAVA_DIST"

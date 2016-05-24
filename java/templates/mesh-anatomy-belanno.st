@@ -1,4 +1,4 @@
-mesh-anatomy-belanno(version, createdDateTime) ::= <<
+mesh-anatomy-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=MeSHAnatomy
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Anatomy terms from Medical Subject Headings (MeSH), limited to
 UsageString=Use to annotate a statement demonstrated in a specific anatomical entity.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

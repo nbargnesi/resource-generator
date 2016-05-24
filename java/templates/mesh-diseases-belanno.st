@@ -1,4 +1,4 @@
-mesh-diseases-belanno(version, createdDateTime) ::= <<
+mesh-diseases-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=MeSHDisease
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Disease terms from the [C] branch of Medical Subject Headings 
 UsageString=Use to annotate a statement demonstrated in the context of a specific disease.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

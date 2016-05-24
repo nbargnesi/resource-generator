@@ -32,6 +32,7 @@ import static java.lang.String.format;
  */
 public class AnnotationTemplate implements AutoCloseable {
 
+    private final String uri;
     private final String version;
     private final String createdDateTime;
     private final File templateFile;
@@ -45,9 +46,11 @@ public class AnnotationTemplate implements AutoCloseable {
     /**
      * Create a annotation template associated with the indicated {@link File template file}.
      *
+     * @param uri {@link String}
      * @param templateFile {@link File}
      */
-    public AnnotationTemplate(File templateFile) {
+    public AnnotationTemplate(String uri, File templateFile) {
+        this.uri = uri;
         log = Logger.getRootLogger();
         if (!templateFile.canRead()) {
             final String fmt = "%s: can't read template";
@@ -97,6 +100,7 @@ public class AnnotationTemplate implements AutoCloseable {
         ST st = group.getInstanceOf(templateName);
         st.add("version", version);
         st.add("createdDateTime", createdDateTime);
+        st.add("uri", uri);
         String hdr = st.render();
         try {
             writer.write(hdr);

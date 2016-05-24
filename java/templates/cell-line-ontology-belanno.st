@@ -1,4 +1,4 @@
-cell-line-ontology-belanno(version, createdDateTime) ::= <<
+cell-line-ontology-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=CellLine
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Cell Line Ontology (CLO) and Experimental Factor Ontology (EFO
 UsageString=Use this annotation to indicate the cell line context of a statement. Use to annotate a statement that was demonstrated in a given cell line.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

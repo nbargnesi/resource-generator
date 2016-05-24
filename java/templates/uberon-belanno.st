@@ -1,4 +1,4 @@
-uberon-belanno(version, createdDateTime) ::= <<
+uberon-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=Uberon
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Anatomy terms from Uberon
 UsageString=Use to annotate a statement demonstrated in a specific anatomical entity.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

@@ -65,12 +65,12 @@ public class Main {
             String anPrefLabel = node.asLiteral().getLexicalForm();
 
             File template = annotationTemplate(anPrefLabel);
-            generate(anConceptIter, template);
+            generate(anConceptScheme, anConceptIter, template);
         }
     }
 
-    void generate(QuerySolutions anConceptIter, File template) {
-        try (AnnotationTemplate ANT = new AnnotationTemplate(template)) {
+    void generate(String uri, QuerySolutions anConceptIter, File template) {
+        try (AnnotationTemplate ANT = new AnnotationTemplate(uri, template)) {
             generate(anConceptIter, ANT);
         }
     }

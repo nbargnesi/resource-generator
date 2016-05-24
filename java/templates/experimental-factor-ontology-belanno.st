@@ -1,4 +1,4 @@
-experimental-factor-ontology-belanno(version, createdDateTime) ::= <<
+experimental-factor-ontology-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=ExperimentalFactorOntology
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Experimental Factor Ontology (EFO) Cell Lines
 UsageString=Use this annotation to indicate the cell line context of a statement. Use to annotate a statement that was demonstrated in a given cell line.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

@@ -1,4 +1,4 @@
-mesh-cellular-structures-belanno(version, createdDateTime) ::= <<
+mesh-cellular-structures-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=CellStructure
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=The Cell Structures [A11.284] sub-branch of the Medical Subjec
 UsageString=Use to annotate a statement demonstrated in the context of a specific cellular location.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

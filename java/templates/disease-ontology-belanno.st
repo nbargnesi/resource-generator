@@ -1,4 +1,4 @@
-disease-ontology-belanno(version, createdDateTime) ::= <<
+disease-ontology-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=Disease
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Disease names from the Disease Ontology (DO)
 UsageString=Use to annotate a statement demonstrated in a biological system where the disease state was present or where the facts represented in the statement were shown to be relevant to the disease.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

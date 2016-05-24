@@ -1,4 +1,4 @@
-ncbi-taxonomy-belanno(version, createdDateTime) ::= <<
+ncbi-taxonomy-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=Species
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=The annotation values for species provided by NCBI Taxonomy Id
 UsageString=Use this annotation to indicate the species context for a statement.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

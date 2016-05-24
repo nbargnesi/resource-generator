@@ -1,5 +1,5 @@
 annotation-definition-block(keyword, type, description, usage, version,
-                            createdDateTime) ::= <<
+                            createdDateTime, uri) ::= <<
 <! required !>
 Keyword=<keyword>
 <! required !>
@@ -12,6 +12,8 @@ UsageString=<usage>
 <if(version)>VersionString=<version><endif>
 <! required !>
 CreatedDateTime=<createdDateTime>
+<! required !>
+URIString=<uri>
 >>
 
 author-block(name, copyright, contactInfo) ::= <<

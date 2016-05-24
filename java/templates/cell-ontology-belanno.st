@@ -1,4 +1,4 @@
-cell-ontology-belanno(version, createdDateTime) ::= <<
+cell-ontology-belanno(version, createdDateTime, uri) ::= <<
 [AnnotationDefinition]
 Keyword=Cell
 TypeString=list
@@ -6,6 +6,7 @@ DescriptionString=Cell types from the Cell Ontology (CL)
 UsageString=Use this annotation to indicate the cell type context of a statement. Use to annotate a statement that was demonstrated in a given cell type or where the facts represented in the statement were shown to be relevant to the cell type.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

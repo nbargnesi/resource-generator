@@ -66,9 +66,7 @@ public class Main {
 
             File[] templates = namespaceTemplates(nsPrefLabel);
 
-            if (nsPrefLabel.contains("Default BEL")) {
-                generate(nsConceptScheme, nsConceptIter, templates);
-            }
+            generate(nsConceptScheme, nsConceptIter, templates);
         }
     }
 

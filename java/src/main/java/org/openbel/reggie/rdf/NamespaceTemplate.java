@@ -37,6 +37,7 @@ public class NamespaceTemplate implements AutoCloseable {
     private final File templateFile;
     private final String templateName;
     private final Logger log;
+    private final String uri;
     private boolean ids = false;
     private File outputFile;
     private FileWriter writer;
@@ -45,9 +46,11 @@ public class NamespaceTemplate implements AutoCloseable {
     /**
      * Create a namespace template associated with the indicated {@link File template file}.
      *
+     * @param uri {@link String}
      * @param templateFile {@link File}
      */
-    public NamespaceTemplate(File templateFile) {
+    public NamespaceTemplate(String uri, File templateFile) {
+        this.uri = uri;
         log = Logger.getRootLogger();
         if (!templateFile.canRead()) {
             final String fmt = "%s: can't read template";
@@ -97,6 +100,7 @@ public class NamespaceTemplate implements AutoCloseable {
         ST st = group.getInstanceOf(templateName);
         st.add("version", version);
         st.add("createdDateTime", createdDateTime);
+        st.add("uri", uri);
         String hdr = st.render();
         try {
             writer.write(hdr);

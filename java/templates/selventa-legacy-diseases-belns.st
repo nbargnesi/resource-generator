@@ -1,4 +1,4 @@
-selventa-legacy-diseases-belns(version, createdDateTime) ::= <<
+selventa-legacy-diseases-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Selventa Legacy Disease Names
 Keyword=SDIS
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Selventa legacy names for diseases. It is not recommended that new BEL Documents include reference to any of these legacy namespaces.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

@@ -1,4 +1,4 @@
-go-biological-process-ids-belns(version, createdDateTime) ::= <<
+go-biological-process-ids-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=GO Biological Process Identifiers
 Keyword=GOBPID
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=The Gene Ontology (GO) identifiers for biological process. These IDs may be used to represent biological processes.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:[VALUE]
 
 [Author]

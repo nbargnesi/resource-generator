@@ -1,4 +1,4 @@
-selventa-legacy-chemicals-belns(version, createdDateTime) ::= <<
+selventa-legacy-chemicals-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Selventa Legacy Chemical Names
 Keyword=SCHEM
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Selventa names for chemicals, drugs, and other molecule abundances. It is not recommended that new BEL Documents include reference to any of these legacy namespaces.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

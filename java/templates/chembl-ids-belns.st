@@ -1,4 +1,4 @@
-chembl-ids-belns(version, createdDateTime) ::= <<
+chembl-ids-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=ChEMBL
 Keyword=CHEMBL
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=ChEMBL is a manually curated chemical database of bioactive molecules with drug-like properties
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=https://www.ebi.ac.uk/chembl/
 
 [Author]

@@ -1,4 +1,4 @@
-disease-ontology-belns(version, createdDateTime) ::= <<
+disease-ontology-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Disease Ontology Names
 Keyword=DO
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Disease names from the Disease Ontology (DO). These names may be used to specify pathologies.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

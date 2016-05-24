@@ -1,4 +1,4 @@
-go-biological-process-belns(version, createdDateTime) ::= <<
+go-biological-process-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=GO Biological Process Names
 Keyword=GOBP
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=The Gene Ontology (GO) names for biological process. These names may be used to represent biological processes.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/search.cgi?search_query=[VALUE]&search_constraint=term&exact_match=1&action=new-search
 
 [Author]

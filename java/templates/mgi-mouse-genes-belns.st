@@ -1,4 +1,4 @@
-mgi-mouse-genes-belns(version, createdDateTime) ::= <<
+mgi-mouse-genes-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=MGI Approved Gene Symbols
 Keyword=MGI
@@ -7,6 +7,7 @@ SpeciesString=10090
 DescriptionString=Mouse Genome Informatics (MGI) approved gene symbols. These symbols may be used to specify mouse gene, RNA, microRNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.informatics.jax.org/searchtool/Search.do?query=[VALUE]
 
 [Author]

@@ -1,4 +1,4 @@
-go-cellular-component-belns(version, createdDateTime) ::= <<
+go-cellular-component-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=GO Cellular Components (Names)
 Keyword=GOCC
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Gene Ontology (GO) cellular component names. These terms may be used to represent cellular components as well as complex abundances.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://amigo.geneontology.org/cgi-bin/amigo/search.cgi?search_query=[VALUE]&search_constraint=term&exact_match=1&action=new-search
 
 [Author]

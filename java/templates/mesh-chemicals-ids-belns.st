@@ -1,4 +1,4 @@
-mesh-chemicals-ids-belns(version, createdDateTime) ::= <<
+mesh-chemicals-ids-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=MeSH Chemicals (Ids)
 Keyword=MESHCID
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for Chemicals [branch D and Supplementary Concepts].
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
 
 [Author]

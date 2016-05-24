@@ -1,4 +1,4 @@
-hgnc-human-genes-belns(version, createdDateTime) ::= <<
+hgnc-human-genes-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=HGNC Approved Gene Symbols
 Keyword=HGNC
@@ -7,6 +7,7 @@ SpeciesString=9606
 DescriptionString=HUGO Gene Nomenclature Committee (HGNC) approved gene symbols. These symbols may be used to specify human gene, RNA, microRNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.genenames.org/data/hgnc_data.php?match=[VALUE]
 
 [Author]

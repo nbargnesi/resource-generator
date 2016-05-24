@@ -1,4 +1,4 @@
-default-bel-namespace-belns(version, createdDateTime) ::= <<
+default-bel-namespace-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Default BEL Namespace
 Keyword=DEFAULT
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=The BEL default namespace.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 
 [Author]
 NameString=OpenBEL

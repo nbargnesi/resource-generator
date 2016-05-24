@@ -1,4 +1,4 @@
-chebi-ids-belns(version, createdDateTime) ::= <<
+chebi-ids-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Chemicals of Biological Interest (Identifiers)
 Keyword=CHEBIID
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Chemical Entities of Biological Interest (ChEBI) unique identifiers. These identifiers may be used to specify abundances.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.ebi.ac.uk/chebi/searchId.do?chebiId=[VALUE]
 
 [Author]

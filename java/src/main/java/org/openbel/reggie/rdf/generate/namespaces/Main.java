@@ -66,20 +66,24 @@ public class Main {
 
             File[] templates = namespaceTemplates(nsPrefLabel);
 
-            generate(nsConceptIter, templates);
+            if (nsPrefLabel.contains("Default BEL")) {
+                generate(nsConceptScheme, nsConceptIter, templates);
+            }
         }
     }
 
-    void generate(QuerySolutions nsConceptIter, File[] templates) {
+    void generate(String uri, QuerySolutions nsConceptIter, File[] templates) {
         for (File FT : templates) {
-            try (NamespaceTemplate NST = new NamespaceTemplate(FT)) {
+            try (NamespaceTemplate NST = new NamespaceTemplate(uri, FT)) {
                 generate(nsConceptIter, NST);
             }
         }
     }
 
     void generate(QuerySolutions nsConceptIter, NamespaceTemplate template) {
-        if (!nsConceptIter.more()) return;
+        if (!nsConceptIter.more()) {
+            return;
+        }
         template.open();
         template.writeHeader();
 

@@ -1,4 +1,4 @@
-swissprot-belns(version, createdDateTime) ::= <<
+swissprot-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=Swiss-Prot Entry Names
 Keyword=SP
@@ -7,6 +7,7 @@ SpeciesString=9606, 10090, 10116
 DescriptionString=Swiss-Prot database entry names for Homo sapiens, Mus musculus, and Rattus norvegicus. These may be used to specify gene, RNA and protein abundances. Single character encoding following each value specify which abundance types are valid.
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.uniprot.org/uniprot/[VALUE]
 
 [Author]

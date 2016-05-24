@@ -1,4 +1,4 @@
-mesh-cellular-structures-belns(version, createdDateTime) ::= <<
+mesh-cellular-structures-belns(version, createdDateTime, uri) ::= <<
 [Namespace]
 NameString=MeSH Cellular Structures (Names)
 Keyword=MESHCS
@@ -7,6 +7,7 @@ SpeciesString=all
 DescriptionString=Medical Subject Headings (MeSH) names for cellular locations [branch A11.284].
 VersionString=<version>
 CreatedDateTime=<createdDateTime>
+URIString=<uri>
 QueryValueURL=http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?mode=&term=[VALUE]&field=entry
 
 [Author]

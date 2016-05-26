@@ -19,11 +19,6 @@ DescriptionString=The Cell Line Ontology (CLO) is a community-driven ontology th
 PublishedVersionString=2.1.63
 PublishedDate=2015-04-25
 ReferenceURL=http://www.clo-ontology.org/
-NameString=Experimental Factor Ontology (EFO)
-DescriptionString=The Experimental Factor Ontology (EFO) provides a systematic description of many experimental variables available in EBI databases.
-PublishedVersionString=2.60
-PublishedDate=2015-05-15
-ReferenceURL=http://www.ebi.ac.uk/efo/
 
 [Processing]
 CaseSensitiveFlag=yes
